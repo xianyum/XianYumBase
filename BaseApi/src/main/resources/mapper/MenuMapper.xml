@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.base.dao.MenuMapper">
+
+    <select id="getAll" resultType="com.base.entity.po.MenuEntity" parameterType="java.lang.String">
+        SELECT
+        menu_id AS "menuId",
+        parent_id AS "parentId",
+        name,
+        url,
+        perms,
+        type,
+        icon,
+        order_num AS "orderNum"
+        FROM menu
+        WHERE del_tag = 0
+        <if test="perms != null and perms != ''">
+            AND perms LIKE '%${perms}%'
+        </if>
+    </select>
+
+</mapper>
