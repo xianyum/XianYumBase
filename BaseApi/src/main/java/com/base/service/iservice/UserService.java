@@ -1,35 +1,24 @@
 package com.base.service.iservice;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.base.entity.po.UserEntity;
 import com.base.entity.request.UpdatePasswordRequest;
-import com.base.entity.request.UserInfoRequest;
+import com.base.entity.request.UserRequest;
 
-import java.util.List;
-import java.util.Set;
+public interface UserService extends IService<UserEntity> {
 
-public interface UserService {
+    IPage<UserEntity> queryAll(UserRequest user);
 
     UserEntity queryByUserName(String username);
 
-    List<UserEntity> queryAll(String username);
-
     void deleteById(Long[] userIds);
 
-    UserEntity selectOneById(Long id);
+    UserEntity selectOneById(UserRequest user);
 
-    void save(UserEntity user);
+    int save(UserRequest user);
 
-    void update(UserEntity user);
+    int update(UserRequest user);
 
     boolean updatePassword(UpdatePasswordRequest info);
-
-    UserEntity queryByPhone(String phone);
-
-    Set<String> getUserPermissions();
-
-    void updateInfo(UserEntity user);
-
-    void saveInfo(UserInfoRequest request);
-
-    List<UserEntity> getByStatus(UserEntity user);
 }

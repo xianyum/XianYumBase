@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2019/5/24 16:02
  */
 @Data
-public class PageUserRequest {
+public class BaseRequest {
     public Integer pageNum;
     public Integer pageSize;
 }

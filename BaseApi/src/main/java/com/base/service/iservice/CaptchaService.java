@@ -1,8 +1,5 @@
 package com.base.service.iservice;
 
-import com.base.entity.request.LoginPhoneRequest;
-import com.base.entity.request.RegisterInfoRequest;
-
 import java.awt.image.BufferedImage;
 
 
@@ -22,10 +19,4 @@ public interface CaptchaService {
      * @return  true：成功  false：失败
      */
     boolean validate(String uuid, String code);
-
-    void  createRegisterCode(RegisterInfoRequest request);
-
-    boolean registerValidate(String uuid, String code);
-
-    void createPhoneCode(LoginPhoneRequest request);
 }

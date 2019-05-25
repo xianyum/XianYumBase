@@ -11,106 +11,21 @@
         a.email,
         a.mobile,
         a.status,
-        a.permission_status as "permissionStatus",
-        a.permission_name as "permissionName",
         a.create_time AS "createTime",
-        a.del_tag AS "delTag",
-        a.nick_name AS "nickName",
-        a.sex,
-        a.department,
-        a.major
+        a.del_tag AS "delTag"
     </sql>
 
-    <select id="queryByUserName" parameterType="java.lang.String" resultType="com.base.entity.po.UserEntity">
-      SELECT
-      <include refid="userColumns"/>
-      FROM user a where a.username = #{username} AND a.del_tag = 0
-    </select>
-
-    <select id="queryByPhone" parameterType="java.lang.String" resultType="com.base.entity.po.UserEntity">
-        SELECT
-        <include refid="userColumns"/>
-        FROM user a where a.mobile = #{phone} AND a.del_tag = 0
-    </select>
-
-    <select id="queryByUserId" parameterType="java.lang.Long" resultType="com.base.entity.po.UserEntity">
-        SELECT
-        <include refid="userColumns"/>
-        FROM user a where a.id = #{userId} AND a.del_tag = 0
-    </select>
-
-    <select id="queryAll" parameterType="java.lang.String" resultType="com.base.entity.po.UserEntity">
+    <select id="queryAll" parameterType="com.base.entity.request.UserRequest" resultType="com.base.entity.po.UserEntity">
         SELECT
         <include refid="userColumns"/>
         from  user a
         <where>
             a.del_tag = 0
-            AND a.username LIKE '%${username}%'
-            <if test="userId !=null and userId!=0">
-             AND a.id = #{userId}
+            <if test="user.username != null and user.username != ''">
+            AND a.username LIKE CONCAT('%', #{user.username}, '%')
             </if>
         </where>
-        ORDER BY create_time desc
+        ORDER BY a.create_time desc
     </select>
 
-    <update id="deleteById" parameterType="java.lang.Long">
-        UPDATE user SET del_tag = 1 where id = #{id}
-    </update>
-
-    <insert id="save" parameterType="com.base.entity.po.UserEntity" useGeneratedKeys="true" keyProperty="id" >
-        INSERT INTO
-        user(username,password,salt,status,create_time,del_tag)
-        values (#{username},#{password},#{salt},#{status},#{createTime},#{delTag})
-    </insert>
-
-    <update id="update" parameterType="com.base.entity.po.UserEntity">
-        UPDATE user
-        <trim prefix="set" suffixOverrides=",">
-            <if test="username != null and username != ''">username = #{username},</if>
-            <if test="status != null and status != '' or status==0">status = #{status},</if>
-            <if test="password != null and password != ''">password = #{password},</if>
-            <if test="salt != null and salt != ''">salt = #{salt},</if>
-            <if test="permissionStatus != null and permissionStatus != '' or permissionStatus==0">permission_status = #{permissionStatus},</if>
-            <if test="permissionName != null and permissionName != ''">permission_name = #{permissionName},</if>
-        </trim>
-        WHERE id = #{id}
-    </update>
-
-    <select id="getUserPermissions" parameterType="java.lang.Long" resultType="com.base.entity.po.UserEntity">
-        SELECT
-        <include refid="userColumns"/>
-        from user a
-        <where>
-            a.del_tag = 0
-            <if test="userId !=null and userId!=0">
-            AND a.id = #{userId}
-            </if>
-        </where>
-    </select>
-
-    <update id="updateInfo" parameterType="com.base.entity.po.UserEntity">
-        UPDATE user
-        <trim prefix="set" suffixOverrides=",">
-            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
-            <if test="sex != null and sex != '' or sex==0">sex = #{sex},</if>
-            <if test="department != null and department != ''">department = #{department},</if>
-            <if test="major != null and major != ''">major = #{major},</if>
-            <if test="email != null and email != ''">email = #{email},</if>
-            <if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
-        </trim>
-        WHERE id = #{id}
-    </update>
-
-
-    <insert id="saveInfo" parameterType="com.base.entity.request.UserInfoRequest" useGeneratedKeys="true" keyProperty="id" >
-        INSERT INTO
-        user(username,password,salt,status,create_time,del_tag,permission_status,permission_name)
-        values (#{username},#{password},#{salt},#{status},#{createTime},#{delTag},#{permissionStatus},#{permissionName})
-    </insert>
-
-    <select id="queryByStatus" parameterType="java.lang.Integer" resultType="com.base.entity.po.UserEntity">
-        SELECT
-        <include refid="userColumns"/>
-        FROM user a where a.permission_status = #{permissionStatus} AND a.del_tag = 0
-    </select>
 </mapper>

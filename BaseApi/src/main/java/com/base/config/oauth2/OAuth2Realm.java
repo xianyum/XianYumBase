@@ -4,7 +4,6 @@ import com.base.common.utils.RedisUtils;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.UserEntity;
-import com.base.service.iservice.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -31,9 +31,6 @@ public class OAuth2Realm extends AuthorizingRealm {
     private UserMapper userMapper;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RedisUtils redisUtils;
 
     @Override
@@ -47,7 +44,7 @@ public class OAuth2Realm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         //用户权限列表
-        Set<String> permsSet = userService.getUserPermissions();
+        Set<String> permsSet = new HashSet<>();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setStringPermissions(permsSet);
         return info;
@@ -65,7 +62,7 @@ public class OAuth2Realm extends AuthorizingRealm {
             throw new IncorrectCredentialsException("token失效，请重新登录");
         }
         //查询用户信息
-        UserEntity user = userMapper.queryByUserId(userEntity.getId().longValue());
+        UserEntity user = userMapper.selectById(userEntity.getId());
         //账号锁定
         if(user.getStatus() == UserStatusEnum.BAN.getStatus()){
             throw new LockedAccountException("账号已被锁定,请联系管理员");

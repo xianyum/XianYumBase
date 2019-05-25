@@ -131,13 +131,18 @@ public class BeanUtils {
         }
         return result;
     }
-    public static <T> T copy(final Object source, final Class<T> clazz) throws Exception{
-        if (source == null) {
-            return null;
+    public static <T> T copy(final Object source, final Class<T> clazz) {
+        try {
+            if (source == null) {
+                return null;
+            }
+            T target = clazz.newInstance();
+            BeanCopier copier = BeanCopier.create(source.getClass(), clazz, false);
+            copier.copy(source, target, null);
+            return target;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        T target = clazz.newInstance();;
-        BeanCopier copier = BeanCopier.create(source.getClass(), clazz, false);
-        copier.copy(source, target, null);
-        return target;
+        return null;
     }
 }
