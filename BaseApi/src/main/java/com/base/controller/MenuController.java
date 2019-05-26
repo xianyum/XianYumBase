@@ -31,7 +31,7 @@ public class MenuController {
     @GetMapping("/nav")
     @ApiOperation(value = "获取导航菜单以及权限", httpMethod = "GET")
     public DataResult nav(){
-        List<MenuEntity> menuList = menuService.getAll();
+        List<MenuEntity> menuList = menuService.getUserMenuList();
         return DataResult.success().put("menuList", menuList).put("permissions",null);
     }
 }

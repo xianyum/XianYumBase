@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.base.dao.MenuMapper">
+
+    <select id="queryListParentId" resultType="com.base.entity.po.MenuEntity">
+		select * from menu where parent_id = #{parentId} and del_tag = 0 order by order_num asc
+	</select>
+
+	<select id="queryMenuID" resultType="java.lang.Long">
+
+		select menu_id from menu  where del_tag = 0
+
+	</select>
+</mapper>

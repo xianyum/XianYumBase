@@ -12,5 +12,22 @@ import java.util.List;
  */
 public interface MenuService extends IService<MenuEntity> {
 
-    List<MenuEntity> getAll();
+    /**
+     * 获取用户菜单列表
+     */
+    List<MenuEntity> getUserMenuList();
+
+    /**
+     * 根据父菜单，查询子菜单
+     * @param parentId 父菜单ID
+     * @param menuIdList  用户菜单ID
+     */
+    List<MenuEntity> queryListParentId(Long parentId, List<Long> menuIdList);
+
+
+    /**
+     * 根据父菜单，查询子菜单
+     * @param parentId 父菜单ID
+     */
+    List<MenuEntity> queryListParentId(Long parentId);
 }

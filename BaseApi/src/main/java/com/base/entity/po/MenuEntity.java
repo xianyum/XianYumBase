@@ -1,10 +1,13 @@
 package com.base.entity.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author zhangwei
@@ -53,4 +56,12 @@ public class MenuEntity extends Model<MenuEntity> {
      */
     private Integer orderNum;
 
+    /**
+     * ztree属性
+     */
+    @TableField(exist=false)
+    private Boolean open;
+
+    @TableField(exist=false)
+    private List<?> list;
 }
