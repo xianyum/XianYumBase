@@ -20,17 +20,24 @@
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
       </el-form-item>
-      <!--<el-form-item label="角色" size="mini" prop="roleIdList">-->
-      <!--<el-checkbox-group v-model="dataForm.roleIdList">-->
-      <!--<el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>-->
-      <!--</el-checkbox-group>-->
-      <!--</el-form-item>-->
-      <el-form-item label="状态" size="mini" prop="status">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">正常</el-radio>
-          <el-radio :label="1">禁用</el-radio>
-        </el-radio-group>
-      </el-form-item>
+      <el-row :gutter="18">
+        <el-col :span="12">
+          <el-form-item label="用户权限" size="mini" prop="permissionStatus">
+            <el-radio-group v-model="dataForm.permissionStatus">
+              <el-radio :label="1">普通用户</el-radio>
+              <el-radio :label="0">管理员</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态" size="mini" prop="status">
+            <el-radio-group v-model="dataForm.status">
+              <el-radio :label="0">正常</el-radio>
+              <el-radio :label="1">禁用</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancle">取消</el-button>
@@ -77,6 +84,7 @@
         visible: false,
         roleList: [],
         dataForm: {
+          permissionStatus: 1,
           id: 0,
           userName: '',
           password: '',
@@ -124,11 +132,12 @@
                 'id': this.dataForm.id
               })
             }).then(({data}) => {
-              if (data && data.code === 0) {
+              if (data && data.code === 200) {
                 this.dataForm.userName = data.data.username
                 this.dataForm.email = data.data.email
                 this.dataForm.mobile = data.data.mobile
                 this.dataForm.status = data.data.status
+                this.dataForm.permissionStatus = data.data.permissionStatus
               }
             })
           }
@@ -152,13 +161,13 @@
                 'id': this.dataForm.id || undefined,
                 'username': this.dataForm.userName,
                 'password': this.dataForm.password,
-                'salt': this.dataForm.salt,
                 'email': this.dataForm.email,
                 'mobile': this.dataForm.mobile,
-                'status': this.dataForm.status
+                'status': this.dataForm.status,
+                'permissionStatus': this.dataForm.permissionStatus
               })
             }).then(({data}) => {
-              if (data && data.code === 0) {
+              if (data && data.code === 200) {
                 this.$message({
                   message: '操作成功',
                   type: 'success',

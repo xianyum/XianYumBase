@@ -6,8 +6,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:user:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:user:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button  type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button  type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,11 +23,9 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="userId"
-        header-align="center"
-        align="center"
-        width="80"
-        label="ID">
+        label="序号"
+        type="index"
+        width="50">
       </el-table-column>
       <el-table-column
         prop="username"
@@ -36,16 +34,18 @@
         label="用户名">
       </el-table-column>
       <el-table-column
-        prop="email"
-        header-align="center"
-        align="center"
-        label="邮箱">
-      </el-table-column>
-      <el-table-column
         prop="mobile"
         header-align="center"
         align="center"
         label="手机号">
+      </el-table-column>
+      <el-table-column
+        prop="email"
+        header-align="center"
+        align="center"
+        show-overflow-tooltip
+        width="170"
+        label="邮箱">
       </el-table-column>
       <el-table-column
         prop="status"
@@ -53,16 +53,23 @@
         align="center"
         label="状态">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
+          <el-tag v-if="scope.row.status === 1" size="small" type="danger">禁用</el-tag>
           <el-tag v-else size="small">正常</el-tag>
         </template>
+      </el-table-column>
+      <el-table-column
+        prop="permission"
+        header-align="center"
+        align="center"
+        label="用户权限">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
         width="180"
-        label="创建时间">
+        label="创建时间"
+        :formatter="formateCreateTime">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -71,8 +78,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button>
-          <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button  type="text"  size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,21 +121,43 @@
       this.getDataList()
     },
     methods: {
+      formateCreateTime (row, column) {
+        var objD = row.createTime
+        if (!objD) {
+          return ''
+        }
+        objD = new Date(objD)
+        var str
+        var yy = objD.getYear()
+        if (yy < 1900) yy = yy + 1900
+        var MM = objD.getMonth() + 1
+        if (MM < 10) MM = '0' + MM
+        var dd = objD.getDate()
+        if (dd < 10) dd = '0' + dd
+        var hh = objD.getHours()
+        if (hh < 10) hh = '0' + hh
+        var mm = objD.getMinutes()
+        if (mm < 10) mm = '0' + mm
+        var ss = objD.getSeconds()
+        if (ss < 10) ss = '0' + ss
+        str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
+        return (str)
+      },
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/user/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'username': this.dataForm.userName
+          url: this.$http.adornUrl('/user/list'),
+          method: 'post',
+          data: this.$http.adornData({
+            'username': this.dataForm.userName,
+            'pageNum': this.pageIndex,
+            'pageSize': this.pageSize
           })
         }).then(({data}) => {
           if (data && data.code === 200) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.dataList = data.data.records
+            this.totalPage = data.data.total
           } else {
             this.dataList = []
             this.totalPage = 0
@@ -152,24 +181,24 @@
         this.dataListSelections = val
       },
       // 新增 / 修改
-      addOrUpdateHandle (id) {
+      addOrUpdateHandle (userid) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.addOrUpdate.init(userid)
         })
       },
       // 删除
       deleteHandle (id) {
         var userIds = id ? [id] : this.dataListSelections.map(item => {
-          return item.userId
+          return item.id
         })
-        this.$confirm(`确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+        this.$confirm(`确定要进行删除操作吗?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/user/delete'),
+            url: this.$http.adornUrl('/user/delete'),
             method: 'post',
             data: this.$http.adornData(userIds, false)
           }).then(({data}) => {
