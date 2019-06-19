@@ -31,6 +31,7 @@ swagger:
   description: 'BaseApi'
   version: '1.0'
   basePackage: 'com.base.controller' #指定swagger扫描包
+  enable: true #swagger开关，建议生产环境关闭
 
 druid:
   manager:
