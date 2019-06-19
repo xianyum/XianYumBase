@@ -25,6 +25,7 @@
             <el-form-item>
               <el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
             </el-form-item>
+              <span @click="$router.push({ name: 'register' })">还没有账号？立即注册</span>
           </el-form>
         </div>
       </div>
@@ -171,7 +172,7 @@
     }
     .login-btn-submit {
       width: 100%;
-      margin-top: 38px;
+      margin-top: 13px;
     }
   }
 </style>
