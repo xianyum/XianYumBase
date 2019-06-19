@@ -14,15 +14,16 @@ redis:
   token:
     prefix: 'baseApi:token:'
     expire: 600  # token有效时长，单位分钟
-    enable: true # 校验token开关，true开启token
+    enable: false # 校验token开关，true开启token
     secret: BaseApi  #密匙
 
-#短信发送配置
-phone:
-  sid: 9c1234485b5a369d5dca1cd412e65344
-  token: 023b737e0a7c120aa2d95a1fa6d0a341
-  appid: 90e27d37954d4716aabaf68f091027bf
-  templateid: 447566
+#腾讯云短信发送配置
+tencent:
+  phone:
+    appid: '1400220962' #短信应用SDK AppID
+    appkey: 'adcf518b6d27f52c0f3cfe93e742f31e' #短信应用SDK AppKey
+    templateId: '355578' #短信模板ID
+    smsSign: ''  #签名
 
 #swagger配置
 swagger:

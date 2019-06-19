@@ -10,12 +10,24 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "phone")
+@ConfigurationProperties(prefix = "tencent.phone")
 public class PhoneConfig {
+    /**
+     * 短信应用SDK AppID
+     */
+    private int appid;
 
-    private String sid;
-    private String token;
-    private String appid;
-    private String templateid;
+    /**
+     *  短信应用SDK AppKey
+     */
+    private String appkey;
+    /**
+     * 短信模板ID
+     */
+    private int templateId;
+    /**
+     * 签名（可为空）
+     */
+    private String smsSign;
 
 }

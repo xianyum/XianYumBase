@@ -30,7 +30,6 @@
         <swagger.version>2.7.0</swagger.version>
         <joda.time.version>2.9.9</joda.time.version>
         <fastjson.version>1.2.56</fastjson.version>
-        <hutool.version>4.1.1</hutool.version>
         <lombok.version>1.18.4</lombok.version>
         <shiro.version>1.4.0</shiro.version>
         <pagehelper.version>4.1.0</pagehelper.version>
@@ -42,9 +41,16 @@
         <org.apache.httpclient.version>4.5.2</org.apache.httpclient.version>
         <dynamic.datasource.boot.version>2.5.4</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.1.0</mybatisplus.boot.version>
+        <qcloudsms.version>1.0.6</qcloudsms.version>
     </properties>
 
     <dependencies>
+        <!--腾讯云短信配置-->
+        <dependency>
+            <groupId>com.github.qcloudsms</groupId>
+            <artifactId>qcloudsms</artifactId>
+            <version>${qcloudsms.version}</version>
+        </dependency>
         <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -206,11 +212,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>${hutool.version}</version>
         </dependency>
     </dependencies>
 
