@@ -1,5 +1,6 @@
 package com.base.controller;
 
+import com.base.common.annotation.SysLog;
 import com.base.common.exception.SoException;
 import com.base.common.server.Server;
 import com.base.common.utils.DataResult;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServerController {
 
     @GetMapping("/get")
+    @SysLog(value = "获取服务器信息")
     @ApiOperation(value = "获取服务器相关信息", httpMethod = "GET")
     public DataResult getServerInfo(){
         try {

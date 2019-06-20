@@ -14,8 +14,10 @@ redis:
   token:
     prefix: 'baseApi:token:'
     expire: 600  # token有效时长，单位分钟
-    enable: true # 校验token开关，true开启token
+    enable: false # 校验token开关，true开启token
     secret: BaseApi  #密匙
+  ip:
+    info: 'baseApi:district:'
 
 #腾讯云短信发送配置
 tencent:

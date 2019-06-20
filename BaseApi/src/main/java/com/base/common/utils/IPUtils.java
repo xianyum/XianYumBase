@@ -1,6 +1,7 @@
 package com.base.common.utils;
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,5 +188,22 @@ public class IPUtils {
         {
         }
         return "127.0.0.1";
+    }
+
+    /**
+     * 获取ip地点
+     * @return
+     */
+    public static String getIpInfo(String ip){
+        try {
+            String url ="http://ip.360.cn/IPQuery/ipquery";
+            String param = "ip="+ip;
+            String result = HttpUtils.sendGet(url, param);
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String ipInfo = jsonObject.getString("data");
+            return ipInfo.trim();
+        }catch (Exception e){
+            return "未知地点";
+        }
     }
 }

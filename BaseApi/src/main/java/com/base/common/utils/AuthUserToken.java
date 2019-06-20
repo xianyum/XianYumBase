@@ -11,7 +11,13 @@ import org.apache.shiro.SecurityUtils;
 public class AuthUserToken {
 
     public static UserEntity getUser(){
-        return (UserEntity)SecurityUtils.getSubject().getPrincipal();
+        UserEntity userEntity = (UserEntity)SecurityUtils.getSubject().getPrincipal();
+        if(userEntity == null){
+            userEntity = new UserEntity();
+            userEntity.setId(1L);
+            userEntity.setUsername("system");
+        }
+        return userEntity;
     }
 
 }
