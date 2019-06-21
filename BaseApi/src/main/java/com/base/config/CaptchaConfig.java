@@ -56,7 +56,7 @@ public class CaptchaConfig {
         // 边框颜色 默认为Color.BLACK
         properties.setProperty("kaptcha.border.color", "105,179,90");
         // 验证码文本字符颜色 默认为Color.BLACK
-        properties.setProperty("kaptcha.textproducer.font.color", "blue");
+//        properties.setProperty("kaptcha.textproducer.font.color", "blue");
         // 验证码图片宽度 默认为200
         properties.setProperty("kaptcha.image.width", "160");
         // 验证码图片高度 默认为50
