@@ -13,13 +13,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 
+import javax.annotation.Resource;
 import java.awt.image.BufferedImage;
 
 
 @Service
 @Slf4j
 public class CaptchaServiceImpl  implements CaptchaService {
-    @Autowired
+
+    @Resource(name = "captchaProducerMath")
     private Producer producer;
 
     @Value("${redis.captcha.expire:60}")
@@ -42,10 +44,12 @@ public class CaptchaServiceImpl  implements CaptchaService {
         if(StringUtils.isBlank(uuid)){
             throw new SoException("uuid不能为空");
         }
-        //生成文字验证码
-        String code = producer.createText();
+        //生成验证码
+        String capText = producer.createText();
+        String capStr = capText.substring(0, capText.lastIndexOf("@"));
+        String code = capText.substring(capText.lastIndexOf("@") + 1);
         redisUtils.setMin(prefix+uuid,code,expireMinTime);
-        return producer.createImage(code);
+        return producer.createImage(capStr);
     }
 
 
