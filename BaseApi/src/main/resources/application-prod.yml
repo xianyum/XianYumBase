@@ -43,7 +43,7 @@ druid:
 log:
   path: logs  #日志存放位置，可以为相对路径也可以为绝对路径（/）
   projectName: BaseApi #日志存放目录名（一般设置为项目名）
-  level: DEBUG   #打印日志级别  < DEBUG < INFO < WARN < ERROR
+  level: INFO   #打印日志级别  < DEBUG < INFO < WARN < ERROR
 
 
 #mybatis plus

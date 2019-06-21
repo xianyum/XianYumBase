@@ -14,7 +14,7 @@ public class AuthUserToken {
         UserEntity userEntity = (UserEntity)SecurityUtils.getSubject().getPrincipal();
         if(userEntity == null){
             userEntity = new UserEntity();
-            userEntity.setId(1L);
+            userEntity.setId(00000L);
             userEntity.setUsername("system");
         }
         return userEntity;
