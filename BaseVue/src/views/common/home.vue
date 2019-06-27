@@ -1,220 +1,35 @@
 <template>
-  <div>
-    <div>
-      <ve-gauge :data="chartData" :settings="chartSettings" style="float:left; width:33.33%;"></ve-gauge>
-      <ve-gauge :data="memChartData" :settings="memChartSettings" style="float:left; width:33.33%;"></ve-gauge>
-      <ve-gauge :data="jvmChartData" :settings="jvmChartSettings" style="float:left; width:33.33%;"></ve-gauge>
-    </div>
-    <div>
-      <!--<el-card class="box-card">-->
-      <!--<div slot="header" class="clearfix">-->
-      <!--<span>CPU</span>-->
-      <!--<el-button style="float: right; padding: 3px 0" type="text" @click="fresh">刷新</el-button>-->
-      <!--</div>-->
-      <!--<el-row :gutter="24" align="middle" :data="cpuData">-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple">-->
-      <!--<span>属性</span>-->
-      <!--<span>值</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple">-->
-      <!--<span>核心数</span>-->
-      <!--<span prop="cpuNum">{{cpu.cpuNum}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple">-->
-      <!--<span>用户使用率</span>-->
-      <!--<span prop="used">{{cpu.used}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple">-->
-      <!--<span>系统使用率</span>-->
-      <!--<span prop="sys">{{cpu.sys}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple">-->
-      <!--<span>当前空闲率</span>-->
-      <!--<span prop="free">{{cpu.free}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--</el-row>-->
-      <!--</el-card>-->
-
-      <!--<el-card  class="box-card" style="margin-left:30px;">-->
-      <!--<div slot="header" class="clearfix">-->
-      <!--<span>内存</span>-->
-      <!--<el-button style="float: right; padding: 3px 0" type="text" @click="fresh">刷新</el-button>-->
-      <!--</div>-->
-      <!--<el-row :gutter="24" align="middle" :data="memData">-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple twoCard">-->
-      <!--<span>属性</span>-->
-      <!--<span>内存</span>-->
-      <!--<span>JVM</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple twoCard">-->
-      <!--<span>总内存</span>-->
-      <!--<span prop="total">{{mem.total}}</span>-->
-      <!--<span>{{jvm.total}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple twoCard">-->
-      <!--<span>已用内存</span>-->
-      <!--<span prop="used">{{mem.used}}</span>-->
-      <!--<span>{{jvm.used}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple twoCard">-->
-      <!--<span>剩余内存</span>-->
-      <!--<span prop="free">{{mem.free}}</span>-->
-      <!--<span>{{jvm.free}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="24">-->
-      <!--<div class="grid-content bg-purple twoCard">-->
-      <!--<span>使用率</span>-->
-      <!--<span prop="usage">{{mem.usage}}</span>-->
-      <!--<span>{{jvm.usage}}</span>-->
-      <!--</div>-->
-      <!--</el-col>-->
-      <!--</el-row>-->
-      <!--</el-card>-->
-      <el-card style="width:100%; margin-top:80px; clear:both;">
-        <div slot="header" class="clearfix">
-          <span>服务器信息</span>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="fresh">刷新</el-button>
-        </div>
-        <el-row :gutter="24" align="middle" :data="tableData">
-          <el-col :span="24">
-            <div class="grid-content bg-purple threeCard">
-              <span>服务器名称</span>
-              <span prop="computerName">{{sys.computerName}}</span>
-              <span>操作系统</span>
-              <span>{{sys.osName}}</span>
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div class="grid-content bg-purple threeCard">
-              <span>服务器IP</span>
-              <span prop="used">{{sys.computerIp}}</span>
-              <span>系统架构</span>
-              <span>{{sys.osArch}}</span>
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>
-      <el-card style="width:100%; margin-top:20px; clear:both;">
-        <div slot="header" class="clearfix">
-          <span>Java虚拟机信息</span>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="fresh">刷新</el-button>
-        </div>
-        <el-row :gutter="24" align="middle" :data="tableData">
-          <el-col :span="24">
-            <div class="grid-content bg-purple threeCard">
-              <span>Java名称</span>
-              <span prop="used">{{jvm.name}}</span>
-              <span>Java版本</span>
-              <span>{{jvm.version}}</span>
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div class="grid-content bg-purple threeCard">
-              <span>启动时间</span>
-              <span prop="used">{{jvm.startTime}}</span>
-              <span>运行时长</span>
-              <span>{{jvm.runTime}}</span>
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div class="grid-content bg-purple threeCard">
-              <span>安装路径</span>
-              <span prop="used">{{jvm.home}}</span>
-            </div>
-          </el-col>
-          <el-col :span="24">
-            <div class="grid-content bg-purple threeCard">
-              <span>项目路径</span>
-              <span prop="used">{{sys.userDir}}</span>
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>
-      <el-card style="width:100%; margin-top:20px; clear:both;">
-        <div slot="header" class="clearfix">
-          <span>磁盘状态</span>
-          <el-button style="float: right; padding: 3px 0" type="text" @click="fresh">刷新</el-button>
-        </div>
-        <el-table :data="sysFilesData" style="width: 100%">
-          <el-table-column prop="dirName" width="180" label="盘符路径"></el-table-column>
-          <el-table-column prop="sysTypeName" label="文件系统" width="180"></el-table-column>
-          <el-table-column prop="typeName" label="盘符类型"></el-table-column>
-          <el-table-column prop="total" label="总大小"></el-table-column>
-          <el-table-column prop="free" label="可用大小"></el-table-column>
-          <el-table-column prop="used" label="已用大小"></el-table-column>
-          <el-table-column prop="usage" label="已用百分比"></el-table-column>
-        </el-table>
-      </el-card>
-    </div>
+  <div class="block">
+    <el-timeline>
+      <el-timeline-item timestamp="2019/6/27" placement="top">
+        <el-card>
+          <h4>待完成</h4>
+          <p>待完成</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2019/6/20" placement="top">
+        <el-card>
+          <h4>v1.2 优化登录模块，增加日志注解</h4>
+          <p>优化登录模块，增加日志注解，使用redis存储token，验证码，ip地址等</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2019/6/10" placement="top">
+        <el-card>
+          <h4>v1.1 版本新增一些常用的工具类,以及集成mybatis-plus多数据源</h4>
+          <p>版本新增一些常用的工具类,以及集成mybatis-plus多数据源</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2019/5/1" placement="top">
+        <el-card>
+          <h4>v1.0 开始开发模板</h4>
+          <p>准备做一套前后端分离版本脚手架，方便接一些项目</p>
+        </el-card>
+      </el-timeline-item>
+    </el-timeline>
   </div>
 </template>
 <style>
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-  .clearfix:after {
-    clear: both
-  }
-  .box-card {
-    width: 48%;
-    float: left;
-    margin-bottom:20px;
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple span{
-    width:50%;
-    float:left;
-    height:36px;
-    line-height:36px;
-  }
-  .threeCard span{
-    width:25%;
-    float:left;
-    height:36px;
-    line-height:36px;
-  }
-  .twoCard span{
-    width:33.33333%;
-    height:36px;
-    float:left;
-    line-height:36px;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    min-height: 36px;
-    border-bottom:1px solid #eee;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
+
 </style>
 <script>
   export default {
@@ -284,105 +99,10 @@
             { type: 'mem', value: 0 }
           ]
         },
-        sysFilesData: null,
-        tableData: null,
-        cpuData: null,
-        memData: null,
-        cpu: {
-          cpuNum: '',
-          used: '',
-          sys: '',
-          free: ''
-        },
-        mem: {
-          total: '',
-          used: '',
-          free: '',
-          usage: ''
-        },
-        jvm: {
-          total: '',
-          used: '',
-          free: '',
-          usage: '',
-          name: '',
-          version: '',
-          startTime: '',
-          runTime: '',
-          home: ''
-        },
-        sys: {
-          computerName: '',
-          osName: '',
-          computerIp: '',
-          osArch: '',
-          userDir: ''
-        }
+        sysFilesData: null
       }
-    },
-    mounted () {
-      this.getList()
-      if (this.timer) {
-        clearInterval(this.timer)
-      } else {
-        this.timer = setInterval(() => {
-          this.getList()
-        }, 8000
-        )
-      }
-    },
-    destroyed () {
-      clearInterval(this.timer)
     },
     methods: {
-      fresh () {
-        this.getList()
-      },
-      getList () {
-        this.$http({
-          url: this.$http.adornUrl('/server/get'),
-          method: 'get',
-          params: this.$http.adornParams({}),
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded'
-          }
-        }).then(({data}) => {
-          if (data && data.code === 200) {
-            var cpu = data.data.cpu
-            this.cpu.cpuNum = cpu.cpuNum
-            this.cpu.sys = cpu.sys + '%'
-            this.cpu.used = cpu.used + '%'
-            this.cpu.free = cpu.free + '%'
-            this.sysFilesData = data.data.sysFiles
-            var mem = data.data.mem
-            this.mem.total = mem.total + 'GB'
-            this.mem.used = mem.used + 'GB'
-            this.mem.free = mem.free + 'GB'
-            this.mem.usage = mem.usage + '%'
-            var jvm = data.data.jvm
-            this.jvm.total = jvm.total + 'M'
-            this.jvm.used = jvm.used + 'M'
-            this.jvm.free = jvm.free + 'M'
-            this.jvm.usage = jvm.usage + '%'
-            this.jvm.name = jvm.name
-            this.jvm.version = jvm.version
-            this.jvm.startTime = jvm.startTime
-            this.jvm.runTime = jvm.runTime
-            this.jvm.home = jvm.home
-            var sys = data.data.sys
-            this.sys.computerName = sys.computerName
-            this.sys.osName = sys.osName
-            this.sys.computerIp = sys.computerIp
-            this.sys.osArch = sys.osArch
-            this.sys.userDir = sys.userDir
-            this.chartData.rows[0].value = 1 - cpu.free / 100
-            this.memChartData.rows[0].value = mem.usage / 100
-            this.jvmChartData.rows[0].value = jvm.usage / 100
-          } else {
-            this.$message.error(data.msg)
-          }
-        })
-      }
     }
   }
 </script>

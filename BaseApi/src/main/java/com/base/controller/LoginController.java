@@ -121,6 +121,7 @@ public class LoginController {
      * 退出
      */
     @PostMapping("/logout")
+    @SysLog(value = "注销")
     @ApiOperation(value = "注销用户", httpMethod = "POST")
     public DataResult logout() {
         userTokenService.logout();

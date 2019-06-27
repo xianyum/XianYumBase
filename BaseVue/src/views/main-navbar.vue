@@ -26,7 +26,7 @@
         </el-menu-item>
         <el-menu-item index="2">
           <el-badge value="hot">
-            <a href="http://javazhangwei.top:9285/" target="_blank">学校官网</a>
+            <a href="https://gitee.com/javzhangwei_admin/events" target="_blank">码云地址</a>
           </el-badge>
         </el-menu-item>
         <!--<el-submenu index="3">-->

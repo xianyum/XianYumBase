@@ -2,7 +2,7 @@
   <div class="mod-log">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="用户名／用户操作" clearable></el-input>
+        <el-input v-model="dataForm.nameOrDesc" placeholder="用户名／用户操作" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -14,22 +14,22 @@
       v-loading="dataListLoading"
       style="width: 100%">
       <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        width="80"
-        label="ID">
+        label="序号"
+        type="index"
+        width="50">
       </el-table-column>
       <el-table-column
         prop="username"
         header-align="center"
         align="center"
+        width="150"
         label="用户名">
       </el-table-column>
       <el-table-column
         prop="operation"
         header-align="center"
         align="center"
+        width="200"
         label="用户操作">
       </el-table-column>
       <el-table-column
@@ -44,15 +44,15 @@
         prop="params"
         header-align="center"
         align="center"
-        width="150"
         :show-overflow-tooltip="true"
         label="请求参数">
       </el-table-column>
       <el-table-column
-        prop="time"
+        prop="timeMs"
         header-align="center"
         align="center"
-        label="执行时长(毫秒)">
+        width="130"
+        label="执行时长">
       </el-table-column>
       <el-table-column
         prop="ip"
@@ -62,11 +62,18 @@
         label="IP地址">
       </el-table-column>
       <el-table-column
-        prop="createDate"
+        prop="ipInfo"
+        header-align="center"
+        align="center"
+        label="IP地点">
+      </el-table-column>
+      <el-table-column
+        prop="createTime"
         header-align="center"
         align="center"
         width="180"
-        label="创建时间">
+        label="创建时间"
+        :formatter="formateCreateTime">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -86,7 +93,7 @@
     data () {
       return {
         dataForm: {
-          key: ''
+          nameOrDesc: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -100,21 +107,46 @@
       this.getDataList()
     },
     methods: {
+      formateCreateTime (row, column) {
+        var objD = row.createTime
+        if (!objD) {
+          return ''
+        }
+        objD = new Date(objD)
+        var str
+        var yy = objD.getYear()
+        if (yy < 1900) yy = yy + 1900
+        var MM = objD.getMonth() + 1
+        if (MM < 10) MM = '0' + MM
+        var dd = objD.getDate()
+        if (dd < 10) dd = '0' + dd
+        var hh = objD.getHours()
+        if (hh < 10) hh = '0' + hh
+        var mm = objD.getMinutes()
+        if (mm < 10) mm = '0' + mm
+        var ss = objD.getSeconds()
+        if (ss < 10) ss = '0' + ss
+        str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
+        return (str)
+      },
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/log/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'key': this.dataForm.key
+          url: this.$http.adornUrl('/log/list'),
+          method: 'post',
+          data: this.$http.adornData({
+            'nameOrDesc': this.dataForm.nameOrDesc,
+            'pageNum': this.pageIndex,
+            'pageSize': this.pageSize
           })
         }).then(({data}) => {
           if (data && data.code === 200) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.dataList = data.data.records
+            this.dataList.forEach((item) => {
+              item.timeMs = item.time + 'ms'
+            })
+            this.totalPage = data.data.total
           } else {
             this.dataList = []
             this.totalPage = 0
