@@ -1,9 +1,11 @@
 package com.base.common.aspectj;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.base.common.annotation.SysLog;
 import com.base.common.utils.*;
 import com.base.entity.po.LogEntity;
+import com.base.entity.request.UserRequest;
 import com.base.service.iservice.LogService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -72,6 +74,12 @@ public class SysLogAspect {
         //请求的参数
         Object[] args = joinPoint.getArgs();
         try {
+            if(args != null && args.length>0){
+                if(args[0] instanceof UserRequest){
+                    UserRequest userRequest = (UserRequest)args[0];
+                    userRequest.setPassword("");
+                }
+            }
             String params = JSON.toJSONString(args);
             logEntity.setParams(params);
         }catch (Exception e){
@@ -98,7 +106,6 @@ public class SysLogAspect {
         logEntity.setCreateTime(new Date());
 
         //保存系统日志
-        log.info(logEntity.toString());
         logService.saveLog(logEntity);
     }
 }

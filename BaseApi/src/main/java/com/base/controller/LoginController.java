@@ -1,6 +1,7 @@
 package com.base.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.base.common.annotation.SysLog;
 import com.base.common.exception.SoException;
 import com.base.common.utils.*;
 import com.base.entity.enums.UserStatusEnum;
@@ -145,6 +146,7 @@ public class LoginController {
         log.setIpInfo(ipInfo);
         log.setCreateTime(new Date());
         log.setMethod("login");
+        userRequest.setPassword("");
         log.setParams(JSON.toJSONString(userRequest));
         log.setUsername(userRequest.getUsername());
         log.setOperation(desc);

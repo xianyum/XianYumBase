@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServerController {
 
     @GetMapping("/get")
-    @SysLog(value = "获取服务器信息")
     @ApiOperation(value = "获取服务器相关信息", httpMethod = "GET")
     public DataResult getServerInfo(){
         try {

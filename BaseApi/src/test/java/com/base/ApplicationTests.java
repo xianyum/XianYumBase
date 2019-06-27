@@ -23,7 +23,7 @@ public class ApplicationTests {
     @Test
     public void test() {
         // 需要发送短信的手机号码
-        String[] phoneNumbers = {"18091597393"};
+        String[] phoneNumbers = {"15691400397"};
 
         try {
             String[] params = {UUIDUtils.getRandomNumber(6),"1"};
