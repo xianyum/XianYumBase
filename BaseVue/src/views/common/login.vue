@@ -25,7 +25,17 @@
             <el-form-item>
               <el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
             </el-form-item>
-              <span @click="$router.push({ name: 'register' })">还没有账号？立即注册</span>
+              <!--<span @click="$router.push({ name: 'register' })">还没有账号？立即注册</span>-->
+            <el-row class="tips">
+              <a @click="$router.push({ name: 'register' })" class="link">
+                立即注册
+              </a>
+              <span class="line">|</span>
+              <a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=GiIqLCssKi8jWmtrNHl1dw" class="link">
+                忘记密码
+              </a>
+            </el-row>
+
           </el-form>
         </div>
       </div>

@@ -28,4 +28,17 @@
         ORDER BY a.create_time desc
     </select>
 
+    <select id="getList" parameterType="com.base.entity.request.UserRequest" resultType="com.base.entity.po.UserEntity">
+        SELECT
+        <include refid="userColumns"/>
+        from user a
+        WHERE
+        a.del_tag = 0
+        AND
+        (
+        a.mobile = #{mobile}
+        OR
+        a.username = #{username}
+        )
+    </select>
 </mapper>

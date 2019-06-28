@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -66,11 +67,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Override
     public int save(UserRequest user) {
-        UserEntity repeatUser = userMapper.selectOne(
-                new QueryWrapper<UserEntity>().eq("username","username")
-        );
-        if(repeatUser != null){
-            throw new SoException("此用户名已被使用！");
+        List<UserEntity> repeatList = userMapper.getList(user);
+        if(repeatList != null && repeatList.size() >0){
+            throw new SoException("用户名或手机号已被使用！");
         }
         UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
         userEntity.setCreateTime(new Date());
@@ -79,6 +78,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         userEntity.setPassword(new Sha256Hash(user.getPassword(), salt).toHex());
         userEntity.setSalt(salt);
         userEntity.setDelTag(DeleteTagEnum.Delete.getDeleteTag());
+        if(userEntity.getStatus() == null){
+            userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
+        }
         int count = userMapper.insert(userEntity);
         return count;
     }
@@ -86,6 +88,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public int update(UserRequest user) {
         UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
+        List<UserEntity> repeatList = userMapper.getList(user).stream().filter(p -> user.getId() == p.getId()).collect(Collectors.toList());
+        if(repeatList != null && repeatList.size() >0){
+            throw new SoException("用户名或手机号已被使用！");
+        }
         if(StringUtil.isNotEmpty(user.getPassword())){
             String salt = RandomStringUtils.randomAlphanumeric(20);
             userEntity.setPassword(new Sha256Hash(user.getPassword(), salt).toHex());
@@ -112,5 +118,4 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         return false;
     }
-
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.base.common.annotation.SysLog;
 import com.base.common.exception.SoException;
 import com.base.common.utils.*;
+import com.base.common.validator.ValidatorUtils;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.LogEntity;
 import com.base.entity.po.UserEntity;
@@ -29,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.crypto.Data;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
@@ -129,7 +131,40 @@ public class LoginController {
     }
 
     /**
-     * 获取登录信息
+     * 获取手机验证码
+     */
+    @PostMapping("/getPhoneCode")
+    @ApiOperation(value = "获取手机验证码", httpMethod = "POST")
+    public DataResult getPhoneCode(@RequestBody UserRequest request) {
+        captchaService.getPhoneCaptcha(request);
+        return DataResult.success();
+    }
+
+    /**
+     * 注册
+     */
+    @PostMapping("/register")
+    @ApiOperation(value = "注册用户", httpMethod = "POST")
+    public DataResult register(@RequestBody UserRequest request) {
+        ValidatorUtils.validateEntity(request);
+        long beginTime = System.currentTimeMillis();
+        boolean captcha = captchaService.validate(request.getUuid(), request.getCaptcha());
+        if(!captcha){
+            return DataResult.error("验证码不正确");
+        }
+        Integer count = userService.save(request);
+        if(count >0){
+            long time = System.currentTimeMillis() - beginTime;
+            saveLoginLog(request,"注册成功",time);
+            return DataResult.success();
+        }
+        long time = System.currentTimeMillis() - beginTime;
+        saveLoginLog(request,"注册失败",time);
+        return DataResult.error("注册失败");
+    }
+
+    /**
+     * 获取登录/注册信息
      */
     public void saveLoginLog(UserRequest userRequest,String desc,Long time){
         LogEntity log = new LogEntity();

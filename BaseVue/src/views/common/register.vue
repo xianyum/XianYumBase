@@ -11,16 +11,16 @@
             <el-form-item prop="password">
               <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
             </el-form-item>
-            <el-form-item prop="mobile">
-              <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
-            </el-form-item>
             <el-form-item prop="email">
-              <el-input v-model="dataForm.email" placeholder="邮箱（用于接受验证码）"></el-input>
+              <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
             </el-form-item>
-            <el-row :gutter="2">
-                <el-col :span="14"><el-form-item prop="code"><el-input v-model="dataForm.code" placeholder="验证码" style="width: 95%"></el-input></el-form-item></el-col>
-                <el-col :span="4">
-                  <el-button  @click="getAuthCode" style="float: left;left: -50px;">{{content}}</el-button>
+            <el-form-item prop="mobile">
+              <el-input v-model="dataForm.mobile" placeholder="手机号（用于接受验证码）"></el-input>
+            </el-form-item>
+            <el-row>
+                <el-col :span="12"><el-form-item prop="code"><el-input v-model="dataForm.code" placeholder="验证码" style="width: 95%"></el-input></el-form-item></el-col>
+                <el-col :span="12">
+                  <el-button  @click="getAuthCode" style="width: 95%">{{content}}</el-button>
                 </el-col>
             </el-row>
             <el-form-item>
@@ -55,7 +55,7 @@
       return {
         totaltime: 60,
         clickCancle: true,
-        content: '获取验证码',
+        content: '发送验证码',
         dataForm: {
           userName: '',
           password: '',
@@ -91,7 +91,7 @@
           this.content = this.totaltime + 's后重新发送'
           if (this.totaltime === 0) {
             clearInterval(m)
-            this.content = '获取验证码'
+            this.content = '发送验证码'
             this.totaltime = 60
             this.clickCancle = true
           }
@@ -104,17 +104,17 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl('/getRegisterCode'),
+              url: this.$http.adornUrl('/getPhoneCode'),
               method: 'post',
               data: this.$http.adornData({
-                'email': this.dataForm.email,
+                'mobile': this.dataForm.mobile,
                 'uuid': this.dataForm.uuid
               })
             }).then(({data}) => {
-              if (data && data.code === 0) {
+              if (data && data.code === 200) {
                 this.flushCode()
                 this.$message({
-                  message: '发送验证码成功，请到邮箱查看',
+                  message: '发送验证码成功',
                   type: 'success'
                 })
               } else {
@@ -137,11 +137,11 @@
                 'password': this.dataForm.password,
                 'email': this.dataForm.email,
                 'mobile': this.dataForm.mobile,
-                'code': this.dataForm.code,
+                'captcha': this.dataForm.code,
                 'uuid': this.dataForm.uuid
               })
             }).then(({data}) => {
-              if (data && data.code === 0) {
+              if (data && data.code === 200) {
                 this.$message({
                   message: '注册成功,即将跳转登录界面',
                   type: 'success'
@@ -214,7 +214,7 @@
     .login-main1 {
       position: absolute;
       width: 400px;
-      height: 500px;
+      height: 465px;
       left: 50%;
       top: 50%;
       transform: translate(-50%,-50%);

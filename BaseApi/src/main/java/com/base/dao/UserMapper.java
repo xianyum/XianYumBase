@@ -12,4 +12,6 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<UserEntity> {
 
     List<UserEntity> queryAll(@Param("user") UserRequest user, Page<UserEntity> page);
+
+    List<UserEntity> getList(UserRequest request);
 }

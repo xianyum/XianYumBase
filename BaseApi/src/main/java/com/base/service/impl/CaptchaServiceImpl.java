@@ -3,8 +3,12 @@ package com.base.service.impl;
 import com.base.common.exception.SoException;
 import com.base.common.utils.RedisUtils;
 import com.base.common.utils.StringUtil;
+import com.base.common.utils.UUIDUtils;
 import com.base.config.PhoneConfig;
+import com.base.entity.request.UserRequest;
 import com.base.service.iservice.CaptchaService;
+import com.github.qcloudsms.SmsSingleSender;
+import com.github.qcloudsms.SmsSingleSenderResult;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +25,9 @@ import java.awt.image.BufferedImage;
 @Slf4j
 public class CaptchaServiceImpl  implements CaptchaService {
 
+    @Autowired
+    private PhoneConfig phoneConfig;
+
     @Resource(name = "captchaProducerMath")
     private Producer producer;
 
@@ -29,12 +36,6 @@ public class CaptchaServiceImpl  implements CaptchaService {
 
     @Value("${redis.captcha.prefix:captcha}")
     private String prefix;
-
-    @Autowired
-    private TemplateEngine templateEngine;
-
-    @Autowired
-    private PhoneConfig phoneConfig;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -66,5 +67,20 @@ public class CaptchaServiceImpl  implements CaptchaService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void getPhoneCaptcha(UserRequest request) {
+        String[] phoneNumbers = {request.getMobile()};
+        try {
+            String code = UUIDUtils.getRandomNumber(6);
+            String[] params = {code,expireMinTime.toString()};
+            SmsSingleSender ssender = new SmsSingleSender(phoneConfig.getAppid(), phoneConfig.getAppkey());
+            SmsSingleSenderResult result = ssender.sendWithParam("86", phoneNumbers[0],
+                    phoneConfig.getTemplateId(), params, phoneConfig.getSmsSign(), "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
+            redisUtils.setMin(prefix+request.getUuid(),code,expireMinTime);
+        } catch (Exception e) {
+            log.error("获取短信验证码出错:"+e.getMessage());
+        }
     }
 }
