@@ -1,10 +1,16 @@
 <template>
   <div class="block">
     <el-timeline>
-      <el-timeline-item timestamp="2019/6/27" placement="top">
+      <el-timeline-item timestamp="2019/7/1" placement="top">
         <el-card>
-          <h4>待完成</h4>
-          <p>待完成</p>
+          <h4>待优化</h4>
+          <p>待优化</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2019/6/28" placement="top">
+        <el-card>
+          <h4>v1.3 注册功能</h4>
+          <p>增加用户注册功能，以及用户重复性校验优化</p>
         </el-card>
       </el-timeline-item>
       <el-timeline-item timestamp="2019/6/20" placement="top">
