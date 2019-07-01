@@ -123,7 +123,7 @@
       width: 100%;
       height: 100%;
       content: "";
-      background-image: url(~@/assets/img/pg1.jpg);
+      background-image: url(https://gitee.com/javzhangwei_admin/images/raw/master/login/pg1.jpg);
       background-size: cover;
     }
     .site-content__wrapper {
