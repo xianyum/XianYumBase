@@ -14,7 +14,7 @@ redis:
   token:
     prefix: 'baseApi:token:'
     expire: 600  # token有效时长，单位分钟
-    enable: true # 校验token开关，true开启token
+    enable: false # 校验token开关，true开启token
     secret: BaseApi  #密匙
   ip:
     info: 'baseApi:district:'
@@ -43,7 +43,7 @@ druid:
 log:
   path: logs  #日志存放位置，可以为相对路径也可以为绝对路径（/）
   projectName: BaseApi #日志存放目录名（一般设置为项目名）
-  level: INFO   #打印日志级别  < DEBUG < INFO < WARN < ERROR
+  level: DEBUG   #打印日志级别  < DEBUG < INFO < WARN < ERROR
 
 
 #mybatis plus
@@ -101,7 +101,7 @@ spring:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
       datasource:
         master:
-          url: jdbc:mysql://javazhangwei.top:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://47.103.20.104:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
           username: root
           password: qq8061605
           driverClassName:  com.mysql.jdbc.Driver

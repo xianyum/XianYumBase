@@ -42,9 +42,16 @@
         <dynamic.datasource.boot.version>2.5.4</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.1.0</mybatisplus.boot.version>
         <qcloudsms.version>1.0.6</qcloudsms.version>
+        <gecco.version>1.1.2</gecco.version>
     </properties>
 
     <dependencies>
+        <!--爬虫框架https://gitee.com/xtuhcy/gecco-->
+        <dependency>
+            <groupId>com.geccocrawler</groupId>
+            <artifactId>gecco-spring</artifactId>
+            <version>${gecco.version}</version>
+        </dependency>
         <!--腾讯云短信配置-->
         <dependency>
             <groupId>com.github.qcloudsms</groupId>
