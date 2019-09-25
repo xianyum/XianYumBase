@@ -1,9 +1,11 @@
 package com.base.task;
 
+import com.base.service.iservice.XiaoDaoService;
 import com.geccocrawler.gecco.GeccoEngine;
 import com.geccocrawler.gecco.pipeline.PipelineFactory;
 import com.geccocrawler.gecco.request.HttpGetRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +18,13 @@ import javax.annotation.Resource;
 @Component
 @Slf4j
 public class XiaoDaoAnalysisTask {
-    @Resource
+    @Autowired
     private PipelineFactory springPipelineFactory;
 
-    @Scheduled(cron = "0/10 * * * * ?")  //每隔5分钟执行一次
+    @Autowired
+    private XiaoDaoService xiaoDaoService;
+
+    @Scheduled(cron = "0 0/3 * * * ?")  //每隔50s执行一次
     public void reportDataJob() {
         HttpGetRequest startUrl = new HttpGetRequest("https://www.xd0.com/");
         startUrl.setCharset("UTF-8");
@@ -32,8 +37,11 @@ public class XiaoDaoAnalysisTask {
                 //开启几个爬虫线程
                 .thread(1)
                 //单个爬虫每次抓取完一个请求后的间隔时间
-                .interval(2000)
                 .run();
     }
 
+    @Scheduled(cron = "0 0/5 * * * ?")  //每隔5分钟执行一次
+    public void pushMessage() {
+        xiaoDaoService.push();
+    }
 }

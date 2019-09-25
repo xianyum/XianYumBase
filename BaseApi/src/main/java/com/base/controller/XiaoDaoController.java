@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019/9/25 17:02
  */
 @RestController
-@RequestMapping("/test")
-@Api(tags = "测试接口")
-public class TestController {
+@RequestMapping("/xiaodao")
+@Api(tags = "小刀爬取数据接口")
+public class XiaoDaoController {
 
     @Autowired
     private XiaoDaoService xiaoDaoService;
