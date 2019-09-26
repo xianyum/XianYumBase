@@ -1,8 +1,11 @@
 package com.base.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.base.common.utils.DataResult;
 import com.base.common.utils.UUIDUtils;
+import com.base.entity.po.LogEntity;
 import com.base.entity.po.xiaodao.XiaoDaoEntity;
+import com.base.entity.request.XiaoDaoRequest;
 import com.base.service.iservice.XiaoDaoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,14 +27,11 @@ public class XiaoDaoController {
     @Autowired
     private XiaoDaoService xiaoDaoService;
 
-    /**
-     * 获取系统日志
-     */
+
     @PostMapping("/list")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public DataResult list(@RequestBody String json){
-        XiaoDaoEntity xiaoDaoEntity = new XiaoDaoEntity();
-        xiaoDaoEntity.setId(UUIDUtils.UUIDReplace());
-        return DataResult.success();
+    public DataResult list(@RequestBody XiaoDaoRequest request){
+        IPage<XiaoDaoEntity> list = xiaoDaoService.queryAll(request);
+        return DataResult.success(list);
     }
 }
