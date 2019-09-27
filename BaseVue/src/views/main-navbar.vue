@@ -17,17 +17,23 @@
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
-        <el-menu-item index="1" @click="$router.push({ name: 'theme' })">
-          <template slot="title">
-            <el-badge value="new">
-              <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
-            </el-badge>
-          </template>
+
+        <el-menu-item index="1">
+          <el-badge value="blog" type="primary">
+            <a href="https://blog.csdn.net/jav_zhangwei" target="_blank">个人博客</a>
+          </el-badge>
         </el-menu-item>
         <el-menu-item index="2">
           <el-badge value="hot">
             <a href="https://gitee.com/javzhangwei_admin/events" target="_blank">码云地址</a>
           </el-badge>
+        </el-menu-item>
+        <el-menu-item index="3" @click="$router.push({ name: 'theme' })">
+          <template slot="title">
+            <el-badge value="new">
+              <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
+            </el-badge>
+          </template>
         </el-menu-item>
         <!--<el-submenu index="3">-->
           <!--<template slot="title">Git源码</template>-->
