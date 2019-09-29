@@ -5,7 +5,8 @@
         <el-input v-model="dataForm.title" placeholder="标题" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-button type="primary" @click="getDataList()">查询</el-button>
+        <el-button type="success" @click="openWxPushXiaoDaoImage = true">推送</el-button>
         <el-button type="info" @click="reset()">重置</el-button>
       </el-form-item>
     </el-form>
@@ -89,6 +90,16 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+
+    <el-dialog
+      title="扫码关注推送微信"
+      :visible.sync="openWxPushXiaoDaoImage"
+      width="18%"
+      center>
+      <div align="center">
+        <img :src="imgUrl" height="200" width="200">
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -96,6 +107,8 @@
   export default {
     data () {
       return {
+        imgUrl: 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQER8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyMWg1TFZRSVFjWWoxR3lLVHh0Y1QAAgSiIZBdAwQAjScA',
+        openWxPushXiaoDaoImage: false,
         dataForm: {
           title: ''
         },
