@@ -46,6 +46,7 @@ public class ShiroConfig {
         filterMap.put("/druid/**", "anon");
         filterMap.put("/app/**", "anon");
         filterMap.put("/login", "anon");
+        filterMap.put("/wxCenter/get", "anon");
         filterMap.put("/loginPhone", "anon");
         filterMap.put("/getRegisterCode", "anon");
         filterMap.put("/getPhoneCode", "anon");

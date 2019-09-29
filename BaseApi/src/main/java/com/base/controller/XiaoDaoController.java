@@ -29,7 +29,7 @@ public class XiaoDaoController {
 
 
     @PostMapping("/list")
-    @ApiOperation(value = "获取用户列表", httpMethod = "POST")
+    @ApiOperation(value = "获取小刀数据列表", httpMethod = "POST")
     public DataResult list(@RequestBody XiaoDaoRequest request){
         IPage<XiaoDaoEntity> list = xiaoDaoService.queryAll(request);
         return DataResult.success(list);
