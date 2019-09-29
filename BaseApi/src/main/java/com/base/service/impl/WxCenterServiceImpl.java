@@ -52,7 +52,7 @@ public class WxCenterServiceImpl implements WxCenterService {
             wxCenterEntityQueryWrapper = new QueryWrapper<WxCenterEntity>().like("app_name", request.getAppName()).orderByDesc("create_time");
         }
         IPage<WxCenterEntity> iPage = wxCenterMapper.selectPage(page, wxCenterEntityQueryWrapper);
-        iPage.getRecords().stream().forEach(p -> p.setUid(StringUtils.overlay(p.getUid(),"********",5,24)));
+//        iPage.getRecords().stream().forEach(p -> p.setUid(StringUtils.overlay(p.getUid(),"********",5,24)));
         return iPage;
     }
 }

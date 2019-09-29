@@ -1,6 +1,7 @@
 package com.base.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.base.common.annotation.SysLog;
 import com.base.common.utils.DataResult;
 import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.po.xiaodao.XiaoDaoEntity;
@@ -30,6 +31,7 @@ public class WXPushCenterController {
     private WxCenterService wxCenterService;
 
     @PostMapping("/get")
+    @SysLog(value = "微信扫码关注回调")
     @ApiOperation(value = "回调接口", httpMethod = "POST")
     public DataResult get(@RequestBody String  json){
         wxCenterService.save(json);
