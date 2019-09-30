@@ -27,13 +27,31 @@ tencent:
     templateId: '355578' #短信模板ID
     smsSign: ''  #签名
 
-#swagger配置
+#swagger配置 https://github.com/SpringForAll/spring-boot-starter-swagger
 swagger:
+  enabled: true #swagger开关，建议生产环境关闭
+  base-package: 'com.base.controller' #指定swagger扫描包
+  base-path: '/**'
   title: '基础API'
   description: 'BaseApi'
   version: '1.0'
-  basePackage: 'com.base.controller' #指定swagger扫描包
-  enable: true #swagger开关，建议生产环境关闭
+  license: 'Apache License, Version 2.0' #许可证
+  licenseUrl: 'https://www.apache.org/licenses/LICENSE-2.0.html' #许可证URL
+  termsOfServiceUrl: 'https://github.com/dyc87112/spring-boot-starter-swagger' #服务条款URL
+  contact:
+    name: 'zhangwei'
+    url: 'https://blog.csdn.net/jav_zhangwei'
+    email: '80616059@qq.com'
+  authorization:
+    # 鉴权策略ID，对应 SecurityReferences ID
+    name: 'Authorization'
+    # 鉴权策略，可选 ApiKey | BasicAuth | None，默认ApiKey
+    type: 'ApiKey'
+    # 鉴权传递的Header参数
+    key-name: 'token'
+    # 需要开启鉴权URL的正则, 默认^.*$匹配所有URL
+    auth-regex: '^.*$'
+
 
 druid:
   manager:
@@ -106,7 +124,7 @@ spring:
           password: qq8061605
           driverClassName:  com.mysql.jdbc.Driver
         slave:
-          url: jdbc:mysql://localhost:3306/TeachingAssessment?useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://localhost:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
           username: root
           password: 80616059
           driverClassName:  com.mysql.jdbc.Driver
