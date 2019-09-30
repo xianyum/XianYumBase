@@ -3,11 +3,16 @@
     <el-timeline>
       <el-timeline-item timestamp="2019/9/27" placement="top">
         <el-card>
-          <h4>不忘初心，方得始终</h4>
-          <p> 系统会持续做下去，会实时集成市面上先进的技术，以及系统有什么BUG会及时优化</p>
+          <h4 style="color: green"><b>不忘初心，方得始终</b></h4>
+          <p> 系统会坚持做下去，不断地维护，不断的更新</p>
         </el-card>
       </el-timeline-item>
-
+      <el-timeline-item timestamp="2019/9/30" placement="top">
+        <el-card>
+          <h4>v1.5 加载速度优化，增加微信推送中心功能</h4>
+          <p>2019-09-30 网站首页初次加载速度优化，新增微信推送中心，用户可以订阅二维码，来进行实时接收消息</p>
+        </el-card>
+      </el-timeline-item>
       <el-timeline-item timestamp="2019/9/27" placement="top">
         <el-card>
           <h4>v1.4 爬虫监控，界面图标美化</h4>

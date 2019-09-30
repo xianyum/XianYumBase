@@ -17,18 +17,20 @@
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
-
         <el-menu-item index="1">
+          <iframe name="weather_inc" src="http://i.tianqi.com/index.php?c=code&id=99" width="120" height="30" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+        </el-menu-item>
+        <el-menu-item index="2">
           <el-badge value="blog" type="primary">
             <a href="https://blog.csdn.net/jav_zhangwei" target="_blank">个人博客</a>
           </el-badge>
         </el-menu-item>
-        <el-menu-item index="2">
+        <el-menu-item index="3">
           <el-badge value="hot">
             <a href="https://gitee.com/javzhangwei_admin/events" target="_blank">码云地址</a>
           </el-badge>
         </el-menu-item>
-        <el-menu-item index="3" @click="$router.push({ name: 'theme' })">
+        <el-menu-item index="4" @click="$router.push({ name: 'theme' })">
           <template slot="title">
             <el-badge value="new">
               <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
