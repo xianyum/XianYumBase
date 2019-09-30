@@ -1,0 +1,6 @@
+使用用gzip压缩
+1). 修改config/index.js 文件下 productionGzip：true ;
+2). 安装依赖 npm install --save-dev compression-webpack-plugin@1.1.11 。（注：这里为啥要指定版本号呢，是因为高版本的依赖会报错，我使用的1.1.11版本是没报错）
+
+
+nginx开启gzip：https://blog.csdn.net/qq_19767623/article/details/83185132
