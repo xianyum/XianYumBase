@@ -32,4 +32,5 @@ public class XiaoDaoEntity {
     private Date pushTime;
 
     private Date createTime;
+
 }

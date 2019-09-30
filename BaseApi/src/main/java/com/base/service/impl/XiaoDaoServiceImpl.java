@@ -55,7 +55,7 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
         if(pushInfo != null && wxCenterEntities != null && pushInfo.size() >0 && wxCenterEntities.size() >0){
             for (XiaoDaoEntity xiaoDaoEntity : pushInfo) {
                 JSONObject params = getParams(xiaoDaoEntity, wxCenterEntities);
-                HttpUtils.sendPostJson(URL,params.toString());
+                HttpUtils.sendPostJson(URL, params.toString());
                 xiaoDaoEntity.setPushStatus(1);
                 xiaoDaoEntity.setPushTime(new Date());
                 xiaoDaoMapper.updateById(xiaoDaoEntity);

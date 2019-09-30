@@ -24,7 +24,7 @@ public class XiaoDaoAnalysisTask {
     @Autowired
     private XiaoDaoService xiaoDaoService;
 
-    @Scheduled(cron = "0 0/3 * * * ?")  //每隔50s执行一次
+    @Scheduled(cron = "0 0/1 * * * ?")  //每隔1分钟执行一次
     public void reportDataJob() {
         HttpGetRequest startUrl = new HttpGetRequest("https://www.xd0.com/");
         startUrl.setCharset("UTF-8");
@@ -40,7 +40,7 @@ public class XiaoDaoAnalysisTask {
                 .run();
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")  //每隔5分钟执行一次
+    @Scheduled(cron = "0 0/1 * * * ?")  //每隔1分钟执行一次
     public void pushMessage() {
         xiaoDaoService.push();
     }
