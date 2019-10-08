@@ -136,8 +136,8 @@ public class LoginController {
     @PostMapping("/getPhoneCode")
     @ApiOperation(value = "获取手机验证码", httpMethod = "POST")
     public DataResult getPhoneCode(@RequestBody UserRequest request) {
-        captchaService.getPhoneCaptcha(request);
-        return DataResult.success();
+        //captchaService.getPhoneCaptcha(request);
+        return DataResult.error("短信接口停用，无法发送短信！");
     }
 
     /**
