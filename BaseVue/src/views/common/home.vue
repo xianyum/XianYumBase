@@ -1,10 +1,16 @@
 <template>
   <div class="block">
     <el-timeline>
-      <el-timeline-item timestamp="2019/9/27" placement="top">
+      <el-timeline-item timestamp="2019/11/09" placement="top">
         <el-card>
           <h4 style="color: green"><b>不忘初心，方得始终</b></h4>
           <p> 系统会坚持做下去，不断地维护，不断的更新</p>
+        </el-card>
+      </el-timeline-item>
+      <el-timeline-item timestamp="2019/11/09" placement="top">
+        <el-card>
+          <h4>v1.6 接入支付宝第三方登录</h4>
+          <p>2019-11-09 接入支付宝第三方登录</p>
         </el-card>
       </el-timeline-item>
       <el-timeline-item timestamp="2019/9/30" placement="top">
