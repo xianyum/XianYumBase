@@ -21,4 +21,11 @@ public interface UserService extends IService<UserEntity> {
     int update(UserRequest user);
 
     boolean updatePassword(UpdatePasswordRequest info);
+
+    /**
+     * 通过阿里authCode获取系统用户信息
+     * @param authCode
+     * @return
+     */
+    UserEntity getUserByAli(String authCode);
 }

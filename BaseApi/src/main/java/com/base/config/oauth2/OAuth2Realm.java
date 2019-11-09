@@ -61,13 +61,14 @@ public class OAuth2Realm extends AuthorizingRealm {
         if(userEntity == null){
             throw new IncorrectCredentialsException("token失效，请重新登录");
         }
+        //注释掉是为了配合支付宝做第三方登录
         //查询用户信息
-        UserEntity user = userMapper.selectById(userEntity.getId());
+        //UserEntity user = userMapper.selectById(userEntity.getId());
         //账号锁定
-        if(user.getStatus() == UserStatusEnum.BAN.getStatus()){
+        if(userEntity.getStatus() == UserStatusEnum.BAN.getStatus()){
             throw new LockedAccountException("账号已被锁定,请联系管理员");
         }
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, accessToken, getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userEntity, accessToken, getName());
         return info;
     }
 }
