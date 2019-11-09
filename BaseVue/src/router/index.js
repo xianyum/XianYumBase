@@ -19,7 +19,8 @@ const _import = require('./import-' + process.env.NODE_ENV)
 const globalRoutes = [
   { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404未找到' } },
   { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } },
-  { path: '/register', component: _import('common/register'), name: 'register', meta: { title: '注册' } }
+  { path: '/register', component: _import('common/register'), name: 'register', meta: { title: '注册' } },
+  { path: '/checkAliLogin', component: _import('common/checkAliLogin'), name: 'checkAliLogin', meta: { title: 'aliLogin' } }
 ]
 
 // 主入口路由(需嵌套上左右整体布局)

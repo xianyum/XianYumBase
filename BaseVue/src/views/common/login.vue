@@ -34,6 +34,10 @@
               <a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=GiIqLCssKi8jWmtrNHl1dw" class="link">
                 忘记密码
               </a>
+              <span class="line">|</span>
+              <a target="_blank" href="https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=http%3A%2F%2F47.103.20.104%3A9152%2F%23%2FcheckAliLogin" class="link">
+                支付宝登录
+              </a>
             </el-row>
 
           </el-form>
