@@ -35,7 +35,7 @@
                 忘记密码
               </a>
               <span class="line">|</span>
-              <a target="_blank" href="https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=http%3A%2F%2Fxianyum.cn%2F%23%2FcheckAliLogin" class="link">
+              <a  @click="jump()">
                 支付宝登录
               </a>
             </el-row>
@@ -101,6 +101,9 @@
           }
         })
       },
+	  jump () {
+		window.location.replace("https://auth.alipay.com/login/index.htm?goto=https%3A%2F%2Fopenauth.alipay.com%3A443%2Foauth2%2FpublicAppAuthorize.htm%3Fapp_id%3D2019110868997443%26scope%3Dauth_user%26redirect_uri%3Dhttp%253A%252F%252Fxianyum.cn%252F%2523%252FcheckAliLogin")
+	  },
       // 获取验证码
       getCaptcha () {
         this.dataForm.uuid = getUUID()
