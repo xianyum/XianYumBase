@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  * @author zhangwei
  * @date 2019/9/25 15:35
  */
-//@Component
+@Component
 @Slf4j
 public class XiaoDaoAnalysisTask {
     @Autowired
