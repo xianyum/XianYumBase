@@ -1,7 +1,5 @@
 package com.base.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.base.common.utils.DataResult;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
