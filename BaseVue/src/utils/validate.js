@@ -29,3 +29,8 @@ export function isPhone (s) {
 export function isURL (s) {
   return /^http[s]?:\/\/.*/.test(s)
 }
+// 手机号验证
+export function isvalidPhone (str) {
+  const reg = /^1[3|6|9|4|5|7|8][0-9]\d{8}$/
+  return reg.test(str)
+}
