@@ -45,6 +45,7 @@
         <gecco.version>1.1.2</gecco.version>
         <gecco.version>1.1.2</gecco.version>
         <alipay.version>4.8.10.ALL</alipay.version>
+        <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
     </properties>
 
     <dependencies>
@@ -54,6 +55,14 @@
             <artifactId>alipay-sdk-java</artifactId>
             <version>${alipay.version}</version>
         </dependency>
+
+        <!--千牛云-->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>${qiniu.version}</version>
+        </dependency>
+
         <!--爬虫框架https://gitee.com/xtuhcy/gecco-->
         <dependency>
             <groupId>com.geccocrawler</groupId>
