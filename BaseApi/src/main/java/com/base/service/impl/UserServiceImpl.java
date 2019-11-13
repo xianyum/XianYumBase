@@ -137,7 +137,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         String accessToken = aliNetService.getAccessToken(authCode);
         AlipayUserInfoShareResponse aLiUserInfo = aliNetService.getALiUserInfo(accessToken);
-        log.info(ReflectionToStringBuilder.toString(aLiUserInfo));
         if(aLiUserInfo.isSuccess()){
             UserEntity userEntity = new UserEntity();
             AliUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<AliUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
