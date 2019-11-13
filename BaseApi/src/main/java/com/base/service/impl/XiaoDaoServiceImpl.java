@@ -66,12 +66,8 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
     @Override
     public IPage<XiaoDaoEntity> queryAll(XiaoDaoRequest request) {
         Page<XiaoDaoEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-        QueryWrapper<XiaoDaoEntity> xiaoDaoEntityQueryWrapper = null;
-        if(StringUtil.isEmpty(request.getTitle())){
-            xiaoDaoEntityQueryWrapper = new QueryWrapper<XiaoDaoEntity>().orderByDesc("create_time");
-        }else{
-            xiaoDaoEntityQueryWrapper = new QueryWrapper<XiaoDaoEntity>().like("title", request.getTitle()).orderByDesc("create_time");
-        }
+        QueryWrapper<XiaoDaoEntity> xiaoDaoEntityQueryWrapper  = new QueryWrapper<XiaoDaoEntity>()
+                .like(StringUtil.isEmpty(request.getTitle()),"title", request.getTitle()).orderByDesc("create_time");
         IPage<XiaoDaoEntity> iPage = xiaoDaoMapper.selectPage(page, xiaoDaoEntityQueryWrapper);
         return iPage;
     }

@@ -200,7 +200,7 @@ public class IPUtils {
             String param = "ip="+ip;
             String result = HttpUtils.sendGet(url, param);
             JSONObject jsonObject = JSONObject.parseObject(JSONObject.parseObject(result).getString("data"));
-            String ipInfo = jsonObject.getString("region")+jsonObject.getString("city")+"_"+jsonObject.getString("isp");
+            String ipInfo = jsonObject.getString("region")+jsonObject.getString("city")+" "+jsonObject.getString("isp");
             return ipInfo.replace("XX","");
         }catch (Exception e){
             return "未知地点";

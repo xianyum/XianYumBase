@@ -55,12 +55,6 @@ public class LoginController {
     private UserTokenService userTokenService;
 
     @Autowired
-    private RedisUtils redisUtils;
-
-    @Value("${redis.ip.info}")
-    private String redisIpInfo;
-
-    @Autowired
     private LogService logService;
     /**
      * 验证码
@@ -172,14 +166,7 @@ public class LoginController {
         HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
         String ip = IPUtils.getIpAddr(httpServletRequest);
         log.setIp(ip);
-        String ipInfo = (String)redisUtils.get(redisIpInfo+ip);
-        if(StringUtil.isEmpty(ipInfo)){
-            ipInfo = IPUtils.getIpInfo(ip);
-            if(!ipInfo.contains("未知")){
-                redisUtils.set(redisIpInfo+ip,ipInfo);
-            }
-        }
-        log.setIpInfo(ipInfo);
+        log.setIpInfo(IPUtils.getIpInfo(ip));
         log.setCreateTime(new Date());
         log.setMethod("login");
         userRequest.setPassword("");
