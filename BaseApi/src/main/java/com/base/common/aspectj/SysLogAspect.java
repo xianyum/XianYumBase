@@ -32,12 +32,6 @@ import java.util.Date;
 public class SysLogAspect {
 
     @Autowired
-    private RedisUtils redisUtils;
-
-    @Value("${redis.ip.info}")
-    private String redisIpInfo;
-
-    @Autowired
     private LogService logService;
 
     @Pointcut("@annotation(com.base.common.annotation.SysLog)")
