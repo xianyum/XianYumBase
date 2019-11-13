@@ -9,8 +9,8 @@
       </el-timeline-item>
       <el-timeline-item timestamp="2019/11/11" placement="top">
         <el-card>
-          <h4>v1.6 接入支付宝第三方登录</h4>
-          <p>2019-11-11 接入支付宝第三方登录</p>
+          <h4>v1.6 接入支付宝第三方登录，登录界面更换样式</h4>
+          <p>2019-11-11 接入支付宝第三方登录，登录界面更换样式</p>
         </el-card>
       </el-timeline-item>
       <el-timeline-item timestamp="2019/9/30" placement="top">
