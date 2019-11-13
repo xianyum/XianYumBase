@@ -196,12 +196,12 @@ public class IPUtils {
      */
     public static String getIpInfo(String ip){
         try {
-            String url ="http://ip.360.cn/IPQuery/ipquery";
+            String url ="http://ip.taobao.com/service/getIpInfo.php";
             String param = "ip="+ip;
             String result = HttpUtils.sendGet(url, param);
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            String ipInfo = jsonObject.getString("data");
-            return ipInfo.trim();
+            JSONObject jsonObject = JSONObject.parseObject(JSONObject.parseObject(result).getString("data"));
+            String ipInfo = jsonObject.getString("region")+jsonObject.getString("city")+"_"+jsonObject.getString("isp");
+            return ipInfo.replace("XX","");
         }catch (Exception e){
             return "未知地点";
         }

@@ -90,14 +90,7 @@ public class SysLogAspect {
         HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
         String ip = IPUtils.getIpAddr(httpServletRequest);
         logEntity.setIp(ip);
-
-        String ipInfo = (String)redisUtils.get(redisIpInfo+ip);
-        if(StringUtil.isEmpty(ipInfo)){
-            ipInfo = IPUtils.getIpInfo(ip);
-            if(!ipInfo.contains("未知")){
-                redisUtils.set(redisIpInfo+ip,ipInfo);
-            }
-        }
+        String ipInfo =IPUtils.getIpInfo(ip);
         logEntity.setIpInfo(ipInfo);
         //用户名
         logEntity.setUsername( AuthUserToken.getUser().getUsername());
