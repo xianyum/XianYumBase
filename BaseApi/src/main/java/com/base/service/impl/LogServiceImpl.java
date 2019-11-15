@@ -10,6 +10,7 @@ import com.base.entity.request.LogRequest;
 import com.base.service.iservice.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
      * @param logEntity
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void saveLog(LogEntity logEntity) {
         logMapper.insert(logEntity);
     }
