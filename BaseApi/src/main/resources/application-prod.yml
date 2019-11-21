@@ -1,10 +1,13 @@
 # Tomcat
 server:
+  servlet:
+    # 应用的访问路径
+    context-path: /base-demo
   tomcat:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
-  port: 9266
+  port: 9190
   connection-timeout: 5000ms
 
 redis:
@@ -96,9 +99,9 @@ mybatis-plus:
 spring:
   redis:
     #    database: 0 #Redis数据库索引（默认为0）
-    host: 47.103.20.104 # Redis服务器地址
+    host: 47.96.19.72 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
-    password: qq80616059. # Redis服务器连接密码（默认为空）
+    password: xianyum80616059 # Redis服务器连接密码（默认为空）
     timeout: 15s # 连接超时时间（毫秒）
     jedis:
       pool:
@@ -117,9 +120,9 @@ spring:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
       datasource:
         master:
-          url: jdbc:mysql://47.103.20.104:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://47.96.19.72:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
           username: root
-          password: qq8061605
+          password: xianyum80616059
           driverClassName:  com.mysql.jdbc.Driver
         slave:
           url: jdbc:mysql://localhost:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
