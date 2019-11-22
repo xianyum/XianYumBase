@@ -9,11 +9,11 @@ import com.base.common.exception.SoException;
 import com.base.common.utils.AuthUserToken;
 import com.base.common.utils.BeanUtils;
 import com.base.common.utils.StringUtil;
-import com.base.dao.AliUserMapper;
+import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
 import com.base.entity.enums.UserStatusEnum;
-import com.base.entity.po.AliUserEntity;
+import com.base.entity.po.ThirdUserEntity;
 import com.base.entity.po.UserEntity;
 import com.base.entity.request.UpdatePasswordRequest;
 import com.base.entity.request.UserRequest;
@@ -21,7 +21,6 @@ import com.base.service.iservice.AliNetService;
 import com.base.service.iservice.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     private UserMapper userMapper;
 
     @Autowired
-    private AliUserMapper aliUserMapper;
+    private ThirdUserMapper aliUserMapper;
 
     @Autowired
     private AliNetService aliNetService;
@@ -139,10 +138,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         AlipayUserInfoShareResponse aLiUserInfo = aliNetService.getALiUserInfo(accessToken);
         if(aLiUserInfo.isSuccess()){
             UserEntity userEntity = new UserEntity();
-            AliUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<AliUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
+            ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
-                userEntity.setId(999999L);
+                userEntity.setId(-1L);
                 userEntity.setUsername(aLiUserInfo.getNickName());
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
             }else{

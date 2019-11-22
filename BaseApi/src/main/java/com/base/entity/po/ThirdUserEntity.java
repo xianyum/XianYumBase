@@ -14,8 +14,8 @@ import java.util.Date;
  * @desc
  */
 @Data
-@TableName(value = "user_ali")
-public class AliUserEntity {
+@TableName(value = "user_third")
+public class ThirdUserEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,5 +29,12 @@ public class AliUserEntity {
      */
     private String aliUserId;
 
+    /**
+     * qq用户userId
+     */
+    private String qqUserId;
+
     private Date createTime;
+
+    private Date updateTime;
 }
