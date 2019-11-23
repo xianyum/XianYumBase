@@ -141,7 +141,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         String accessToken = qqNetService.getAccessToken(authCode);
         String qqUserId = qqNetService.getUserId(accessToken);
-        if(StringUtil.isBlank(qqUserId)){
+        if(StringUtil.isNotBlank(qqUserId)){
             UserEntity userEntity = new UserEntity();
             ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserId));
             if(aliUserEntity == null ){
