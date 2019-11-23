@@ -9,6 +9,7 @@ import com.base.common.exception.SoException;
 import com.base.common.utils.AuthUserToken;
 import com.base.common.utils.BeanUtils;
 import com.base.common.utils.StringUtil;
+import com.base.common.utils.UUIDUtils;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
@@ -18,6 +19,7 @@ import com.base.entity.po.UserEntity;
 import com.base.entity.request.UpdatePasswordRequest;
 import com.base.entity.request.UserRequest;
 import com.base.service.iservice.AliNetService;
+import com.base.service.iservice.QqNetService;
 import com.base.service.iservice.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
@@ -41,6 +43,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Autowired
     private AliNetService aliNetService;
+
+    @Autowired
+    private QqNetService qqNetService;
 
     @Override
     public IPage<UserEntity> queryAll(UserRequest user) {
@@ -127,6 +132,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             return true;
         }
         return false;
+    }
+
+    @Override
+    public UserEntity getUserByQq(String authCode) {
+        if(StringUtil.isBlank(authCode)){
+            return null;
+        }
+        String accessToken = qqNetService.getAccessToken(authCode);
+        String qqUserId = qqNetService.getUserId(accessToken);
+        if(StringUtil.isBlank(qqUserId)){
+            UserEntity userEntity = new UserEntity();
+            ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserId));
+            if(aliUserEntity == null ){
+                userEntity.setId(-1L);
+                userEntity.setUsername(UUIDUtils.getUUID().substring(1,7));
+                userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
+            }else{
+                userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
+                        .eq("id",aliUserEntity.getUserId())
+                        .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
+            }
+            return userEntity;
+        }
+        return null;
     }
 
     @Override

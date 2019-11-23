@@ -28,4 +28,10 @@ public interface UserService extends IService<UserEntity> {
      * @return
      */
     UserEntity getUserByAli(String authCode);
+    /**
+     * 通过QQ authCode获取系统用户信息
+     * @param authCode
+     * @return
+     */
+    UserEntity getUserByQq(String authCode);
 }

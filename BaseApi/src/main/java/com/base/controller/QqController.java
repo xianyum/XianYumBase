@@ -10,17 +10,20 @@ import com.base.service.iservice.UserTokenService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author zhangwei
- * @date 2019/11/9 17:24
+ * @date 2019/11/23 23:20
  * @desc
  */
 @RestController
-@RequestMapping("/ali")
-@Api(tags = "支付宝接口")
-public class AliController {
+@RequestMapping("/qq")
+@Api(tags = "qq接口")
+public class QqController {
 
     @Autowired
     private UserTokenService userTokenService;
@@ -29,16 +32,17 @@ public class AliController {
     private UserService userService;
 
     @PostMapping("/login")
-    @SysLog(value = "支付宝第三方登录")
-    @ApiOperation(value = "支付宝第三方登录", httpMethod = "POST")
+    @SysLog(value = "QQ第三方登录")
+    @ApiOperation(value = "QQ第三方登录", httpMethod = "POST")
     public DataResult login(@RequestBody String requestInfo) {
         JSONObject jsonObject = JSON.parseObject(requestInfo);
         String authCode = jsonObject.getString("authCode");
-        UserEntity user = userService.getUserByAli(authCode);
+        UserEntity user = userService.getUserByQq(authCode);
         if(user != null){
             return userTokenService.createToken(user);
         }else {
             return DataResult.error();
         }
     }
+
 }

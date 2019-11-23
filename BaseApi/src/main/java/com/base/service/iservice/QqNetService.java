@@ -10,6 +10,13 @@ public interface QqNetService {
      * @param authCode
      * @return
      */
-    String getAccessToken(String authCode,String redirectUri);
+    String getAccessToken(String authCode);
+
+    /**
+     * 获取QQ用户id
+     * @param accessToken
+     * @return
+     */
+    String getUserId(String accessToken);
 
 }

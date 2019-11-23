@@ -132,7 +132,7 @@
                                                                                      class="icon_style"></icon-svg></span>
         <span class="other_login_info" @click="otherLogin()" title="使用微信登录"><icon-svg name="weixinlogin"
                                                                                       class="icon_style"></icon-svg></span>
-        <span class="other_login_info" @click="otherLogin()" title="使用QQ登录"><icon-svg name="qqlogin"
+        <span class="other_login_info" @click="qqLogin()" title="使用QQ登录"><icon-svg name="qqlogin"
                                                                                       class="icon_style"></icon-svg></span>
         <!--<div class="register">-->
         <!--<span class="" @click="gotoRegister()">注册账户</span>-->
@@ -198,10 +198,13 @@
     },
     methods: {
       otherLogin () {
-        this.$message.error('请使用支付宝登录，功能待完善')
+        this.$message.error('微信登录功能待完善')
       },
       aliLogin () {
         window.location.replace('https://auth.alipay.com/login/index.htm?goto=https%3A%2F%2Fopenauth.alipay.com%3A443%2Foauth2%2FpublicAppAuthorize.htm%3Fapp_id%3D2019110868997443%26scope%3Dauth_user%26redirect_uri%3Dhttp%253A%252F%252Fxianyum.cn%252F%2523%252FcheckAliLogin')
+      },
+      qqLogin () {
+        window.location.replace('https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=http%3a%2f%2fxianyum.cn%2f%23%2fcheckQQLogin&state=0')
       },
       // 用户名 密码登录
       handleLogin () {

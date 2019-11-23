@@ -1,11 +1,6 @@
 package com.base;
 
-
-import com.base.common.utils.UUIDUtils;
-import com.base.config.PhoneConfig;
 import com.base.service.iservice.QqNetService;
-import com.github.qcloudsms.SmsSingleSender;
-import com.github.qcloudsms.SmsSingleSenderResult;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,15 +14,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ApplicationTests {
 
     @Autowired
-    private PhoneConfig phoneConfig;
-
-    @Autowired
     private QqNetService qqNetService;
 
 
     @Test
     public void test() {
-        qqNetService.getAccessToken("","");
+
+        //System.out.println(qqNetService.getAccessToken("61FF7A86412AD0352F8B9BAB53EF4F56"));
+        System.out.println(qqNetService.getUserId("F36AB94C6B3663637AFCC1562D009793"));
     }
 
 }
