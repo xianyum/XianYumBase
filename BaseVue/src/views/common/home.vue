@@ -1,138 +1,114 @@
 <template>
-  <div class="block">
-    <el-timeline>
-      <el-timeline-item timestamp="至今" placement="top">
-        <el-card>
-          <h4 style="color: green"><b>不忘初心，方得始终</b></h4>
-          <p> 系统会坚持做下去，不断地维护，不断的更新</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/11/24" placement="top">
-        <el-card>
-          <h4>v1.7 接入QQ第三方登录</h4>
-          <p>2019-11-24 接入QQ第三方登录</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/11/11" placement="top">
-        <el-card>
-          <h4>v1.6 接入支付宝第三方登录，登录界面更换样式</h4>
-          <p>2019-11-11 接入支付宝第三方登录，登录界面更换样式</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/9/30" placement="top">
-        <el-card>
-          <h4>v1.5 加载速度优化，增加微信推送中心功能</h4>
-          <p>2019-09-30 网站首页初次加载速度优化，新增微信推送中心，用户可以订阅二维码，来进行实时接收消息</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/9/27" placement="top">
-        <el-card>
-          <h4>v1.4 爬虫监控，界面图标美化</h4>
-          <p>2019-09-27 集成Gecco爬虫框架，把爬取的数据写到数据库里，并且把每天更新内容推送到微信上，以及界面图标美化</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/6/28" placement="top">
-        <el-card>
-          <h4>v1.3 注册功能</h4>
-          <p>2019-06-28 增加用户注册功能，以及用户重复性校验优化</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/6/20" placement="top">
-        <el-card>
-          <h4>v1.2 优化登录模块，增加日志注解</h4>
-          <p>2019-06-20 优化登录模块，增加日志注解，使用redis存储token，验证码，ip地址等</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/6/10" placement="top">
-        <el-card>
-          <h4>v1.1 版本新增一些常用的工具类,以及集成mybatis-plus多数据源</h4>
-          <p>2019-06-10 版本新增一些常用的工具类,以及集成mybatis-plus多数据源</p>
-        </el-card>
-      </el-timeline-item>
-      <el-timeline-item timestamp="2019/5/1" placement="top">
-        <el-card>
-          <h4>v1.0 开始开发模板</h4>
-          <p>2019-05-01 准备做一套前后端分离版本脚手架，方便接一些项目</p>
-        </el-card>
-      </el-timeline-item>
-    </el-timeline>
+  <div class="mod-home">
+    <div class="main_home">
+      <div class="leftProject">
+        <h3>项目介绍</h3>
+        <ul>
+          <li>前后端分离，前端采用vue+element-ui，后端采用springboot主流框架</li>
+          <li>完全响应式布局（支持电脑、平板、手机等所有主流设备）</li>
+          <li>支持多数据源，简单配置即可实现切换。</li>
+          <li>支持按钮及数据权限，可自定义部门数据权限。</li>
+          <li>动态菜单，通过菜单管理统一管理访问路由</li>
+          <li>完善的XSS防范及脚本过滤，彻底杜绝XSS攻击</li>
+          <li>Maven多项目依赖，模块及插件分项目，尽量松耦合，方便模块升级、增减模块。</li>
+          <li>完善的日志记录体系简单注解即可实现</li>
+          <li>支持第三方登录以及管理</li>
+        </ul>
+      </div>
+      <div class="rightUpdate">
+        <h3>更新日志</h3>
+        <ul>
+          <el-collapse v-model="activeName" accordion>
+            <el-collapse-item title="不忘初心，方得始终" name="1">
+              <div style="color: green">加油！加油！加油！加油！加油！加油！</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.8 首页改版" name="2">
+              <div>2019-11-27 首页改版，去除天气插件</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.7 接入QQ第三方登录" name="2">
+              <div>2019-11-24 接入QQ第三方登录</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.6 接入支付宝第三方登录，登录界面更换样式" name="3">
+              <div>2019-11-11 接入支付宝第三方登录，登录界面更换样式</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.5 加载速度优化，增加微信推送中心功能" name="4">
+              <div>2019-09-30 网站首页初次加载速度优化，新增微信推送中心，用户可以订阅二维码，来进行实时接收消息</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.4 增加爬虫监控，界面图标美化" name="5">
+              <div>2019-09-27 集成Gecco爬虫框架，把爬取的数据写到数据库里，并且把每天更新内容推送到微信上，以及界面图标美化</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.3 注册功能" name="6">
+              <div>2019-06-28 增加用户注册功能，以及用户重复性校验优化</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.2 优化登录模块，增加日志注解" name="7">
+              <div>2019-06-20 优化登录模块，增加日志注解，使用redis存储token，验证码，ip地址等</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.1 版本新增一些常用的工具类,以及集成mybatis-plus多数据源" name="8">
+              <div>2019-06-10 版本新增一些常用的工具类,以及集成mybatis-plus多数据源</div>
+            </el-collapse-item>
+            <el-collapse-item title="v1.0 开始开发模板" name="9">
+              <div>2019-05-01 v1.0 开始开发模板</div>
+            </el-collapse-item>
+          </el-collapse>
+        </ul>
+      </div>
+    </div>
+    <div class="contact">
+      <h3 >联系方式</h3>
+      <ul>
+        <img
+          style="margin-left: 40px;height: 200px;"
+          :src="src"
+          alt=""
+        >
+        <img
+          style="margin-left: 40px;height: 172px;"
+          :src="zhudong"
+          alt=""
+        >
+      </ul>
+    </div>
   </div>
 </template>
 <style>
-
+  .mod-home {
+    line-height: 1.5;
+  }
+  .main_home{
+    width: 100%;
+    height: 100%;
+  }
+  .main_home .leftProject{
+    position: absolute;
+    margin-left: 20px;
+    width: 750px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
+  .main_home .rightUpdate{
+    position: absolute;
+    margin-left: 800px;
+    width: 48%;
+    float: right;
+    margin-right: 20px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    height: 600px;
+  }
+  .contact{
+    margin-left: 20px;
+    float:left;
+    width: 750px;
+    margin-top: 281px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
+  }
 </style>
 <script>
   export default {
     data () {
-      this.jvmChartSettings = {
-        dataType: {
-          'jvm': 'percent'
-        },
-        digit: 0,
-        seriesMap: {
-          'jvm': {
-            min: 0,
-            max: 1,
-            show: false
-          }
-        },
-        dataName: {
-          'jvm': 'JVM占用率'
-        }
-      }
-      this.memChartSettings = {
-        dataType: {
-          'mem': 'percent'
-        },
-        digit: 0,
-        seriesMap: {
-          'mem': {
-            min: 0,
-            max: 1
-          }
-        },
-        dataName: {
-          'mem': '内存占用率'
-        }
-      }
-      this.chartSettings = {
-        dataType: {
-          'cpu': 'percent'
-        },
-        digit: 0,
-        seriesMap: {
-          'cpu': {
-            min: 0,
-            max: 1
-          }
-        },
-        dataName: {
-          'cpu': 'CPU占用率'
-        }
-      }
       return {
-        chartData: {
-          columns: ['type', 'value'],
-          rows: [
-            { type: 'cpu', value: 0 }
-          ]
-        },
-        jvmChartData: {
-          columns: ['type', 'value'],
-          rows: [
-            { type: 'jvm', value: 0 }
-          ]
-        },
-        memChartData: {
-          columns: ['type', 'value'],
-          rows: [
-            { type: 'mem', value: 0 }
-          ]
-        },
-        sysFilesData: null
+        activeName: '1',
+        src: 'http://oss.xianyum.cn/wechat.jpg',
+        zhudong: 'http://oss.xianyum.cn/zhudong.jpg'
       }
-    },
-    methods: {
     }
   }
 </script>

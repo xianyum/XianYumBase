@@ -17,9 +17,6 @@
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
-        <el-menu-item index="1">
-          <iframe width="225" scrolling="no" height="80" frameborder="0" allowtransparency="true" src="//i.tianqi.com/index.php?c=code&id=8&icon=1&py=xian&num=1&site=12"></iframe>
-        </el-menu-item>
         <el-menu-item index="2">
           <el-badge value="blog" type="primary">
             <a href="https://blog.csdn.net/jav_zhangwei" target="_blank">个人博客</a>
