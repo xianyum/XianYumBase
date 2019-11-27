@@ -20,7 +20,10 @@
         <ul>
           <el-collapse v-model="activeName" accordion>
             <el-collapse-item title="不忘初心，方得始终" name="1">
-              <div style="color: green">加油！加油！加油！加油！加油！加油！</div>
+              <div style="color: green">不乱于心，不困于情。 不畏将来，不念过往。</div>
+              <div style="color: blue">深谋若谷，深交若水。深明大义，深悉小节。</div>
+              <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
+              <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
             <el-collapse-item title="v1.8 首页改版" name="2">
               <div>2019-11-27 首页改版，去除天气插件</div>
@@ -91,7 +94,7 @@
     float: right;
     margin-right: 20px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    height: 600px;
+    height: 700px;
   }
   .contact{
     margin-left: 20px;
