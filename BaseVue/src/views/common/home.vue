@@ -25,7 +25,7 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
-            <el-collapse-item title="v1.8 首页改版" name="2">
+            <el-collapse-item title="v1.8 首页改版" name="8">
               <div>2019-11-27 首页改版，去除天气插件</div>
             </el-collapse-item>
             <el-collapse-item title="v1.7 接入QQ第三方登录" name="2">
