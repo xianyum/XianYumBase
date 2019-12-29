@@ -3,6 +3,8 @@ package com.base.common.aspectj;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.base.common.annotation.SysLog;
+import com.base.common.async.AsyncManager;
+import com.base.common.async.factory.AsyncLogFactory;
 import com.base.common.utils.*;
 import com.base.entity.po.LogEntity;
 import com.base.entity.request.UserRequest;
@@ -92,7 +94,7 @@ public class SysLogAspect {
         logEntity.setTime(time);
         logEntity.setCreateTime(new Date());
 
-        //保存系统日志
-        logService.saveLog(logEntity);
+        //异步保存系统日志
+        AsyncManager.async().execute(AsyncLogFactory.save(logEntity));
     }
 }

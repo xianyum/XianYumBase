@@ -2,6 +2,8 @@ package com.base.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.base.common.annotation.SysLog;
+import com.base.common.async.AsyncManager;
+import com.base.common.async.factory.AsyncLogFactory;
 import com.base.common.exception.SoException;
 import com.base.common.utils.*;
 import com.base.common.validator.ValidatorUtils;
@@ -54,8 +56,6 @@ public class LoginController {
     @Autowired
     private UserTokenService userTokenService;
 
-    @Autowired
-    private LogService logService;
     /**
      * 验证码
      * 设置produces = MediaType.IMAGE_JPEG_VALUE（）import org.springframework.http.MediaType;
@@ -174,6 +174,6 @@ public class LoginController {
         log.setUsername(userRequest.getUsername());
         log.setOperation(desc);
         log.setTime(time);
-        logService.saveLog(log);
+        AsyncManager.async().execute(AsyncLogFactory.save(log));
     }
 }

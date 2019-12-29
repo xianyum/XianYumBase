@@ -1,6 +1,7 @@
 package com.base.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.base.common.exception.SoException;
 import com.base.common.utils.DataResult;
 import com.base.entity.po.LogEntity;
 import com.base.entity.request.LogRequest;
@@ -33,5 +34,16 @@ public class LogController {
     public DataResult list(@RequestBody LogRequest request){
         IPage<LogEntity> list = logService.queryAll(request);
         return DataResult.success(list);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除日志记录", httpMethod = "POST")
+    public DataResult delete(@RequestBody String[] logIdS){
+        try {
+            logService.deleteById(logIdS);
+            return DataResult.success();
+        }catch(SoException exception){
+            return DataResult.error(exception.getMsg());
+        }
     }
 }

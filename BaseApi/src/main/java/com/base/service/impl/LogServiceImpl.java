@@ -4,6 +4,7 @@ package com.base.service.impl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.base.common.exception.SoException;
 import com.base.dao.LogMapper;
 import com.base.entity.po.LogEntity;
 import com.base.entity.request.LogRequest;
@@ -44,5 +45,15 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
         List<LogEntity> list = logMapper.queryAll(request, page);
         page.setRecords(list);
         return page;
+    }
+
+    @Override
+    public void deleteById(String[] logIdS) {
+        if(logIdS == null || logIdS.length <= 0){
+            throw new SoException("非法传参！");
+        }
+        for(String id : logIdS){
+            logMapper.deleteById(id);
+        }
     }
 }

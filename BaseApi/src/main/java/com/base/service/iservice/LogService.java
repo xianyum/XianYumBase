@@ -16,4 +16,6 @@ public interface LogService {
     void saveLog(LogEntity logEntity);
 
     IPage<LogEntity> queryAll(LogRequest request);
+
+    void deleteById(String[] logIdS);
 }
