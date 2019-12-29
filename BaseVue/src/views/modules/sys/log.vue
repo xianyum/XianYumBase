@@ -6,13 +6,21 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
+        <el-button type="danger"  @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
       :data="dataList"
       border
+      @selection-change="selectionChangeHandle"
       v-loading="dataListLoading"
       style="width: 100%">
+      <el-table-column
+        type="selection"
+        header-align="center"
+        align="center"
+        width="50">
+      </el-table-column>
       <el-table-column
         label="序号"
         type="index"
@@ -75,6 +83,17 @@
         label="创建时间"
         :formatter="formateCreateTime">
       </el-table-column>
+      <el-table-column
+        header-align="center"
+        fixed="right"
+        align="center"
+        width="150"
+        label="操作">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="getRequestParams(scope.row)">查看请求参数</el-button>
+          <el-button type="text" size="small"  @click="deleteHandle(scope.row.id)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"
@@ -85,6 +104,18 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+    <el-dialog
+      :title="'请求参数'"
+      :close-on-click-modal="false"
+      :visible.sync="requestVisible"
+      :before-close="cancleRequestForm"
+      width="25%">
+      <json-viewer
+        :value="requestParam" :expand-depth=5
+        copyable
+        boxed
+        sort></json-viewer>
+    </el-dialog>
   </div>
 </template>
 
@@ -95,6 +126,10 @@
         dataForm: {
           nameOrDesc: ''
         },
+        requestParam: {
+        },
+        dataListSelections: [],
+        requestVisible: false,
         dataList: [],
         pageIndex: 1,
         pageSize: 10,
@@ -107,6 +142,50 @@
       this.getDataList()
     },
     methods: {
+      // 删除
+      deleteHandle(id) {
+        var logIdS = id ? [id] : this.dataListSelections.map(item => {
+          return item.id
+        })
+        this.$confirm(`确定要进行删除操作吗?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/log/delete'),
+            method: 'post',
+            data: this.$http.adornData(logIdS, false)
+          }).then(({data}) => {
+            if (data && data.code === 200) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.getDataList()
+                }
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        }).catch(() => {
+        })
+      },
+      // 多选
+      selectionChangeHandle(val) {
+        this.dataListSelections = val
+      },
+      cancleRequestForm (){
+        this.requestParam = ''
+        this.requestVisible = false;
+      },
+      getRequestParams (row){
+        let params = row.params
+        this.requestParam = JSON.parse(params)
+        this.requestVisible = true
+      },
       formateCreateTime (row, column) {
         var objD = row.createTime
         if (!objD) {

@@ -11,9 +11,11 @@ import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/a
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 import VCharts from 'v-charts'
+import JsonViewer from 'vue-json-viewer'
 Vue.use(VCharts)
 
 Vue.use(VueCookie)
+Vue.use(JsonViewer)
 Vue.config.productionTip = false
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock

@@ -78,7 +78,7 @@
           <el-table-column prop="total" label="总大小"></el-table-column>
           <el-table-column prop="free" label="可用大小"></el-table-column>
           <el-table-column prop="used" label="已用大小"></el-table-column>
-          <el-table-column prop="usage" label="已用百分比"></el-table-column>
+          <el-table-column prop="usage" label="已用百分比" :formatter="formateUseage"></el-table-column>
         </el-table>
       </el-card>
     </div>
@@ -263,6 +263,10 @@
       clearInterval(this.timer)
     },
     methods: {
+      formateUseage (row, column) {
+        let objD = row.usage
+        return objD + '%'
+      },
       fresh () {
         this.getList()
       },

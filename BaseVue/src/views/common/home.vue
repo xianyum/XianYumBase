@@ -25,6 +25,9 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
+            <el-collapse-item title="v1.9 日志增加删除" name="8">
+              <div>2019-12-29 日志增加删除,异步保存用户操作日志.</div>
+            </el-collapse-item>
             <el-collapse-item title="v1.8 首页改版" name="8">
               <div>2019-11-27 首页改版，去除天气插件</div>
             </el-collapse-item>
@@ -94,7 +97,7 @@
     float: right;
     margin-right: 20px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    height: 700px;
+    height: 750px; /*增加日志会影响这里*/
   }
   .contact{
     margin-left: 20px;
