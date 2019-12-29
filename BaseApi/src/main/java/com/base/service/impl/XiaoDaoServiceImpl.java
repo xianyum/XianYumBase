@@ -40,7 +40,7 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
 
     private static final String APP_TOKEN = "AT_gEUq49NQBwiX29wvaNNawCRdyoBMJ8RA";
 
-    private static final String SUFFIX = "BaseApi【47.103.20.104】推送：";
+    private static final String SUFFIX = "【xianyum.cn】推送：";
 
     private static final String APP_KEY = "AK_l8hjWUB0dlmkmBwc";
 
