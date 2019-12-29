@@ -14,14 +14,14 @@ import lombok.Data;
 public class XiaoDaoArticle implements HtmlBean {
 
     @Text
-    @HtmlField(cssPath = "div>span")
+    @HtmlField(cssPath = "span")
     private String time;
 
     @Text
-    @HtmlField(cssPath = "div > a")
+    @HtmlField(cssPath = "a")
     private String title;
 
     @Href(value = "href")
-    @HtmlField(cssPath = "div > a")
+    @HtmlField(cssPath = "a")
     private String url;
 }

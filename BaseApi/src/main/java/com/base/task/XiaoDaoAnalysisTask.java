@@ -26,7 +26,7 @@ public class XiaoDaoAnalysisTask {
 
     @Scheduled(cron = "0 0/1 * * * ?")  //每隔1分钟执行一次
     public void reportDataJob() {
-        HttpGetRequest startUrl = new HttpGetRequest("https://www.xd0.com/");
+        HttpGetRequest startUrl = new HttpGetRequest("https://www.x6d.com/");
         startUrl.setCharset("UTF-8");
         GeccoEngine.create()
                 //Gecco搜索的包路径
