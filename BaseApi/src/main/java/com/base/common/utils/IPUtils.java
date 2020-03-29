@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author zhangwei
@@ -196,12 +198,19 @@ public class IPUtils {
      */
     public static String getIpInfo(String ip){
         try {
-            String url ="http://ip.taobao.com/service/getIpInfo.php";
-            String param = "ip="+ip;
-            String result = HttpUtils.sendGet(url, param);
-            JSONObject jsonObject = JSONObject.parseObject(JSONObject.parseObject(result).getString("data"));
-            String ipInfo = jsonObject.getString("region")+jsonObject.getString("city")+" "+jsonObject.getString("isp");
-            return ipInfo.replace("XX","");
+            String result = HttpUtils.getIpInfo(ip);
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            String province = jsonObject.getString("province");
+            String city = jsonObject.getString("city");
+            StringBuilder sb = new StringBuilder();
+            if(StringUtil.isNotEmpty(province)){
+                sb.append(province);
+            }
+            if(StringUtil.isNotEmpty(city)){
+                sb.append("-");
+                sb.append(city);
+            }
+            return  sb.toString();
         }catch (Exception e){
             return "未知地点";
         }
