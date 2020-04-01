@@ -105,7 +105,7 @@ spring:
     host: 47.96.19.72 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
     password: xianyum80616059 # Redis服务器连接密码（默认为空）
-    timeout: 15s # 连接超时时间（毫秒）
+    timeout: 5000 # 连接超时时间（毫秒）
     jedis:
       pool:
         max-active: 10 # 连接池中的最小空闲连接
