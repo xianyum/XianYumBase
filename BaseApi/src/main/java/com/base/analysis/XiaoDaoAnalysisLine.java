@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.base.common.utils.BeanUtils;
 import com.base.common.utils.DateUtils;
+import com.base.common.utils.StringUtil;
 import com.base.common.utils.UUIDUtils;
 import com.base.dao.XiaoDaoMapper;
 import com.base.entity.po.UserEntity;
@@ -41,11 +42,16 @@ public class XiaoDaoAnalysisLine implements Pipeline<XiaoDaoAnalysis> {
             if (collect != null && collect.size() > 0) {
                 for (XiaoDaoArticle item : collect) {
                     Integer count = xiaoDaoMapper.selectCount(
-                            new QueryWrapper<XiaoDaoEntity>().eq("title",item.getTitle())
+                            new QueryWrapper<XiaoDaoEntity>()
+                                    .eq(StringUtil.isNotEmpty(item.getTitle()),"title",item.getTitle())
+                                    .eq("url",item.getUrl())
                                     .eq("time",DateUtils.format(new Date(), "MM-dd"))
                     );
                     if(count > 0){
                         continue;
+                    }
+                    if(StringUtil.isEmpty(item.getTitle())){
+                        item.setTitle("特别关注："+DateUtils.format(new Date(),"yyyyMMddHHmmss"));
                     }
                     XiaoDaoEntity bean = BeanUtils.copy(item,XiaoDaoEntity.class);
                     bean.setParams(JSONObject.toJSONString(xiaoDaoAnalysis.getRequest()));
