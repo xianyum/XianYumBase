@@ -20,4 +20,7 @@ public class IpInfoEntity {
 
     /** isp */
     private String isp;
+
+    /** 备注 */
+    private String remark;
 }
