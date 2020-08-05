@@ -20,8 +20,7 @@ redis:
 
 ip:
   db:
-    #    path: E:\MyProjects\ip2region\data\ip2region.db
-    path: /home/application/ipdb/ip2region.db
+    path: E:\MyProjects\ip2region\data\ip2region.db
 
 #腾讯云短信发送配置
 tencent:

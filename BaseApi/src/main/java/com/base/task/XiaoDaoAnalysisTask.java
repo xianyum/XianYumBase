@@ -26,6 +26,7 @@ public class XiaoDaoAnalysisTask {
 
     @Scheduled(cron = "0 0/3 * * * ?")  //每隔1分钟执行一次
     public void reportDataJob() {
+        log.info("执行爬取job开始");
         HttpGetRequest startUrl = new HttpGetRequest("https://www.x6d.com/");
         startUrl.setCharset("UTF-8");
         GeccoEngine.create()
@@ -38,6 +39,7 @@ public class XiaoDaoAnalysisTask {
                 .thread(1)
                 //单个爬虫每次抓取完一个请求后的间隔时间
                 .run();
+        log.info("执行爬取job结束");
     }
 
     @Scheduled(cron = "0 0/3 * * * ?")  //每隔1分钟执行一次

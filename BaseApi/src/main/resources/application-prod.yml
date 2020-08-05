@@ -20,8 +20,8 @@ redis:
 
 ip:
   db:
-#    path: E:\MyProjects\ip2region\data\ip2region.db
-    path: /home/application/ipdb/ip2region.db
+#    path: E:\MyProject\BaseDemo\BaseApi\db\ip2region.db
+    path: /home/zhangwei/BaseApi/db/ip2region.db
 
 #腾讯云短信发送配置
 tencent:
@@ -102,7 +102,7 @@ mybatis-plus:
 spring:
   redis:
     #    database: 0 #Redis数据库索引（默认为0）
-    host: 127.0.0.1 # Redis服务器地址
+    host: 47.96.19.72 # Redis服务器地址
     port: 6379 # Redis服务器连接端口
     password: xianyum80616059 # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
@@ -123,7 +123,7 @@ spring:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://47.96.19.72:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
           username: root
           password: xianyum80616059
           driverClassName:  com.mysql.jdbc.Driver
