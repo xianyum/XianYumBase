@@ -1,19 +1,26 @@
 package com.base.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.base.common.exception.SoException;
+import com.base.common.utils.HttpUtils;
 import com.base.dao.LogMapper;
+import com.base.dao.WxCenterMapper;
 import com.base.entity.po.LogEntity;
+import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.request.LogRequest;
 import com.base.service.iservice.LogService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangwei
@@ -22,9 +29,15 @@ import java.util.List;
 @Service
 public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements LogService {
 
+    private static final String APP_TOKEN = "AT_o4on0ssXIcq1TzcQmPfJ6pklqfgBP1v8";
+    private static final String APP_KEY = "AK_l7XdgAZvFIUegeUu";
+    private static final String URL = "http://wxpusher.zjiecode.com/api/send/message";
+
     @Autowired
     private LogMapper logMapper;
 
+    @Autowired
+    private WxCenterMapper wxCenterMapper;
 
     /**
      * 保存系统日志
@@ -55,5 +68,47 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
         for(String id : logIdS){
             logMapper.deleteById(id);
         }
+    }
+
+    @Override
+    public void push() {
+        DateTime now = DateTime.now();
+        String nowDay = now.toString("yyyy-MM-dd");
+        String oneDay = now.minusDays(1).toString("yyyy-MM-dd");
+        String twoDay = now.minusDays(2).toString("yyyy-MM-dd");
+
+        LogRequest logRequest = new LogRequest();
+        logRequest.setQueryTime(nowDay);
+        Integer nowCount = logMapper.getCount(logRequest);
+
+        logRequest.setQueryTime(oneDay);
+        Integer oneCount = logMapper.getCount(logRequest);
+
+        logRequest.setQueryTime(twoDay);
+        Integer twoCount = logMapper.getCount(logRequest);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<h3>【Base-Demo-Api接口统计报表推送】</h3>");
+        sb.append("<ul>");
+        sb.append("<li>- 今日实时量：");
+        sb.append(nowCount);
+        sb.append("</li>");
+        sb.append("<li>- 昨日访问量：");
+        sb.append(oneCount);
+        sb.append("</li>");
+        sb.append("<li>- 昨日环比量：");
+        sb.append(oneCount - twoCount);
+        sb.append("</li>");
+        sb.append("</ul>");
+
+
+        List<WxCenterEntity> wxCenterEntities = wxCenterMapper.selectList(new QueryWrapper<WxCenterEntity>().eq("app_key", APP_KEY));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("appToken",APP_TOKEN);
+        jsonObject.put("contentType",2);//内容类型 1表示文字  2表示html 3表示markdown
+        jsonObject.put("uids",wxCenterEntities.stream().map(p -> p.getUid()).collect(Collectors.toList()));
+        jsonObject.put("content",sb.toString());
+
+        HttpUtils.sendPostJson(URL, jsonObject.toString());
     }
 }

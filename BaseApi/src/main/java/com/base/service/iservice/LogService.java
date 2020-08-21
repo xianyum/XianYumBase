@@ -18,4 +18,6 @@ public interface LogService {
     IPage<LogEntity> queryAll(LogRequest request);
 
     void deleteById(String[] logIdS);
+
+    void push();
 }

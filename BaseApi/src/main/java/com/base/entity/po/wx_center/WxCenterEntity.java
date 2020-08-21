@@ -14,10 +14,13 @@ import java.util.Date;
 @TableName(value = "wx_push_center")
 public class WxCenterEntity {
 
+
+    @TableId(type = IdType.INPUT)
+    private String id;
+
     /**
      * 用户ID
      */
-    @TableId(type = IdType.INPUT)
     private String uid;
 
     /**

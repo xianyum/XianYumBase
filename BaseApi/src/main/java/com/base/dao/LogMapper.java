@@ -15,4 +15,6 @@ import java.util.List;
 public interface LogMapper extends BaseMapper<LogEntity> {
 
     List<LogEntity> queryAll(@Param("logRequest") LogRequest logRequest, Page<LogEntity> page);
+
+    int getCount(LogRequest logRequest);
 }

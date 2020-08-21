@@ -26,5 +26,14 @@
         ORDER BY create_time DESC
     </select>
 
+    <select id="getCount" parameterType="com.base.entity.request.LogRequest" resultType="java.lang.Integer">
 
+        SELECT
+        COUNT(*)
+        FROM
+        user_log
+        WHERE
+        create_time &lt;= CONCAT(#{queryTime},' 23:59:59')
+        and create_time >= CONCAT(#{queryTime},' 00:00:00')
+    </select>
 </mapper>

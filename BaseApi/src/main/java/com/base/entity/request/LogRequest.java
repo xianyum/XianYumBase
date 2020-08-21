@@ -8,5 +8,12 @@ import lombok.Data;
  */
 @Data
 public class LogRequest extends BaseRequest {
+
     private String nameOrDesc;
+
+    private String startTime;
+
+    private String endTime;
+
+    private String queryTime;
 }

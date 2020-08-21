@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.base.common.utils.StringUtil;
+import com.base.common.utils.UUIDUtils;
 import com.base.dao.WxCenterMapper;
 import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.po.xiaodao.XiaoDaoEntity;
@@ -35,6 +36,7 @@ public class WxCenterServiceImpl implements WxCenterService {
                 String data = JSONObject.parseObject(json).getString("data");
                 WxCenterEntity wxCenterEntity = JSONObject.parseObject(data, WxCenterEntity.class);
                 wxCenterEntity.setCreateTime(new Date());
+                wxCenterEntity.setId(UUIDUtils.UUIDReplace());
                 wxCenterMapper.insert(wxCenterEntity);
             }
         }catch (Exception e){
