@@ -18,7 +18,7 @@ public class VisitsCountPushTask {
     @Autowired
     private LogService logService;
 
-    @Scheduled(cron = "0/10 * * * * ? ")  //每隔1分钟执行一次
+    @Scheduled(cron = "0 0 0/1 * * ? ")  //每隔1小时执行一次
     public void pushMessage() {
         logService.push();
     }

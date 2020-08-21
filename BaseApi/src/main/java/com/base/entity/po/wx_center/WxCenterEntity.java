@@ -43,4 +43,8 @@ public class WxCenterEntity {
      */
     private Date createTime;
 
+    /**
+     * 关注用户名称
+     */
+    private String userName;
 }

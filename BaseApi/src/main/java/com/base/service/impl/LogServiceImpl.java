@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.base.common.exception.SoException;
+import com.base.common.utils.DateUtils;
+import com.base.common.utils.DingDingPushUtils;
 import com.base.common.utils.HttpUtils;
 import com.base.dao.LogMapper;
 import com.base.dao.WxCenterMapper;
@@ -86,29 +88,40 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
 
         logRequest.setQueryTime(twoDay);
         Integer twoCount = logMapper.getCount(logRequest);
+        Integer hoopeCount = oneCount - twoCount;
+        String hoopeCountStr = hoopeCount.toString();
+        if(hoopeCount > 0){
+            hoopeCountStr = "+"+hoopeCount;
+        }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<h3>【Base-Demo-Api接口统计报表推送】</h3>");
-        sb.append("<ul>");
-        sb.append("<li>- 今日实时量：");
-        sb.append(nowCount);
-        sb.append("</li>");
-        sb.append("<li>- 昨日访问量：");
-        sb.append(oneCount);
-        sb.append("</li>");
-        sb.append("<li>- 昨日环比量：");
-        sb.append(oneCount - twoCount);
-        sb.append("</li>");
-        sb.append("</ul>");
-
+        StringBuilder markdownStr = new StringBuilder();
+        markdownStr.append("#### Base-Api接口统计报表推送");
+        markdownStr.append("\n");
+        markdownStr.append(">");
+        markdownStr.append("- 今日实时量：");
+        markdownStr.append(nowCount);
+        markdownStr.append("\n");
+        markdownStr.append(">");
+        markdownStr.append("- 昨日访问量：");
+        markdownStr.append(oneCount);
+        markdownStr.append("\n");
+        markdownStr.append(">");
+        markdownStr.append("- 昨日环比量：");
+        markdownStr.append(hoopeCountStr);
+        markdownStr.append("\n");
+        markdownStr.append(">");
+        markdownStr.append("- 统计时间：");
+        markdownStr.append(now.toString(DateUtils.DATE_TIME_PATTERN));
+        DingDingPushUtils.push("Base-Api接口统计报表推送",markdownStr.toString());
 
         List<WxCenterEntity> wxCenterEntities = wxCenterMapper.selectList(new QueryWrapper<WxCenterEntity>().eq("app_key", APP_KEY));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("appToken",APP_TOKEN);
-        jsonObject.put("contentType",2);//内容类型 1表示文字  2表示html 3表示markdown
+        jsonObject.put("contentType",3);//内容类型 1表示文字  2表示html 3表示markdown
         jsonObject.put("uids",wxCenterEntities.stream().map(p -> p.getUid()).collect(Collectors.toList()));
-        jsonObject.put("content",sb.toString());
+        jsonObject.put("content",markdownStr.toString());
 
         HttpUtils.sendPostJson(URL, jsonObject.toString());
+
     }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.base.common.utils.DingDingPushUtils;
 import com.base.common.utils.HttpUtils;
 import com.base.common.utils.StringUtil;
 import com.base.dao.WxCenterMapper;
@@ -56,6 +57,7 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
             for (XiaoDaoEntity xiaoDaoEntity : pushInfo) {
                 JSONObject params = getParams(xiaoDaoEntity, wxCenterEntities);
                 HttpUtils.sendPostJson(URL, params.toString());
+                DingDingPushUtils.push("推送活动助手",params.getString("content"));
                 xiaoDaoEntity.setPushStatus(1);
                 xiaoDaoEntity.setPushTime(new Date());
                 xiaoDaoMapper.updateById(xiaoDaoEntity);
@@ -81,10 +83,20 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
     public JSONObject getParams(XiaoDaoEntity xiaoDaoEntity,List<WxCenterEntity> wxCenterEntitys){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("appToken",APP_TOKEN);
-        jsonObject.put("contentType",1);//内容类型 1表示文字  2表示html 3表示markdown
-        jsonObject.put("url",xiaoDaoEntity.getUrl());
+        jsonObject.put("contentType",3);//内容类型 1表示文字  2表示html 3表示markdown
         jsonObject.put("uids",wxCenterEntitys.stream().map(p -> p.getUid()).collect(Collectors.toList()));
-        jsonObject.put("content",SUFFIX+xiaoDaoEntity.getTitle());
+        String url =xiaoDaoEntity.getUrl();
+        StringBuilder markdownStr = new StringBuilder();
+        markdownStr.append("#### ");
+        markdownStr.append(xiaoDaoEntity.getTitle());
+        markdownStr.append("\n");
+        markdownStr.append(">");
+        markdownStr.append("[");
+        markdownStr.append(url);
+        markdownStr.append("](");
+        markdownStr.append(url);
+        markdownStr.append(")");
+        jsonObject.put("content",markdownStr.toString());
         return jsonObject;
     }
 }
