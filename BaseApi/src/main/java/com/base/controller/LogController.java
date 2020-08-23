@@ -5,6 +5,7 @@ import com.base.common.exception.SoException;
 import com.base.common.utils.DataResult;
 import com.base.entity.po.LogEntity;
 import com.base.entity.request.LogRequest;
+import com.base.entity.response.LogResponse;
 import com.base.service.iservice.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author zhangwei
@@ -34,6 +38,17 @@ public class LogController {
     public DataResult list(@RequestBody LogRequest request){
         IPage<LogEntity> list = logService.queryAll(request);
         return DataResult.success(list);
+    }
+
+    /**
+     * 获取七天趋势图
+     */
+    @PostMapping("/getVisitCountCharts")
+    @ApiOperation(value = "获取用户列表", httpMethod = "POST")
+    public DataResult getVisitCountCharts(@RequestBody LogRequest request){
+        List<LogResponse> responses = logService.getVisitCountCharts(request);
+        Collections.reverse(responses);
+        return DataResult.success(responses);
     }
 
     @PostMapping("/delete")

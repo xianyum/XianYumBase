@@ -5,10 +5,28 @@
         <el-input v-model="dataForm.nameOrDesc" placeholder="用户名／用户操作" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-date-picker
+          v-model="dataForm.time"
+          type="datetimerange"
+          :picker-options="pickerOptions"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          align="center">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="queryData()">查询</el-button>
+        <el-button @click="changeType()">切换图表</el-button>
         <el-button type="danger"  @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
+
+    <div>
+      <ve-chart :data="chartData" :settings="chartSettings1" :data-empty="dataEmpty" :colors="echartsColors" v-loading="dataListLoading1" element-loading-text="正在汇总数据..."
+               element-loading-spinner="el-icon-loading"></ve-chart>
+    </div>
+
     <el-table
       :data="dataList"
       border
@@ -122,9 +140,73 @@
 <script>
   export default {
     data () {
+      this.typeArr = ['line', 'bar','histogram']
+      this.index = 0
+      this.echartsColors = ['#836FFF']
       return {
+        chartSettings1: {
+          type: this.typeArr[this.index],
+          labelMap: {
+            visitCount: '日志写入量'
+          },
+          metrics: ['visitCount'],
+          dimension: ['time']
+        },
+        chartData: {
+          columns: ['time','visitCount'],
+          rows: []
+        },
+        dataEmpty: true,
+        pickerOptions: {
+          shortcuts: [
+            {
+              text: '今天',
+              onClick(picker) {
+                const start = new Date();
+                const start1 = new Date(start.getFullYear(),start.getMonth(),start.getDate(),0,0,0);
+                const end1 = new Date(start.getFullYear(),start.getMonth(),start.getDate(),23,59,59);
+                picker.$emit('pick', [start1, end1]);
+              }
+            },{
+              text: '昨天',
+              onClick(picker) {
+                const start = new Date();
+                start.setTime(start.getTime() - 3600 * 1000 * 24);
+                const start1 = new Date(start.getFullYear(),start.getMonth(),start.getDate(),0,0,0);
+                const end1 = new Date(start.getFullYear(),start.getMonth(),start.getDate(),23,59,59);
+                picker.$emit('pick', [start1, end1]);
+              }
+            },{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
         dataForm: {
-          nameOrDesc: ''
+          startTime: '',
+          endTime: '',
+          nameOrDesc: '',
+          time: [new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0),new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59)]
         },
         requestParam: {
         },
@@ -135,13 +217,45 @@
         pageSize: 10,
         totalPage: 0,
         dataListLoading: false,
+        dataListLoading1: true,
         selectionDataList: []
       }
     },
     created () {
-      this.getDataList()
+      this.queryData()
     },
     methods: {
+      changeType () {
+        this.index++
+        if (this.index >= this.typeArr.length) { this.index = 0 }
+        this.chartSettings1 = { type: this.typeArr[this.index],labelMap: {visitCount: '日志写入量'} }
+      },
+      queryData () {
+        this.getDataList();
+        this.getVisitCountCharts();
+      },
+      getVisitCountCharts (){
+        this.dataListLoading1 = true
+        let startTime = this.dataForm.time[0]
+        let endTime = this.dataForm.time[1]
+        this.$http({
+          url: this.$http.adornUrl('/log/getVisitCountCharts'),
+          method: 'post',
+          data: this.$http.adornData({
+            'nameOrDesc': this.dataForm.nameOrDesc,
+            'startTime': this.dateFormat(startTime),
+            'endTime': this.dateFormat(endTime),
+            'time': this.dataForm.time,
+            'pageNum': this.pageIndex,
+            'pageSize': this.pageSize
+          })
+        }).then(({data}) => {
+          if (data && data.code === 200) {
+            this.chartData.rows = data.data
+          }
+          this.dataListLoading1 = false
+        })
+      },
       // 删除
       deleteHandle(id) {
         var logIdS = id ? [id] : this.dataListSelections.map(item => {
@@ -208,14 +322,32 @@
         str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
         return (str)
       },
+      dateFormat:function(date) {
+        var year=date.getFullYear();
+        /* 在日期格式中，月份是从0开始的，因此要加0
+         * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+         * */
+        var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+        var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+        var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+        var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+        var seconds=date.getSeconds()<10 ? "0"+date.getSeconds() : date.getSeconds();
+        // 拼接
+        return year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+      },
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
+        let startTime = this.dataForm.time[0]
+        let endTime = this.dataForm.time[1]
         this.$http({
           url: this.$http.adornUrl('/log/list'),
           method: 'post',
           data: this.$http.adornData({
             'nameOrDesc': this.dataForm.nameOrDesc,
+            'startTime': this.dateFormat(startTime),
+            'endTime': this.dateFormat(endTime),
+            'time': this.dataForm.time,
             'pageNum': this.pageIndex,
             'pageSize': this.pageSize
           })

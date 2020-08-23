@@ -23,6 +23,12 @@
             operation LIKE CONCAT('%', #{logRequest.nameOrDesc}, '%')
             )
         </if>
+        <if test="logRequest.startTime != null and logRequest.startTime != ''">
+            AND create_time &gt;= #{logRequest.startTime}
+        </if>
+        <if test="logRequest.endTime != null and logRequest.endTime != ''">
+            AND create_time &lt;= #{logRequest.endTime}
+        </if>
         ORDER BY create_time DESC
     </select>
 
@@ -35,5 +41,41 @@
         WHERE
         create_time &lt;= CONCAT(#{queryTime},' 23:59:59')
         and create_time >= CONCAT(#{queryTime},' 00:00:00')
+    </select>
+
+
+    <select id="getVisitCountCharts" parameterType="com.base.entity.request.LogRequest" resultType="com.base.entity.response.LogResponse">
+
+        SELECT
+        tbr.count AS visitCount,
+        tbl._date AS time
+        FROM
+            (
+        SELECT
+            @s := @s + 1 AS _index,
+            DATE_FORMAT( DATE_SUB( #{endTime}, INTERVAL @s DAY),'%Y-%m-%d'
+            ) AS _date FROM information_schema.TABLES, ( SELECT @s := - 1 ) temp ) AS tbl
+            LEFT JOIN (
+        SELECT
+            count(*) as count,
+            DATE_FORMAT( create_time, '%Y-%m-%d' ) AS timeDate
+        FROM
+            user_log
+        <where>
+            <if test="nameOrDesc != null and nameOrDesc != ''">
+                AND
+                (
+                username LIKE CONCAT('%', #{nameOrDesc}, '%')
+                OR
+                operation LIKE CONCAT('%', #{nameOrDesc}, '%')
+                )
+            </if>
+        </where>
+        GROUP BY
+            DATE_FORMAT(create_time,'%Y-%m-%d')
+            ) AS tbr ON tbl._date = tbr.timeDate
+        ORDER BY
+            tbl._date DESC
+        limit 15
     </select>
 </mapper>
