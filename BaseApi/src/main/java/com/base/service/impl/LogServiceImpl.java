@@ -15,6 +15,7 @@ import com.base.dao.WxCenterMapper;
 import com.base.entity.po.LogEntity;
 import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.request.LogRequest;
+import com.base.entity.response.LogResponse;
 import com.base.service.iservice.LogService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,5 +124,11 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
 
         HttpUtils.sendPostJson(URL, jsonObject.toString());
 
+    }
+
+    @Override
+    public List<LogResponse> getVisitCountCharts(LogRequest request) {
+        List<LogResponse> responses = logMapper.getVisitCountCharts(request);
+        return responses;
     }
 }

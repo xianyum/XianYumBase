@@ -3,6 +3,9 @@ package com.base.service.iservice;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.base.entity.po.LogEntity;
 import com.base.entity.request.LogRequest;
+import com.base.entity.response.LogResponse;
+
+import java.util.List;
 
 /**
  * @author zhangwei
@@ -20,4 +23,6 @@ public interface LogService {
     void deleteById(String[] logIdS);
 
     void push();
+
+    List<LogResponse> getVisitCountCharts(LogRequest request);
 }
