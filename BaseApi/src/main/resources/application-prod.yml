@@ -20,7 +20,7 @@ redis:
 
 ip:
   db:
-#    path: E:\MyProject\BaseDemo\BaseApi\db\ip2region.db
+#    path: C:\xianyu\peojects\BaseDemo\BaseApi\db\ip2region.db
     path: /home/zhangwei/BaseApi/db/ip2region.db
 
 #腾讯云短信发送配置
