@@ -46,9 +46,16 @@
         <gecco.version>1.3.0</gecco.version>
         <alipay.version>4.8.10.ALL</alipay.version>
         <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
+        <captcha.version>1.2.4</captcha.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.anji-plus</groupId>
+            <artifactId>captcha-spring-boot-starter</artifactId>
+            <version>${captcha.version}</version>
+        </dependency>
+
         <!-- 集成阿里框架-->
         <dependency>
             <groupId>com.alipay.sdk</groupId>

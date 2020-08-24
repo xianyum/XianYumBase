@@ -45,30 +45,41 @@
                 >
                 </el-input>
               </el-form-item>
+<!--              <el-form-item>-->
+<!--                <el-col :span="12" style="overflow:hidden">-->
+<!--                  <el-form-item prop="captcha">-->
+<!--                    <el-input-->
+<!--                      v-model="dataForm.captcha"-->
+<!--                      type="test"-->
+<!--                      auto-complete="off"-->
+<!--                      placeholder="验证码, 单击图片刷新"-->
+<!--                      style="width: 100%;"-->
+<!--                    />-->
+<!--                  </el-form-item>-->
+<!--                </el-col>-->
+<!--                <el-col class="line" :span="1">&nbsp;</el-col>-->
+<!--                <el-col :span="11">-->
+<!--                  <el-form-item>-->
+<!--                    <img-->
+<!--                      style="width: 57%;height: 35px;float: left;"-->
+<!--                      class="pointer"-->
+<!--                      :src="src"-->
+<!--                      alt=""-->
+<!--                      @click="refreshCaptcha"-->
+<!--                    >-->
+<!--                  </el-form-item>-->
+<!--                </el-col>-->
+<!--              </el-form-item>-->
+
+
               <el-form-item>
-                <el-col :span="12" style="overflow:hidden">
-                  <el-form-item prop="captcha">
-                    <el-input
-                      v-model="dataForm.captcha"
-                      type="test"
-                      auto-complete="off"
-                      placeholder="验证码, 单击图片刷新"
-                      style="width: 100%;"
-                    />
-                  </el-form-item>
-                </el-col>
-                <el-col class="line" :span="1">&nbsp;</el-col>
-                <el-col :span="11">
-                  <el-form-item>
-                    <img
-                      style="width: 57%;height: 35px;float: left;"
-                      class="pointer"
-                      :src="src"
-                      alt=""
-                      @click="refreshCaptcha"
-                    >
-                  </el-form-item>
-                </el-col>
+                <Verify
+                  @success="success"
+                  :mode="'pop'"
+                  :captchaType="'blockPuzzle'"
+                  :imgSize="{ width: '330px', height: '155px' }"
+                  ref="verify"
+                ></Verify>
               </el-form-item>
 
               <el-button
@@ -145,6 +156,7 @@
 <script>
   import {getUUID} from '@/utils'
   import {isvalidPhone} from '@/utils/validate'
+  import Verify from "./../../components/verifition/Verify";
 
   export default {
     name: 'Login',
@@ -190,25 +202,18 @@
       }
     },
     created () {
-      this.refreshCaptcha()
+      // this.refreshCaptcha()
+    },
+    components: {
+      Verify
     },
     mounted () {
       // 自动加载indexs方法
 
     },
     methods: {
-      otherLogin () {
-        this.$message.error('微信登录功能待完善')
-      },
-      aliLogin () {
-        let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=http%3a%2f%2fxianyum.cn%2fbase%2f%23%2fcheckAliLogin'
-        window.location.replace(aliUrl)
-      },
-      qqLogin () {
-        window.location.replace('https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=http%3a%2f%2fxianyum.cn%2fbase%2f%23%2fcheckQQLogin')
-      },
-      // 用户名 密码登录
-      handleLogin () {
+      success(params){
+        let captchaVerification = params.captchaVerification
         let _this = this
         _this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -219,7 +224,8 @@
                 'username': _this.dataForm.userName,
                 'password': _this.dataForm.password,
                 'uuid': _this.dataForm.uuid,
-                'captcha': _this.dataForm.captcha
+                'captcha': _this.dataForm.captcha,
+                'captchaVerification': captchaVerification
               })
             }).then(({data}) => {
               if (data && data.code === 200) {
@@ -232,6 +238,46 @@
             })
           }
         })
+      },
+      showVerify(){
+        this.$refs.verify.show();
+      },
+      otherLogin () {
+        this.$message.error('微信登录功能待完善')
+      },
+      aliLogin () {
+        let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=http%3a%2f%2fxianyum.cn%2fbase%2f%23%2fcheckAliLogin'
+        window.location.replace(aliUrl)
+      },
+      qqLogin () {
+        window.location.replace('https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=http%3a%2f%2fxianyum.cn%2fbase%2f%23%2fcheckQQLogin')
+      },
+      // 用户名 密码登录
+      handleLogin () {
+        this.$refs.verify.show()
+        // let _this = this
+        // _this.$refs['dataForm'].validate((valid) => {
+        //   if (valid) {
+        //     _this.$http({
+        //       url: _this.$http.adornUrl('/login'),
+        //       method: 'post',
+        //       data: _this.$http.adornData({
+        //         'username': _this.dataForm.userName,
+        //         'password': _this.dataForm.password,
+        //         'uuid': _this.dataForm.uuid,
+        //         'captcha': _this.dataForm.captcha
+        //       })
+        //     }).then(({data}) => {
+        //       if (data && data.code === 200) {
+        //         _this.$cookie.set('token', data.token)
+        //         _this.$router.replace({name: 'home'})
+        //       } else {
+        //         _this.refreshCaptcha()
+        //         _this.$message.error(data.msg)
+        //       }
+        //     })
+        //   }
+        // })
       },
 
       // 手机号短信登录

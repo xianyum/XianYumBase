@@ -47,6 +47,8 @@ public class ShiroConfig {
         filterMap.put("/app/**", "anon");
         filterMap.put("/login", "anon");
         filterMap.put("/getIpInfo", "anon");
+        filterMap.put("/captcha/get", "anon");
+        filterMap.put("/captcha/check", "anon");
         filterMap.put("/oss/upload", "anon");
         filterMap.put("/ali/login", "anon");
         filterMap.put("/qq/login", "anon");

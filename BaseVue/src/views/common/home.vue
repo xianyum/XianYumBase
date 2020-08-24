@@ -25,6 +25,9 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
+            <el-collapse-item title="v2.3 2020-08-24 登录增加滑动验证" name="20">
+              <div>登录增加滑动验证</div>
+            </el-collapse-item>
             <el-collapse-item title="v2.2 2020-08-23 新增日志趋势图" name="20">
               <div>增加日志写入量趋势图</div>
             </el-collapse-item>
@@ -103,7 +106,7 @@
     float: right;
     margin-right: 20px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    height: 800px; /*增加日志会影响这里*/
+    height: 100%; /*增加日志会影响这里*/
   }
   .contact{
     margin-left: 20px;

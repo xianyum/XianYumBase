@@ -1,6 +1,8 @@
 package com.base.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.anji.captcha.model.common.ResponseModel;
+import com.anji.captcha.model.vo.CaptchaVO;
 import com.base.common.annotation.SysLog;
 import com.base.common.async.AsyncManager;
 import com.base.common.async.factory.AsyncLogFactory;
@@ -56,6 +58,9 @@ public class LoginController {
     @Autowired
     private UserTokenService userTokenService;
 
+    @Autowired
+    private com.anji.captcha.service.CaptchaService captchaService1;
+
     /**
      * 验证码
      * 设置produces = MediaType.IMAGE_JPEG_VALUE（）import org.springframework.http.MediaType;
@@ -83,12 +88,20 @@ public class LoginController {
     public DataResult login(@RequestBody UserRequest userRequest) {
         long beginTime = System.currentTimeMillis();
         try {
-            boolean captcha = captchaService.validate(userRequest.getUuid(), userRequest.getCaptcha());
-            if(!captcha){
+            CaptchaVO captchaVO = new CaptchaVO();
+            captchaVO.setCaptchaVerification(userRequest.getCaptchaVerification());
+            ResponseModel response = captchaService1.verification(captchaVO);
+            if(response.isSuccess() == false){
                 long time = System.currentTimeMillis() - beginTime;
                 saveLoginLog(userRequest,"验证码不正确",time);
                 return DataResult.error("验证码不正确");
             }
+//            boolean captcha = captchaService.validate(userRequest.getUuid(), userRequest.getCaptcha());
+//            if(!captcha){
+//                long time = System.currentTimeMillis() - beginTime;
+//                saveLoginLog(userRequest,"验证码不正确",time);
+//                return DataResult.error("验证码不正确");
+//            }
             //用户信息
             UserEntity user = userService.queryByUserName(userRequest.getUsername());
             //账号不存在、密码错误
