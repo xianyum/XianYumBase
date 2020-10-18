@@ -121,8 +121,8 @@
     data () {
       return {
         activeName: '1',
-        src: 'http://oss.xianyum.cn/wechat.jpg',
-        zhudong: 'http://oss.xianyum.cn/zhudong.jpg'
+        src: 'https://xiaoyaxiaokeai.gitee.io/base/20201018/wechat.jpg',
+        zhudong: 'https://xiaoyaxiaokeai.gitee.io/base/20201018/zhudong.jpg'
       }
     },
     methods: {
