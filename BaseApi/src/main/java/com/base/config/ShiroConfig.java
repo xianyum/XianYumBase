@@ -45,6 +45,7 @@ public class ShiroConfig {
         filterMap.put("/webjars/**", "anon");
         filterMap.put("/druid/**", "anon");
         filterMap.put("/app/**", "anon");
+        filterMap.put("/systemConstant/getPublicConstant", "anon");
         filterMap.put("/login", "anon");
         filterMap.put("/getIpInfo", "anon");
         filterMap.put("/captcha/get", "anon");
