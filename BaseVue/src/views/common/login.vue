@@ -353,7 +353,7 @@
     width: 100%;
     height: 100%;
     content: "";
-    background-image: url(http://oss.xianyum.cn/pg5.jpg);
+    background-image: url(https://xiaoyaxiaokeai.gitee.io/base/20201018/457a981a-b7fe-4777-a7b8-ed1a5e8abf2e.jpg);
     /*background-image: url(~@/assets/img/pg5.jpg);*/
     background-size: cover;
   }
