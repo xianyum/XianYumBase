@@ -108,7 +108,7 @@
   export default {
     data () {
       return {
-        imgUrl: 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQER8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyMWg1TFZRSVFjWWoxR3lLVHh0Y1QAAgSiIZBdAwQAjScA',
+        imgUrl: 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQFq8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZlZCc1VKSVFjWWoxT0trYWh2Yy0AAgSuh6JfAwQAjScA',
         openWxPushXiaoDaoImage: false,
         dataForm: {
           title: ''
