@@ -4,7 +4,7 @@
       <el-input v-model="form.constantKey"  maxlength="100" placeholder="客户端通过标识符获取客户端信息" :disabled="true"></el-input>
     </el-form-item>
     <el-form-item label="客户端版本号" prop="versionNo" style="width: 50%">
-      <el-input v-model="form.versionNo"  maxlength="100" type="number" placeholder="填入最新版本号客户端自动更新"></el-input>
+      <el-input v-model="form.versionNo"  maxlength="100" type="number" placeholder="输入最新版本号客户端自动更新"></el-input>
     </el-form-item>
     <el-form-item label="客户端版本标签" prop="title" style="width: 50%">
       <el-input v-model="form.title"  maxlength="100" placeholder="客户端版本标签"></el-input>
