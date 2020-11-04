@@ -25,7 +25,10 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
-            <el-collapse-item title="v2.3 2020-08-24 登录增加滑动验证" name="20">
+            <el-collapse-item title="v2.4 2020-11-04 增加咸鱼客户端发布" name="22">
+              <div>增加咸鱼客户端发布</div>
+            </el-collapse-item>
+            <el-collapse-item title="v2.3 2020-08-24 登录增加滑动验证" name="21">
               <div>登录增加滑动验证</div>
             </el-collapse-item>
             <el-collapse-item title="v2.2 2020-08-23 新增日志趋势图" name="20">
@@ -96,22 +99,23 @@
   .main_home .leftProject{
     position: absolute;
     margin-left: 20px;
-    width: 750px;
+    width: 52%;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
   }
   .main_home .rightUpdate{
     position: absolute;
-    margin-left: 800px;
-    width: 48%;
+    margin-left: 54%;
+    width: 720px;
     float: right;
+    overflow: auto;
     margin-right: 20px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    height: 100%; /*增加日志会影响这里*/
+    height: 700px;
   }
   .contact{
     margin-left: 20px;
     float:left;
-    width: 750px;
+    width: 54%;
     margin-top: 281px;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
   }
