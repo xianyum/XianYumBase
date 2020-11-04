@@ -37,7 +37,7 @@
         prop="url"
         header-align="center"
         align="center"
-        width="250"
+        width="270"
         label="url">
         <template slot-scope="scope">
           <a :href="scope.row.url" target="_blank" class="buttonText">{{scope.row.url}}</a>
