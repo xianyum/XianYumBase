@@ -19,7 +19,7 @@
         mode="horizontal">
         <el-menu-item index="2">
           <el-badge value="blog" type="primary">
-            <a href="https://blog.csdn.net/jav_zhangwei" target="_blank">个人博客</a>
+            <a href="https://xianyum.cn" target="_blank">个人博客</a>
           </el-badge>
         </el-menu-item>
         <el-menu-item index="3">
