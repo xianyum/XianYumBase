@@ -27,9 +27,23 @@ public class SystemConstantController {
     @PostMapping("/getPublicConstant")
     @SysLog(value = "获取系统可见参数")
     @ApiOperation(value = "获取系统可见参数", httpMethod = "POST")
-    public DataResult login(@RequestBody SystemConstantEntity request) {
+    public DataResult getPublicConstant(@RequestBody SystemConstantEntity request) {
         SystemConstantEntity response = systemConstantService.getPublicConstant(request);
         return DataResult.success(response);
     }
 
+
+    @PostMapping("/getPrivateConstant")
+    @ApiOperation(value = "获取系统内部参数", httpMethod = "POST")
+    public DataResult getPrivateConstant(@RequestBody SystemConstantEntity request) {
+        SystemConstantEntity response = systemConstantService.getPrivateConstant(request);
+        return DataResult.success(response);
+    }
+
+    @PostMapping("/update")
+    @ApiOperation(value = "更新系统参数", httpMethod = "POST")
+    public DataResult update(@RequestBody SystemConstantEntity request) {
+        int count = systemConstantService.update(request);
+        return DataResult.success(count);
+    }
 }

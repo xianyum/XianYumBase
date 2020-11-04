@@ -12,6 +12,8 @@ import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 import VCharts from 'v-charts'
 import JsonViewer from 'vue-json-viewer'
+import '@/utils/formatDate.js'
+
 Vue.use(VCharts)
 
 Vue.use(VueCookie)

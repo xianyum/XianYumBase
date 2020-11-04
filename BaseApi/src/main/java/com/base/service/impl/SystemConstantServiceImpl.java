@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * @author zhangwei
  * @date 2020/11/3 19:26
@@ -28,6 +30,21 @@ public class SystemConstantServiceImpl implements SystemConstantService {
                 .eq("constant_key",request.getConstantKey()).eq("constant_visible",0);
         SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
         return systemConstantEntity;
+    }
+
+    @Override
+    public SystemConstantEntity getPrivateConstant(SystemConstantEntity request) {
+        QueryWrapper<SystemConstantEntity> queryWrapper
+                = new QueryWrapper<SystemConstantEntity>()
+                .eq("constant_key",request.getConstantKey());
+        SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
+        return systemConstantEntity;
+    }
+
+    @Override
+    public int update(SystemConstantEntity request) {
+        request.setUpdateTime(new Date());
+        return systemConstantMapper.updateById(request);
     }
 
 }

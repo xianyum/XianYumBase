@@ -8,4 +8,8 @@ import com.base.entity.po.SystemConstantEntity;
  */
 public interface SystemConstantService {
     SystemConstantEntity getPublicConstant(SystemConstantEntity request);
+
+    SystemConstantEntity getPrivateConstant(SystemConstantEntity request);
+
+    int update(SystemConstantEntity request);
 }
