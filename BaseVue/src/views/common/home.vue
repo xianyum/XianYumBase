@@ -25,6 +25,9 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
+            <el-collapse-item title="v2.5 2020-11-05 增加访客权限" name="23">
+              <div>增加访客权限</div>
+            </el-collapse-item>
             <el-collapse-item title="v2.4 2020-11-04 增加咸鱼客户端发布" name="22">
               <div>增加咸鱼客户端发布</div>
             </el-collapse-item>
