@@ -24,4 +24,5 @@ public class UserEntity extends Model<UserEntity> {
     private Integer status;//状态吗  1：允许登录 0：禁止登录
     private Date createTime;//创建时间
     private Integer delTag;//删除标记
+    private Integer permission;
 }

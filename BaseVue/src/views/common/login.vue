@@ -164,8 +164,8 @@
       return {
         tenantList: [],
         dataForm: {
-          userName: 'admin',
-          password: 'admin',
+          userName: 'xianyu',
+          password: '123456',
           uuid: '',
           captcha: ''
         },

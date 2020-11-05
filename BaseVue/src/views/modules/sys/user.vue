@@ -62,6 +62,10 @@
         header-align="center"
         align="center"
         label="用户权限">
+        <template slot-scope="scope">
+          <div v-if="scope.row.permission === 0">管理员</div>
+          <div v-else >普通用户</div>
+        </template>
       </el-table-column>
       <el-table-column
         prop="createTime"

@@ -16,6 +16,8 @@ redis:
     expire: 600  # token有效时长，单位分钟
     enable: true # 校验token开关，true开启token
     secret: BaseApi  #密匙
+  permission:
+    admin: true #系统访客权限，true：表示如果是访客，就不能操作敏感数据
 
 # 滑块验证码配置 https://gitee.com/anji-plus/captcha/tree/master/service/springboot
 aj:
@@ -44,7 +46,7 @@ aj:
 ip:
   db:
 #    path: /home/zhangwei/BaseApi/db/ip2region.db
-    path: E:\MyProject\BaseDemo\BaseApi\db\ip2region.db
+    path: C:\xianyum\JavaProjects\BaseDemo\BaseApi\db\ip2region.db
 
 #腾讯云短信发送配置
 tencent:

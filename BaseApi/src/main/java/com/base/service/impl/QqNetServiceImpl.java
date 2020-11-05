@@ -3,6 +3,7 @@ package com.base.service.impl;
 import com.base.common.utils.HttpUtils;
 import com.base.common.utils.StringUtil;
 import com.base.service.iservice.QqNetService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
  * @date 2019/11/22 16:58
  */
 @Service
+@Slf4j
 public class QqNetServiceImpl implements QqNetService {
 
     /** 获取Access_Token */

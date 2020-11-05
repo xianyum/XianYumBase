@@ -22,16 +22,16 @@
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-row :gutter="18">
-        <el-col :span="12">
-          <el-form-item label="用户权限" size="mini" prop="permissionStatus">
-            <el-radio-group v-model="dataForm.permissionStatus">
+      <el-row>
+        <el-col :span="13">
+          <el-form-item label="用户权限" size="mini" prop="permission">
+            <el-radio-group v-model="dataForm.permission">
               <el-radio :label="1">普通用户</el-radio>
               <el-radio :label="0">管理员</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="11">
           <el-form-item label="状态" size="mini" prop="status">
             <el-radio-group v-model="dataForm.status">
               <el-radio :label="0">正常</el-radio>
@@ -86,7 +86,7 @@
         visible: false,
         roleList: [],
         dataForm: {
-          permissionStatus: 1,
+          permission: 1,
           id: 0,
           userName: '',
           password: '',
@@ -139,7 +139,7 @@
                 this.dataForm.email = data.data.email
                 this.dataForm.mobile = data.data.mobile
                 this.dataForm.status = data.data.status
-                this.dataForm.permissionStatus = data.data.permissionStatus
+                this.dataForm.permission = data.data.permission
               }
             })
           }
@@ -166,7 +166,7 @@
                 'email': this.dataForm.email,
                 'mobile': this.dataForm.mobile,
                 'status': this.dataForm.status,
-                'permissionStatus': this.dataForm.permissionStatus
+                'permission': this.dataForm.permission
               })
             }).then(({data}) => {
               if (data && data.code === 200) {

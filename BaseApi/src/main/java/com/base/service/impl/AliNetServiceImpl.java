@@ -1,5 +1,6 @@
 package com.base.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -51,6 +52,7 @@ public class AliNetServiceImpl implements AliNetService {
         AlipayUserInfoShareRequest request = new AlipayUserInfoShareRequest();
         try {
             AlipayUserInfoShareResponse response = alipayClient.execute(request, accessToken);
+            log.info("第三方支付宝登录,{}", JSONObject.toJSONString(response));
             return response;
         } catch (AlipayApiException e) {
             //处理异常

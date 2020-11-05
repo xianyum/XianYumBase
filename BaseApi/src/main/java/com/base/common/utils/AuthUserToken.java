@@ -1,5 +1,6 @@
 package com.base.common.utils;
 
+import com.base.entity.enums.PermissionEnum;
 import com.base.entity.po.UserEntity;
 import org.apache.shiro.SecurityUtils;
 
@@ -15,6 +16,7 @@ public class AuthUserToken {
         if(userEntity == null){
             userEntity = new UserEntity();
             userEntity.setId(00000L);
+            userEntity.setPermission(PermissionEnum.COMMON.getStatus());
             userEntity.setUsername("system");
         }
         return userEntity;

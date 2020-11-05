@@ -9,7 +9,6 @@ import com.base.common.exception.SoException;
 import com.base.common.utils.AuthUserToken;
 import com.base.common.utils.BeanUtils;
 import com.base.common.utils.StringUtil;
-import com.base.common.utils.UUIDUtils;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
@@ -26,7 +25,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,12 +139,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         String accessToken = qqNetService.getAccessToken(authCode);
         String qqUserId = qqNetService.getUserId(accessToken);
+        log.info("第三方QQ登录,{}",qqUserId);
         if(StringUtil.isNotBlank(qqUserId)){
             UserEntity userEntity = new UserEntity();
             ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserId));
             if(aliUserEntity == null ){
                 userEntity.setId(-1L);
-                userEntity.setUsername(UUIDUtils.getUUID().substring(1,7));
+                userEntity.setUsername("QQ临时用户");
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()

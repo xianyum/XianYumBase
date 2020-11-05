@@ -12,7 +12,8 @@
         a.mobile,
         a.status,
         a.create_time AS "createTime",
-        a.del_tag AS "delTag"
+        a.del_tag AS "delTag",
+        a.permission
     </sql>
 
     <select id="queryAll" parameterType="com.base.entity.request.UserRequest" resultType="com.base.entity.po.UserEntity">

@@ -1,6 +1,7 @@
 package com.base.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.base.common.annotation.AdminPermission;
 import com.base.common.annotation.SysLog;
 import com.base.common.exception.SoException;
 import com.base.common.utils.AuthUserToken;
@@ -53,6 +54,7 @@ public class UserController {
      */
     @PostMapping("/delete")
     @SysLog(value = "删除用户")
+    @AdminPermission()
     @ApiOperation(value = "删除用户", httpMethod = "POST")
     public DataResult delete(@RequestBody Long[] userIds){
         try {
@@ -78,6 +80,7 @@ public class UserController {
      */
     @PostMapping("/save")
     @SysLog(value = "新增用户")
+    @AdminPermission()
     @ApiOperation(value = "保存用户", httpMethod = "POST")
     public DataResult save(@RequestBody UserRequest user){
         try {
@@ -98,6 +101,7 @@ public class UserController {
      */
     @PostMapping("/update")
     @SysLog(value = "修改用户")
+    @AdminPermission()
     @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
     public DataResult update(@RequestBody UserRequest user){
         try {

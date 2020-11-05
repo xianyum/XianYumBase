@@ -9,7 +9,7 @@ package com.base.entity.enums;
 public enum PermissionEnum {
 
     ADMIN(0,"admin"),
-    TEACHER(1,"teacher");
+    COMMON(1,"common");
 
     private Integer status;
     private String name;
