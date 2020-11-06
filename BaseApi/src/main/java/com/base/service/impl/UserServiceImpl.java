@@ -12,6 +12,7 @@ import com.base.common.utils.StringUtil;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
+import com.base.entity.enums.PermissionEnum;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.ThirdUserEntity;
 import com.base.entity.po.UserEntity;
@@ -146,6 +147,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             if(aliUserEntity == null ){
                 userEntity.setId(-1L);
                 userEntity.setUsername("QQ临时用户");
+                userEntity.setPermission(PermissionEnum.COMMON.getStatus());
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
@@ -170,6 +172,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
                 userEntity.setId(-1L);
+                userEntity.setPermission(PermissionEnum.COMMON.getStatus());
                 userEntity.setUsername(aLiUserInfo.getNickName());
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
             }else{
