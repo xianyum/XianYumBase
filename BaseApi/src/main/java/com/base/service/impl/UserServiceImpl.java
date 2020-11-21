@@ -1,6 +1,5 @@
 package com.base.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -10,11 +9,9 @@ import com.base.common.exception.SoException;
 import com.base.common.utils.AuthUserToken;
 import com.base.common.utils.BeanUtils;
 import com.base.common.utils.StringUtil;
-import com.base.common.utils.UUIDUtils;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
-import com.base.entity.enums.PermissionEnum;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.ThirdUserEntity;
 import com.base.entity.po.UserEntity;
@@ -153,12 +150,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         String accessToken = qqNetService.getAccessToken(authCode);
         String qqUserId = qqNetService.getUserId(accessToken);
+        log.info("第三方QQ登录,{}",qqUserId);
         if(StringUtil.isNotBlank(qqUserId)){
             UserEntity userEntity = new UserEntity();
             ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserId));
             if(aliUserEntity == null ){
-                userEntity.setId(qqUserId);
-                userEntity.setUsername(qqUserId);
+                userEntity.setId(-1L);
+                userEntity.setUsername("QQ临时用户");
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
                 userEntity.setThirdUserInfo(qqUserId);
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
