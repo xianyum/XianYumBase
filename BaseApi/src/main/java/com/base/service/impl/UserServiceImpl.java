@@ -115,7 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public int update(UserRequest user) {
         UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
-        List<UserEntity> repeatList = userMapper.getList(user).stream().filter(p -> user.getId() != p.getId()).collect(Collectors.toList());
+        List<UserEntity> repeatList = userMapper.getList(user).stream().filter(p -> !user.getId().equals(p.getId())).collect(Collectors.toList());
         if(repeatList != null && repeatList.size() >0){
             throw new SoException("用户名或手机号已被使用！");
         }
