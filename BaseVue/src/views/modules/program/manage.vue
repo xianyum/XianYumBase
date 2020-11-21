@@ -127,7 +127,7 @@
         header-align="center"
         align="center"
         :formatter="formateTime"
-        width="150px"
+        width="160px"
         label="预计完成时间">
       </el-table-column>
       <el-table-column
@@ -135,7 +135,7 @@
         header-align="center"
         align="center"
         :formatter="formateTime"
-        width="150px"
+        width="160px"
         label="最终完成时间">
       </el-table-column>
       <el-table-column
@@ -150,7 +150,7 @@
         header-align="center"
         align="center"
         :formatter="formateTime"
-        width="150px"
+        width="160px"
         label="创建日期">
       </el-table-column>
       <el-table-column
