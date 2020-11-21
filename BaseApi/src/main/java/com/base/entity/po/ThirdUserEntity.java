@@ -22,7 +22,7 @@ public class ThirdUserEntity {
     @TableId(type = IdType.INPUT)
     private String id;
 
-    private Integer userId;
+    private String userId;
 
     /**
      * 阿里用户userId
