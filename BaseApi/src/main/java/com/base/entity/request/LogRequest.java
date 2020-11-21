@@ -16,4 +16,6 @@ public class LogRequest extends BaseRequest {
     private String endTime;
 
     private String queryTime;
+
+    private String username;
 }

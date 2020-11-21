@@ -37,7 +37,7 @@
         <java.jwt.version>3.2.0</java.jwt.version>
         <commons.httpclient.version>3.0.1</commons.httpclient.version>
         <oshi.version>3.9.1</oshi.version>
-        <easy.excel.version>1.1.1</easy.excel.version>
+        <easy.excel.version>2.2.6</easy.excel.version>
         <org.apache.httpclient.version>4.5.2</org.apache.httpclient.version>
         <dynamic.datasource.boot.version>2.5.4</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.1.0</mybatisplus.boot.version>
@@ -50,6 +50,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>com.github.anji-plus</groupId>
             <artifactId>captcha-spring-boot-starter</artifactId>

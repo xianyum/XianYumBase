@@ -1,6 +1,7 @@
 package com.base.entity.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -14,8 +15,8 @@ import java.util.Date;
 @Data
 @TableName(value = "user")
 public class UserEntity extends Model<UserEntity> {
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    @TableId(type = IdType.INPUT)
+    private String id;
     private String username;
     private String password;
     private String salt;
@@ -25,4 +26,9 @@ public class UserEntity extends Model<UserEntity> {
     private Date createTime;//创建时间
     private Integer delTag;//删除标记
     private Integer permission;
+
+    /** 第三方用户信息（json串） */
+    @TableField(exist = false)
+    private String thirdUserInfo;
+
 }

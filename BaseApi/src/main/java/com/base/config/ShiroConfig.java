@@ -51,6 +51,7 @@ public class ShiroConfig {
         filterMap.put("/captcha/get", "anon");
         filterMap.put("/captcha/check", "anon");
         filterMap.put("/oss/upload", "anon");
+        filterMap.put("/gitee/push", "anon");
         filterMap.put("/ali/login", "anon");
         filterMap.put("/qq/login", "anon");
         filterMap.put("/wxCenter/get", "anon");

@@ -15,8 +15,8 @@ public class AuthUserToken {
         UserEntity userEntity = (UserEntity)SecurityUtils.getSubject().getPrincipal();
         if(userEntity == null){
             userEntity = new UserEntity();
-            userEntity.setId(00000L);
-            userEntity.setPermission(PermissionEnum.COMMON.getStatus());
+            userEntity.setId("00000L");
+            userEntity.setPermission(PermissionEnum.VISITOR.getStatus());
             userEntity.setUsername("system");
         }
         return userEntity;

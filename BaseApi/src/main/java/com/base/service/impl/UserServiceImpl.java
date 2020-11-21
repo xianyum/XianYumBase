@@ -1,5 +1,6 @@
 package com.base.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,9 +10,11 @@ import com.base.common.exception.SoException;
 import com.base.common.utils.AuthUserToken;
 import com.base.common.utils.BeanUtils;
 import com.base.common.utils.StringUtil;
+import com.base.common.utils.UUIDUtils;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
+import com.base.entity.enums.PermissionEnum;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.ThirdUserEntity;
 import com.base.entity.po.UserEntity;
@@ -25,9 +28,10 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -50,6 +54,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         Page<UserEntity> page = new Page<>(user.getPageNum(),user.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
+        if(AuthUserToken.getUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+            user.setId(AuthUserToken.getUser().getId());
+        }else{
+            user.setId(null);
+        }
         List<UserEntity> list = userMapper.queryAll(user, page);
         page.setRecords(list);
         return page;
@@ -64,10 +73,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public void deleteById(Long[] userIds) {
+    public void deleteById(String[] userIds) {
+
+        if(AuthUserToken.getUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+            throw new SoException("无权删除用户信息");
+        }
         UserEntity userEntity = new UserEntity();
         userEntity.setDelTag(UserStatusEnum.BAN.getStatus());
-        for(Long id : userIds){
+        for(String id : userIds){
             userEntity.setId(id);
             userMapper.updateById(userEntity);
         }
@@ -94,6 +107,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if(userEntity.getStatus() == null){
             userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
         }
+        userEntity.setId(UUIDUtils.UUIDReplace());
         int count = userMapper.insert(userEntity);
         return count;
     }
@@ -139,14 +153,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         String accessToken = qqNetService.getAccessToken(authCode);
         String qqUserId = qqNetService.getUserId(accessToken);
-        log.info("第三方QQ登录,{}",qqUserId);
         if(StringUtil.isNotBlank(qqUserId)){
             UserEntity userEntity = new UserEntity();
             ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserId));
             if(aliUserEntity == null ){
-                userEntity.setId(-1L);
-                userEntity.setUsername("QQ临时用户");
+                userEntity.setId(qqUserId);
+                userEntity.setUsername(qqUserId);
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
+                userEntity.setThirdUserInfo(qqUserId);
+                userEntity.setPermission(PermissionEnum.COMMON.getStatus());
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
@@ -155,6 +170,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             return userEntity;
         }
         return null;
+    }
+
+    @Override
+    public Set<String> getPermissions() {
+        Set<String> permissions = new HashSet<>();
+        if(AuthUserToken.getUser().getPermission() == PermissionEnum.ADMIN.getStatus()){
+            for(PermissionEnum item : PermissionEnum.values()){
+                permissions.add(item.getName());
+            }
+        }
+        permissions.add(PermissionEnum.getNameByStatus(AuthUserToken.getUser().getPermission()));
+        return permissions;
     }
 
     @Override
@@ -169,9 +196,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
-                userEntity.setId(-1L);
+                userEntity.setId(aLiUserInfo.getUserId());
                 userEntity.setUsername(aLiUserInfo.getNickName());
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
+                userEntity.setPermission(PermissionEnum.COMMON.getStatus());
+                userEntity.setThirdUserInfo(JSONObject.toJSONString(aLiUserInfo));
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())

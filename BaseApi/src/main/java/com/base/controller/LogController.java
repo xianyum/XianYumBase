@@ -1,7 +1,7 @@
 package com.base.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.base.common.annotation.AdminPermission;
+import com.base.common.annotation.Permissions;
 import com.base.common.exception.SoException;
 import com.base.common.utils.DataResult;
 import com.base.entity.po.LogEntity;
@@ -53,7 +53,7 @@ public class LogController {
     }
 
     @PostMapping("/delete")
-    @AdminPermission()
+    @Permissions(value = {"visitor","common"})
     @ApiOperation(value = "删除日志记录", httpMethod = "POST")
     public DataResult delete(@RequestBody String[] logIdS){
         try {

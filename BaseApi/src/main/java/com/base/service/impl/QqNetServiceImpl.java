@@ -1,5 +1,6 @@
 package com.base.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.base.common.utils.HttpUtils;
 import com.base.common.utils.StringUtil;
 import com.base.service.iservice.QqNetService;
@@ -46,6 +47,7 @@ public class QqNetServiceImpl implements QqNetService {
     @Override
     public String getUserId(String accessToken) {
         String result = HttpUtils.sendGet(OPEN_ID_URL, "access_token="+accessToken);
+        log.info("第三方QQ登录,{}",result);
         String userId = StringUtil.substringBetween(result,"\"openid\":\"","\"} )");
         return userId;
     }

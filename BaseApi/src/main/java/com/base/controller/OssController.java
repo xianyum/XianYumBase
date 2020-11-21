@@ -1,5 +1,6 @@
 package com.base.controller;
 
+import com.base.common.annotation.Permissions;
 import com.base.common.utils.DataResult;
 import com.base.entity.po.OssFileEntity;
 import com.base.service.iservice.OssService;
@@ -29,6 +30,7 @@ public class OssController {
 
     @PostMapping("/upload")
     @ApiOperation(value = "上传接口", httpMethod = "POST")
+    @Permissions()
     public DataResult upload(@RequestParam("file") MultipartFile file)  throws Exception{
         OssFileEntity ossFileEntity = ossService.upload(file);
         if(ossFileEntity == null){

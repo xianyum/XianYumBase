@@ -22,12 +22,14 @@
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-row>
-        <el-col :span="13">
+
+      <el-row v-if="isAuth('admin')">
+        <el-col :span="18">
           <el-form-item label="用户权限" size="mini" prop="permission">
             <el-radio-group v-model="dataForm.permission">
-              <el-radio :label="1">普通用户</el-radio>
-              <el-radio :label="0">管理员</el-radio>
+              <el-radio :label="1">游客</el-radio>
+              <el-radio :label="2">管理员</el-radio>
+              <el-radio :label="0">超级管理员</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>

@@ -13,11 +13,13 @@ import cloneDeep from 'lodash/cloneDeep'
 import VCharts from 'v-charts'
 import JsonViewer from 'vue-json-viewer'
 import '@/utils/formatDate.js'
+import hzqingVueTimeline from 'hzqing-vue-timeline'
 
 Vue.use(VCharts)
 
 Vue.use(VueCookie)
 Vue.use(JsonViewer)
+Vue.use(hzqingVueTimeline)
 Vue.config.productionTip = false
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock

@@ -23,9 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class OssServiceImpl implements OssService {
 
-    private static final String ACCESS_KEY= "BO-n8TYUy-DqdUYOyN8RXLZpJYfqP9ghJLEAxGpa";
-    private static final String SECRET_KEY= "cTgGZFdV4FaLnjlQEBv2U2sH8D70oH31U6beaidY";
-    private static final String BUCKET= "xianyudream";
+    private static final String ACCESS_KEY= "FggH83ACOAOCm2CxqL7epPBinlZOqgZnnnm2BWdL";
+    private static final String SECRET_KEY= "MaSeD_Z63MZSsWqwRjI_Di-9-p5uijOq-cz7Y0_O";
+    private static final String BUCKET= "xianyum";
     private static final String URL= "http://oss.xianyum.cn/";
 
 
@@ -46,7 +46,7 @@ public class OssServiceImpl implements OssService {
             Response response = uploadManager.put(file.getBytes(), fileName, upToken);
             if(response.statusCode == 200){ //上传成功
                 ossFileEntity.setFileName(file.getOriginalFilename());
-                ossFileEntity.setUrl(fileName);
+                ossFileEntity.setUrl(URL+fileName);
                 Long size = file.getSize()/1024;//转换成kb
                 ossFileEntity.setSize(size);
             }else{

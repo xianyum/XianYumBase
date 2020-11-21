@@ -6,13 +6,15 @@ import com.base.entity.po.UserEntity;
 import com.base.entity.request.UpdatePasswordRequest;
 import com.base.entity.request.UserRequest;
 
+import java.util.Set;
+
 public interface UserService extends IService<UserEntity> {
 
     IPage<UserEntity> queryAll(UserRequest user);
 
     UserEntity queryByUserName(String username);
 
-    void deleteById(Long[] userIds);
+    void deleteById(String[] userIds);
 
     UserEntity selectOneById(UserRequest user);
 
@@ -34,4 +36,6 @@ public interface UserService extends IService<UserEntity> {
      * @return
      */
     UserEntity getUserByQq(String authCode);
+
+    Set<String> getPermissions();
 }

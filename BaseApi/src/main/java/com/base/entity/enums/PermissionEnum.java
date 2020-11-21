@@ -8,8 +8,13 @@ package com.base.entity.enums;
  */
 public enum PermissionEnum {
 
+
+    /** 超级管理员 */
     ADMIN(0,"admin"),
-    COMMON(1,"common");
+    /** 管理员 */
+    COMMON(2,"common"),
+    /** 游客 */
+    VISITOR(1,"visitor");
 
     private Integer status;
     private String name;

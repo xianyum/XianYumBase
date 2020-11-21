@@ -1,6 +1,6 @@
 package com.base.controller;
 
-import com.base.common.annotation.AdminPermission;
+import com.base.common.annotation.Permissions;
 import com.base.common.annotation.SysLog;
 import com.base.common.utils.DataResult;
 import com.base.entity.po.SystemConstantEntity;
@@ -42,7 +42,7 @@ public class SystemConstantController {
     }
 
     @PostMapping("/update")
-    @AdminPermission()
+    @Permissions(value = {"visitor","common"})
     @ApiOperation(value = "更新系统参数", httpMethod = "POST")
     public DataResult update(@RequestBody SystemConstantEntity request) {
         int count = systemConstantService.update(request);

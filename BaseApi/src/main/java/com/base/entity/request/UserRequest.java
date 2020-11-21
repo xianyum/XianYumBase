@@ -13,7 +13,7 @@ public class UserRequest extends BaseRequest {
 
     private String captcha;
     private String uuid;
-    private Long id;
+    private String id;
     @NotBlank(message="账号不能为空")
     private String username;//登录账号
     private String password;//登录密码

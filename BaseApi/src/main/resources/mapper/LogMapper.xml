@@ -29,6 +29,9 @@
         <if test="logRequest.endTime != null and logRequest.endTime != ''">
             AND create_time &lt;= #{logRequest.endTime}
         </if>
+        <if test="logRequest.username != null and logRequest.username != ''">
+            AND username = #{logRequest.username}
+        </if>
         ORDER BY create_time DESC
     </select>
 
@@ -69,6 +72,9 @@
                 OR
                 operation LIKE CONCAT('%', #{nameOrDesc}, '%')
                 )
+            </if>
+            <if test="username != null and username != ''">
+                AND username = #{username}
             </if>
         </where>
         GROUP BY

@@ -4,6 +4,7 @@ import com.base.common.utils.RedisUtils;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.UserEntity;
+import com.base.service.iservice.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -33,6 +34,9 @@ public class OAuth2Realm extends AuthorizingRealm {
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public boolean supports(AuthenticationToken token) {
         return token instanceof OAuth2Token;
@@ -44,7 +48,7 @@ public class OAuth2Realm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         //用户权限列表
-        Set<String> permsSet = new HashSet<>();
+        Set<String> permsSet = userService.getPermissions();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         info.setStringPermissions(permsSet);
         return info;

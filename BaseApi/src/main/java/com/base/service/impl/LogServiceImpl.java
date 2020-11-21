@@ -7,11 +7,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.base.common.exception.SoException;
+import com.base.common.utils.AuthUserToken;
 import com.base.common.utils.DateUtils;
 import com.base.common.utils.DingDingPushUtils;
 import com.base.common.utils.HttpUtils;
 import com.base.dao.LogMapper;
 import com.base.dao.WxCenterMapper;
+import com.base.entity.enums.PermissionEnum;
 import com.base.entity.po.LogEntity;
 import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.request.LogRequest;
@@ -58,6 +60,11 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
         Page<LogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
+        if(AuthUserToken.getUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+            request.setUsername(AuthUserToken.getUser().getUsername());
+        }else{
+            request.setUsername(null);
+        }
         List<LogEntity> list = logMapper.queryAll(request, page);
         page.setRecords(list);
         return page;
@@ -128,6 +135,11 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
 
     @Override
     public List<LogResponse> getVisitCountCharts(LogRequest request) {
+        if(AuthUserToken.getUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+            request.setUsername(AuthUserToken.getUser().getUsername());
+        }else{
+            request.setUsername(null);
+        }
         List<LogResponse> responses = logMapper.getVisitCountCharts(request);
         return responses;
     }
