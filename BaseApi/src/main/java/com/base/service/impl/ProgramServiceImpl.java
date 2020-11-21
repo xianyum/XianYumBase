@@ -11,7 +11,9 @@ import com.base.common.utils.StringUtil;
 import com.base.common.utils.UUIDUtils;
 import com.base.dao.GiteeCommitMapper;
 import com.base.dao.ProgramMapper;
+import com.base.dao.SystemConstantMapper;
 import com.base.entity.enums.PermissionEnum;
+import com.base.entity.po.SystemConstantEntity;
 import com.base.entity.po.program.GiteeCommitEntity;
 import com.base.entity.po.program.ProgramEntity;
 import com.base.entity.request.ProgramRequest;
@@ -34,6 +36,9 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Autowired
     private GiteeCommitMapper giteeCommitMapper;
+
+    @Autowired
+    private SystemConstantMapper systemConstantMapper;
 
 
     @Override
@@ -140,10 +145,14 @@ public class ProgramServiceImpl implements ProgramService {
                 .orderByDesc("create_time");
         List<GiteeCommitEntity> giteeCommitEntities = giteeCommitMapper.selectList(queryWrapper);
         List<JSONObject> list = new ArrayList<>();
+        QueryWrapper<SystemConstantEntity> queryWrapper1
+                = new QueryWrapper<SystemConstantEntity>()
+                .eq("constant_key","program_schedule_url");
+        SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper1);
         if(giteeCommitEntities != null && giteeCommitEntities.size() >0){
             for(GiteeCommitEntity item : giteeCommitEntities){
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("img","static/img/favicon.ico");
+                jsonObject.put("img",systemConstantEntity.getConstantValue());
                 jsonObject.put("time",item.getCreateTime().getTime());
                 jsonObject.put("content",item.getCommitMessage());
                 list.add(jsonObject);
