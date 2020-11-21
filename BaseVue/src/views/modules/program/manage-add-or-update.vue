@@ -99,6 +99,7 @@
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancle">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button type="info" @click="getHelp()">查看帮助</el-button>
     </span>
   </el-dialog>
 </template>
@@ -173,6 +174,17 @@ export default {
     this.uploadUrl = this.$http.adornUrl(`/oss/upload?token=${this.$cookie.get('token')}`);
   },
   methods: {
+    getHelp(){
+      this.$http({
+        url: this.$http.adornUrl('/systemConstant/getPrivateConstant'),
+        method: 'post',
+        data: this.$http.adornData({
+          'constantKey': 'program_help'
+        })
+      }).then(({data}) => {
+        window.open(data.data.constantValue, '_blank')
+      })
+    },
     beforeUploadHandle(file) {
       // if (file.type !== 'application/pdf' && file.type !== 'application/msword'
       //   && file.type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
