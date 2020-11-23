@@ -85,6 +85,8 @@
               :before-upload="beforeUploadHandle"
               :on-success="successHandle"
               ref="upload"
+              accept=".doc, .docx"
+              :data="postData"
             >
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -105,6 +107,8 @@
 </template>
 
 <script>
+import {getUUID} from '@/utils'
+
 export default {
   data () {
     var validateMobile = (rule, value, callback) => {
@@ -115,6 +119,10 @@ export default {
       }
     }
     return {
+      postData: {
+        token: '',
+        key: ''
+      },
       tmallStatusList :[{
         value: 1,
         label: '散客买家'
@@ -171,9 +179,22 @@ export default {
     }
   },
   created() {
-    this.uploadUrl = this.$http.adornUrl(`/oss/upload?token=${this.$cookie.get('token')}`);
+    // this.uploadUrl = this.$http.adornUrl(`/oss/upload?token=${this.$cookie.get('token')}`);
+    this.getUploadUpParam()
   },
   methods: {
+    getUploadUpParam () {
+      this.$http({
+        url: this.$http.adornUrl('/oss/getWebUpToken'),
+        method: 'post',
+        data: this.$http.adornData({
+          'constantKey': 'program_help'
+        })
+      }).then(({data}) => {
+        this.postData.token = data.msg
+        this.uploadUrl = 'http://up-z2.qiniup.com'
+      })
+    },
     getHelp(){
       this.$http({
         url: this.$http.adornUrl('/systemConstant/getPrivateConstant'),
@@ -186,17 +207,30 @@ export default {
       })
     },
     beforeUploadHandle(file) {
-      // if (file.type !== 'application/pdf' && file.type !== 'application/msword'
-      //   && file.type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      //   this.$message.error('只支持doc、docx、pdf格式的图片！')
-      //   return false
-      // }
+      let fileName = file.name
+      let fileExtension = "."+fileName.substring(fileName.lastIndexOf('.') + 1);
+      this.postData.key = getUUID()+fileExtension
+      if (file.type !== 'application/pdf' && file.type !== 'application/msword'
+        && file.type !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        this.$message.error('只支持doc、docx、pdf格式的文件！')
+        return false
+      }
+      let fileSize = file.size/(1024*1024)
+      if(fileSize>10){
+        this.$message.error('只允许上传小于10M的文件！')
+        return false
+      }
     },
     successHandle (response, file, fileList) {
-      if (response && response.code === 200) {
-        this.dataForm.programRequirements = response.data.url
-        console.log(response.data.url)
-      } else {
+      // if (response && response.code === 200) {
+      //   this.dataForm.programRequirements = response.data.url
+      //   console.log(response.data.url)
+      // } else {
+      //   this.dataForm.programRequirements = ''
+      // }
+      if(response){
+        this.dataForm.programRequirements = "http://oss.xianyum.cn/" + response.key
+      }else{
         this.dataForm.programRequirements = ''
       }
     },
