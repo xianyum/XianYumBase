@@ -10,4 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface OssService {
     OssFileEntity upload(MultipartFile file);
+
+    String getWebUpToken();
 }

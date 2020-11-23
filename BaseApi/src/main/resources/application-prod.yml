@@ -45,7 +45,7 @@ aj:
 ip:
   db:
 #    path: /home/zhangwei/BaseApi/db/ip2region.db
-    path: C:\xianyum\JavaProjects\BaseDemo\BaseApi\db\ip2region.db
+    path: E:\MyProject\BaseDemo\BaseApi\db\ip2region.db
 
 #腾讯云短信发送配置
 tencent:

@@ -38,4 +38,14 @@ public class OssController {
         }
         return DataResult.success(ossFileEntity);
     }
+
+
+    @PostMapping("/getWebUpToken")
+    @ApiOperation(value = "获取上传凭证", httpMethod = "POST")
+    @Permissions()
+    public DataResult getWebUpToken(){
+
+        String token = ossService.getWebUpToken();
+        return DataResult.success(token);
+    }
 }

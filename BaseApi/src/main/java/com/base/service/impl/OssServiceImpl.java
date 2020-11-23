@@ -58,4 +58,11 @@ public class OssServiceImpl implements OssService {
         }
         return null;
     }
+
+    @Override
+    public String getWebUpToken() {
+        Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
+        String upToken = auth.uploadToken(BUCKET);
+        return upToken;
+    }
 }
