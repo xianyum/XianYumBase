@@ -192,7 +192,7 @@ export default {
         })
       }).then(({data}) => {
         this.postData.token = data.msg
-        this.uploadUrl = 'http://up-z2.qiniup.com'
+        this.uploadUrl = 'https://up-z2.qiniup.com'
       })
     },
     getHelp(){
