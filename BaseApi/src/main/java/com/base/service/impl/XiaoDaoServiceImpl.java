@@ -16,6 +16,7 @@ import com.base.entity.request.XiaoDaoRequest;
 import com.base.service.iservice.XiaoDaoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -37,13 +38,14 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
     @Autowired
     private WxCenterMapper wxCenterMapper;
 
-    private static final String URL = "http://wxpusher.zjiecode.com/api/send/message";
+    @Value("${push.wxpusher.url}")
+    private String URL;
 
-    private static final String APP_TOKEN = "AT_gEUq49NQBwiX29wvaNNawCRdyoBMJ8RA";
+    @Value("${push.wxpusher.app_token}")
+    private String APP_TOKEN;
 
-    private static final String SUFFIX = "【xianyum.cn】推送：";
-
-    private static final String APP_KEY = "AK_l8hjWUB0dlmkmBwc";
+    @Value("${push.wxpusher.app_key}")
+    private String APP_KEY;
 
     /**
      * 实时推送更新消息

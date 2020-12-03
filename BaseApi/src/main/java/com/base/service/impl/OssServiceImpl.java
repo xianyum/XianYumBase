@@ -10,6 +10,7 @@ import com.qiniu.storage.Region;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,10 +24,17 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class OssServiceImpl implements OssService {
 
-    private static final String ACCESS_KEY= "FggH83ACOAOCm2CxqL7epPBinlZOqgZnnnm2BWdL";
-    private static final String SECRET_KEY= "MaSeD_Z63MZSsWqwRjI_Di-9-p5uijOq-cz7Y0_O";
-    private static final String BUCKET= "xianyum";
-    private static final String URL= "http://oss.xianyum.cn/";
+    @Value("${oss.access_key}")
+    private String ACCESS_KEY;
+
+    @Value("${oss.secret_key}")
+    private String SECRET_KEY;
+
+    @Value("${oss.bucket}")
+    private String BUCKET;
+
+    @Value("${oss.url}")
+    private String URL;
 
 
     @Override

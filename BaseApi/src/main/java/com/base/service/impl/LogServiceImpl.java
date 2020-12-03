@@ -21,9 +21,9 @@ import com.base.entity.response.LogResponse;
 import com.base.service.iservice.LogService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,9 +34,14 @@ import java.util.stream.Collectors;
 @Service
 public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements LogService {
 
-    private static final String APP_TOKEN = "AT_o4on0ssXIcq1TzcQmPfJ6pklqfgBP1v8";
-    private static final String APP_KEY = "AK_l7XdgAZvFIUegeUu";
-    private static final String URL = "http://wxpusher.zjiecode.com/api/send/message";
+    @Value("${push.wxpusher.url}")
+    private String URL;
+
+    @Value("${push.wxpusher.app_token}")
+    private String APP_TOKEN;
+
+    @Value("${push.wxpusher.app_key}")
+    private String APP_KEY;
 
     @Autowired
     private LogMapper logMapper;

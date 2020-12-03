@@ -1,10 +1,10 @@
 package com.base.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.base.common.utils.HttpUtils;
 import com.base.common.utils.StringUtil;
 import com.base.service.iservice.QqNetService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,13 +17,24 @@ import org.springframework.stereotype.Service;
 public class QqNetServiceImpl implements QqNetService {
 
     /** 获取Access_Token */
-    private static final String ACCESS_TOKEN_URL="https://graph.qq.com/oauth2.0/token";
-    private static final String CLIENT_ID="101831000";
-    private static final String CLIENT_SECRET="5d8b22dd879c4e942d691d0b7b1940e9";
-    private static final String GRANT_TYPE="authorization_code";
-    private static final String REDIRECT_URI="http://xianyum.cn/#/checkQQLogin";
+    @Value("${qq.login.access_token_url}")
+    private String ACCESS_TOKEN_URL;
+
+    @Value("${qq.login.client_id}")
+    private String CLIENT_ID;
+
+    @Value("${qq.login.client_secret}")
+    private String CLIENT_SECRET;
+
+    @Value("${qq.login.grant_type}")
+    private String GRANT_TYPE;
+
+    @Value("${qq.login.redirect_uri}")
+    private String REDIRECT_URI;
+
     /** 获取OpenID */
-    private static final String OPEN_ID_URL="https://graph.qq.com/oauth2.0/me";
+    @Value("${qq.login.open_id_url}")
+    private String OPEN_ID_URL;
 
     /**
      * 获取QQ用户token

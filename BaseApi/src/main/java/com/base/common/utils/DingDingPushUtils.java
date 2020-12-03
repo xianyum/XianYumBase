@@ -16,8 +16,8 @@ import java.net.URLEncoder;
 @Slf4j
 public class DingDingPushUtils {
 
-    private static final String SECRET = "SEC9e92d51cbd1766a9d2ccdb8dfbebd7862e04a46923c5d6dec950dd19c3333a9c";
-    private static final String URL = "https://oapi.dingtalk.com/robot/send?access_token=f6a9684a35620efe0ac41f7aa5d99f70858c71646b867340dae19f52d25b6fc9";
+    private static final String SECRET = PropertiesUtil.getString("push.dingding.secret");
+    private static final String URL = PropertiesUtil.getString("push.dingding.url");
 
     public static void push(String title,String text){
 
@@ -46,7 +46,7 @@ public class DingDingPushUtils {
 
         StringBuilder markdownStr = new StringBuilder();
         markdownStr.append("#### ");
-        markdownStr.append("Photoshop CC 2019精简");
+        markdownStr.append("Photoshop CC 2019精简111");
         markdownStr.append("\n");
         markdownStr.append(">");
         markdownStr.append("[https://www.xd0.com/i-wz-56060507.html](https://www.xd0.com/i-wz-56060507.html)");
