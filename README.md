@@ -1,37 +1,63 @@
 # BaseDemo
 
-#### 介绍
-基础框架
+#### 项目简介
+
+1. 定时爬取某娱乐网站数据，进行实时推送到微信/钉钉
+2. 支持QQ、支付宝等第三方登录
+3. 支持按钮及数据权限，可自定义部门数据权限。
+4. 动态菜单，通过菜单管理统一管理访问路由
+5. 支持多数据源，简单配置即可实现切换
+6. 完善的日志记录体系简单注解即可实现
+7. 在线演示地址：[https://xianyum.cn/base](https://xianyum.cn/base)
+
+#### 项目截图
+
+![微信截图_20201203201546](https://xiaoyaxiaokeai.gitee.io/base/20201113/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20201203201546.png)
+
+
+
+![微信截图_20201203201602](https://xiaoyaxiaokeai.gitee.io/base/20201113/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20201203201602.png)
 
 #### 软件架构
-软件架构说明
 
+**后端**
+
+SpringBoot 
+
+Mybatis-Plus
+
+Shiro
+
+Redis
+
+Gecco爬虫
+
+**前端**
+
+vue
+
+element-ui
 
 #### 安装教程
 
-1. xxxx
-2. xxxx
-3. xxxx
+1. 后端修改application-test.yml 160行mysql账号密码以及url，139以及141行redis密码，启动项目即可
+
+2. 前端安装
+
+   ```java
+   npm install
+   
+   npm run dev
+   ```
+
+   
 
 #### 使用说明
 
-1. xxxx
-2. xxxx
-3. xxxx
+1. 账号密码默认admin/123456
 
-#### 参与贡献
+#### 项目感谢
 
-1. Fork 本仓库
-2. 新建 Feat_xxx 分支
-3. 提交代码
-4. 新建 Pull Request
+​	感谢[renren-fast](https://gitee.com/renrenio)，本项目大多借鉴renren开源
 
-
-#### 码云特技
-
-1. 使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2. 码云官方博客 [blog.gitee.com](https://blog.gitee.com)
-3. 你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
-4. [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
-5. 码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6. 码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+​	
