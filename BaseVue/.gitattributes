@@ -1,0 +1,3 @@
+*.css linguist-language=Java
+*.jsc linguist-language=Java
+*.vue linguist-language=Java
