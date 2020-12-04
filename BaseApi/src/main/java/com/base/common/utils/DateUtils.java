@@ -1,11 +1,9 @@
 package com.base.common.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,7 +48,7 @@ public class DateUtils {
      * @param pattern 日期的格式，如：DateUtils.DATE_TIME_PATTERN
      */
     public static Date stringToDate(String strDate, String pattern) {
-        if (StringUtils.isBlank(strDate)){
+        if (StringUtil.isBlank(strDate)){
             return null;
         }
 

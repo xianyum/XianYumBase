@@ -2,6 +2,7 @@ package com.base.common.validator;
 
 import com.base.common.exception.SoException;
 
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;

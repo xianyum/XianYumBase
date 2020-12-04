@@ -9,8 +9,6 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.Date;
 
@@ -49,7 +47,7 @@ public class JwtUtils {
                     .sign(algorithm);
             byte[] encode = Base64.getEncoder().encode(token.getBytes());
             return new String(encode);
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             return null;
         }
     }

@@ -8,14 +8,11 @@ import com.base.common.utils.StringUtil;
 import com.base.common.utils.UUIDUtils;
 import com.base.dao.WxCenterMapper;
 import com.base.entity.po.wx_center.WxCenterEntity;
-import com.base.entity.po.xiaodao.XiaoDaoEntity;
 import com.base.entity.request.WxCenterRequest;
 import com.base.service.iservice.WxCenterService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 
 /**

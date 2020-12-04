@@ -9,10 +9,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *  获取区域信息
@@ -43,7 +41,7 @@ public class AreaUtils {
 				sb.append(res.trim());
 			}
 			String str = sb.toString();
-			if (StringUtils.isNotEmpty(str)) {
+			if (StringUtil.isNotEmpty(str)) {
 				int lngStart = str.indexOf("lng\":");
 				int lngEnd = str.indexOf(",\"lat");
 				int latEnd = str.indexOf("},\"precise");
@@ -86,7 +84,7 @@ public class AreaUtils {
 			}
 			String str = sb.toString();
 			ObjectMapper mapper = new ObjectMapper();
-			if (StringUtils.isNotEmpty(str)) {
+			if (StringUtil.isNotEmpty(str)) {
 				JsonNode jsonNode = mapper.readTree(str);
 				jsonNode.findValue("status").toString();
 				JsonNode resultNode = jsonNode.findValue("result");

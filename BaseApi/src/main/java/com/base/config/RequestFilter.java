@@ -3,7 +3,6 @@ package com.base.config;
 import com.alibaba.druid.util.DruidWebUtils;
 import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
-import com.google.common.base.Stopwatch;
 import com.base.common.utils.IPUtils;
 import com.base.common.utils.StringUtil;
 import com.base.common.utils.UUIDUtils;
@@ -11,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
-
+import com.google.common.base.Stopwatch;
 import javax.servlet.*;
 import javax.servlet.FilterConfig;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +38,7 @@ public class RequestFilter implements Filter {
     public RequestFilter() {
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         Stopwatch sp = Stopwatch.createStarted();
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {

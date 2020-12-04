@@ -1,7 +1,7 @@
 package com.base.common.validator;
 
 import com.base.common.exception.SoException;
-import org.apache.commons.lang.StringUtils;
+import com.base.common.utils.StringUtil;
 
 /**
  * 数据校验
@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class Assert {
     public static void isBlank(String str, String message) {
-        if (StringUtils.isBlank(str)) {
+        if (StringUtil.isBlank(str)) {
             throw new SoException(message);
         }
     }

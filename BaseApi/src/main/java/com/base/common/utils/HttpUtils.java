@@ -3,12 +3,11 @@ package com.base.common.utils;
 
 import com.base.common.exception.SoException;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import javax.net.ssl.*;
 import java.io.*;

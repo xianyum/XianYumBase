@@ -1,14 +1,14 @@
 package com.base.common.utils;
 
 
-import org.apache.commons.lang.StringUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * 字符串工具类
- * 
+ *
  * @author ruoyi
  */
 public class StringUtil extends StringUtils
@@ -21,7 +21,7 @@ public class StringUtil extends StringUtils
 
     /**
      * 获取参数不为空值
-     * 
+     *
      * @param value defaultValue 要判断的value
      * @return value 返回值
      */
@@ -32,7 +32,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个Collection是否为空， 包含List，Set，Queue
-     * 
+     *
      * @param coll 要判断的Collection
      * @return true：为空 false：非空
      */
@@ -43,7 +43,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个Collection是否非空，包含List，Set，Queue
-     * 
+     *
      * @param coll 要判断的Collection
      * @return true：非空 false：空
      */
@@ -54,7 +54,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个对象数组是否为空
-     * 
+     *
      * @param objects 要判断的对象数组
      ** @return true：为空 false：非空
      */
@@ -65,7 +65,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个对象数组是否非空
-     * 
+     *
      * @param objects 要判断的对象数组
      * @return true：非空 false：空
      */
@@ -76,7 +76,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个Map是否为空
-     * 
+     *
      * @param map 要判断的Map
      * @return true：为空 false：非空
      */
@@ -87,7 +87,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个Map是否为空
-     * 
+     *
      * @param map 要判断的Map
      * @return true：非空 false：空
      */
@@ -98,7 +98,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个字符串是否为空串
-     * 
+     *
      * @param str String
      * @return true：为空 false：非空
      */
@@ -109,7 +109,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个字符串是否为非空串
-     * 
+     *
      * @param str String
      * @return true：非空串 false：空串
      */
@@ -120,7 +120,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个对象是否为空
-     * 
+     *
      * @param object Object
      * @return true：为空 false：非空
      */
@@ -131,7 +131,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个对象是否非空
-     * 
+     *
      * @param object Object
      * @return true：非空 false：空
      */
@@ -142,7 +142,7 @@ public class StringUtil extends StringUtils
 
     /**
      * * 判断一个对象是否是数组类型（Java基本型别的数组）
-     * 
+     *
      * @param object 对象
      * @return true：是数组 false：不是数组
      */
@@ -161,7 +161,7 @@ public class StringUtil extends StringUtils
 
     /**
      * 截取字符串
-     * 
+     *
      * @param str 字符串
      * @param start 开始
      * @return 结果
@@ -192,7 +192,7 @@ public class StringUtil extends StringUtils
 
     /**
      * 截取字符串
-     * 
+     *
      * @param str 字符串
      * @param start 开始
      * @param end 结束
@@ -287,7 +287,7 @@ public class StringUtil extends StringUtils
 
     /**
      * 是否包含字符串
-     * 
+     *
      * @param str 验证字符串
      * @param strs 字符串组
      * @return 包含返回true
@@ -309,7 +309,7 @@ public class StringUtil extends StringUtils
 
     /**
      * 将下划线大写方式命名的字符串转换为驼峰式。如果转换前的下划线大写方式命名的字符串为空，则返回空字符串。 例如：HELLO_WORLD->HelloWorld
-     * 
+     *
      * @param name 转换前的下划线大写方式命名的字符串
      * @return 转换后的驼峰式命名的字符串
      */

@@ -11,12 +11,9 @@ import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-
 import javax.annotation.Resource;
 import java.awt.image.BufferedImage;
 
@@ -42,7 +39,7 @@ public class CaptchaServiceImpl  implements CaptchaService {
 
     @Override
     public BufferedImage getCaptcha(String uuid) {
-        if(StringUtils.isBlank(uuid)){
+        if(StringUtil.isBlank(uuid)){
             throw new SoException("uuid不能为空");
         }
         //生成验证码

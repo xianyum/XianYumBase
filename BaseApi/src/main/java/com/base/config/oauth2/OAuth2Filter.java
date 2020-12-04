@@ -3,7 +3,7 @@ package com.base.config.oauth2;
 import com.alibaba.fastjson.JSON;
 import com.base.common.utils.DataResult;
 import com.base.common.utils.HttpContextUtils;
-import org.apache.commons.lang.StringUtils;
+import com.base.common.utils.StringUtil;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -26,7 +26,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
         //获取请求token
         String token = getRequestToken((HttpServletRequest) request);
 
-        if(StringUtils.isBlank(token)){
+        if(StringUtil.isBlank(token)){
             return null;
         }
 
@@ -45,7 +45,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
         protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
             //获取请求token，如果token不存在，直接返回401
             String token = getRequestToken((HttpServletRequest) request);
-            if(StringUtils.isBlank(token)){
+            if(StringUtil.isBlank(token)){
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
                 httpResponse.setHeader("Access-Control-Allow-Origin", HttpContextUtils.getOrigin());
@@ -86,7 +86,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
         //从header中获取token
         String token = httpRequest.getHeader("token");
         //如果header中不存在token，则从参数中获取token
-        if(StringUtils.isBlank(token)){
+        if(StringUtil.isBlank(token)){
             token = httpRequest.getParameter("token");
         }
         return token;

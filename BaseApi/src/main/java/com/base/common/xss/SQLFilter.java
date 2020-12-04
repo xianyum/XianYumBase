@@ -1,7 +1,8 @@
 package com.base.common.xss;
 
 import com.base.common.exception.SoException;
-import org.apache.commons.lang.StringUtils;
+import com.base.common.utils.StringUtil;
+
 
 /**
  * @author zhangwei
@@ -14,14 +15,14 @@ public class SQLFilter {
      * @param str  待验证的字符串
      */
     public static String sqlInject(String str){
-        if(StringUtils.isBlank(str)){
+        if(StringUtil.isBlank(str)){
             return null;
         }
         //去掉'|"|;|\字符
-        str = StringUtils.replace(str, "'", "");
-        str = StringUtils.replace(str, "\"", "");
-        str = StringUtils.replace(str, ";", "");
-        str = StringUtils.replace(str, "\\", "");
+        str = StringUtil.replace(str, "'", "");
+        str = StringUtil.replace(str, "\"", "");
+        str = StringUtil.replace(str, ";", "");
+        str = StringUtil.replace(str, "\\", "");
 
         //转换成小写
         str = str.toLowerCase();

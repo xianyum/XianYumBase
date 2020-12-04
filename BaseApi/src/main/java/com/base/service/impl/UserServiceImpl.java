@@ -24,14 +24,13 @@ import com.base.service.iservice.AliNetService;
 import com.base.service.iservice.QqNetService;
 import com.base.service.iservice.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 @Slf4j

@@ -2,13 +2,11 @@ package com.base.common.aspectj;
 
 import com.base.common.annotation.Permissions;
 import com.base.common.exception.SoException;
-import com.base.common.utils.AuthUserToken;
-import com.base.common.utils.HttpContextUtils;
 import com.base.common.utils.RedisUtils;
+import com.base.common.utils.StringUtil;
 import com.base.entity.enums.PermissionEnum;
 import com.base.entity.po.UserEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,9 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
+
 
 
 /**
@@ -58,7 +55,7 @@ public class PermissionAspect {
         HttpServletRequest httpRequest = sra.getRequest();
         String token = httpRequest.getHeader("token");
         //如果header中不存在token，则从参数中获取token
-        if(StringUtils.isBlank(token)){
+        if(StringUtil.isEmpty(token)){
             token = httpRequest.getParameter("token");
         }
         UserEntity userEntity = (UserEntity)redisUtils.get(prefix+token);
