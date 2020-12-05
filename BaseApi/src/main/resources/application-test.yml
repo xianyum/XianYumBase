@@ -1,7 +1,5 @@
-# Tomcat
 server:
   port: 9190
-
 
 redis:
   captcha:

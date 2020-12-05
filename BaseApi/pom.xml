@@ -43,9 +43,18 @@
         <hibernate.version>5.4.3.Final</hibernate.version>
         <boot.mail.version>2.3.5.RELEASE</boot.mail.version>
         <guava.version>30.0-jre</guava.version>
+        <okhttps.fastjson.version>2.4.5</okhttps.fastjson.version>
     </properties>
 
     <dependencies>
+
+<!--        http://okhttps.ejlchina.com/v2/getstart.html#maven-->
+        <dependency>
+            <groupId>com.ejlchina</groupId>
+            <artifactId>okhttps-fastjson</artifactId>
+            <version>${okhttps.fastjson.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
@@ -121,17 +130,6 @@
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
             <version>${dynamic.datasource.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${commons.httpclient.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

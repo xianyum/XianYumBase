@@ -133,9 +133,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
         jsonObject.put("contentType",3);//内容类型 1表示文字  2表示html 3表示markdown
         jsonObject.put("uids",wxCenterEntities.stream().map(p -> p.getUid()).collect(Collectors.toList()));
         jsonObject.put("content",markdownStr.toString());
-
-        HttpUtils.sendPostJson(URL, jsonObject.toString());
-
+        HttpUtils.sendPost(URL, jsonObject);
     }
 
     @Override

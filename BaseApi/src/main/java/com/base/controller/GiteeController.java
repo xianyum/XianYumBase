@@ -24,6 +24,7 @@ public class GiteeController {
     @PostMapping("/push")
     @ApiOperation(value = "接受仓库推送请求", httpMethod = "POST")
     public DataResult getIpInfo(@RequestBody String json) {
+        log.info("接受的参数:{}",json);
         giteeSerivce.push(json);
         return DataResult.success();
     }

@@ -36,7 +36,7 @@ public class DingDingPushUtils {
             markdown.put("title",title);
             markdown.put("text",text);
             requestJson.put("markdown",markdown);
-            HttpUtils.sendPostJson(url,requestJson.toJSONString());
+            HttpUtils.sendPost(url,requestJson.toJSONString());
         }catch (Exception e){
             log.error("send ding ding message error.",e);
         }
