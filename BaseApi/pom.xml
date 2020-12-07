@@ -8,12 +8,12 @@
         <version>2.3.5.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.base</groupId>
     <artifactId>BaseApi</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>BaseApi</name>
-    <description>基础api</description>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -48,7 +48,7 @@
 
     <dependencies>
 
-<!--        http://okhttps.ejlchina.com/v2/getstart.html#maven-->
+        <!--        http://okhttps.ejlchina.com/v2/getstart.html#maven-->
         <dependency>
             <groupId>com.ejlchina</groupId>
             <artifactId>okhttps-fastjson</artifactId>

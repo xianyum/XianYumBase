@@ -12,7 +12,7 @@ redis:
     secret: BaseApi  #密匙
 
 
-#七牛云配置
+#七牛云配置，配置：https://portal.qiniu.com/kodo/bucket
 oss:
   access_key:
   secret_key:
@@ -20,7 +20,7 @@ oss:
   url:
 
 qq:
-  # qq第三方登录配置
+  # qq第三方登录配置，配置：https://wiki.connect.qq.com/%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C_oauth2-0
   login:
     access_token_url:
     client_id:
@@ -30,7 +30,7 @@ qq:
     open_id_url:
 
 ali:
-  # 阿里第三方登录
+  # 阿里第三方登录,配置：https://openhome.alipay.com/svr/ability/SM010000000000001010/USERINFO_SHARE/manage
   login:
     app_private_key:
     alipay_public_key:
@@ -39,10 +39,12 @@ ali:
 
 # 推送配置
 push:
+  # 配置网址：https://wxpusher.zjiecode.com/admin/login
   wxpusher:
     app_token:
     app_key:
     url:
+  # 配置网址：https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq
   dingding:
     secret:
     url:
@@ -89,12 +91,6 @@ druid:
   manager:
     username: 'admin'
     password: '123456'
-#日志配置
-log:
-  path: logs  #日志存放位置，可以为相对路径也可以为绝对路径（/）
-  projectName: BaseApi #日志存放目录名（一般设置为项目名）
-  level: INFO   #打印日志级别  < DEBUG < INFO < WARN < ERROR
-
 
 #mybatis plus
 mybatis-plus:

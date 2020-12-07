@@ -1,4 +1,5 @@
 spring-boot.version:   ${spring-boot.version}
+xianyum.version:   ${xianyum.version}
 
                        .::::.
                       .::::::::.
@@ -6,7 +7,7 @@ spring-boot.version:   ${spring-boot.version}
                   ..:::::::::::'
                '::::::::::::'
                  .::::::::::
-            '::::::::::::::..                          女神助攻，流量冲天
+                '::::::::::::..                          女神助攻，流量冲天
                  ..:::::::::::::.                       永不宕机，永无bug
                ``:::::::::::::::::
                 ::::``:::::::::'        .:::.

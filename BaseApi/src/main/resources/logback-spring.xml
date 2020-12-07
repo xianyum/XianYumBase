@@ -1,19 +1,9 @@
 <configuration>
   <!-- 定义日志的根目录 -->
-  <!--<property name="LOG_HOME" value="/home/ituser/logs"/>-->
-  <!-- log base path -->
-  <springProperty scope="context" name="logPath" source="log.path" defaultValue="logs"/>
-  <!-- log base projectName -->
-  <springProperty scope="context" name="projectName" source="log.projectName" defaultValue="projectName"/>
+  <property name="LOG_HOME" value="/home/ituser/logs"/>
+  <property name="PROJECT_NAME" value="BaseDemoApi"/>
 
-  <!-- log base root level -->
-  <springProperty scope="context" name="level" source="log.level" defaultValue="DEBUG"/>
-
-  <property name="LOG_HOME" value="${logPath}"/>
-  <property name="PROJECT_NAME" value="${projectName}"/>
-
-  <property name="FILE_PATTEN"
-            value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
+  <property name="FILE_PATTEN"  value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
 
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -29,9 +19,9 @@
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- 按天回滚 daily -->
       <!-- log.dir 在maven profile里配置 -->
-      <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/ERROR-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-      <!-- 日志最大的历史 60天 -->
-      <maxHistory>30</maxHistory>
+      <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/logstash/ERROR-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <!-- 日志最大的历史 10 day -->
+      <maxHistory>10</maxHistory>
       <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
         <!--文件达到 最大128MB时会被压缩和切割 -->
         <maxFileSize>100MB</maxFileSize>
@@ -49,14 +39,15 @@
   </appender>
 
 
+
   <!-- 日志 appender  -->
   <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- 按天回滚 daily -->
       <!-- log.dir 在maven profile里配置 -->
-      <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/INFO-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-      <!-- 日志最大的历史 60天 -->
-      <maxHistory>30</maxHistory>
+      <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/logstash/INFO-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <!-- 日志最大的历史 10天 -->
+      <maxHistory>10</maxHistory>
       <timeBasedFileNamingAndTriggeringPolicy
               class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
         <!--文件达到 最大128MB时会被压缩和切割 -->
@@ -77,31 +68,25 @@
   <logger name="org.springframework" level="WARN"/>
   <logger name="io.undertow" level="INFO"/>
   <logger name="springfox.documentation" level="WARN"/>
-  <logger name="org.mybatis.spring" level="WARN"/>
   <logger name="org.xnio.nio" level="WARN"/>
 
   <!-- root将级别为“INFO”及大于“INFO”的日志信息交给已经配置好的名为“Console”的appender处理，“Console”appender将信息打印到Console； -->
   <!--ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF。-->
-  <!--<springProfile name="dev,test">-->
-  <!--&lt;!&ndash; configuration to be enabled when the "production" profile is not active &ndash;&gt;-->
-  <!--<root level="DEBUG">-->
-  <!--<appender-ref ref="CONSOLE"/>-->
-  <!--<appender-ref ref="ERROR"/>-->
-  <!--<appender-ref ref="DEBUG"/>-->
-  <!--</root>-->
-  <!--</springProfile>-->
+  <springProfile name="dev,test,uat">
+    <!-- configuration to be enabled when the "production" profile is not active -->
+    <root level="DEBUG">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="ERROR"/>
+      <appender-ref ref="DEBUG"/>
+    </root>
+  </springProfile>
 
-  <!--<springProfile name="prod">-->
-  <!--<root level="DEBUG">-->
-  <!--<appender-ref ref="CONSOLE"/>-->
-  <!--<appender-ref ref="ERROR"/>-->
-  <!--<appender-ref ref="DEBUG"/>-->
-  <!--</root>-->
-  <!--</springProfile>-->
-  <root level="${level}">
-    <appender-ref ref="CONSOLE"/>
-    <appender-ref ref="ERROR"/>
-    <appender-ref ref="DEBUG"/>
-  </root>
+  <springProfile name="pred,prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="ERROR"/>
+      <appender-ref ref="DEBUG"/>
+    </root>
+  </springProfile>
 
 </configuration>
