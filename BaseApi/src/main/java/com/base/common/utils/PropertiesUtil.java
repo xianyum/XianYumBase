@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.MissingResourceException;
 
-
+/**
+ * 只能用于静态方法类中，不适合注入方法中使用
+ */
 @Component
 @Order(-100)
 public class PropertiesUtil {
