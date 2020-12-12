@@ -65,7 +65,7 @@
         align="center"
         label="程序要求">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="review(scope.row)">点击下载</el-button>
+          <el-link :href="scope.row.programRequirements" type="success" target="_blank">点击下载</el-link>
         </template>
       </el-table-column>
       <el-table-column
@@ -380,7 +380,7 @@ export default {
       })
     },
     download (){
-      window.open(this.programTemplateUrl, '_blank')
+      window.open(this.programTemplateUrl, '_blank','width=400,height=500,menubar=no,toolbar=no')
     },
     review (row) {
       window.open(row.programRequirements, '_blank')
