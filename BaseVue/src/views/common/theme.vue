@@ -4,7 +4,7 @@
     <el-form-item label="导航条类型">
       <el-radio-group v-model="navbarLayoutType">
         <el-radio label="default" border>default</el-radio>
-        <el-radio label="inverse" border>inverse</el-radio>
+<!--        <el-radio label="inverse" border>inverse</el-radio>-->
       </el-radio-group>
     </el-form-item>
     <el-form-item label="侧边栏皮肤">
