@@ -24,7 +24,7 @@ public class IpController {
     @GetMapping("/getIpInfo")
     @SysLog(value = "查询IP地理位置")
     @ApiOperation(value = "查询IP地理位置", httpMethod = "POST")
-    public DataResult getIpInfo(@RequestParam String ip) {
+    public DataResult getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
         return DataResult.success(result);
     }

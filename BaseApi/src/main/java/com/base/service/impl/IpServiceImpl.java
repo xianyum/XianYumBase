@@ -1,9 +1,7 @@
 package com.base.service.impl;
 
 import com.base.common.exception.SoException;
-import com.base.common.utils.IpDataBlock;
-import com.base.common.utils.IpDbSearcher;
-import com.base.common.utils.StringUtil;
+import com.base.common.utils.*;
 import com.base.config.IpDbConfig;
 import com.base.entity.po.IpInfoEntity;
 import com.base.service.iservice.IpService;
@@ -26,7 +24,7 @@ public class IpServiceImpl implements IpService {
     @Override
     public IpInfoEntity getIpInfo(String ip) {
         if(StringUtil.isBlank(ip)){
-            throw new SoException("ip不能为空");
+            ip = IPUtils.getIpAddr(HttpContextUtils.getHttpServletRequest());
         }
         try {
             IpDataBlock dataBlock = ipDbSearcher.btreeSearch(ip);
@@ -37,6 +35,7 @@ public class IpServiceImpl implements IpService {
             ipInfoEntity.setCity("0".equals(data[3])?"":data[3]);
             ipInfoEntity.setIsp("0".equals(data[4])?"":data[4]);
             ipInfoEntity.setRemark("非常感谢您使用此接口！此接口免费长期维护，联系qq：80616059");
+            ipInfoEntity.setIp(ip);
             return ipInfoEntity;
         }catch (Exception e){
             return new IpInfoEntity();
