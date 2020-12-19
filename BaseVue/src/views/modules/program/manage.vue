@@ -56,7 +56,7 @@
         prop="programTitle"
         header-align="center"
         align="center"
-        width="180px"
+        width="200px"
         label="程序题目">
       </el-table-column>
       <el-table-column
@@ -130,19 +130,13 @@
         width="160px"
         label="预计完成时间">
       </el-table-column>
-      <el-table-column
-        prop="completionTime"
-        header-align="center"
-        align="center"
-        :formatter="formateTime"
-        width="160px"
-        label="最终完成时间">
-      </el-table-column>
+
       <el-table-column
         prop="createUserName"
         header-align="center"
         align="center"
         width="100px"
+        show-overflow-tooltip
         label="创建人名称">
       </el-table-column>
       <el-table-column
@@ -152,6 +146,14 @@
         :formatter="formateTime"
         width="160px"
         label="创建日期">
+      </el-table-column>
+      <el-table-column
+        prop="completionTime"
+        header-align="center"
+        align="center"
+        :formatter="formateTime"
+        width="160px"
+        label="最终完成时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -198,7 +200,6 @@
       width="30%"
       center>
       <div style="overflow-x:scroll;height: 500px">
-
         <hzqing-vue-timeline
           timelineColor="#5bbcd5"
           timeContentColor="#fff"
