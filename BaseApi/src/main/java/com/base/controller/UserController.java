@@ -127,4 +127,33 @@ public class UserController {
         }
         return DataResult.success();
     }
+
+
+    /**
+     * 实时获取当前用户信息
+     */
+    @GetMapping("/currentUser")
+    @ApiOperation(value = "实时获取当前用户信息", httpMethod = "GET")
+    public DataResult currentUser(){
+        UserRequest request = new UserRequest();
+        request.setId(AuthUserToken.getUser().getId());
+        UserEntity userEntity = userService.selectOneById(request);
+        return DataResult.success().put("user", userEntity);
+    }
+
+
+    /**
+     * 更新当前用户信息
+     */
+    @PostMapping ("/updateCurrentUser")
+    @SysLog(value = "更新当前用户信息")
+    @ApiOperation(value = "更新当前用户信息", httpMethod = "POST")
+    public DataResult updateCurrentUser(@RequestBody UserRequest user){
+        int count = userService.updateCurrentUser(user);
+        if(count>0){
+            return DataResult.success();
+        }else {
+            return DataResult.error("更新当前用户信息失败！");
+        }
+    }
 }

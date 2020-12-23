@@ -1,9 +1,9 @@
 package com.base.entity.request;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 /***
  * 获取登录提交的参数
@@ -28,4 +28,5 @@ public class UserRequest extends BaseRequest {
     private Integer delTag;//删除标记
     private String captchaVerification;
     private Integer permission;
+    private Integer sex;
 }

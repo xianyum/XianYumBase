@@ -1,8 +1,8 @@
 package com.base.entity.request;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.NotBlank;
 
 /***
  * 获取请求的新密码和旧密码

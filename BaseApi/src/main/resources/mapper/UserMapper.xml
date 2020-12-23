@@ -13,7 +13,9 @@
         a.status,
         a.create_time AS "createTime",
         a.del_tag AS "delTag",
-        a.permission
+        a.permission,
+        a.sex,
+        a.avatar
     </sql>
 
     <select id="queryAll" parameterType="com.base.entity.request.UserRequest" resultType="com.base.entity.po.UserEntity">
@@ -45,4 +47,20 @@
         a.username = #{username}
         )
     </select>
+
+    <update id="update" parameterType="com.base.entity.request.UserRequest">
+        UPDATE user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="sex != null">
+                sex = #{sex}
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
 </mapper>

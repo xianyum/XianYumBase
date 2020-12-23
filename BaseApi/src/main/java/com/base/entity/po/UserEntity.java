@@ -26,9 +26,10 @@ public class UserEntity extends Model<UserEntity> {
     private Date createTime;//创建时间
     private Integer delTag;//删除标记
     private Integer permission;
+    private Integer sex;
+    private String avatar;
 
     /** 第三方用户信息（json串） */
     @TableField(exist = false)
     private String thirdUserInfo;
-
 }

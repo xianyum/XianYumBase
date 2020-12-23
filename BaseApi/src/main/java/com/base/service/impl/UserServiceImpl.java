@@ -184,6 +184,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
+    public int updateCurrentUser(UserRequest user) {
+        user.setId(AuthUserToken.getUser().getId());
+        int count = userMapper.update(user);
+        return count;
+    }
+
+    @Override
     public UserEntity getUserByAli(String authCode) {
         if(StringUtil.isBlank(authCode)){
             return null;

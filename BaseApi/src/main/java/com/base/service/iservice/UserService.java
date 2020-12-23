@@ -38,4 +38,6 @@ public interface UserService extends IService<UserEntity> {
     UserEntity getUserByQq(String authCode);
 
     Set<String> getPermissions();
+
+    int updateCurrentUser(UserRequest user);
 }

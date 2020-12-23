@@ -1,6 +1,6 @@
 <configuration>
   <!-- 定义日志的根目录 -->
-  <property name="LOG_HOME" value="/home/ituser/logs"/>
+  <property name="LOG_HOME" value="/home/zhangwei/logs"/>
   <property name="PROJECT_NAME" value="BaseDemoApi"/>
 
   <property name="FILE_PATTEN"  value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
