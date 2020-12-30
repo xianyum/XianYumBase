@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.base.entity.po.UserEntity;
 import com.base.entity.request.UpdatePasswordRequest;
 import com.base.entity.request.UserRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -40,4 +41,8 @@ public interface UserService extends IService<UserEntity> {
     Set<String> getPermissions();
 
     int updateCurrentUser(UserRequest user);
+
+    UserEntity getInfo(UserEntity user);
+
+    String upload(MultipartFile file);
 }

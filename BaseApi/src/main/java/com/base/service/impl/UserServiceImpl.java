@@ -7,27 +7,28 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.base.common.exception.SoException;
-import com.base.common.utils.AuthUserToken;
-import com.base.common.utils.BeanUtils;
-import com.base.common.utils.StringUtil;
-import com.base.common.utils.UUIDUtils;
+import com.base.common.utils.*;
+import com.base.config.XianYumConfig;
+import com.base.dao.SystemConstantMapper;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
 import com.base.entity.enums.PermissionEnum;
 import com.base.entity.enums.UserStatusEnum;
+import com.base.entity.po.QqUserEntity;
+import com.base.entity.po.SystemConstantEntity;
 import com.base.entity.po.ThirdUserEntity;
 import com.base.entity.po.UserEntity;
 import com.base.entity.request.UpdatePasswordRequest;
 import com.base.entity.request.UserRequest;
-import com.base.service.iservice.AliNetService;
-import com.base.service.iservice.QqNetService;
-import com.base.service.iservice.UserService;
+import com.base.service.iservice.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Autowired
     private QqNetService qqNetService;
+
+    @Autowired
+    private SystemConstantService systemConstantService;
+
+    @Autowired
+    private XianYumConfig xianYumConfig;
+
+    @Autowired
+    private UserTokenService userTokenService;
 
     @Override
     public IPage<UserEntity> queryAll(UserRequest user) {
@@ -151,16 +161,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             return null;
         }
         String accessToken = qqNetService.getAccessToken(authCode);
-        String qqUserId = qqNetService.getUserId(accessToken);
-        if(StringUtil.isNotBlank(qqUserId)){
+        QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
+        if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
             UserEntity userEntity = new UserEntity();
-            ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserId));
+            ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
             if(aliUserEntity == null ){
-                userEntity.setId(qqUserId);
-                userEntity.setUsername(qqUserId);
+                userEntity.setId(qqUserEntity.getUserId());
+                userEntity.setUsername(qqUserEntity.getNickname());
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
-                userEntity.setThirdUserInfo(qqUserId);
+                userEntity.setThirdUserInfo(JSONObject.toJSONString(qqUserEntity));
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
+                if("女".equals(qqUserEntity.getGender())){
+                    userEntity.setSex(1);
+                }else{
+                    userEntity.setSex(0);
+                }
+                // 现在qq返回的是http连接，实际https也是支持的，这里替换下
+                if(StringUtil.isNotEmpty(qqUserEntity.getFigureurl_qq_2())){
+                    userEntity.setAvatar(qqUserEntity.getFigureurl_qq_2().replace("http","https"));
+                }else{
+                    userEntity.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
+                }
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
@@ -187,7 +208,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     public int updateCurrentUser(UserRequest user) {
         user.setId(AuthUserToken.getUser().getId());
         int count = userMapper.update(user);
+        userTokenService.refreshUser();
         return count;
+    }
+
+    @Override
+    public UserEntity getInfo(UserEntity user) {
+        UserEntity u = AuthUserToken.getUser();
+        if(null != u && StringUtil.isEmpty(u.getAvatar())){
+            SystemConstantEntity systemConstantEntity = systemConstantService.getByKey("avatar_url");
+            if(systemConstantEntity != null){
+                u.setAvatar(systemConstantEntity.getConstantValue());
+            }
+        }
+        return u;
+    }
+
+    @Override
+    public String upload(MultipartFile file) {
+        try {
+            String upload = FileUtils.upload(XianYumConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
+            String avatarUrl = xianYumConfig.getAvatarUrl()+ upload;
+            UserEntity userEntity = new UserEntity();
+            userEntity.setId(AuthUserToken.getUser().getId());
+            userEntity.setAvatar(avatarUrl);
+            userMapper.updateById(userEntity);
+            userTokenService.refreshUser();
+            return avatarUrl;
+        }catch (Exception e){
+            throw new SoException(e.getMessage());
+        }
     }
 
     @Override
@@ -205,6 +255,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 userEntity.setId(aLiUserInfo.getUserId());
                 userEntity.setUsername(aLiUserInfo.getNickName());
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
+                userEntity.setAvatar(aLiUserInfo.getAvatar());
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
                 userEntity.setThirdUserInfo(JSONObject.toJSONString(aLiUserInfo));
             }else{

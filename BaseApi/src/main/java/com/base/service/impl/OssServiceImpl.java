@@ -1,6 +1,7 @@
 package com.base.service.impl;
 
 import com.base.common.exception.SoException;
+import com.base.common.utils.FileUtils;
 import com.base.common.utils.UUIDUtils;
 import com.base.entity.po.OssFileEntity;
 import com.base.service.iservice.OssService;
@@ -72,5 +73,11 @@ public class OssServiceImpl implements OssService {
         Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
         String upToken = auth.uploadToken(BUCKET);
         return upToken;
+    }
+
+    @Override
+    public byte[] getImage(String path) {
+        byte[] avatarImage = FileUtils.getAvatarImage(path);
+        return avatarImage;
     }
 }

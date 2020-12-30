@@ -1,12 +1,12 @@
 package com.base.service.impl;
 
-import com.base.common.utils.DataResult;
-import com.base.common.utils.HttpContextUtils;
-import com.base.common.utils.RedisUtils;
-import com.base.common.utils.StringUtil;
+import com.base.common.utils.*;
+import com.base.config.oauth2.OAuth2Token;
 import com.base.config.oauth2.TokenGenerator;
+import com.base.dao.UserMapper;
 import com.base.entity.po.UserEntity;
 import com.base.service.iservice.UserTokenService;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,9 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public DataResult createToken(UserEntity user) {
@@ -47,5 +50,12 @@ public class UserTokenServiceImpl implements UserTokenService {
             token = request.getParameter("token");
         }
         redisUtils.del(prefix+token);
+    }
+
+    @Override
+    public void refreshUser() {
+        String token = HttpContextUtils.getRequestToken();
+        UserEntity userEntity = userMapper.selectById(AuthUserToken.getUser().getId());
+        redisUtils.setMin(prefix+token,userEntity,expire);
     }
 }

@@ -12,4 +12,10 @@ public interface SystemConstantService {
     SystemConstantEntity getPrivateConstant(SystemConstantEntity request);
 
     int update(SystemConstantEntity request);
+
+    SystemConstantEntity getByKey(String key);
+
+    boolean setSystemConstantToRedis(String keyOrId,SystemConstantEntity systemConstantEntity);
+
+    SystemConstantEntity getByKeyFromRedis(String key);
 }

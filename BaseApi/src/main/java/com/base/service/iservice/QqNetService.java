@@ -1,5 +1,7 @@
 package com.base.service.iservice;
 
+import com.base.entity.po.QqUserEntity;
+
 /**
  * @author zhangwei
  * @date 2019/11/22 16:58
@@ -17,6 +19,6 @@ public interface QqNetService {
      * @param accessToken
      * @return
      */
-    String getUserId(String accessToken);
+    QqUserEntity getUserId(String accessToken);
 
 }

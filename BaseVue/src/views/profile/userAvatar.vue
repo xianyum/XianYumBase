@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="user-info-head" @click="editCropper()"><img v-bind:src="options.img" title="点击上传头像" class="img-circle img-lg" /></div>
+    <div class="user-info-head" @click="editCropper()"><img v-bind:src="options.img" title="点击上传头像"
+                                                            class="img-circle img-lg"/></div>
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body @opened="modalOpened">
       <el-row>
         <el-col :xs="24" :md="12" :style="{height: '350px'}">
@@ -18,11 +19,11 @@
         </el-col>
         <el-col :xs="24" :md="12" :style="{height: '350px'}">
           <div class="avatar-upload-preview">
-            <img :src="previews.url" :style="previews.img" />
+            <img :src="previews.url" :style="previews.img"/>
           </div>
         </el-col>
       </el-row>
-      <br />
+      <br/>
       <el-row>
         <el-col :lg="2" :md="2">
           <el-upload action="#" :http-request="requestUpload" :show-file-list="false" :before-upload="beforeUpload">
@@ -53,109 +54,102 @@
 </template>
 
 <script>
-import { VueCropper } from "vue-cropper";
+import {VueCropper} from 'vue-cropper'
 
 export default {
-  components: { VueCropper },
+  components: {VueCropper},
   props: {
     user: {
       type: Object
     }
   },
-  data() {
+  data () {
     return {
       // 是否显示弹出层
       open: false,
       // 是否显示cropper
       visible: false,
       // 弹出层标题
-      title: "修改头像",
+      title: '修改头像',
       options: {
-        img: '', //裁剪图片的地址
+        img: this.$store.state.user.avatar, //裁剪图片的地址
         autoCrop: true, // 是否默认生成截图框
         autoCropWidth: 200, // 默认生成截图框宽度
         autoCropHeight: 200, // 默认生成截图框高度
         fixedBox: true // 固定截图框大小 不允许改变
       },
       previews: {}
-    };
-  },
-  created () {
-    this.options.img = this.$store.state.user.avatar
+    }
   },
   methods: {
     // 编辑头像
     editCropper () {
-      // this.$store.commit('user/avatar', 'https://static01.imgkr.com/temp/94d39bf426ff48368d4b4e040f1db473.jpg')
-      // this.open = true;
-      this.$message.error('暂未实现此功能')
+      this.open = true
     },
     // 打开弹出层结束时的回调
-    modalOpened() {
-      this.visible = true;
+    modalOpened () {
+      this.visible = true
     },
     // 覆盖默认的上传行为
-    requestUpload() {
+    requestUpload () {
     },
     // 向左旋转
-    rotateLeft() {
-      this.$refs.cropper.rotateLeft();
+    rotateLeft () {
+      this.$refs.cropper.rotateLeft()
     },
     // 向右旋转
-    rotateRight() {
-      this.$refs.cropper.rotateRight();
+    rotateRight () {
+      this.$refs.cropper.rotateRight()
     },
     // 图片缩放
-    changeScale(num) {
-      num = num || 1;
-      this.$refs.cropper.changeScale(num);
+    changeScale (num) {
+      num = num || 1
+      this.$refs.cropper.changeScale(num)
     },
     // 上传预处理
-    beforeUpload(file) {
-      if (file.type.indexOf("image/") == -1) {
-        this.msgError("文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件。");
+    beforeUpload (file) {
+      if (file.type.indexOf('image/') == -1) {
+        this.$message.error('文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件。')
       } else {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
         reader.onload = () => {
-          this.options.img = reader.result;
-        };
+          this.options.img = reader.result
+        }
       }
     },
     // 上传图片
-    uploadImg() {
+    uploadImg () {
       this.$refs.cropper.getCropBlob(data => {
-        let formData = new FormData();
-        formData.append("file", data);
+        let formData = new FormData()
+        formData.append('file', data)
         this.$http({
-          url: 'https://imgkr.com/api/v2/files/upload',
+          url: this.$http.adornUrl('/user/upload'),
           method: 'post',
           data: formData
         }).then(({data}) => {
           if (data && data.code === 200) {
             this.$message({
-              message: '上传成功',
+              message: '图像上传成功',
               type: 'success',
               duration: 1500,
             })
-            console.log(data)
+            this.open = false
+            this.$store.commit('user/avatar', data.msg)
+            this.options.img = data.msg
+            this.visible = false
           } else {
             this.$message.error(data.msg)
           }
         })
-        // uploadAvatar(formData).then(response => {
-        //   this.open = false;
-        //   this.options.img = process.env.VUE_APP_BASE_API + response.imgUrl;
-        //   this.visible = false;
-        // });
-      });
+      })
     },
     // 实时预览
-    realTime(data) {
-      this.previews = data;
+    realTime (data) {
+      this.previews = data
     }
   }
-};
+}
 </script>
 <style scoped lang="scss">
 .user-info-head {
@@ -180,6 +174,7 @@ export default {
   line-height: 110px;
   border-radius: 50%;
 }
+
 .avatar-upload-preview {
   position: absolute;
   top: 50%;

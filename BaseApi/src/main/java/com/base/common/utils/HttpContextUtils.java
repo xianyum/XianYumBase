@@ -24,4 +24,25 @@ public class HttpContextUtils {
         HttpServletRequest request = getHttpServletRequest();
         return request.getHeader("Origin");
     }
+
+
+    /**
+     * 获取请求的token
+     */
+    public static String getRequestToken(HttpServletRequest httpRequest){
+        //从header中获取token
+        String token = httpRequest.getHeader("token");
+        //如果header中不存在token，则从参数中获取token
+        if(StringUtil.isBlank(token)){
+            token = httpRequest.getParameter("token");
+        }
+        return token;
+    }
+
+    /**
+     * 获取请求的token
+     */
+    public static String getRequestToken(){
+        return getRequestToken(getHttpServletRequest());
+    }
 }

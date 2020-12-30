@@ -12,4 +12,6 @@ public interface OssService {
     OssFileEntity upload(MultipartFile file);
 
     String getWebUpToken();
+
+    byte[] getImage(String path);
 }

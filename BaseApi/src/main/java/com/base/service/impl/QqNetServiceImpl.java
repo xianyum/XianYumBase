@@ -1,7 +1,9 @@
 package com.base.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.base.common.utils.HttpUtils;
 import com.base.common.utils.StringUtil;
+import com.base.entity.po.QqUserEntity;
 import com.base.service.iservice.QqNetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,10 +58,22 @@ public class QqNetServiceImpl implements QqNetService {
     }
 
     @Override
-    public String getUserId(String accessToken) {
+    public QqUserEntity getUserId(String accessToken) {
         String result = HttpUtils.sendGet(OPEN_ID_URL, "access_token="+accessToken);
         log.info("第三方QQ登录,{}",result);
         String userId = StringUtil.substringBetween(result,"\"openid\":\"","\"} )");
-        return userId;
+        StringBuilder sb = new StringBuilder();
+        sb.append("access_token="+accessToken);
+        sb.append("&oauth_consumer_key="+CLIENT_ID);
+        sb.append("&openid="+userId);
+        sb.append("&format=json");
+        String userJson = HttpUtils.sendGet("https://graph.qq.com/user/get_user_info", sb.toString());
+        QqUserEntity qqUserEntity = JSONObject.parseObject(userJson,QqUserEntity.class);
+        if(qqUserEntity == null){
+            qqUserEntity = new QqUserEntity();
+        }
+        qqUserEntity.setUserId(userId);
+        return qqUserEntity;
     }
+
 }

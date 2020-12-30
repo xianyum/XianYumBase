@@ -13,9 +13,9 @@ import com.base.entity.request.UserRequest;
 import com.base.service.iservice.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /***
  * 用户相关
@@ -44,7 +44,7 @@ public class UserController {
     @GetMapping("/info")
     @ApiOperation(value = "获取登录的用户信息", httpMethod = "GET")
     public DataResult info(){
-        UserEntity userEntity = AuthUserToken.getUser();
+        UserEntity userEntity = userService.getInfo(AuthUserToken.getUser());
         return DataResult.success().put("user", userEntity);
     }
 
@@ -128,20 +128,6 @@ public class UserController {
         return DataResult.success();
     }
 
-
-    /**
-     * 实时获取当前用户信息
-     */
-    @GetMapping("/currentUser")
-    @ApiOperation(value = "实时获取当前用户信息", httpMethod = "GET")
-    public DataResult currentUser(){
-        UserRequest request = new UserRequest();
-        request.setId(AuthUserToken.getUser().getId());
-        UserEntity userEntity = userService.selectOneById(request);
-        return DataResult.success().put("user", userEntity);
-    }
-
-
     /**
      * 更新当前用户信息
      */
@@ -155,5 +141,13 @@ public class UserController {
         }else {
             return DataResult.error("更新当前用户信息失败！");
         }
+    }
+
+
+    @PostMapping("/upload")
+    @ApiOperation(value = "上传图像接口", httpMethod = "POST")
+    public DataResult upload(@RequestParam("file") MultipartFile file){
+        String imageUrl = userService.upload(file);
+        return DataResult.success(imageUrl);
     }
 }

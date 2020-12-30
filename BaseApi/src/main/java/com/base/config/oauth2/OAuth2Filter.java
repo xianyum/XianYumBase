@@ -24,8 +24,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
         //获取请求token
-        String token = getRequestToken((HttpServletRequest) request);
-
+        String token = HttpContextUtils.getRequestToken((HttpServletRequest) request);
         if(StringUtil.isBlank(token)){
             return null;
         }
@@ -44,7 +43,7 @@ public class OAuth2Filter extends AuthenticatingFilter {
         @Override
         protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
             //获取请求token，如果token不存在，直接返回401
-            String token = getRequestToken((HttpServletRequest) request);
+            String token = HttpContextUtils.getRequestToken((HttpServletRequest) request);
             if(StringUtil.isBlank(token)){
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
@@ -77,18 +76,5 @@ public class OAuth2Filter extends AuthenticatingFilter {
 
         }
         return false;
-    }
-
-    /**
-     * 获取请求的token
-     */
-    private String getRequestToken(HttpServletRequest httpRequest){
-        //从header中获取token
-        String token = httpRequest.getHeader("token");
-        //如果header中不存在token，则从参数中获取token
-        if(StringUtil.isBlank(token)){
-            token = httpRequest.getParameter("token");
-        }
-        return token;
     }
 }

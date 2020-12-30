@@ -16,4 +16,9 @@ public interface UserTokenService {
      * 退出，修改token值
      */
     void logout();
+
+    /**
+     * 刷新redis中user数据
+     */
+    void refreshUser();
 }
