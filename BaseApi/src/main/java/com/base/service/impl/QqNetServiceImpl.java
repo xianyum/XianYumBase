@@ -68,6 +68,7 @@ public class QqNetServiceImpl implements QqNetService {
         sb.append("&openid="+userId);
         sb.append("&format=json");
         String userJson = HttpUtils.sendGet("https://graph.qq.com/user/get_user_info", sb.toString());
+        log.info("获取QQ用户信息,{}",userJson);
         QqUserEntity qqUserEntity = JSONObject.parseObject(userJson,QqUserEntity.class);
         if(qqUserEntity == null){
             qqUserEntity = new QqUserEntity();

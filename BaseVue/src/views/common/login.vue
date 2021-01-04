@@ -246,11 +246,11 @@
         this.$message.error('微信登录功能待完善')
       },
       aliLogin () {
-        let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3a%2f%2fxianyum.cn%2fbase%2f%23%2fcheckAliLogin'
+        let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3a%2f%2fbase.xianyum.cn%2f%23%2fcheckAliLogin'
         window.location.replace(aliUrl)
       },
       qqLogin () {
-        window.location.replace('https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3a%2f%2fxianyum.cn%2fbase%2f%23%2fcheckQQLogin')
+        window.location.replace('https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3a%2f%2fbase.xianyum.cn%2f%23%2fcheckQQLogin')
       },
       // 用户名 密码登录
       handleLogin () {

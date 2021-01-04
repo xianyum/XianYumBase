@@ -167,7 +167,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
             if(aliUserEntity == null ){
                 userEntity.setId(qqUserEntity.getUserId());
-                userEntity.setUsername(qqUserEntity.getNickname());
+                userEntity.setUsername(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
                 userEntity.setThirdUserInfo(JSONObject.toJSONString(qqUserEntity));
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
@@ -253,7 +253,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
                 userEntity.setId(aLiUserInfo.getUserId());
-                userEntity.setUsername(aLiUserInfo.getNickName());
+                userEntity.setUsername(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
                 userEntity.setAvatar(aLiUserInfo.getAvatar());
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
