@@ -8,7 +8,7 @@
 4. 动态菜单，通过菜单管理统一管理访问路由
 5. 支持多数据源，简单配置即可实现切换
 6. 完善的日志记录体系简单注解即可实现
-7. 在线演示地址：[https://xianyum.cn/base](https://xianyum.cn/base)
+7. 在线演示地址：[https://base.xianyum.cn](https://base.xianyum.cn)
 
 #### 项目截图
 
