@@ -14,12 +14,11 @@ import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.po.xiaodao.XiaoDaoEntity;
 import com.base.entity.request.XiaoDaoRequest;
 import com.base.service.iservice.XiaoDaoService;
+import com.ejlchina.okhttps.OkHttps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +57,8 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
         if(pushInfo != null && wxCenterEntities != null && pushInfo.size() >0 && wxCenterEntities.size() >0){
             for (XiaoDaoEntity xiaoDaoEntity : pushInfo) {
                 JSONObject params = getParams(xiaoDaoEntity, wxCenterEntities);
-                HttpUtils.sendPost(URL, params);
+                HttpUtils.getHttpInstance().sync(URL)
+                        .bodyType(OkHttps.JSON).setBodyPara(params).post();
                 DingDingPushUtils.push("推送活动助手",params.getString("content"));
                 xiaoDaoEntity.setPushStatus(1);
                 xiaoDaoEntity.setPushTime(new Date());

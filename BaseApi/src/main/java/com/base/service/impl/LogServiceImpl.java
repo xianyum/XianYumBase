@@ -19,6 +19,7 @@ import com.base.entity.po.wx_center.WxCenterEntity;
 import com.base.entity.request.LogRequest;
 import com.base.entity.response.LogResponse;
 import com.base.service.iservice.LogService;
+import com.ejlchina.okhttps.OkHttps;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -133,7 +134,8 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
         jsonObject.put("contentType",3);//内容类型 1表示文字  2表示html 3表示markdown
         jsonObject.put("uids",wxCenterEntities.stream().map(p -> p.getUid()).collect(Collectors.toList()));
         jsonObject.put("content",markdownStr.toString());
-        HttpUtils.sendPost(URL, jsonObject);
+        HttpUtils.getHttpInstance().sync(URL)
+                .bodyType(OkHttps.JSON).setBodyPara(jsonObject).post();
     }
 
     @Override

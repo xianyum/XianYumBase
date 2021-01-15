@@ -4,7 +4,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alipay.api.domain.AlipaySecurityProdCtidVerifyModel;
+import com.ejlchina.okhttps.OkHttps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import java.net.URLEncoder;
@@ -36,7 +36,8 @@ public class DingDingPushUtils {
             markdown.put("title",title);
             markdown.put("text",text);
             requestJson.put("markdown",markdown);
-            HttpUtils.sendPost(url,requestJson.toJSONString());
+            HttpUtils.getHttpInstance().sync(url)
+                    .bodyType(OkHttps.JSON).setBodyPara(requestJson).post();
         }catch (Exception e){
             log.error("send ding ding message error.",e);
         }

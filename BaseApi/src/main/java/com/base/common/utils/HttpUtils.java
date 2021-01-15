@@ -1,10 +1,9 @@
 package com.base.common.utils;
 
-import com.alibaba.fastjson.JSONObject;
-import com.ejlchina.okhttps.HttpResult;
-import com.ejlchina.okhttps.OkHttps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ejlchina.okhttps.FastjsonMsgConvertor;
+import com.ejlchina.okhttps.HTTP;
+import okhttp3.OkHttpClient;
+import java.util.concurrent.TimeUnit;
 
 /**
  * http://okhttps.ejlchina.com/v2/getstart.html#maven
@@ -13,58 +12,31 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+    private static HTTP http;
 
-    /**
-     * 发送post请求（application/json）
-     * @param url 请求url
-     * @param requestObject 可以是String-json类型，也可以是Object
-     * @return
-     */
-    public static String sendPost(String url,Object requestObject){
+    private HttpUtils() {
 
-        if(StringUtil.isEmpty(url) || null == requestObject){
-            return null;
-        }
-        try {
-            HttpResult httpResult = com.ejlchina.okhttps.HttpUtils.sync(url)
-                    .bodyType(OkHttps.JSON).setBodyPara(requestObject).post();
-            if(httpResult.isSuccessful()){
-                return httpResult.getBody().toString();
-            }
-        }catch (Exception e){
-            log.error("send post json request error. {},{},{}",url,JSONObject.toJSONString(requestObject),e);
-        }
-        return null;
     }
 
     /**
-     * 向指定 URL 发送GET方法的请求
-     *
-     * @param url   发送请求的 URL
-     * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-     * @return 所代表远程资源的响应结果
+     * 返回Okhttp3实例
+     * @return
      */
-    public static String sendGet(String url, String param) {
+    public static synchronized HTTP getHttpInstance() {
 
-        if(StringUtil.isEmpty(url)){
-            return null;
+        if(null == http){
+            http = HTTP.builder().addMsgConvertor(new FastjsonMsgConvertor())
+                    .config((OkHttpClient.Builder builder) -> {
+                        // 连接超时时间（默认10秒）
+                        builder.connectTimeout(1, TimeUnit.SECONDS);
+                        // 写入超时时间（默认10秒）
+                        builder.writeTimeout(1, TimeUnit.SECONDS);
+                        // 读取超时时间（默认10秒）
+                        builder.readTimeout(1, TimeUnit.SECONDS);
+                    })
+                    .build();
         }
-        StringBuilder requestUrl = new StringBuilder();
-        requestUrl.append(url);
-        if(StringUtil.isNotEmpty(param)){
-            requestUrl.append("?");
-            requestUrl.append(param);
-        }
-        try {
-            HttpResult httpResult = com.ejlchina.okhttps.HttpUtils.sync(requestUrl.toString()).get();
-            if(httpResult.isSuccessful()){
-                return httpResult.getBody().toString();
-            }
-        }catch (Exception e){
-            log.error("send get request error. {},{}",requestUrl.toString(),e);
-        }
-        return null;
+        return http;
     }
 
 }

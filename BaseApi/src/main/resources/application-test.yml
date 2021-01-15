@@ -24,12 +24,13 @@ oss:
 qq:
   # qq第三方登录配置，配置：https://wiki.connect.qq.com/%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C_oauth2-0
   login:
-    access_token_url:
+    access_token_url: https://graph.qq.com/oauth2.0/token
     client_id:
     client_secret:
     grant_type:
-    redirect_uri:
-    open_id_url:
+    redirect_uri: http://xianyum.cn/#/checkQQLogin
+    open_id_url: https://graph.qq.com/oauth2.0/me
+    user_info_url: https://graph.qq.com/user/get_user_info
 
 ali:
   # 阿里第三方登录,配置：https://openhome.alipay.com/svr/ability/SM010000000000001010/USERINFO_SHARE/manage
@@ -37,7 +38,7 @@ ali:
     app_private_key:
     alipay_public_key:
     app_id:
-    server_url:
+    server_url: https://openapi.alipay.com/gateway.do
 
 # 推送配置
 push:
@@ -45,11 +46,11 @@ push:
   wxpusher:
     app_token:
     app_key:
-    url:
+    url: http://wxpusher.zjiecode.com/api/send/message
   # 配置网址：https://ding-doc.dingtalk.com/doc#/serverapi2/qf2nxq
   dingding:
     secret:
-    url:
+    url: https://oapi.dingtalk.com/robot/send?access_token=
 
 ip:
   db:

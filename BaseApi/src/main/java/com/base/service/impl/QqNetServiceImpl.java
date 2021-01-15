@@ -5,6 +5,7 @@ import com.base.common.utils.HttpUtils;
 import com.base.common.utils.StringUtil;
 import com.base.entity.po.QqUserEntity;
 import com.base.service.iservice.QqNetService;
+import com.ejlchina.okhttps.HttpResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,9 @@ public class QqNetServiceImpl implements QqNetService {
     @Value("${qq.login.open_id_url}")
     private String OPEN_ID_URL;
 
+    @Value("${qq.login.user_info_url}")
+    private String USER_INFO_URL;
+
     /**
      * 获取QQ用户token
      *
@@ -47,29 +51,31 @@ public class QqNetServiceImpl implements QqNetService {
     @Override
     public String getAccessToken(String authCode) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("grant_type="+GRANT_TYPE);
+        stringBuilder.append("?grant_type="+GRANT_TYPE);
         stringBuilder.append("&client_id="+CLIENT_ID);
         stringBuilder.append("&client_secret="+CLIENT_SECRET);
         stringBuilder.append("&code="+authCode);
         stringBuilder.append("&redirect_uri="+REDIRECT_URI);
-        String result = HttpUtils.sendGet(ACCESS_TOKEN_URL, stringBuilder.toString());
-        String accessToken = StringUtil.substringBetween(result,"access_token=","&");
+        HttpResult result = HttpUtils.getHttpInstance().sync(ACCESS_TOKEN_URL + stringBuilder.toString()).get();
+        String accessToken = StringUtil.substringBetween(result.getBody().toString(),"access_token=","&");
         return accessToken;
     }
 
     @Override
     public QqUserEntity getUserId(String accessToken) {
-        String result = HttpUtils.sendGet(OPEN_ID_URL, "access_token="+accessToken);
-        log.info("第三方QQ登录,{}",result);
-        String userId = StringUtil.substringBetween(result,"\"openid\":\"","\"} )");
+        HttpResult result = HttpUtils.getHttpInstance().sync(OPEN_ID_URL + "?access_token="+accessToken).get();
+        String resultResponse = result.getBody().toString();
+        log.info("第三方QQ登录,{}",resultResponse);
+        String userId = StringUtil.substringBetween(resultResponse,"\"openid\":\"","\"} )");
         StringBuilder sb = new StringBuilder();
-        sb.append("access_token="+accessToken);
+        sb.append("?access_token="+accessToken);
         sb.append("&oauth_consumer_key="+CLIENT_ID);
         sb.append("&openid="+userId);
         sb.append("&format=json");
-        String userJson = HttpUtils.sendGet("https://graph.qq.com/user/get_user_info", sb.toString());
-        log.info("获取QQ用户信息,{}",userJson);
-        QqUserEntity qqUserEntity = JSONObject.parseObject(userJson,QqUserEntity.class);
+        HttpResult userJson = HttpUtils.getHttpInstance().sync(USER_INFO_URL + sb.toString()).get();
+        String userJsonResponse = userJson.getBody().toString();
+        log.info("获取QQ用户信息,{}",userJsonResponse);
+        QqUserEntity qqUserEntity = JSONObject.parseObject(userJsonResponse,QqUserEntity.class);
         if(qqUserEntity == null){
             qqUserEntity = new QqUserEntity();
         }
