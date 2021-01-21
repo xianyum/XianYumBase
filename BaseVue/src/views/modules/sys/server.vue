@@ -94,21 +94,7 @@
   .clearfix:after {
     clear: both
   }
-
-  /*.box-card {*/
-  /*  width: 48%;*/
-  /*  float: left;*/
-  /*  margin-bottom: 20px;*/
-  /*}*/
-
-  .el-col {
-    border-radius: 4px;
-  }
-
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-
+  
   .bg-purple span {
     width: 50%;
     float: left;
