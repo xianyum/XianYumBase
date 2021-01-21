@@ -205,14 +205,14 @@
     }
     .mask{
         position: fixed;
-        top: -35%;
+        /*top: -35%;*/
         left:0;
         z-index: 1001;
         width: 100%;
         height: 100vh;
         background: rgba(0,0,0,.3);
         /* display: none; */
-        transition: all .5s;
+        /*transition: all .1s;*/
     }
     .verify-tips{
         position: absolute;

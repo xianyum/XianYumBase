@@ -73,13 +73,7 @@
 
 
               <el-form-item>
-                <Verify
-                  @success="success"
-                  :mode="'pop'"
-                  :captchaType="'blockPuzzle'"
-                  :imgSize="{ width: '330px', height: '155px' }"
-                  ref="verify"
-                ></Verify>
+
               </el-form-item>
 
               <el-button
@@ -150,7 +144,15 @@
         <!--</div>-->
       </div>
     </div>
+    <Verify
+      @success="success"
+      :mode="'pop'"
+      :captchaType="'blockPuzzle'"
+      :imgSize="{ width: '330px', height: '155px' }"
+      ref="verify"
+    ></Verify>
   </div>
+
 </template>
 
 <script>

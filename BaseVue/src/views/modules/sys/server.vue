@@ -95,11 +95,11 @@
     clear: both
   }
 
-  .box-card {
-    width: 48%;
-    float: left;
-    margin-bottom: 20px;
-  }
+  /*.box-card {*/
+  /*  width: 48%;*/
+  /*  float: left;*/
+  /*  margin-bottom: 20px;*/
+  /*}*/
 
   .el-col {
     border-radius: 4px;
