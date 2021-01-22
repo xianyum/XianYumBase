@@ -15,5 +15,5 @@ public interface UserMapper extends BaseMapper<UserEntity> {
 
     List<UserEntity> getList(UserRequest request);
 
-    int update(UserRequest user);
+    int updateUser(UserRequest user);
 }

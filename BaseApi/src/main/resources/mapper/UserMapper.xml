@@ -48,7 +48,7 @@
         )
     </select>
 
-    <update id="update" parameterType="com.base.entity.request.UserRequest">
+    <update id="updateUser" parameterType="com.base.entity.request.UserRequest">
         UPDATE user
         <trim prefix="set" suffixOverrides=",">
             <if test="email != null and email != ''">

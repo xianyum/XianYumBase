@@ -70,7 +70,6 @@
 <!--                  </el-form-item>-->
 <!--                </el-col>-->
 <!--              </el-form-item>-->
-
               <el-button
                 :loading="loading"
                 type="primary"
@@ -142,7 +141,7 @@
     <Verify
       @success="success"
       :mode="'pop'"
-      :captchaType="'blockPuzzle'"
+      :captchaType="captchaType"
       :imgSize="{ width: '330px', height: '155px' }"
       ref="verify"
     ></Verify>
@@ -153,7 +152,7 @@
 <script>
   import {getUUID} from '@/utils'
   import {isvalidPhone} from '@/utils/validate'
-  import Verify from "./../../components/verifition/Verify";
+  import Verify from './../../components/verifition/Verify'
 
   export default {
     name: 'Login',
@@ -171,6 +170,7 @@
           phone: '',
           code: ''
         },
+        captchaType: 'clickWord',
         passwordType: 'password',
         loading: false,
         showDialog: false,
@@ -199,7 +199,8 @@
       }
     },
     created () {
-      // this.refreshCaptcha()
+      // 初始化验证码类型
+      this.getCaptchaTypeParams()
     },
     components: {
       Verify
@@ -209,6 +210,18 @@
 
     },
     methods: {
+      getCaptchaTypeParams () {
+        this.$http({
+          url: this.$http.adornUrl('/systemConstant/getPublicConstant'),
+          method: 'post',
+          data: this.$http.adornData({
+            'constantKey': 'captcha_type'
+          })
+        }).then(({data}) => {
+          console.log(data)
+          this.captchaType = data.data.constantValue
+        })
+      },
       success(params){
         let captchaVerification = params.captchaVerification
         let _this = this

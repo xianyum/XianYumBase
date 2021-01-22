@@ -94,7 +94,11 @@
   .clearfix:after {
     clear: both
   }
-  
+
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+
   .bg-purple span {
     width: 50%;
     float: left;

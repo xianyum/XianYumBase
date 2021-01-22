@@ -207,7 +207,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public int updateCurrentUser(UserRequest user) {
         user.setId(AuthUserToken.getUser().getId());
-        int count = userMapper.update(user);
+        int count = userMapper.updateUser(user);
         userTokenService.refreshUser();
         return count;
     }

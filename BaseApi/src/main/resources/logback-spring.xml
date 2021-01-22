@@ -1,7 +1,9 @@
 <configuration>
   <!-- 定义日志的根目录 -->
+  <springProperty scope="context" name="projectName" source="spring.application.name" defaultValue="BaseApi"/>
+
   <property name="LOG_HOME" value="/home/zhangwei/logs"/>
-  <property name="PROJECT_NAME" value="BaseDemoApi"/>
+  <property name="PROJECT_NAME" value="${projectName}"/>
 
   <property name="FILE_PATTEN"  value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
 
