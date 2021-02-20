@@ -42,6 +42,9 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
+            <el-collapse-item title="v2.8 2021-01-25 新增个人中心/在线用户功能" name="26">
+              <div>新增个人中心/在线用户功能</div>
+            </el-collapse-item>
             <el-collapse-item title="v2.7 2020-12-15 首页样式调整，去除http" name="25">
               <div>首页样式调整，去除页面中有http请求的地方，适配最新谷歌浏览器</div>
             </el-collapse-item>

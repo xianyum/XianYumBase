@@ -1,12 +1,11 @@
 package com.base.service.impl;
 
 import com.base.common.utils.*;
-import com.base.config.oauth2.OAuth2Token;
 import com.base.config.oauth2.TokenGenerator;
 import com.base.dao.UserMapper;
 import com.base.entity.po.UserEntity;
 import com.base.service.iservice.UserTokenService;
-import org.apache.shiro.authc.AuthenticationToken;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,18 @@ public class UserTokenServiceImpl implements UserTokenService {
         //生成token
         String token = TokenGenerator.generateValue();
         Date now = new Date();
+
+        /** 增加浏览器标识以及登录ip等 */
+        HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
+        UserAgent userAgent = UserAgent.parseUserAgentString(httpServletRequest.getHeader("User-Agent"));
+        String ip = IPUtils.getIpAddr(httpServletRequest);
+        user.setIpaddr(ip);
+        user.setLoginLocation(IPUtils.getIpInfo(ip));
+        user.setBrowser(userAgent.getBrowser().getName());
+        user.setOs(userAgent.getOperatingSystem().getName());
+        user.setLoginTime(now);
+        user.setLoginSystem("本站(BaseDemo)");
+
         //过期时间
         Date expireTime = new Date(now.getTime() + expire * 1000);
         redisUtils.setMin(prefix+token,user,expire);

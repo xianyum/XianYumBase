@@ -38,6 +38,7 @@
     <el-table
       :data="dataList"
       border
+      stripe
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%">

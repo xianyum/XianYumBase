@@ -58,7 +58,7 @@ public class XiaoDaoServiceImpl extends ServiceImpl<XiaoDaoMapper, XiaoDaoEntity
             for (XiaoDaoEntity xiaoDaoEntity : pushInfo) {
                 JSONObject params = getParams(xiaoDaoEntity, wxCenterEntities);
                 HttpUtils.getHttpInstance().sync(URL)
-                        .bodyType(OkHttps.JSON).setBodyPara(params).post();
+                        .bodyType(OkHttps.JSON).setBodyPara(params).post().close();
                 DingDingPushUtils.push("推送活动助手",params.getString("content"));
                 xiaoDaoEntity.setPushStatus(1);
                 xiaoDaoEntity.setPushTime(new Date());

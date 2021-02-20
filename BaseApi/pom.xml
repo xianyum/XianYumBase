@@ -44,9 +44,18 @@
         <boot.mail.version>2.3.5.RELEASE</boot.mail.version>
         <guava.version>30.0-jre</guava.version>
         <okhttps.fastjson.version>2.4.5</okhttps.fastjson.version>
+        <bitwalker.version>1.21</bitwalker.version>
     </properties>
 
     <dependencies>
+
+        <!-- 解析客户端操作系统、浏览器等 -->
+        <dependency>
+            <groupId>eu.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>${bitwalker.version}</version>
+        </dependency>
+
 
 <!--        http://okhttps.ejlchina.com/v2/getstart.html#maven-->
         <dependency>

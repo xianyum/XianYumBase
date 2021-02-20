@@ -14,7 +14,6 @@ import com.base.entity.po.LogEntity;
 import com.base.entity.po.UserEntity;
 import com.base.entity.request.UserRequest;
 import com.base.service.iservice.CaptchaService;
-import com.base.service.iservice.LogService;
 import com.base.service.iservice.UserService;
 import com.base.service.iservice.UserTokenService;
 import io.swagger.annotations.Api;
@@ -22,19 +21,16 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.io.IOUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
@@ -116,6 +112,7 @@ public class LoginController {
                 saveLoginLog(userRequest,"账号被锁定",time);
                 return DataResult.error("账号已被锁定,请联系管理员");
             }
+
             //生成token，并保存到数据库
             DataResult result = userTokenService.createToken(user);
             long time = System.currentTimeMillis() - beginTime;

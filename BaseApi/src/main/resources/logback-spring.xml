@@ -71,6 +71,7 @@
   <logger name="io.undertow" level="INFO"/>
   <logger name="springfox.documentation" level="WARN"/>
   <logger name="org.xnio.nio" level="WARN"/>
+  <logger name="com.anji.captcha" level="WARN"/>
   <logger name="com.geccocrawler.gecco" level="WARN"/>
   <logger name="org.reflections.Reflections" level="WARN"/>
 

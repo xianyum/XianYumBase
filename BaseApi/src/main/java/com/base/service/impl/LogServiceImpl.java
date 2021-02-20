@@ -135,7 +135,7 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
         jsonObject.put("uids",wxCenterEntities.stream().map(p -> p.getUid()).collect(Collectors.toList()));
         jsonObject.put("content",markdownStr.toString());
         HttpUtils.getHttpInstance().sync(URL)
-                .bodyType(OkHttps.JSON).setBodyPara(jsonObject).post();
+                .bodyType(OkHttps.JSON).setBodyPara(jsonObject).post().close();
     }
 
     @Override

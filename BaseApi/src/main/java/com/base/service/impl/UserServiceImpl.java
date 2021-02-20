@@ -1,6 +1,5 @@
 package com.base.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,10 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.base.common.exception.SoException;
 import com.base.common.utils.*;
 import com.base.config.XianYumConfig;
-import com.base.dao.SystemConstantMapper;
 import com.base.dao.ThirdUserMapper;
 import com.base.dao.UserMapper;
 import com.base.entity.enums.DeleteTagEnum;
+import com.base.entity.enums.LoginTypeEnum;
 import com.base.entity.enums.PermissionEnum;
 import com.base.entity.enums.UserStatusEnum;
 import com.base.entity.po.QqUserEntity;
@@ -24,7 +23,6 @@ import com.base.entity.request.UserRequest;
 import com.base.service.iservice.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -169,7 +167,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 userEntity.setId(qqUserEntity.getUserId());
                 userEntity.setUsername(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
-                userEntity.setThirdUserInfo(JSONObject.toJSONString(qqUserEntity));
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
                 if("女".equals(qqUserEntity.getGender())){
                     userEntity.setSex(1);
@@ -187,6 +184,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                         .eq("id",aliUserEntity.getUserId())
                         .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
             }
+            userEntity.setLoginType(LoginTypeEnum.QQ.getLoginType());
             return userEntity;
         }
         return null;
@@ -257,12 +255,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
                 userEntity.setAvatar(aLiUserInfo.getAvatar());
                 userEntity.setPermission(PermissionEnum.COMMON.getStatus());
-                userEntity.setThirdUserInfo(JSONObject.toJSONString(aLiUserInfo));
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
                         .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
             }
+            userEntity.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
             return userEntity;
         }
         return null;

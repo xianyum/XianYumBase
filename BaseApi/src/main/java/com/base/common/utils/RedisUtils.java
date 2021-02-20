@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -589,5 +591,16 @@ public class RedisUtils {
         }
     }
 
+
+    /**
+     * 获得缓存的基本对象列表
+     *
+     * @param key 字符串前缀
+     * @return 对象列表
+     */
+    public Collection<String> keys(final String key)
+    {
+        return redisTemplate.keys(key);
+    }
 }
 

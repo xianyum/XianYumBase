@@ -37,7 +37,7 @@ public class DingDingPushUtils {
             markdown.put("text",text);
             requestJson.put("markdown",markdown);
             HttpUtils.getHttpInstance().sync(url)
-                    .bodyType(OkHttps.JSON).setBodyPara(requestJson).post();
+                    .bodyType(OkHttps.JSON).setBodyPara(requestJson).post().close();
         }catch (Exception e){
             log.error("send ding ding message error.",e);
         }

@@ -29,7 +29,45 @@ public class UserEntity extends Model<UserEntity> {
     private Integer sex;
     private String avatar;
 
-    /** 第三方用户信息（json串） */
+    /**
+     * 登录时间
+     */
     @TableField(exist = false)
-    private String thirdUserInfo;
+    private Date loginTime;
+
+    /**
+     * 登录IP地址
+     */
+    @TableField(exist = false)
+    private String ipaddr;
+
+    /**
+     * 登录地点
+     */
+    @TableField(exist = false)
+    private String loginLocation;
+
+    /**
+     * 浏览器类型
+     */
+    @TableField(exist = false)
+    private String browser;
+
+    /**
+     * 操作系统
+     */
+    @TableField(exist = false)
+    private String os;
+
+    /**
+     * 登录系统（用来区分外部系统）
+     */
+    @TableField(exist = false)
+    private String loginSystem;
+
+    /**
+     * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
+     */
+    @TableField(exist = false)
+    private int loginType;
 }

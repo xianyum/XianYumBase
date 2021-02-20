@@ -46,7 +46,7 @@ public class CaptchaServiceImpl  implements CaptchaService {
         String capText = producer.createText();
         String capStr = capText.substring(0, capText.lastIndexOf("@"));
         String code = capText.substring(capText.lastIndexOf("@") + 1);
-        redisUtils.setMin(prefix+uuid,code,expireMinTime);
+        redisUtils.set(prefix+uuid,code,expireMinTime);
         return producer.createImage(capStr);
     }
 
