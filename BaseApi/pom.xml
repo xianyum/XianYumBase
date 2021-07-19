@@ -57,7 +57,6 @@
         </dependency>
 
 
-<!--        http://okhttps.ejlchina.com/v2/getstart.html#maven-->
         <dependency>
             <groupId>com.ejlchina</groupId>
             <artifactId>okhttps-fastjson</artifactId>
