@@ -24,7 +24,7 @@
         </el-menu-item>
         <el-menu-item index="3">
           <el-badge value="hot">
-            <a href="https://gitee.com/javzhangwei_admin/events" target="_blank">码云地址</a>
+            <a href="https://github.com/xianyum/BaseDemo" target="_blank">开源地址</a>
           </el-badge>
         </el-menu-item>
         <el-menu-item index="4" @click="$router.push({ name: 'theme' })">

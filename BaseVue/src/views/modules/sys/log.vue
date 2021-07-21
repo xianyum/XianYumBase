@@ -16,8 +16,8 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button @click="queryData()">查询</el-button>
-        <el-button @click="changeType()">切换图表</el-button>
+        <el-button round @click="queryData()">查询</el-button>
+        <el-button round type="primary" @click="changeType()">切换图表</el-button>
         <el-button type="danger"  @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -100,7 +100,7 @@
         align="center"
         width="180"
         label="创建时间"
-        :formatter="formateCreateTime">
+        :formatter="formateTime">
       </el-table-column>
       <el-table-column
         header-align="center"
@@ -244,8 +244,8 @@
           method: 'post',
           data: this.$http.adornData({
             'nameOrDesc': this.dataForm.nameOrDesc,
-            'startTime': this.dateFormat(startTime),
-            'endTime': this.dateFormat(endTime),
+            'startTime': new Date(startTime).Format('yyyy-MM-dd hh:mm:ss'),
+            'endTime': new Date(endTime).Format('yyyy-MM-dd hh:mm:ss'),
             'time': this.dataForm.time,
             'pageNum': this.pageIndex,
             'pageSize': this.pageSize
@@ -301,27 +301,11 @@
         this.requestParam = JSON.parse(params)
         this.requestVisible = true
       },
-      formateCreateTime (row, column) {
-        var objD = row.createTime
-        if (!objD) {
+      formateTime (row, column,cell) {
+        if(!cell){
           return ''
         }
-        objD = new Date(objD)
-        var str
-        var yy = objD.getYear()
-        if (yy < 1900) yy = yy + 1900
-        var MM = objD.getMonth() + 1
-        if (MM < 10) MM = '0' + MM
-        var dd = objD.getDate()
-        if (dd < 10) dd = '0' + dd
-        var hh = objD.getHours()
-        if (hh < 10) hh = '0' + hh
-        var mm = objD.getMinutes()
-        if (mm < 10) mm = '0' + mm
-        var ss = objD.getSeconds()
-        if (ss < 10) ss = '0' + ss
-        str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
-        return (str)
+        return new Date(cell).Format('yyyy-MM-dd hh:mm:ss');
       },
       dateFormat:function(date) {
         var year=date.getFullYear();

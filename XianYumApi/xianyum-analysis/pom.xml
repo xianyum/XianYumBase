@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>XianYumApi</artifactId>
+        <groupId>cn.xianyum</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>xianyum-analysis</artifactId>
+
+    <description>
+        爬虫框架模块
+    </description>
+
+    <properties>
+        <gecco.version>1.3.0</gecco.version>
+        <version>${mybatisplus.boot.version}</version>
+        <dynamic.datasource.boot.version>3.2.1</dynamic.datasource.boot.version>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>cn.xianyum</groupId>
+            <artifactId>xianyum-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.geccocrawler</groupId>
+            <artifactId>gecco-spring</artifactId>
+            <version>${gecco.version}</version>
+        </dependency>
+
+        <!--mybatis-plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+
+        <!--dynamic-datasource-多数据源-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+</project>

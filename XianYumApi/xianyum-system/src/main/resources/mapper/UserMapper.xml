@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.system.dao.UserMapper">
+    <sql id="userColumns">
+        a.id,
+        a.username,
+        a.password,
+        a.email,
+        a.mobile,
+        a.status,
+        a.create_time AS "createTime",
+        a.del_tag AS "delTag",
+        a.permission,
+        a.sex,
+        a.avatar
+    </sql>
+
+    <select id="queryAll" parameterType="cn.xianyum.system.entity.request.LogRequest" resultType="cn.xianyum.system.entity.po.UserEntity">
+        SELECT
+        <include refid="userColumns"/>
+        from  user a
+        <where>
+            a.del_tag = 0
+            <if test="user.id != null">
+                AND a.id = #{user.id}
+            </if>
+            <if test="user.username != null and user.username != ''">
+                AND a.username LIKE CONCAT('%', #{user.username}, '%')
+            </if>
+        </where>
+        ORDER BY a.create_time desc
+    </select>
+
+    <select id="getList" parameterType="cn.xianyum.system.entity.request.UserRequest" resultType="cn.xianyum.system.entity.po.UserEntity">
+        SELECT
+        <include refid="userColumns"/>
+        from user a
+        WHERE
+        a.del_tag = 0
+        AND
+        (
+        a.mobile = #{mobile}
+        OR
+        a.username = #{username}
+        )
+    </select>
+
+    <update id="updateUser" parameterType="cn.xianyum.system.entity.request.UserRequest">
+        UPDATE user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="sex != null">
+                sex = #{sex}
+            </if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+</mapper>

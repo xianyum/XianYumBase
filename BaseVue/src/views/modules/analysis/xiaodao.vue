@@ -5,9 +5,9 @@
         <el-input v-model="dataForm.title" placeholder="标题" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getDataList()">查询</el-button>
-        <el-button type="success" @click="openWxPushXiaoDaoImage = true">推送</el-button>
-        <el-button type="info" @click="reset()">重置</el-button>
+        <el-button round  @click="getDataList()">查询</el-button>
+        <el-button round type="primary" @click="openWxPushXiaoDaoImage = true">推送</el-button>
+        <el-button round type="info" @click="reset()">重置</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -45,16 +45,10 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="time"
-        header-align="center"
-        align="center"
-        width="100"
-        label="时间">
-      </el-table-column>
-      <el-table-column
         prop="pushStatus"
         header-align="center"
         align="center"
+        width="120"
         label="推送状态">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.pushStatus === 0" size="small" type="danger">未推送</el-tag>
@@ -62,25 +56,30 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="pushId"
+        header-align="center"
+        align="center"
+        width="280"
+        label="消息ID">
+        <template slot-scope="scope">
+          <a type="primary" @click="toPushLog(scope.row.pushId)">{{ scope.row.pushId }}</a>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="pushTime"
         header-align="center"
         align="center"
         label="推送时间"
-        :formatter="formatePushTime">
+        width="160px"
+        :formatter="formateTime">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
         label="创建时间"
-        :formatter="formateCreateTime">
-      </el-table-column>
-      <el-table-column
-        prop="params"
-        header-align="center"
-        align="center"
-        show-overflow-tooltip
-        label="请求参数">
+        width="160px"
+        :formatter="formateTime">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -127,49 +126,14 @@
       this.getDataList()
     },
     methods: {
-      formateCreateTime (row, column) {
-        var objD = row.createTime
-        if (!objD) {
-          return ''
-        }
-        objD = new Date(objD)
-        var str
-        var yy = objD.getYear()
-        if (yy < 1900) yy = yy + 1900
-        var MM = objD.getMonth() + 1
-        if (MM < 10) MM = '0' + MM
-        var dd = objD.getDate()
-        if (dd < 10) dd = '0' + dd
-        var hh = objD.getHours()
-        if (hh < 10) hh = '0' + hh
-        var mm = objD.getMinutes()
-        if (mm < 10) mm = '0' + mm
-        var ss = objD.getSeconds()
-        if (ss < 10) ss = '0' + ss
-        str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
-        return (str)
+      toPushLog (pushId){
+        this.$router.push({name: 'push-log', params: {pushId: pushId}})
       },
-      formatePushTime (row, column) {
-        var objD = row.pushTime
-        if (!objD) {
+      formateTime (row, column,cell) {
+        if(!cell){
           return ''
         }
-        objD = new Date(objD)
-        var str
-        var yy = objD.getYear()
-        if (yy < 1900) yy = yy + 1900
-        var MM = objD.getMonth() + 1
-        if (MM < 10) MM = '0' + MM
-        var dd = objD.getDate()
-        if (dd < 10) dd = '0' + dd
-        var hh = objD.getHours()
-        if (hh < 10) hh = '0' + hh
-        var mm = objD.getMinutes()
-        if (mm < 10) mm = '0' + mm
-        var ss = objD.getSeconds()
-        if (ss < 10) ss = '0' + ss
-        str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
-        return (str)
+        return new Date(cell).Format('yyyy-MM-dd hh:mm:ss');
       },
       reset () {
         this.dataForm.title = ''

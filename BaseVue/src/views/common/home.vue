@@ -42,6 +42,9 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
+            <el-collapse-item title="v3.0 2021-07-21 后端框架重构，集成咸鱼内网穿透" name="26">
+              <div>后端框架优化，集成咸鱼内网穿透</div>
+            </el-collapse-item>
             <el-collapse-item title="v2.8 2021-01-25 新增个人中心/在线用户功能" name="26">
               <div>新增个人中心/在线用户功能</div>
             </el-collapse-item>

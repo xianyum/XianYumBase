@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>xianyu客户端代理配置详情</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #ECECEC;
+        }
+
+        .container {
+            width: 800px;
+            margin: 50px auto;
+        }
+
+        .header {
+            height: 80px;
+            background-color: #49bcff;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            padding-left: 30px;
+        }
+
+        .header h2 {
+            padding-top: 25px;
+            color: white;
+        }
+
+        .content {
+            background-color: #fff;
+            padding-left: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .content h2 {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .content p {
+            padding-top: 10px;
+        }
+
+        .footer {
+            background-color: #fff;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            padding: 35px;
+        }
+
+        .footer p {
+            color: #747474;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header">
+        <h2>xianyu客户端代理配置详情</h2>
+    </div>
+    <div class="content">
+        <p></p>
+        <p>客户端名称：<b><span th:text="${name}"></span></b></p>
+        <p>代理信息：<b><span style="color: red" th:text="${remoteAddr}"></span></b></p>
+        <p>当前是否在线：<b><span th:text="${online}"></span></b></p>
+        <p>上次登录日期：<b><span th:text="${loginTime}"></span></b></p>
+        <p>共计登录次数：<b><span th:text="${loginCount}"></span></b></p>
+        <p>客户端公告：<b><span th:text="${notice}"></span></b></p>
+        <p>客户端最新下载地址：<b><span th:text="${clientDownloadUrl}"></span></b></p>
+        <p>如果您有什么疑问可以联系管理员，Email: <b>80616059@qq.com</b></p>
+    </div>
+    <div class="footer">
+        <p>此为系统邮件，请勿回复</p>
+        <p>请保管好您的信息，避免被他人盗用</p>
+        <p>©xianyum.cn</p>
+    </div>
+</div>
+</body>
+</html>

@@ -5,9 +5,9 @@
         <el-input v-model="dataForm.userName" placeholder="用户名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button  type="primary"  @click="addOrUpdateHandle()">新增</el-button>
-        <el-button  type="danger"  @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button round @click="getDataList()">查询</el-button>
+        <el-button round type="success"  @click="addOrUpdateHandle()">新增</el-button>
+        <el-button round type="danger"  @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -75,7 +75,7 @@
         align="center"
         width="180"
         label="创建时间"
-        :formatter="formateCreateTime">
+        :formatter="formateTime">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -127,27 +127,11 @@
       this.getDataList()
     },
     methods: {
-      formateCreateTime (row, column) {
-        var objD = row.createTime
-        if (!objD) {
+      formateTime (row, column,cell) {
+        if(!cell){
           return ''
         }
-        objD = new Date(objD)
-        var str
-        var yy = objD.getYear()
-        if (yy < 1900) yy = yy + 1900
-        var MM = objD.getMonth() + 1
-        if (MM < 10) MM = '0' + MM
-        var dd = objD.getDate()
-        if (dd < 10) dd = '0' + dd
-        var hh = objD.getHours()
-        if (hh < 10) hh = '0' + hh
-        var mm = objD.getMinutes()
-        if (mm < 10) mm = '0' + mm
-        var ss = objD.getSeconds()
-        if (ss < 10) ss = '0' + ss
-        str = yy + '-' + MM + '-' + dd + ' ' + hh + ':' + mm + ':' + ss
-        return (str)
+        return new Date(cell).Format('yyyy-MM-dd hh:mm:ss');
       },
       // 获取数据列表
       getDataList () {

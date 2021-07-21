@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.proxy.dao.ProxyDetailsMapper">
+
+    <select id="getPage" parameterType="cn.xianyum.proxy.entity.request.ProxyDetailsRequest" resultType="cn.xianyum.proxy.entity.response.ProxyDetailsResponse">
+
+        SELECT
+            pd.id AS id,
+            pd.proxy_id AS proxyId,
+            pd.inet_port AS inetPort,
+            pd.lan AS lan,
+            pd.NAME AS NAME,
+            pd.create_time AS createTime,
+            p.`name` AS proxyName
+        FROM
+            proxy_details pd
+            LEFT JOIN proxy p on pd.proxy_id = p.id
+        <where>
+            <if test="request.proxyName != null and request.proxyName != ''">
+                AND p.name LIKE CONCAT('%', #{request.proxyName}, '%')
+            </if>
+            <if test="request.proxyId != null and request.proxyId != ''">
+                AND p.id LIKE CONCAT('%', #{request.proxyId}, '%')
+            </if>
+            <if test="request.inetPort != null and request.inetPort != ''">
+                AND pd.inet_port = #{request.inetPort}
+            </if>
+        </where>
+        ORDER BY pd.create_time desc,pd.id desc
+    </select>
+</mapper>

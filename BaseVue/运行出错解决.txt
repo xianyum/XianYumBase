@@ -4,3 +4,13 @@
 
 
 nginx开启gzip：https://blog.csdn.net/qq_19767623/article/details/83185132
+
+
+node版本必须是14以上
+否则node-sass报错
+https://www.npmjs.com/package/node-sass
+
+
+升级框架
+npm install -g npm-check-updates
+ncu -u

@@ -1,0 +1,101 @@
+package cn.xianyum.framwork.aspectj;
+
+import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.async.AsyncManager;
+import cn.xianyum.common.utils.HttpContextUtils;
+import cn.xianyum.common.utils.IPUtils;
+import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.system.common.factory.AsyncLogFactory;
+import cn.xianyum.system.entity.po.LogEntity;
+import cn.xianyum.system.entity.request.UserRequest;
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Date;
+
+/**
+ * 系统日志，切面处理类
+ * @author zhangwei
+ * @date 2019/4/18 14:18
+ */
+@Slf4j
+@Aspect
+@Component
+public class SysLogAspect {
+
+
+    @Pointcut("@annotation(cn.xianyum.common.annotation.SysLog)")
+    public void logPointCut() {
+    }
+
+    @Around("logPointCut()")
+    public Object around(ProceedingJoinPoint point) throws Throwable {
+        long beginTime = System.currentTimeMillis();
+        //执行方法
+        Object result = point.proceed();
+        //执行时长(毫秒)
+        long time = System.currentTimeMillis() - beginTime;
+        //保存日志
+        saveSysLog(point, time);
+        return result;
+    }
+
+    private void saveSysLog(ProceedingJoinPoint joinPoint, long time) {
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        LogEntity logEntity = new LogEntity();
+        logEntity.setId(UUIDUtils.UUIDReplace());
+        SysLog syslog = method.getAnnotation(SysLog.class);
+        if(syslog != null){
+            //注解上的描述
+            logEntity.setOperation(syslog.value());
+        }
+        //请求的方法名
+        String className = joinPoint.getTarget().getClass().getName();
+        String methodName = signature.getName();
+        logEntity.setMethod(className + "." + methodName + "()");
+
+        //请求的参数
+        Object[] args = joinPoint.getArgs();
+        try {
+            if(args != null && args.length>0){
+                if(args[0] instanceof UserRequest){
+                    UserRequest userRequest = (UserRequest)args[0];
+                    userRequest.setPassword("");
+                }
+            }
+            String params = JSON.toJSONString(args);
+            logEntity.setParams(params);
+        }catch (Exception e){
+
+        }
+
+        //ip
+        HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
+        String ip = IPUtils.getIpAddr(httpServletRequest);
+        logEntity.setIp(ip);
+        String ipInfo =IPUtils.getIpInfo(ip);
+        logEntity.setIpInfo(ipInfo);
+        //用户名
+        if(null != SecurityUtils.getLoginUser()){
+            logEntity.setUsername(SecurityUtils.getLoginUser().getUsername());
+        }else{
+            logEntity.setUsername("system");
+        }
+
+
+        logEntity.setTime(time);
+        logEntity.setCreateTime(new Date());
+
+        //异步保存系统日志
+        AsyncManager.async().execute(AsyncLogFactory.save(logEntity));
+    }
+}
