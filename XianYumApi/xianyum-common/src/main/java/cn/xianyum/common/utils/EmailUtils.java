@@ -26,7 +26,7 @@ public class EmailUtils {
     @Autowired
     private TemplateEngine templateEngine;
 
-    @Value("${spring.mail.username}:80616059@qq.com")
+    @Value("${spring.mail.username:'80616059@qq.com'}")
     private String sender;
 
 
@@ -69,7 +69,6 @@ public class EmailUtils {
             message.setText(emailContent);
             javaMailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("发送邮件失败,{}",e);
         }
     }

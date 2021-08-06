@@ -131,7 +131,6 @@ public class ProxyController {
     @ApiOperation(value = "发送客户端配置信息")
     @PostMapping(value = "/sendEmail")
     public DataResult sendEmail(@RequestBody ProxyRequest request) {
-
         String result = proxyService.sendEmail(request);
         return DataResult.success(result);
     }

@@ -321,7 +321,7 @@ public class ProxyServiceImpl implements ProxyService {
 		jsonObject.put("sslEnable",true);
 		jsonObject.put("sslJksPath","xianyu.jks");
 		jsonObject.put("keyStorePassword","123456");
-		jsonObject.put("autoStart",true);
+		jsonObject.put("autoStart",false);
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);
 	}

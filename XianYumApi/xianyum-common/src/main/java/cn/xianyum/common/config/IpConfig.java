@@ -22,14 +22,14 @@ public class IpConfig {
     private String dbFile;
 
     private final static String DWONLOAD_DB_URL = "http://oss.xianyum.cn/ip2region.db";
-    private final static String DB_PATH = System.getProperty("user.dir")+"/ipDb/ip2region.db";
+    private final static String DB_PATH = System.getProperty("user.dir")+"/ipdb/ip2region.db";
 
     @Bean(name = "ipDbSearcherConfig")
     public IpDbSearcher loadIpConfig(){
         try {
             File file = new File(dbFile);
             if(!file.exists()){
-                log.warn("本地未找到ipDb库，切换到从网络资源下载ipDb库，下载路径为：{}",DB_PATH);
+                log.info("本地未找到ip库(建议配置ip.db.path本地路径)，切换到从网络资源下载ip库，下载路径为：{}",DB_PATH);
                 FileUtils.copyByUrl(DWONLOAD_DB_URL,DB_PATH);
                 dbFile = DB_PATH;
             }
