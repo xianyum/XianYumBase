@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class ConsolePipeline implements Pipeline<SpiderBean> {
     @Override
     public void process(SpiderBean spiderBean) {
+
         System.out.println(JSON.toJSONString(spiderBean));
     }
 }
