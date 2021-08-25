@@ -13,8 +13,9 @@ import java.util.List;
  * @date 2019/9/25 15:17
  */
 @Data
-@Gecco(matchUrl = "https://www.x6d.com/", pipelines={"xiaoDaoArticleLine"},timeout = 300000,downloader="htmlUnitDownloder")
+@Gecco(matchUrl = "https://www.x6g.com/", pipelines={"xiaoDaoArticleLine"},timeout = 300000,downloader="htmlUnitDownloder")
 public class XiaoDaoAnalysis implements HtmlBean {
+
     private static final long serialVersionUID = 1225018257932399804L;
 
     @Request

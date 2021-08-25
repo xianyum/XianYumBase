@@ -17,7 +17,6 @@
 
     <properties>
         <gecco.version>1.3.0</gecco.version>
-        <version>${mybatisplus.boot.version}</version>
         <dynamic.datasource.boot.version>3.2.1</dynamic.datasource.boot.version>
     </properties>
 

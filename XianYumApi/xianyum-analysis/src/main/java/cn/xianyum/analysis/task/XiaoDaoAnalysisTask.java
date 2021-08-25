@@ -23,13 +23,14 @@ public class XiaoDaoAnalysisTask {
     @Autowired
     private XiaoDaoService xiaoDaoService;
 
-    @Scheduled(cron = "0 0/5 * * * ?")  //每隔1分钟执行一次
+    @Scheduled(cron = "0 0/10 * * * ?")  //每隔1分钟执行一次
     public void reportDataJob() {
-        HttpGetRequest startUrl = new HttpGetRequest("https://www.x6d.com/");
+        log.info("执行爬虫计划...");
+        HttpGetRequest startUrl = new HttpGetRequest("https://www.x6g.com/");
         startUrl.setCharset("UTF-8");
         GeccoEngine.create()
                 //Gecco搜索的包路径
-                .classpath("com.base.analysis")
+                .classpath("cn.xianyum.analysis")
                 .pipelineFactory(springPipelineFactory)
                 //开始抓取的页面地址
                 .start(startUrl)
