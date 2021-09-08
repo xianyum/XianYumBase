@@ -365,7 +365,8 @@
     content: "";
     //background-image: url(https://xiaoyaxiaokeai.gitee.io/base/20201018/457a981a-b7fe-4777-a7b8-ed1a5e8abf2e.jpg);
     /*background-image: url(~@/assets/img/pg5.jpg);*/
-    background-image: url(https://bing.mcloc.cn/api);
+    //background-image: url(https://bing.mcloc.cn/api);
+    background-image: url(https://api.kdcc.cn/img/);
     background-size: cover;
   }
 
