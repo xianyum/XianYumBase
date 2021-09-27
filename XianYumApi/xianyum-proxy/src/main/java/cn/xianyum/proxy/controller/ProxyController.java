@@ -136,6 +136,18 @@ public class ProxyController {
     }
 
     /**
+     * 更新客户端信息
+     *
+     */
+    @SysLog("更新客户端信息")
+    @ApiOperation(value = "更新客户端信息")
+    @PostMapping(value = "/updateClientInfo")
+    public DataResult updateClientInfo(@RequestBody ProxyRequest request) {
+        proxyService.updateClientInfo(request);
+        return DataResult.success();
+    }
+
+    /**
      * 下载配置
      * @param request
      * @return

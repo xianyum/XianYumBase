@@ -145,7 +145,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
 
         // 此处是客户端上线的
         AsyncManager.async().execute(AsyncXianYuOnlineFactory.notify(clientKey));
-        logger.info("set port => channel, {}, {}, {}", clientKey, ports, ctx.channel());
+        logger.info("咸鱼客户端新上线，授权码：{},端口：{}，映射：{}", clientKey, ports, ctx.channel());
         ProxyChannelManager.addCmdChannel(ports, clientKey, ctx.channel());
     }
 

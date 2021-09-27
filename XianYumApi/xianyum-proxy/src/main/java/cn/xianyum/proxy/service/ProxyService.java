@@ -49,4 +49,10 @@ public interface ProxyService {
     String sendEmail(ProxyRequest request);
 
     String downloadConfig(ProxyRequest request);
+
+	/**
+	 * 更新客户端信息
+	 * @param request
+	 */
+	void updateClientInfo(ProxyRequest request);
 }

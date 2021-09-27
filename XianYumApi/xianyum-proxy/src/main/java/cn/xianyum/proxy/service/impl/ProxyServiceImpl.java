@@ -172,11 +172,11 @@ public class ProxyServiceImpl implements ProxyService {
 
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
-			content.put("登录次数：",proxyEntity.getLoginCount()+1);
 			content.put("登录时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
+			content.put("登录mac：",proxyEntity.getMacAddress());
+			content.put("登录ip：",proxyEntity.getHostIp());
+			content.put("登录次数：",proxyEntity.getLoginCount()+1);
 			pushProxyUtils.push(content,"xianyu客户端上线通知");
-
-
 
 			// 发送邮件通知客户端
 			if(null != proxyEntity.getNotify() && 1 == proxyEntity.getNotify()
@@ -272,6 +272,8 @@ public class ProxyServiceImpl implements ProxyService {
 		}else {
 			context.setVariable("online", "离线");
 		}
+		context.setVariable("macAddress", proxyEntity.getMacAddress());
+		context.setVariable("hostIp", proxyEntity.getHostIp());
 		emailUtils.sendHtmlEmail(proxyEntity.getNotifyEmail(),"xianyu客户端代理配置详情","clientHtml",context);
 
 	}
@@ -324,6 +326,26 @@ public class ProxyServiceImpl implements ProxyService {
 		jsonObject.put("autoStart",false);
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);
+	}
+
+	/**
+	 * 更新客户端信息
+	 *
+	 * @param request
+	 */
+	@Override
+	public void updateClientInfo(ProxyRequest request) {
+		if(StringUtil.isEmpty(request.getId())){
+			throw new SoException("客户端秘钥不能为空！");
+		}
+		ProxyEntity updateBean = new ProxyEntity();
+		updateBean.setId(request.getId());
+		updateBean.setMacAddress(request.getMacAddress());
+		updateBean.setHostIp(request.getHostIp());
+		updateBean.setHostName(request.getHostName());
+		updateBean.setOsName(request.getOsName());
+		proxyMapper.updateById(updateBean);
+
 	}
 
 }

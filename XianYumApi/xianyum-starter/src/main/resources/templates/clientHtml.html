@@ -75,6 +75,8 @@
         <p>代理信息：<b><span style="color: red" th:text="${remoteAddr}"></span></b></p>
         <p>当前是否在线：<b><span th:text="${online}"></span></b></p>
         <p>上次登录日期：<b><span th:text="${loginTime}"></span></b></p>
+        <p>上次登录mac地址：<b><span th:text="${macAddress}"></span></b></p>
+        <p>上次登录ip：<b><span th:text="${hostIp}"></span></b></p>
         <p>共计登录次数：<b><span th:text="${loginCount}"></span></b></p>
         <p>客户端公告：<b><span th:text="${notice}"></span></b></p>
         <p>客户端最新下载地址：<b><span th:text="${clientDownloadUrl}"></span></b></p>
@@ -83,7 +85,7 @@
     <div class="footer">
         <p>此为系统邮件，请勿回复</p>
         <p>请保管好您的信息，避免被他人盗用</p>
-        <p>©xianyum.cn</p>
+        <p>©www.xianyum.cn</p>
     </div>
 </div>
 </body>

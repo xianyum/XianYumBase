@@ -100,7 +100,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/captcha/get",
                         "/captcha/check",
                         "/systemConstant/getPublicConstant",
-                        "/proxy/sendEmail").permitAll()
+                        "/proxy/sendEmail",
+                        "/proxy/updateClientInfo").permitAll()
                 .antMatchers(
                         HttpMethod.GET,
                         "/",

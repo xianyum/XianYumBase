@@ -70,7 +70,6 @@ public class ProxyMessageDecoder extends LengthFieldBasedFrameDecoder {
         byte[] data = new byte[frameLength - TYPE_SIZE - SERIAL_NUMBER_SIZE - URI_LENGTH_SIZE - uriLength];
         in.readBytes(data);
         proxyMessage.setData(data);
-
         in.release();
 
         return proxyMessage;
