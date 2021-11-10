@@ -4,10 +4,11 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -19,6 +20,10 @@ public class DateUtils {
     public final static String DATE_PATTERN = "yyyy-MM-dd";
     /** 时间格式(yyyy-MM-dd HH:mm:ss) */
     public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    public final static String START_DATE_PATTERN = DATE_PATTERN +" 00:00:00";
+
+    public final static String END_DATE_PATTERN = DATE_PATTERN +" 23:59:59";
 
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd
@@ -57,6 +62,14 @@ public class DateUtils {
         return fmt.parseLocalDateTime(strDate).toDate();
     }
 
+    /**
+     * 字符串转换成日期
+     * @param strDate 日期字符串
+     * @param pattern 日期的格式，如：DateUtils.DATE_TIME_PATTERN
+     */
+    public static Date stringToDate(String strDate) {
+        return stringToDate(strDate,DATE_TIME_PATTERN);
+    }
     /**
      * 根据周数，获取开始日期、结束日期
      * @param week  周期  0本周，-1上周，-2上上周，1下周，2下下周
@@ -185,4 +198,23 @@ public class DateUtils {
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
     }
+
+    /**
+     * 获取过去的时间字符串
+     * @param date
+     * @param pattern
+     * @param day
+     * @return
+     */
+    public static List<String> minusDate(Date date, String pattern, int day) {
+        List<String> dateStrs = new ArrayList<>();
+        DateTime dateTime = new DateTime(date);
+        for(int i = 1 ;i <= day;i++){
+            DateTime minusDateTime = dateTime.minusDays(i);
+            dateStrs.add(minusDateTime.toString(pattern));
+        }
+        return dateStrs;
+    }
+
+
 }

@@ -24,4 +24,6 @@ public interface LogService {
     void push();
 
     List<LogResponse> getVisitCountCharts(LogRequest request);
+
+    int getLogCountWithCache(String time);
 }

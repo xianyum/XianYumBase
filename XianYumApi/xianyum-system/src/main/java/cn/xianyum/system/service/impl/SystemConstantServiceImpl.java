@@ -85,7 +85,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         if(systemConstantEntity == null){
             QueryWrapper<SystemConstantEntity> queryWrapper
                     = new QueryWrapper<SystemConstantEntity>()
-                    .eq("constant_key",keyOrId).or().eq("id","keyOrId");
+                    .eq("constant_key",keyOrId).or().eq("id",keyOrId);
             systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
         }
         if(systemConstantEntity != null){

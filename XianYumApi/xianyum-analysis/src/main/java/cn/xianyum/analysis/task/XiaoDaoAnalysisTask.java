@@ -23,7 +23,7 @@ public class XiaoDaoAnalysisTask {
     @Autowired
     private XiaoDaoService xiaoDaoService;
 
-    @Scheduled(cron = "0 0/10 * * * ?")  //每隔1分钟执行一次
+    @Scheduled(cron = "0 0/8 * * * ?")  //每隔1分钟执行一次
     public void reportDataJob() {
         log.info("执行爬虫计划...");
         HttpGetRequest startUrl = new HttpGetRequest("https://www.x6g.com/");

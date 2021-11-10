@@ -46,4 +46,7 @@ public class ProxyResponse{
 
     /** 操作系统 */
     private String osName;
+
+    /** 客户端版本号 */
+    private Double clientVersion;
 }

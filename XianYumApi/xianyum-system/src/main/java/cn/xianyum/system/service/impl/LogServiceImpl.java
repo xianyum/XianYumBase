@@ -14,13 +14,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zhangwei
@@ -35,6 +33,11 @@ public class LogServiceImpl implements LogService {
     @Autowired
     private PushCenterSystemUtils pushCenterSystemUtils;
 
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Value("${redis.log.count:logCount}")
+    private String logCountPrefix;
 
     /**
      * 保存系统日志
@@ -115,21 +118,20 @@ public class LogServiceImpl implements LogService {
         logRequest.setQueryTime(nowDay);
         Integer nowCount = logMapper.getCount(logRequest);
 
-        logRequest.setQueryTime(oneDay);
-        Integer oneCount = logMapper.getCount(logRequest);
+        Integer oneCount = this.getLogCountWithCache(oneDay);
 
-        logRequest.setQueryTime(twoDay);
-        Integer twoCount = logMapper.getCount(logRequest);
-        Integer hoopeCount = oneCount - twoCount;
-        String hoopeCountStr = hoopeCount.toString();
-        if(hoopeCount > 0){
-            hoopeCountStr = "+"+hoopeCount;
+        Integer twoCount = this.getLogCountWithCache(twoDay);
+
+        Integer hoopCount = oneCount - twoCount;
+        String hoopCountStr = hoopCount.toString();
+        if(hoopCount > 0){
+            hoopCountStr = "+"+hoopCount;
         }
 
         Map<String,Object> content = new LinkedHashMap<>();
         content.put("今日实时量：",nowCount);
         content.put("昨日访问量：",oneCount);
-        content.put("昨日环比量：",hoopeCountStr);
+        content.put("昨日环比量：",hoopCountStr);
         content.put("统计时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
         pushCenterSystemUtils.push(content,"Base-Api接口统计报表推送");
 
@@ -137,12 +139,43 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public List<LogResponse> getVisitCountCharts(LogRequest request) {
+
         if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
-            request.setUsername(SecurityUtils.getLoginUser().getUsername());
-        }else{
-            request.setUsername(null);
+            return null;
         }
-        List<LogResponse> responses = logMapper.getVisitCountCharts(request);
+        String endTime = request.getEndTime();
+        Date date = new Date();
+        if(StringUtil.isNotEmpty(endTime)){
+            date = DateUtils.stringToDate(endTime);
+        }
+
+        List<String> dateStrings = DateUtils.minusDate(date, DateUtils.DATE_PATTERN, 15);
+        List<LogResponse> responses = new ArrayList<>();
+        dateStrings.forEach(p -> {
+            LogResponse logResponse = new LogResponse();
+            logResponse.setTime(p);
+            logResponse.setVisitCount(this.getLogCountWithCache(p));
+            responses.add(logResponse);
+        });
+//        String queryTimeStr = new DateTime(DateUtils.stringToDate(request.getEndTime())).minusDays(15).toString(DateUtils.START_DATE_PATTERN);
+//        request.setQueryTime(queryTimeStr);
+//        List<LogResponse> responses = logMapper.getVisitCountCharts(request);
         return responses;
     }
+
+    @Override
+    public int getLogCountWithCache(String time) {
+        String redisKey = logCountPrefix + time;
+        int count = 0;
+        if(redisUtils.hasKey(redisKey)){
+            count = (int) redisUtils.get(redisKey);
+        }else{
+            LogRequest logRequest = new LogRequest();
+            logRequest.setQueryTime(time);
+            count = logMapper.getCount(logRequest);
+            redisUtils.setDay(redisKey,count,16);
+        }
+        return count;
+    }
+
 }

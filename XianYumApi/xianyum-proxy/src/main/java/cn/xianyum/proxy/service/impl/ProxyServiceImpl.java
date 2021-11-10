@@ -324,6 +324,11 @@ public class ProxyServiceImpl implements ProxyService {
 		jsonObject.put("sslJksPath","xianyu.jks");
 		jsonObject.put("keyStorePassword","123456");
 		jsonObject.put("autoStart",false);
+		ProxySystemConstantEntity systemConstantEntity = systemConstantService.getByKey("xianyu_client");
+		if(systemConstantEntity != null){
+			JSONObject systemConstantObject = JSONObject.parseObject(systemConstantEntity.getConstantValue());
+			jsonObject.put("apiUrl",systemConstantObject.getString("apiUrl"));
+		}
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);
 	}
@@ -344,6 +349,7 @@ public class ProxyServiceImpl implements ProxyService {
 		updateBean.setHostIp(request.getHostIp());
 		updateBean.setHostName(request.getHostName());
 		updateBean.setOsName(request.getOsName());
+		updateBean.setClientVersion(request.getClientVersion());
 		proxyMapper.updateById(updateBean);
 
 	}

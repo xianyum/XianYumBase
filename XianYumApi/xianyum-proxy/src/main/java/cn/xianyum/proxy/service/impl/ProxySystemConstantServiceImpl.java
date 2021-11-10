@@ -85,7 +85,7 @@ public class ProxySystemConstantServiceImpl implements ProxySystemConstantServic
         if(systemConstantEntity == null){
             QueryWrapper<ProxySystemConstantEntity> queryWrapper
                     = new QueryWrapper<ProxySystemConstantEntity>()
-                    .eq("constant_key",keyOrId).or().eq("id","keyOrId");
+                    .eq("constant_key",keyOrId).or().eq("id",keyOrId);
             systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
         }
         if(systemConstantEntity != null){

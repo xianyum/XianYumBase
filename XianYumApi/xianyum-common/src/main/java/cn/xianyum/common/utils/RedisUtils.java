@@ -154,6 +154,28 @@ public class RedisUtils {
         }
     }
 
+
+    /**
+     * 缓存以天为单位放入
+     * @param key
+     * @param value
+     * @param days 单位天
+     * @return
+     */
+    public boolean setDay(String key, Object value, Integer days) {
+        try {
+            if (days > 0) {
+                redisTemplate.opsForValue().set(key, value, days, TimeUnit.DAYS);
+            } else {
+                set(key, value);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /**
      * 递增 此时value值必须为int类型 否则报错
      *

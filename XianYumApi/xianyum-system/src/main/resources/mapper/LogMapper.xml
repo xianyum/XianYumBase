@@ -50,38 +50,28 @@
     <select id="getVisitCountCharts" parameterType="cn.xianyum.system.entity.request.LogRequest" resultType="cn.xianyum.system.entity.response.LogResponse">
 
         SELECT
-        tbr.count AS visitCount,
-        tbl._date AS time
+            count(*) as visitCount,
+            DATE_FORMAT( ul.create_time, '%Y-%m-%d' ) AS time
         FROM
-            (
-        SELECT
-            @s := @s + 1 AS _index,
-            DATE_FORMAT( DATE_SUB( #{endTime}, INTERVAL @s DAY),'%Y-%m-%d'
-            ) AS _date FROM information_schema.TABLES, ( SELECT @s := - 1 ) temp ) AS tbl
-            LEFT JOIN (
-        SELECT
-            count(*) as count,
-            DATE_FORMAT( create_time, '%Y-%m-%d' ) AS timeDate
-        FROM
-            user_log
+            user_log ul
         <where>
+            <if test="queryTime != null and queryTime != ''">
+                AND ul.create_time &gt;= #{queryTime}
+            </if>
             <if test="nameOrDesc != null and nameOrDesc != ''">
                 AND
                 (
-                username LIKE CONCAT('%', #{nameOrDesc}, '%')
+                ul.username LIKE CONCAT('%', #{nameOrDesc}, '%')
                 OR
-                operation LIKE CONCAT('%', #{nameOrDesc}, '%')
+                ul.operation LIKE CONCAT('%', #{nameOrDesc}, '%')
                 )
             </if>
             <if test="username != null and username != ''">
-                AND username = #{username}
+                AND ul.username = #{username}
             </if>
         </where>
-        GROUP BY
-            DATE_FORMAT(create_time,'%Y-%m-%d')
-            ) AS tbr ON tbl._date = tbr.timeDate
-        ORDER BY
-            tbl._date DESC
-        limit 15
+        GROUP BY DATE_FORMAT(ul.create_time,'%Y-%m-%d')
+        ORDER BY ul.create_time DESC
+        LIMIT 15
     </select>
 </mapper>
