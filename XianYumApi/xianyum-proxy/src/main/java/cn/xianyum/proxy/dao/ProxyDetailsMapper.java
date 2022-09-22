@@ -11,4 +11,6 @@ import java.util.List;
 public interface ProxyDetailsMapper extends BaseMapper<ProxyDetailsEntity> {
 
     List<ProxyDetailsResponse> getPage(@Param("request") ProxyDetailsRequest request, Page<ProxyDetailsEntity> page);
+
+    void flushBytes(@Param("id")  String id,@Param("nowWroteBytes") long nowWroteBytes,@Param("nowReadBytes")  long nowReadBytes);
 }

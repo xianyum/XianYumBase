@@ -20,10 +20,14 @@ public class DateUtils {
     public final static String DATE_PATTERN = "yyyy-MM-dd";
     /** 时间格式(yyyy-MM-dd HH:mm:ss) */
     public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    /** 时间格式(HH:mm:ss) */
+    public final static String TIME_PATTERN = "HH:mm:ss";
 
     public final static String START_DATE_PATTERN = DATE_PATTERN +" 00:00:00";
 
     public final static String END_DATE_PATTERN = DATE_PATTERN +" 23:59:59";
+
+    public final static String YYYY_MM = "yyyy-MM";
 
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd
@@ -216,5 +220,21 @@ public class DateUtils {
         return dateStrs;
     }
 
-
+    /**
+     * 判断当前时间是否在两个时间之内（以HH:mm:ss为准）
+     * @param limitSendStartTime
+     * @param limitSendEndTime
+     * @return
+     */
+    public static boolean checkNowBetweenTime(Date limitSendStartTime, Date limitSendEndTime) {
+        Date nowTime = new Date();
+        Date nowDate = DateUtils.stringToDate(DateUtils.format(nowTime, TIME_PATTERN), TIME_PATTERN);
+        Date startDate = DateUtils.stringToDate(DateUtils.format(limitSendStartTime, TIME_PATTERN), TIME_PATTERN);
+        Date endDate = DateUtils.stringToDate(DateUtils.format(limitSendEndTime, TIME_PATTERN), TIME_PATTERN);
+        // startDate<nowDate<endDate
+        if(startDate.before(nowDate) && endDate.after(nowDate)){
+            return true;
+        }
+        return false;
+    }
 }

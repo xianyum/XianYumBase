@@ -3,14 +3,3 @@ spring:
     active: prod
   application:
     name: XianYumApi
-
-# 项目相关配置
-xianyum:
-  # 名称
-  name: xianyum
-  # 版本
-  version: 1.0.0
-  # 文件路径 示例（ Windows配置D:/xianyum/uploadPath，Linux配置 /home/xianyum/uploadPath）
-  profile: /home/application/BaseDemo/file
-  # 图像浏览路径
-  avatarUrl: https://xianyum.cn/base-demo/oss/getImage?path=

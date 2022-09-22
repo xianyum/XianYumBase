@@ -1,18 +1,26 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.async.AsyncManager;
-import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.utils.*;
 import cn.xianyum.system.common.factory.AsyncConstantFactory;
 import cn.xianyum.system.dao.SystemConstantMapper;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
+import cn.xianyum.system.entity.request.SystemConstantRequest;
+import cn.xianyum.system.entity.response.SystemConstantResponse;
 import cn.xianyum.system.service.SystemConstantService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author zhangwei
@@ -47,10 +55,12 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     }
 
     @Override
-    public int update(SystemConstantEntity request) {
-        request.setUpdateTime(new Date());
-        request.setConstantKey(null);
-        int count = systemConstantMapper.updateById(request);
+    public int update(SystemConstantRequest request) {
+        SecurityUtils.allowAdminAuth();
+        SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
+        bean.setUpdateTime(new Date());
+        bean.setConstantKey(null);
+        int count = systemConstantMapper.updateById(bean);
         AsyncManager.async().execute(AsyncConstantFactory.setSystemConstantToRedis(request.getConstantKey(),null));
         return count;
     }
@@ -60,8 +70,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         if(StringUtil.isEmpty(key)){
             return null;
         }
-        String redisKey = systemConstantPrefix + key;
-        SystemConstantEntity byKeyFromRedis = getByKeyFromRedis(redisKey);
+        SystemConstantEntity byKeyFromRedis = getByKeyFromRedis(key);
         if(byKeyFromRedis != null){
             return byKeyFromRedis;
         }
@@ -71,6 +80,12 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
         AsyncManager.async().execute(AsyncConstantFactory.setSystemConstantToRedis(key,systemConstantEntity));
         return systemConstantEntity;
+    }
+
+    @Override
+    public String getValueKey(String key) {
+        SystemConstantEntity systemConstant = this.getByKey(key);
+        return Objects.nonNull(systemConstant)?systemConstant.getConstantValue():null;
     }
 
     /**
@@ -105,6 +120,75 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         String redisKey = systemConstantPrefix + key;
         SystemConstantEntity systemConstantEntity = (SystemConstantEntity)redisUtils.get(redisKey);
         return systemConstantEntity;
+    }
+
+
+    @Override
+    public IPage<SystemConstantResponse> getPage(SystemConstantRequest request) {
+        SecurityUtils.allowAdminAuth();
+        Page<SystemConstantEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
+        QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>()
+                .like(StringUtil.isNotEmpty(request.getConstantKey()),"constant_key",request.getConstantKey())
+                .like(StringUtil.isNotEmpty(request.getConstantDescribe()),"constant_describe",request.getConstantDescribe())
+                .orderByDesc(Arrays.asList("update_time","create_time"));
+        IPage<SystemConstantEntity> pageResult = systemConstantMapper.selectPage(page,queryWrapper);
+        IPage<SystemConstantResponse> responseIPage = new Page<>();
+        responseIPage.setTotal(pageResult.getTotal());
+        responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),SystemConstantResponse.class));
+        return responseIPage;
+    }
+
+    @Override
+    public void deleteByKey(String key) {
+        SecurityUtils.allowAdminAuth();
+        if(StringUtil.isEmpty(key)){
+            throw new SoException("系统常量键不能为空");
+        }
+        QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>().eq("constant_key",key);
+        systemConstantMapper.delete(queryWrapper);
+        String redisKey = systemConstantPrefix + key;
+        redisUtils.del(redisKey);
+    }
+
+    @Override
+    public void deleteRedisCache(String key) {
+        if(StringUtil.isEmpty(key)){
+            throw new SoException("key不能为空");
+        }
+        String redisKey = systemConstantPrefix + key;
+        redisUtils.del(redisKey);
+    }
+
+    @Override
+    public SystemConstantResponse getById(SystemConstantRequest request) {
+        SecurityUtils.allowAdminAuth();
+        if(StringUtil.isEmpty(request.getId())){
+            throw new SoException("id不能为空");
+        }
+        SystemConstantEntity result = systemConstantMapper.selectById(request.getId());
+        SystemConstantResponse response = BeanUtils.copy(result, SystemConstantResponse.class);
+        return response;
+
+    }
+
+    @Override
+    public Integer save(SystemConstantRequest request) {
+        SecurityUtils.allowAdminAuth();
+        if(StringUtil.isBlank(request.getConstantValue())){
+            throw new SoException("系统常量值不能为空");
+        }
+        QueryWrapper<SystemConstantEntity> queryRepeatWrapper = new QueryWrapper<SystemConstantEntity>()
+                .eq("constant_key",request.getConstantKey());
+        SystemConstantEntity repeatSystemConstant = systemConstantMapper.selectOne(queryRepeatWrapper);
+        if (Objects.nonNull(repeatSystemConstant)) {
+            throw new SoException("系统常量键已存在");
+        }
+        SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
+        bean.setId(UUIDUtils.UUIDReplace());
+        Date date = new Date();
+        bean.setCreateTime(date);
+        bean.setUpdateTime(date);
+        return systemConstantMapper.insert(bean);
     }
 
 }

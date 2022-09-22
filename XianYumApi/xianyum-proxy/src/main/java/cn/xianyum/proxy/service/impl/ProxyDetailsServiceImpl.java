@@ -37,10 +37,14 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		List<ProxyDetailsResponse> list = proxyDetailsMapper.getPage(request,page);
 		for(ProxyDetailsResponse item:list){
 			MetricsCollector collector = MetricsCollector.getCollector(item.getInetPort());
+			long nowWroteBytes = collector.getWroteBytes().get();
+			long nowReadBytes = collector.getReadBytes().get();
+			item.setWriteBytes(nowWroteBytes+item.getWriteBytes());
+			item.setReadBytes(nowReadBytes+item.getReadBytes());
 			if(collector != null){
 				item.setConnectCount(collector.getChannels().get());
-				item.setWriteBytesStr(ByteUtils.byteFormat(collector.getWroteBytes().get(),true));
-				item.setReadBytesStr(ByteUtils.byteFormat(collector.getReadBytes().get(),true));
+				item.setWriteBytesStr(ByteUtils.byteFormat(item.getWriteBytes(),true));
+				item.setReadBytesStr(ByteUtils.byteFormat(item.getReadBytes(),true));
 			}
 		}
 		responseIPage.setTotal(page.getTotal());
@@ -87,7 +91,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 		QueryWrapper<ProxyDetailsEntity> queryWrapper
 				= new QueryWrapper<ProxyDetailsEntity>().eq("inet_port",request.getInetPort());
-		Integer portCount = proxyDetailsMapper.selectCount(queryWrapper);
+		Long portCount = proxyDetailsMapper.selectCount(queryWrapper);
 		if(portCount > 0){
 			throw new SoException("公网端口不能重复！");
 		}
@@ -117,11 +121,13 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 				= new QueryWrapper<ProxyDetailsEntity>()
 				.eq("inet_port",request.getInetPort())
 				.ne("id",request.getId());
-		Integer portCount = proxyDetailsMapper.selectCount(queryWrapper);
+		Long portCount = proxyDetailsMapper.selectCount(queryWrapper);
 		if(portCount > 0){
 			throw new SoException("公网端口不能重复！");
 		}
 		ProxyDetailsEntity bean = BeanUtils.copy(request,ProxyDetailsEntity.class);
+		bean.setReadBytes(null);
+		bean.setWriteBytes(null);
 		return proxyDetailsMapper.updateById(bean);
 
 	}

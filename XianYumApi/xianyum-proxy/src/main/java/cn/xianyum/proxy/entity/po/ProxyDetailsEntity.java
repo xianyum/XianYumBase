@@ -33,4 +33,10 @@ public class ProxyDetailsEntity{
 
     /** 创建时间 */
     private Date createTime;
+
+    /** 当前读取量 */
+    private Long readBytes;
+
+    /** 当前读取量 */
+    private Long writeBytes;
 }

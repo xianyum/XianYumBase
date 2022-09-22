@@ -34,11 +34,17 @@ public class ProxyDetailsResponse{
 
     private Date createTime;
 
-    /** 当前读取量 */
+    /** 当前读取量转换可读 */
     private String readBytesStr;
 
-    /** 当前写入量 */
+    /** 当前读取量转换可读 */
     private String writeBytesStr;
+
+    /** 当前读取量 */
+    private Long readBytes;
+
+    /** 当前读取量 */
+    private Long writeBytes;
 
     /** 当前连接数 */
     private int connectCount;

@@ -4,7 +4,10 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
-import cn.xianyum.system.common.utils.PushCenterSystemUtils;
+import cn.xianyum.message.entity.po.MessageSenderEntity;
+import cn.xianyum.message.enums.MessageCodeEnums;
+import cn.xianyum.message.infra.sender.MessageSender;
+import cn.xianyum.message.infra.utils.MessageUtils;
 import cn.xianyum.system.dao.LogMapper;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.LogRequest;
@@ -31,7 +34,7 @@ public class LogServiceImpl implements LogService {
     private LogMapper logMapper;
 
     @Autowired
-    private PushCenterSystemUtils pushCenterSystemUtils;
+    private MessageSender messageSender;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -133,8 +136,11 @@ public class LogServiceImpl implements LogService {
         content.put("昨日访问量：",oneCount);
         content.put("昨日环比量：",hoopCountStr);
         content.put("统计时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
-        pushCenterSystemUtils.push(content,"Base-Api接口统计报表推送");
 
+        MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+        messageSenderEntity.setTitle("Base-Api接口统计报表推送");
+        messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
+        messageSender.sendAsyncMessage(MessageCodeEnums.SYSTEM_VISITS_NOTIFY.getMessageCode(),messageSenderEntity);
     }
 
     @Override

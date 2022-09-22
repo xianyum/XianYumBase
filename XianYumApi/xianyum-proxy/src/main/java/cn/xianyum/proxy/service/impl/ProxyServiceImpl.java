@@ -2,19 +2,20 @@ package cn.xianyum.proxy.service.impl;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
-import cn.xianyum.proxy.common.utils.PushProxyUtils;
+import cn.xianyum.message.entity.po.MessageSenderEntity;
+import cn.xianyum.message.enums.MessageCodeEnums;
+import cn.xianyum.message.infra.sender.MessageSender;
+import cn.xianyum.message.infra.utils.MessageUtils;
 import cn.xianyum.proxy.container.ProxyChannelManager;
 import cn.xianyum.proxy.container.ProxyServerContainer;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
 import cn.xianyum.proxy.entity.po.ProxyDetailsEntity;
 import cn.xianyum.proxy.entity.po.ProxyEntity;
-import cn.xianyum.proxy.entity.po.ProxySystemConstantEntity;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
 import cn.xianyum.proxy.handlers.ProxyChangedListener;
 import cn.xianyum.proxy.service.ProxyService;
-import cn.xianyum.proxy.service.ProxySystemConstantService;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -39,14 +40,7 @@ public class ProxyServiceImpl implements ProxyService {
 	private ProxyDetailsMapper proxyDetailsMapper;
 
 	@Autowired
-	private PushProxyUtils pushProxyUtils;
-
-	@Autowired
-	private EmailUtils emailUtils;
-
-	@Autowired
-	private ProxySystemConstantService systemConstantService;
-
+	private MessageSender messageSender;
 
 	@Override
 	public IPage<ProxyResponse> getPage(ProxyRequest request) {
@@ -137,7 +131,7 @@ public class ProxyServiceImpl implements ProxyService {
 		for (String id : ids){
 			QueryWrapper<ProxyDetailsEntity> queryWrapper = new QueryWrapper<ProxyDetailsEntity>()
 					.eq("proxy_id",id);
-			Integer count = proxyDetailsMapper.selectCount(queryWrapper);
+			Long count = proxyDetailsMapper.selectCount(queryWrapper);
 			if(count > 0){
 				throw new SoException("请先删除该客户端下的代理配置！");
 			}
@@ -173,10 +167,18 @@ public class ProxyServiceImpl implements ProxyService {
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
 			content.put("登录时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
-			content.put("登录mac：",proxyEntity.getMacAddress());
-			content.put("登录ip：",proxyEntity.getHostIp());
+			if(StringUtil.isNotEmpty(proxyEntity.getMacAddress())){
+				content.put("登录mac：",proxyEntity.getMacAddress());
+			}
+			if(StringUtil.isNotEmpty(proxyEntity.getHostIp())){
+				content.put("登录ip：",proxyEntity.getHostIp());
+			}
+			content.put("服务器节点：",IPUtils.getHostName());
 			content.put("登录次数：",proxyEntity.getLoginCount()+1);
-			pushProxyUtils.push(content,"xianyu客户端上线通知");
+			MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+			messageSenderEntity.setTitle("xianyu客户端上线通知");
+			messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
+			messageSender.sendAsyncMessage(MessageCodeEnums.XIANYU_ONLINE_OFFLINE_NOTIFY.getMessageCode(),messageSenderEntity);
 
 			// 发送邮件通知客户端
 			if(null != proxyEntity.getNotify() && 1 == proxyEntity.getNotify()
@@ -198,7 +200,12 @@ public class ProxyServiceImpl implements ProxyService {
 			content.put("客户端名称：",proxyEntity.getName());
 			content.put("在线时长：",DateUtils.getDatePoor(now.toDate(),proxyEntity.getLoginTime()));
 			content.put("下线时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
-			pushProxyUtils.push(content,"xianyu客户端下线通知");
+
+			MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+			messageSenderEntity.setTitle("xianyu客户端下线通知");
+			messageSenderEntity.setWechatToUser(proxyEntity.getWxUserId());
+			messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
+			messageSender.sendAsyncMessage(MessageCodeEnums.XIANYU_ONLINE_OFFLINE_NOTIFY.getMessageCode(),messageSenderEntity);
 		}
 	}
 
@@ -234,10 +241,23 @@ public class ProxyServiceImpl implements ProxyService {
 				= new QueryWrapper<ProxyDetailsEntity>().eq("proxy_id",proxyEntity.getId());
 		List<ProxyDetailsEntity> proxyDetailsEntities = proxyDetailsMapper.selectList(queryWrapper);
 
+		String serverAddress = "";
+		String systemConstantJson = SystemConstantUtils.getValueByKey("xianyu_client");
+		if(StringUtil.isNotEmpty(systemConstantJson)){
+			JSONObject jsonObject = JSONObject.parseObject(systemConstantJson);
+			context.setVariable("clientDownloadUrl", jsonObject.getString("downloadUrl"));
+			context.setVariable("notice", jsonObject.getString("notice"));
+			serverAddress = jsonObject.getString("serverAddress");
+		}else{
+			context.setVariable("clientDownloadUrl", "http://xianyum.cn");
+			context.setVariable("notice", "暂未有最新公告");
+		}
+
 		if(proxyDetailsEntities != null && proxyDetailsEntities.size() >0){
 			StringBuilder remoteAddr = new StringBuilder();
 			for(ProxyDetailsEntity item : proxyDetailsEntities){
-				remoteAddr.append("mstsc.xianyum.cn:");
+				remoteAddr.append(serverAddress);
+				remoteAddr.append(":");
 				remoteAddr.append(item.getInetPort());
 				remoteAddr.append("(");
 				remoteAddr.append(item.getLan());
@@ -256,15 +276,7 @@ public class ProxyServiceImpl implements ProxyService {
 		}else{
 			context.setVariable("loginTime", DateTime.now().toString(DateUtils.DATE_TIME_PATTERN));
 		}
-		ProxySystemConstantEntity systemConstantEntity = systemConstantService.getByKey("xianyu_client");
-		if(systemConstantEntity != null){
-			JSONObject jsonObject = JSONObject.parseObject(systemConstantEntity.getConstantValue());
-			context.setVariable("clientDownloadUrl", jsonObject.getString("downloadUrl"));
-			context.setVariable("notice", jsonObject.getString("notice"));
-		}else{
-			context.setVariable("clientDownloadUrl", "http://xianyum.cn");
-			context.setVariable("notice", "暂未有最新公告");
-		}
+
 
 		Channel channel = ProxyChannelManager.getCmdChannel(proxyEntity.getId());
 		if(channel != null){
@@ -274,8 +286,11 @@ public class ProxyServiceImpl implements ProxyService {
 		}
 		context.setVariable("macAddress", proxyEntity.getMacAddress());
 		context.setVariable("hostIp", proxyEntity.getHostIp());
-		emailUtils.sendHtmlEmail(proxyEntity.getNotifyEmail(),"xianyu客户端代理配置详情","clientHtml",context);
-
+		MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+		messageSenderEntity.setTitle("xianyu客户端代理配置详情");
+		messageSenderEntity.setEmailHtmlPath("clientHtml");
+		messageSenderEntity.setEmailToUser(proxyEntity.getNotifyEmail());
+		messageSender.sendAsyncEmailTemplateMessage(MessageCodeEnums.XIANYU_CONFIG_DETAIL_NOTIFY.getMessageCode(),messageSenderEntity,context);
 	}
 
 	@Override
@@ -317,17 +332,17 @@ public class ProxyServiceImpl implements ProxyService {
 		}
 
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("serverAddress","mstsc.xianyum.cn");
-		jsonObject.put("serverPort","9101");
 		jsonObject.put("userKey",proxyEntity.getId());
 		jsonObject.put("sslEnable",true);
 		jsonObject.put("sslJksPath","xianyu.jks");
 		jsonObject.put("keyStorePassword","123456");
 		jsonObject.put("autoStart",false);
-		ProxySystemConstantEntity systemConstantEntity = systemConstantService.getByKey("xianyu_client");
-		if(systemConstantEntity != null){
-			JSONObject systemConstantObject = JSONObject.parseObject(systemConstantEntity.getConstantValue());
+		String systemConstantJson = SystemConstantUtils.getValueByKey("xianyu_client");
+		if(StringUtil.isNotEmpty(systemConstantJson)){
+			JSONObject systemConstantObject = JSONObject.parseObject(systemConstantJson);
 			jsonObject.put("apiUrl",systemConstantObject.getString("apiUrl"));
+			jsonObject.put("serverAddress",systemConstantObject.getString("serverAddress"));
+			jsonObject.put("serverPort",systemConstantObject.getString("serverPort"));
 		}
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);

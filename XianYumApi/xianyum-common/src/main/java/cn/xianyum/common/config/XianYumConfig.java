@@ -1,15 +1,18 @@
 package cn.xianyum.common.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.utils.SystemConstantUtils;
+import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
+
+import java.util.Objects;
 
 /**
  * 读取项目相关配置
  * @author zhangwei
  * @date 2020/12/23 22:07
  */
-@Component
-@ConfigurationProperties(prefix = "xianyum")
+@Data
 public class XianYumConfig {
 
     /** 项目名称 */
@@ -19,52 +22,29 @@ public class XianYumConfig {
     private String version;
 
     /** 上传路径 */
-    private static String profile;
+    private String profile;
 
     /** 图像路径 */
     private String avatarUrl;
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    /** 首页地址 */
+    private String webUrl;
+
+    public static XianYumConfig getXianYumConfig(){
+        String systemJsonStr = SystemConstantUtils.getValueByKey("system");
+        XianYumConfig xianYumConfig = JSONObject.parseObject(systemJsonStr, XianYumConfig.class);
+        if(Objects.isNull(xianYumConfig)){
+            throw new SoException("系统配置数据为空，请检查是否已经配置【system】系统常量");
+        }
+        return xianYumConfig;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getVersion()
-    {
-        return version;
-    }
-
-    public void setVersion(String version)
-    {
-        this.version = version;
-    }
-
-    public void setProfile(String profile)
-    {
-        XianYumConfig.profile = profile;
-    }
-
-    public static String getProfile() {
-        return profile;
-    }
     /**
      * 获取头像上传路径
      */
     public static String getAvatarPath() {
-        return getProfile() + "/avatar";
+        return getXianYumConfig().getProfile() + "/avatar";
     }
 
     /**
@@ -72,8 +52,6 @@ public class XianYumConfig {
      */
     public static String getUploadPath()
     {
-        return getProfile() + "/upload";
+        return getXianYumConfig().getProfile() + "/upload";
     }
-
-
 }

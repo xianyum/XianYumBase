@@ -6,7 +6,7 @@ import cn.xianyum.common.utils.UUIDUtils;
 import com.alibaba.druid.util.DruidWebUtils;
 import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
-import com.google.common.base.Stopwatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author zhangwei
@@ -40,7 +40,7 @@ public class RequestFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        Stopwatch sp = Stopwatch.createStarted();
+        StopWatch watch = StopWatch.createStarted();
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
             HttpServletRequest httpRequest = (HttpServletRequest)request;
             HttpServletResponse httpResponse = (HttpServletResponse)response;
@@ -56,7 +56,8 @@ public class RequestFilter implements Filter {
                 try {
                     chain.doFilter(httpRequest, httpResponse);
                 } finally {
-                    log.info("access url [{}], cost time [{}] ms )", path, sp.elapsed(TimeUnit.MILLISECONDS));
+                    log.info("access url [{}], cost time [{}] ms )", path, watch.getTime());
+                    watch.stop();
                     MDC.clear();
                 }
 

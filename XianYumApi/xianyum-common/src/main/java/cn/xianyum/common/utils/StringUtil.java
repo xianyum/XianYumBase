@@ -3,6 +3,8 @@ package cn.xianyum.common.utils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具类
@@ -339,5 +341,20 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
             result.append(camel.substring(1).toLowerCase());
         }
         return result.toString();
+    }
+
+    /**
+     * 去除字符串中的空格\t、回车\n、换行符\r、制表符\t
+     * @param str
+     * @return
+     */
+    public static String replaceBlank(String str){
+        String dest = "";
+        if (str!=null) {
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
+        }
+        return dest;
     }
 }

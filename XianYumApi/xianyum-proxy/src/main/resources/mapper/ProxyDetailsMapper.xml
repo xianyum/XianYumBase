@@ -13,7 +13,9 @@
             pd.lan AS lan,
             pd.NAME AS NAME,
             pd.create_time AS createTime,
-            p.`name` AS proxyName
+            p.`name` AS proxyName,
+            pd.read_bytes AS readBytes,
+            pd.write_bytes AS writeBytes
         FROM
             proxy_details pd
             LEFT JOIN proxy p on pd.proxy_id = p.id
@@ -30,4 +32,13 @@
         </where>
         ORDER BY pd.create_time desc,pd.id desc
     </select>
+
+
+    <update id="flushBytes">
+        update
+            proxy_details
+        set read_bytes = (#{nowReadBytes}+read_bytes),write_bytes = (#{nowWroteBytes}+write_bytes)
+        where
+            id = #{id}
+    </update>
 </mapper>

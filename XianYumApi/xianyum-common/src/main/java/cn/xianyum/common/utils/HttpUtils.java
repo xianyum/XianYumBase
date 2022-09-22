@@ -1,7 +1,7 @@
 package cn.xianyum.common.utils;
 
-import com.ejlchina.okhttps.FastjsonMsgConvertor;
 import com.ejlchina.okhttps.HTTP;
+import com.ejlchina.okhttps.fastjson.FastjsonMsgConvertor;
 import okhttp3.OkHttpClient;
 import java.util.concurrent.TimeUnit;
 

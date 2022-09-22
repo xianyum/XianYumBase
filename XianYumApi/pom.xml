@@ -2,7 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.8</version>
+        <relativePath/>
+    </parent>
+
     <packaging>pom</packaging>
+    <groupId>cn.xianyum</groupId>
+    <artifactId>XianYumApi</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>XianYumApi</name>
+    <description>Demo project for Spring Boot</description>
+
     <modules>
         <module>xianyum-common</module>
         <module>xianyum-framework</module>
@@ -10,35 +24,45 @@
         <module>xianyum-analysis</module>
         <module>xianyum-proxy</module>
         <module>xianyum-starter</module>
+        <module>xianyum-message</module>
+        <module>xianyum-sheduler</module>
     </modules>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.12.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <groupId>cn.xianyum</groupId>
-    <artifactId>XianYumApi</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>XianYumApi</name>
-    <description>Demo project for Spring Boot</description>
 
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dynamic.datasource.boot.version>3.2.1</dynamic.datasource.boot.version>
-        <mybatisplus.boot.version>3.4.1</mybatisplus.boot.version>
-        <fastjson.version>1.2.75</fastjson.version>
-        <okhttps.fastjson.version>2.5.1</okhttps.fastjson.version>
-        <joda.time.version>2.10.8</joda.time.version>
-        <knife4j.version>3.0.3</knife4j.version>
-        <lombok.version>1.18.20</lombok.version>
-        <druid.version>1.2.6</druid.version>
+        <dynamic.datasource.boot.version>3.5.0</dynamic.datasource.boot.version>
+        <mybatisplus.boot.version>3.4.3.4</mybatisplus.boot.version>
+        <fastjson.version>1.2.78</fastjson.version>
+        <okhttps.fastjson.version>3.5.3</okhttps.fastjson.version>
+        <joda.time.version>2.10.13</joda.time.version>
+        <lombok.version>1.18.22</lombok.version>
+        <druid.version>1.1.10</druid.version>
+        <captcha.version>1.2.6</captcha.version>
+        <qiniu.version>7.4.0</qiniu.version>
+        <easy.excel.version>3.0.5</easy.excel.version>
+        <alipay.version>4.10.192.ALL</alipay.version>
+        <bitwalker.version>1.21</bitwalker.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
+        <oshi.version>5.8.6</oshi.version>
+        <commons.io.version>2.11.0</commons.io.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <hibernate.version>7.0.2.Final</hibernate.version>
+        <swagger.version>3.0.0</swagger.version>
+        <swagger.models.version>1.6.2</swagger.models.version>
+        <quartz.version>2.3.2</quartz.version>
+        <commons.codec.version>1.9</commons.codec.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -59,10 +83,24 @@
                 <version>${okhttps.fastjson.version}</version>
             </dependency>
 
+            <!-- Swagger3依赖 -->
             <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-models</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- 防止进入swagger页面报类型转换错误，排除3.0.0中的引用，手动增加1.6.2版本 -->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger.models.version}</version>
             </dependency>
 
             <dependency>
@@ -96,21 +134,88 @@
                 <version>${dynamic.datasource.boot.version}</version>
             </dependency>
 
+            <!-- fastjson-->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
 
+            <!-- 集成阿里支付框架-->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <scope>test</scope>
+                <groupId>com.alipay.sdk</groupId>
+                <artifactId>alipay-sdk-java</artifactId>
+                <version>${alipay.version}</version>
             </dependency>
+
+            <!--阿里easyExcel-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easy.excel.version}</version>
+            </dependency>
+
+            <!-- 验证码配置 -->
+            <dependency>
+                <groupId>com.github.anji-plus</groupId>
+                <artifactId>captcha-spring-boot-starter</artifactId>
+                <version>${captcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
+            </dependency>
+
+            <!--七牛云-->
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu.version}</version>
+            </dependency>
+
+            <!-- 解析客户端操作系统、浏览器等 -->
+            <dependency>
+                <groupId>eu.bitwalker</groupId>
+                <artifactId>UserAgentUtils</artifactId>
+                <version>${bitwalker.version}</version>
+            </dependency>
+
+            <!-- 获取系统信息 -->
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi.version}</version>
+            </dependency>
+
+            <!-- hibernate校验 -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+
+            <!-- io常用工具类 -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
-
-
 
     <build>
         <plugins>

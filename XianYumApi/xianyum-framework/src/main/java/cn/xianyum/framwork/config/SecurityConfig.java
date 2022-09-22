@@ -101,7 +101,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/captcha/check",
                         "/systemConstant/getPublicConstant",
                         "/proxy/sendEmail",
-                        "/proxy/updateClientInfo").permitAll()
+                        "/proxy/updateClientInfo",
+                        "/v1/messageMonitor/getById",
+                        "/p1/**").permitAll()
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
@@ -117,7 +119,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/webjars/**").anonymous()
                 .antMatchers("/*/api-docs").anonymous()
                 .antMatchers("/druid/**").anonymous()
-                .antMatchers("/getIpInfo").anonymous()
                 .antMatchers("/getIpInfo").anonymous()
                 .antMatchers("/oss/getImage").anonymous()
                 .antMatchers("/ali/login").anonymous()

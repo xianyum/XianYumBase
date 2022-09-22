@@ -39,7 +39,7 @@ public class XiaoDaoAnalysisLine implements Pipeline<XiaoDaoAnalysis> {
             List<XiaoDaoArticle> collect = xiaoDaoArticles.stream().filter(p -> DateUtils.format(new Date(), "MM-dd").equals(p.getTime().trim())).collect(Collectors.toList());
             if (collect != null && collect.size() > 0) {
                 for (XiaoDaoArticle item : collect) {
-                    Integer count = xiaoDaoMapper.selectCount(
+                    Long count = xiaoDaoMapper.selectCount(
                             new QueryWrapper<XiaoDaoEntity>()
                                     .eq(StringUtil.isNotEmpty(item.getTitle()),"title",item.getTitle())
                                     .eq("url",item.getUrl())

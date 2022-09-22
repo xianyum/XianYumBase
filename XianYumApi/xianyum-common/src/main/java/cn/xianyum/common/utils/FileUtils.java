@@ -31,7 +31,7 @@ public class FileUtils {
     /**
      * 默认上传的地址
      */
-    private static String defaultBaseDir = XianYumConfig.getProfile();
+    private static String defaultBaseDir = XianYumConfig.getXianYumConfig().getProfile();
 
 
     public static String getDefaultBaseDir() {
@@ -128,7 +128,7 @@ public class FileUtils {
     }
 
     private static final String getPathFileName(String uploadDir, String fileName) throws IOException {
-        int dirLastIndex = XianYumConfig.getProfile().length() + 1;
+        int dirLastIndex = XianYumConfig.getXianYumConfig().getProfile().length() + 1;
         String currentDir = StringUtil.substring(uploadDir, dirLastIndex);
         String pathFileName = "/" + currentDir + "/" + fileName;
         return pathFileName;

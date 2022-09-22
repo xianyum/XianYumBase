@@ -4,8 +4,11 @@ import cn.xianyum.analysis.dao.XiaoDaoMapper;
 import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
 import cn.xianyum.analysis.service.XiaoDaoService;
-import cn.xianyum.analysis.utils.PushAnalysisUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.message.entity.po.MessageSenderEntity;
+import cn.xianyum.message.enums.MessageCodeEnums;
+import cn.xianyum.message.infra.sender.MessageSender;
+import cn.xianyum.message.infra.utils.MessageUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -29,7 +32,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
     private XiaoDaoMapper xiaoDaoMapper;
 
     @Autowired
-    private PushAnalysisUtils pushAnalysisUtils;
+    private MessageSender messageSender;
 
     /**
      * 实时推送更新消息
@@ -44,11 +47,14 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
             Map<String,Object> content = new LinkedHashMap<>();
             content.put("活动内容：",xiaoDaoEntity.getTitle());
             content.put("活动url：",xiaoDaoEntity.getUrl());
-            String pushId = pushAnalysisUtils.push(content,"最新活动通知");
+
+            MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+            messageSenderEntity.setFormUrl(xiaoDaoEntity.getUrl());
+            messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
+            messageSender.sendAsyncMessage(MessageCodeEnums.NEW_ACTIVITY_NOTIFY.getMessageCode(),messageSenderEntity);
 
             xiaoDaoEntity.setPushStatus(1);
             xiaoDaoEntity.setPushTime(new Date());
-            xiaoDaoEntity.setPushId(pushId);
             xiaoDaoMapper.updateById(xiaoDaoEntity);
         }
 

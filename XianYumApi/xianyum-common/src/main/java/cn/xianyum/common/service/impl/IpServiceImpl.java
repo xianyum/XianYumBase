@@ -31,7 +31,8 @@ public class IpServiceImpl implements IpService {
             ipInfoEntity.setProv("0".equals(data[2])?"":data[2]);
             ipInfoEntity.setCity("0".equals(data[3])?"":data[3]);
             ipInfoEntity.setIsp("0".equals(data[4])?"":data[4]);
-            ipInfoEntity.setRemark("非常感谢您使用此接口！此接口免费长期维护，联系qq：80616059");
+            ipInfoEntity.setSupport("https://xiaoyaxiaokeai.gitee.io/base/20201224/thanks.jpg");
+            ipInfoEntity.setEmail("80616059@qq.com");
             ipInfoEntity.setIp(ip);
             return ipInfoEntity;
         }catch (Exception e){

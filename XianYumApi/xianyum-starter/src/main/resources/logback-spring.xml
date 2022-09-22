@@ -2,7 +2,7 @@
   <!-- 定义日志的根目录 -->
   <springProperty scope="context" name="projectName" source="spring.application.name" defaultValue="BaseApi"/>
 
-  <property name="LOG_HOME" value="/home/logs"/>
+  <property name="LOG_HOME" value="logs"/>
   <property name="PROJECT_NAME" value="${projectName}"/>
 
   <property name="FILE_PATTEN"  value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
@@ -86,7 +86,7 @@
     </root>
   </springProfile>
 
-  <springProfile name="pred,prod">
+  <springProfile name="pred,prod,tencent">
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="ERROR"/>

@@ -50,4 +50,7 @@ public class ProxyEntity{
 
     /** 客户端版本号 */
     private Double clientVersion;
+
+    /** 微信用户ID */
+    private String wxUserId;
 }

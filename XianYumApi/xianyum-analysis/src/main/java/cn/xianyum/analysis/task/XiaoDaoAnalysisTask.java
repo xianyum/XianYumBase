@@ -1,31 +1,27 @@
 package cn.xianyum.analysis.task;
 
-import cn.xianyum.analysis.service.XiaoDaoService;
+import cn.xianyum.common.annotation.JobHandler;
+import cn.xianyum.common.enums.ReturnT;
+import cn.xianyum.common.service.IJobHandler;
+import cn.xianyum.common.utils.SchedulerTool;
 import com.geccocrawler.gecco.GeccoEngine;
 import com.geccocrawler.gecco.pipeline.PipelineFactory;
 import com.geccocrawler.gecco.request.HttpGetRequest;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import java.util.Map;
 
 /**
  * @author zhangwei
  * @date 2019/9/25 15:35
  */
-@Component
-@Slf4j
-public class XiaoDaoAnalysisTask {
+@JobHandler("xiaoDaoAnalysisTask")
+public class XiaoDaoAnalysisTask implements IJobHandler {
 
     @Autowired
     private PipelineFactory springPipelineFactory;
 
-    @Autowired
-    private XiaoDaoService xiaoDaoService;
-
-    @Scheduled(cron = "0 0/8 * * * ?")  //每隔1分钟执行一次
-    public void reportDataJob() {
-        log.info("执行爬虫计划...");
+    @Override
+    public ReturnT execute(Map<String, String> jobMapParams, SchedulerTool tool) throws Exception {
         HttpGetRequest startUrl = new HttpGetRequest("https://www.x6g.com/");
         startUrl.setCharset("UTF-8");
         GeccoEngine.create()
@@ -38,10 +34,6 @@ public class XiaoDaoAnalysisTask {
                 .thread(1)
                 //单个爬虫每次抓取完一个请求后的间隔时间
                 .run();
-    }
-
-    @Scheduled(cron = "0 0/3 * * * ?")  //每隔1分钟执行一次
-    public void pushMessage() {
-        xiaoDaoService.push();
+        return ReturnT.SUCCESS;
     }
 }

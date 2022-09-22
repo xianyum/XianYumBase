@@ -54,9 +54,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     private SystemConstantService systemConstantService;
 
     @Autowired
-    private XianYumConfig xianYumConfig;
-
-    @Autowired
     private UserTokenService userTokenService;
 
     @Override
@@ -222,8 +219,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public String upload(MultipartFile file) {
         try {
-            String upload = FileUtils.upload(XianYumConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
-            String avatarUrl = xianYumConfig.getAvatarUrl()+ upload;
+            String upload = FileUtils.upload(XianYumConfig.getXianYumConfig().getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
+            String avatarUrl = XianYumConfig.getXianYumConfig().getAvatarUrl()+ upload;
             UserEntity userEntity = new UserEntity();
             userEntity.setId(SecurityUtils.getLoginUser().getId());
             userEntity.setAvatar(avatarUrl);

@@ -6,9 +6,8 @@ import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.annotation.write.style.ContentStyle;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 import com.alibaba.excel.annotation.write.style.HeadStyle;
+import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import lombok.Data;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-
 import java.util.Date;
 
 /**
@@ -17,8 +16,8 @@ import java.util.Date;
  */
 @Data
 @HeadRowHeight(15)
-@HeadStyle(horizontalAlignment = HorizontalAlignment.CENTER)
-@ContentStyle(horizontalAlignment = HorizontalAlignment.CENTER)
+@HeadStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER)
+@ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER)
 public class ExportProgramEntity {
 
     /** 程序题目 */

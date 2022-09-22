@@ -37,4 +37,10 @@ public class ProxyRequest extends BaseRequest {
 
     /** 客户端版本号 */
     private Double clientVersion;
+
+    /** 当前读取量 */
+    private Long readBytes;
+
+    /** 当前读取量 */
+    private Long writeBytes;
 }

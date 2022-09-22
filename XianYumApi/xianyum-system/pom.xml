@@ -14,16 +14,14 @@
         系统模块
     </description>
 
-    <properties>
-        <captcha.version>1.2.6</captcha.version>
-        <qiniu.version>7.4.0</qiniu.version>
-        <easy.excel.version>2.2.6</easy.excel.version>
-        <alipay.version>4.10.192.ALL</alipay.version>
-        <bitwalker.version>1.21</bitwalker.version>
-        <kaptcha.version>0.0.9</kaptcha.version>
-    </properties>
-
     <dependencies>
+
+        <dependency>
+            <groupId>cn.xianyum</groupId>
+            <artifactId>xianyum-message</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
@@ -33,16 +31,14 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.axet</groupId>
+            <groupId>com.github.penggle</groupId>
             <artifactId>kaptcha</artifactId>
-            <version>${kaptcha.version}</version>
         </dependency>
 
         <!-- 解析客户端操作系统、浏览器等 -->
         <dependency>
             <groupId>eu.bitwalker</groupId>
             <artifactId>UserAgentUtils</artifactId>
-            <version>${bitwalker.version}</version>
         </dependency>
 
         <!-- spring security 安全认证 -->
@@ -52,8 +48,14 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger</groupId>
+                    <artifactId>swagger-models</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--mybatis-plus-->
@@ -77,7 +79,6 @@
         <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
-            <version>${alipay.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>fastjson</artifactId>
@@ -90,22 +91,20 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>${easy.excel.version}</version>
         </dependency>
 
         <!-- 验证码配置 -->
         <dependency>
             <groupId>com.github.anji-plus</groupId>
             <artifactId>captcha-spring-boot-starter</artifactId>
-            <version>${captcha.version}</version>
         </dependency>
 
         <!--七牛云-->
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
-            <version>${qiniu.version}</version>
         </dependency>
+
     </dependencies>
 
 </project>

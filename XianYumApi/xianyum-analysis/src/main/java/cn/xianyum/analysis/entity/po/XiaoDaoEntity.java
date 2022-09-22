@@ -31,5 +31,4 @@ public class XiaoDaoEntity {
 
     private Date createTime;
 
-    private String pushId;
 }

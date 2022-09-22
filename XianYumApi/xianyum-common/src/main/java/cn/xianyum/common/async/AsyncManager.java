@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * @author zhangwei
  * @date 2019/12/10 10:36
  */
-public class AsyncManager {
+public class  AsyncManager {
 
     /**
      * 操作延迟10毫秒

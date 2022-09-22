@@ -21,8 +21,11 @@ public class IpInfoEntity {
     /** isp */
     private String isp;
 
-    /** 备注 */
-    private String remark;
+    /** 赞助 */
+    private String support;
+
+    /** email */
+    private String email;
 
     private String ip;
 }

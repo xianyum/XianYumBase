@@ -94,6 +94,16 @@ public class RedisUtils {
     }
 
     /**
+     * 普通缓存获取
+     *
+     * @param key 键
+     * @return 值
+     */
+    public String getString(String key) {
+        return key == null ? null : (String) redisTemplate.opsForValue().get(key);
+    }
+
+    /**
      * 普通缓存放入
      *
      * @param key   键
