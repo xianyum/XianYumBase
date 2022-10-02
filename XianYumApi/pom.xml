@@ -39,12 +39,11 @@
         <joda.time.version>2.10.13</joda.time.version>
         <lombok.version>1.18.22</lombok.version>
         <druid.version>1.1.10</druid.version>
-        <captcha.version>1.2.6</captcha.version>
+        <captcha.version>1.3.0</captcha.version>
         <qiniu.version>7.4.0</qiniu.version>
         <easy.excel.version>3.0.5</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
         <bitwalker.version>1.21</bitwalker.version>
-        <kaptcha.version>2.3.2</kaptcha.version>
         <oshi.version>5.8.6</oshi.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
@@ -158,14 +157,9 @@
 
             <!-- 验证码配置 -->
             <dependency>
-                <groupId>com.github.anji-plus</groupId>
-                <artifactId>captcha-spring-boot-starter</artifactId>
-                <version>${captcha.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.penggle</groupId>
-                <artifactId>kaptcha</artifactId>
-                <version>${kaptcha.version}</version>
+                <groupId>com.anji-plus</groupId>
+                <artifactId>spring-boot-starter-captcha</artifactId>
+                <version>1.3.0</version>
             </dependency>
 
             <!--七牛云-->

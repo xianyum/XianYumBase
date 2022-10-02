@@ -30,11 +30,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.penggle</groupId>
-            <artifactId>kaptcha</artifactId>
-        </dependency>
-
         <!-- 解析客户端操作系统、浏览器等 -->
         <dependency>
             <groupId>eu.bitwalker</groupId>
@@ -95,8 +90,8 @@
 
         <!-- 验证码配置 -->
         <dependency>
-            <groupId>com.github.anji-plus</groupId>
-            <artifactId>captcha-spring-boot-starter</artifactId>
+            <groupId>com.anji-plus</groupId>
+            <artifactId>spring-boot-starter-captcha</artifactId>
         </dependency>
 
         <!--七牛云-->

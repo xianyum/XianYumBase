@@ -1,1 +1,1 @@
-cn.xianyum.framwork.service.CaptchaCacheServiceRedisImpl
+cn.xianyum.system.service.impl.CaptchaCacheServiceRedisImpl

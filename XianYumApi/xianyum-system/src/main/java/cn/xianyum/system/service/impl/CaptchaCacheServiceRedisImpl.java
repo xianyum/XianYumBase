@@ -1,4 +1,4 @@
-package cn.xianyum.framwork.service;
+package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.utils.RedisUtils;
 import com.anji.captcha.service.CaptchaCacheService;
