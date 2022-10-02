@@ -23,11 +23,29 @@
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%">
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="最近登录时间：">
+              <span>{{ new Date(props.row.loginTime).Format('yyyy-MM-dd hh:mm:ss') }}</span>
+            </el-form-item>
+            <el-form-item label="最近登录mac地址：">
+              <span>{{ props.row.macAddress }}</span>
+            </el-form-item>
+            <el-form-item label="最近登录ip：">
+              <span>{{ props.row.hostIp }}</span>
+            </el-form-item>
+            <el-form-item label="最近登录计算机名：">
+              <span>{{ props.row.hostName }}</span>
+            </el-form-item>
+            <el-form-item label="最近登录操作系统：">
+              <span>{{ props.row.osName }}</span>
+            </el-form-item>
+            <el-form-item label="最近登录版本号：">
+              <span>V {{ numFilter(props.row.clientVersion) }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
       </el-table-column>
       <el-table-column
         label="序号"
@@ -203,6 +221,10 @@ export default {
       }).catch(() => {
       })
     },
+    numFilter (num) {
+
+      return (Math.round(num*10)/10).toFixed(1)
+    },
     updateNotify(row){
       this.$confirm(`确定要更新上线通知状态吗?`, '提示', {
         confirmButtonText: '确定',
@@ -348,3 +370,17 @@ export default {
   }
 }
 </script>
+<style rel="stylesheet/scss" lang="scss">
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 150px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
+</style>

@@ -56,16 +56,6 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="pushId"
-        header-align="center"
-        align="center"
-        width="280"
-        label="消息ID">
-        <template slot-scope="scope">
-          <a type="primary" @click="toPushLog(scope.row.pushId)">{{ scope.row.pushId }}</a>
-        </template>
-      </el-table-column>
-      <el-table-column
         prop="pushTime"
         header-align="center"
         align="center"
@@ -126,9 +116,6 @@
       this.getDataList()
     },
     methods: {
-      toPushLog (pushId){
-        this.$router.push({name: 'push-log', params: {pushId: pushId}})
-      },
       formateTime (row, column,cell) {
         if(!cell){
           return ''

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.message.dao.MessageSendConfigMapper">
+
+    <sql id="columns">
+        msc.id,
+        msc.message_code,
+        msc.message_title,
+        msc.status,
+        msc.create_time,
+        msc.create_user_id,
+        msc.create_user_name,
+        mtc.message_code,
+        mtc.description as messageTypeDescription
+    </sql>
+
+    <resultMap id="messageSendConfigMap" type="cn.xianyum.message.entity.response.MessageSendConfigResponse">
+        <result column="id" property="id"/>
+        <result column="message_code" property="messageCode"/>
+        <result column="message_title" property="messageTitle"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="limit_send_start_time" property="limitSendStartTime"/>
+        <result column="limit_send_end_time" property="limitSendEndTime"/>
+        <collection property="messageSendRelationResponses" resultMap="messageSendRelationResponsesMap"/>
+    </resultMap>
+
+
+    <resultMap id="messageSendRelationResponsesMap" type="cn.xianyum.message.entity.response.MessageSendRelationResponse">
+        <result column="message_send_id" property="messageSendId"/>
+        <result column="message_account_type" property="messageAccountType"/>
+        <result column="message_config_id" property="messageConfigId"/>
+        <result column="to_user" property="toUser"/>
+    </resultMap>
+
+    <select id="queryList" parameterType="cn.xianyum.message.entity.request.MessageSendConfigRequest" resultType="cn.xianyum.message.entity.response.MessageSendConfigResponse">
+
+        SELECT
+        <include refid="columns"/>
+        FROM
+        message_send_config msc
+        LEFT JOIN message_type_config mtc ON mtc.message_code = msc.message_code
+        <where>
+            <if test="request.messageCode != null and request.messageCode != ''">
+                AND msc.message_code LIKE CONCAT('%', #{request.messageCode}, '%')
+            </if>
+            <if test="request.messageTitle != null and request.messageTitle != ''">
+                AND msc.message_title LIKE CONCAT('%', #{request.messageTitle}, '%')
+            </if>
+
+        </where>
+        ORDER BY msc.create_time DESC
+    </select>
+
+
+    <select id="selectListByMessageCode" parameterType="string" resultMap="messageSendConfigMap">
+
+        SELECT
+            msr.message_send_id,
+            msr.message_account_type,
+            msr.message_config_id,
+            msr.to_user,
+            msc.message_code,
+            msc.status,
+            msc.message_title,
+            msc.create_time,
+            msc.create_user_id,
+            msc.create_user_name,
+            msc.limit_send_start_time,
+            msc.limit_send_end_time
+        FROM
+            message_send_config msc
+            LEFT JOIN message_send_relation msr ON msc.id = msr.message_send_id
+        WHERE
+            msc.message_code = #{messageCode}
+            AND msc.`status` = 0
+    </select>
+</mapper>

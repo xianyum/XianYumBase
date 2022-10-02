@@ -1,29 +1,67 @@
 <template>
   <el-form ref="form" :rules="dataRule" :model="form" label-width="150px">
-    <el-form-item label="客户端标识" prop="constantKey" style="width: 50%">
-      <el-input v-model="form.constantKey"  maxlength="100" placeholder="客户端通过标识符获取客户端信息" :disabled="true"></el-input>
-    </el-form-item>
-    <el-form-item label="客户端版本号" prop="versionNo" style="width: 50%">
-      <el-input v-model="form.versionNo"  maxlength="100" type="number" placeholder="输入最新版本号客户端自动更新"></el-input>
-    </el-form-item>
-    <el-form-item label="客户端版本标签" prop="title" style="width: 50%">
-      <el-input v-model="form.title"  maxlength="100" placeholder="客户端版本标签"></el-input>
-    </el-form-item>
-    <el-form-item label="客户端版本标题" prop="labelTitle" style="width: 50%">
-      <el-input v-model="form.labelTitle"  maxlength="100" placeholder="客户端版本正文标题"></el-input>
-    </el-form-item>
-    <el-form-item label="客户端公告" prop="notice" style="width: 50%">
-      <el-input v-model="form.notice"  type="textarea" maxlength="100" placeholder="用于展示最新客户端公告"></el-input>
-    </el-form-item>
-    <el-form-item label="客户端更新地址" prop="downloadUrl" style="width: 50%">
-      <el-input v-model="form.downloadUrl"  maxlength="100" placeholder="客户端最新更新地址"></el-input>
-    </el-form-item>
-    <el-form-item label="系统常用参数描述" prop="constantDescribe" style="width: 50%">
-      <el-input v-model="form.constantDescribe"  type="textarea" maxlength="100" placeholder="系统常用参数描述"></el-input>
-    </el-form-item>
-    <el-form-item label="上次发布时间" prop="updateTime" style="width: 50%">
-      <el-input v-model="form.updateTime"  maxlength="100"  :disabled="true" placeholder="客户端版本上次发布时间"></el-input>
-    </el-form-item>
+    <el-row>
+      <el-col :span="10">
+        <el-form-item label="客户端标识" prop="constantKey">
+          <el-input v-model="form.constantKey"  maxlength="100" placeholder="客户端通过标识符获取客户端信息" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item label="上次发布时间" prop="updateTime" >
+          <el-input v-model="form.updateTime"  maxlength="100"  :disabled="true" placeholder="客户端版本上次发布时间"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="10">
+        <el-form-item label="服务端地址" prop="serverAddress">
+          <el-input v-model="form.serverAddress"  maxlength="100" placeholder="服务端地址"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item label="服务端端口" prop="serverPort" >
+          <el-input v-model="form.serverPort"  maxlength="100" placeholder="服务端端口"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="10">
+        <el-form-item label="客户端版本标签" prop="title">
+          <el-input v-model="form.title"  maxlength="100" placeholder="客户端版本标签"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item label="客户端版本标题" prop="labelTitle">
+          <el-input v-model="form.labelTitle"  maxlength="100" placeholder="客户端版本正文标题"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="10">
+        <el-form-item label="客户端API地址" prop="apiUrl">
+          <el-input v-model="form.apiUrl"  maxlength="100" placeholder="客户端API地址"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item label="客户端更新地址" prop="downloadUrl">
+          <el-input v-model="form.downloadUrl"  maxlength="100" placeholder="客户端最新更新地址"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="10">
+        <el-form-item label="客户端版本号" prop="versionNo">
+          <el-input v-model="form.versionNo"  maxlength="100" type="number" placeholder="输入最新版本号客户端自动更新"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="10">
+        <el-form-item label="客户端公告" prop="notice">
+          <el-input v-model="form.notice"  type="textarea" :rows="4" maxlength="100" placeholder="用于展示最新客户端公告"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
     <el-form-item>
       <el-button type="primary" @click="sendInfo">发布</el-button>
       <el-button type="info" @click="reset">刷新</el-button>
@@ -45,9 +83,18 @@ export default {
         notice: '',
         labelTitle: '',
         constantDescribe: '',
-        updateTime: ''
+        updateTime: '',
+        apiUrl: '',
+        serverAddress: '',
+        serverPort: ''
       },
       dataRule: {
+        serverAddress: [
+          { required: true, message: '服务端地址不能为空', trigger: 'blur' }
+        ],
+        serverPort: [
+          { required: true, message: '服务端端口不能为空', trigger: 'blur' }
+        ],
         constantKey: [
           { required: true, message: '客户端标识不能为空', trigger: 'blur' }
         ],
@@ -56,6 +103,9 @@ export default {
         ],
         title: [
           { required: true, message: '客户端版本标签不能为空', trigger: 'blur' }
+        ],
+        apiUrl: [
+          { required: true, message: '客户端API地址不能为空', trigger: 'blur' }
         ],
         downloadUrl: [
           { required: true, message: '客户端更新地址不能为空', trigger: 'blur' }
@@ -101,7 +151,10 @@ export default {
             'title': this.form.title,
             'downloadUrl': this.form.downloadUrl,
             'notice': this.form.notice,
-            'labelTitle': this.form.labelTitle
+            'labelTitle': this.form.labelTitle,
+            'apiUrl': this.form.apiUrl,
+            'serverAddress': this.form.serverAddress,
+            'serverPort': this.form.serverPort
           }
           this.form.constantValue = JSON.stringify(params)
           this.$http({

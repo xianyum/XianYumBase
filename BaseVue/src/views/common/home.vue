@@ -42,6 +42,18 @@
               <div style="color: red">善宽以怀，善感以恩。善博以浪，善精以业。</div>
               <div style="color: skyblue">无愧于天，无愧于地。无怍于人，无惧于鬼。</div>
             </el-collapse-item>
+            <el-collapse-item title="v4.1 2022-04-24 系统变量" name="32">
+              <div>增加系统变量功能</div>
+            </el-collapse-item>
+            <el-collapse-item title="v4.0 2022-02-12 新年第一版" name="31">
+              <div>新年第一版，优化之前遗留的问题，消息发送增加限制时间，消息监控查询类型增加等等...</div>
+            </el-collapse-item>
+            <el-collapse-item title="v3.3 2021-11-27 消息管理功能" name="30">
+              <div>消息管理功能模块</div>
+            </el-collapse-item>
+            <el-collapse-item title="v3.2 2021-09-28 适配咸鱼客户端V5.2版本" name="29">
+              <div>适配咸鱼客户端V5.2版本</div>
+            </el-collapse-item>
             <el-collapse-item title="v3.1 2021-08-26 更换登录背景图api" name="28">
               <div>更换登录背景图api</div>
             </el-collapse-item>
@@ -145,7 +157,7 @@
     data () {
       return {
         activeName: '1',
-        src: 'https://xiaoyaxiaokeai.gitee.io/base/20201018/wechat.jpg',
+        src: 'https://xiaoyaxiaokeai.gitee.io/base/20201018/wechat-pay.png',
         zhudong: 'https://xiaoyaxiaokeai.gitee.io/base/20201018/zhudong.jpg'
       }
     },

@@ -22,7 +22,7 @@
       </el-form-item>
     </el-form>
 
-    <div>
+    <div v-show="isAuth('admin')">
       <ve-chart :data="chartData" :settings="chartSettings1" :data-empty="dataEmpty" :colors="echartsColors" v-loading="dataListLoading1" element-loading-text="正在汇总数据..."
                element-loading-spinner="el-icon-loading"></ve-chart>
     </div>

@@ -21,7 +21,8 @@ const globalRoutes = [
   { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } },
   { path: '/register', component: _import('common/register'), name: 'register', meta: { title: '注册' } },
   { path: '/checkAliLogin', component: _import('common/checkAliLogin'), name: 'checkAliLogin', meta: { title: 'aliLogin' } },
-  { path: '/checkQQLogin', component: _import('common/checkQQLogin'), name: 'checkQQLogin', meta: { title: 'checkQQLogin' } }
+  { path: '/checkQQLogin', component: _import('common/checkQQLogin'), name: 'checkQQLogin', meta: { title: 'checkQQLogin' } },
+  { path: '/messageDetail', component: _import('modules/message/detail'), name: 'messageDetail', meta: { title: '消息推送中心详情' } }
 ]
 
 // 主入口路由(需嵌套上左右整体布局)
@@ -41,7 +42,8 @@ const mainRoutes = {
     { path: '/theme', component: _import('common/theme'), name: 'theme', meta: { title: '主题' }},
     { path: '/demo-echarts', component: _import('demo/echarts'), name: 'demo-echarts', meta: { title: 'demo-echarts', isTab: true } },
     { path: '/demo-ueditor', component: _import('demo/ueditor'), name: 'demo-ueditor', meta: { title: 'demo-ueditor', isTab: true } },
-    { path: '/profile', component: _import('profile/index'), name: 'profile', meta: { title: '个人中心', isTab: true } }
+    { path: '/profile', component: _import('profile/index'), name: 'profile', meta: { title: '个人中心', isTab: true } },
+    { path: '/message-send-config-add-or-update', component: _import('modules/message/send-config-add-or-update'), name: 'message-send-config-add-or-update', meta: { title: '消息发送配置保存/修改', isTab: true } }
   ],
   beforeEnter (to, from, next) {
     let token = Vue.cookie.get('token')

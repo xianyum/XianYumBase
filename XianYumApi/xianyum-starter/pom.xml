@@ -21,6 +21,12 @@
 
         <dependency>
             <groupId>cn.xianyum</groupId>
+            <artifactId>xianyum-zeekr</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-message</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
