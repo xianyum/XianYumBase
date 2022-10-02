@@ -1,0 +1,174 @@
+server:
+  port: 9190
+
+redis:
+  captcha:
+    prefix: '${spring.application.name}:captcha:'
+    expire: 120  # 验证码过期时间，单位秒
+  token:
+    prefix: '${spring.application.name}:token:'
+    expire: 120  # token有效时长，单位分钟
+    enable: true # 校验token开关，true开启token
+    secret: ${spring.application.name}  #密匙
+  system_constant:
+    prefix: '${spring.application.name}:system_constant:'
+  log:
+    count: '${spring.application.name}:log_count:'
+  message:
+    wechat:
+      token: '${spring.application.name}:xianyum-message:wechat:'
+    config:
+      prefix: '${spring.application.name}:xianyum-message:config:'
+
+#七牛云配置
+oss:
+  access_key: mpw:zwhl7cATylP4lLJAhou0pPv9trW1rACXhGBW7PsZkVBAocvTeLULeq/EIWTL/cbD
+  secret_key: mpw:KtlEKOf2oVC4NJt3dlSxiZerIleCPAmgLXIIJ/9odHFRkruAnBqMTIiZBbjgvU7l
+  bucket: xianyum
+  url: http://oss.xianyum.cn/
+
+
+qq:
+  # qq第三方登录配置
+  login:
+    access_token_url: https://graph.qq.com/oauth2.0/token
+    client_id: mpw:g+jpCefajURQrBSFbhCZBQ==
+    client_secret: mpw:JbwUFgMSaP+x6K7sWc1f5Qky3deXR/phe2gy9TEZg7NN921Jdltdr86gG71gSIvP
+    grant_type: authorization_code
+    redirect_uri: http://xianyum.cn/#/checkQQLogin
+    open_id_url: https://graph.qq.com/oauth2.0/me
+    user_info_url: https://graph.qq.com/user/get_user_info
+
+
+# Swagger配置
+swagger:
+  # 是否开启swagger
+  enabled: true
+  # 请求前缀
+  pathMapping: /api
+
+proxy:
+  ssl:
+    enable: true
+    port: 9101
+    jksPath: test.jks
+    keyStorePassword: 123456
+    keyManagerPassword: 123456
+    needsClientAuth: false
+    bind: 0.0.0.0
+
+ali:
+  # 阿里第三方登录
+  login:
+    app_private_key: mpw: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
+    alipay_public_key: mpw:hPKhZT0XVQ2oy6CS4cnVEQnFZ/JBjbO/ZdA4/2hA6EGGQYdw1X3N3MYBRsQF12Hzw2iyKYJM0gO6so+aJORk6DZ9OkTe+lYPJHUvAyGJvf46J4qe0jLhiZnZGg4Lt94IeJOMd3fI5jPioGFAp87/QGB8i0GGLDGMg2hF7lYimTvAYnp31z8ttsh3+tTV7ROFmX5A4huMxeWC8EsuMEXKb8onju2m7KRNG3xLV9CQi9vLZ+0qMvfWC16JQnlZ7MYvSSFEo0MGLm7B165Q67PPD9ikqDsrtvtl+F0uAi83b8G+EQ8R0jGnFC87ZvLFkpeezl3vnVv48pG4JFfDbgSy8+JGBGMp5aOBBOcMybkn623iZz8QXHp5ilcpxtcckNcvqmji8pUD/fLblS1lryq0uHjQxgGvJZ6Ai5eDdSBuukiQZhreP6v7k+csCqKDSgVzv6JDOSvvADcNZzb6SJ36Tev6NpF6aHTkUCEEKhGwyE7wDdp13FuLI0QVBC+hjOBFdQMcyVwf2AA7N0avzP7v3w==
+    app_id: mpw:E7xIIUCorWxfm+bWP37MtaLN22V4JLL4nD4rWadKIQY=
+    server_url: https://openapi.alipay.com/gateway.do
+
+
+# 滑块验证码配置 https://gitee.com/anji-plus/captcha/tree/master/service/springboot
+aj:
+  captcha:
+    aes-status: true
+    cache-type: redis
+    interference-options: 2
+    jigsaw: classpath:static/images/jigsaw
+    pic-click: classpath:static/images/pic-click
+    slip-offset: 5
+    type: default
+    water-mark: ''
+
+ip:
+  db:
+    path: /jdk/app/ipdb/ip2region.db
+#    path: C:\xianyum\projects\BaseDemo\BaseApi\db\ip2region.db
+
+
+#mybatis plus
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: cn.xianyum.**.entity.po
+  check-config-location: true
+  configuration:
+    #是否开启自动驼峰命名规则（camel case）映射
+    map-underscore-to-camel-case: true
+    #全局地开启或关闭配置文件中的所有映射器已经配置的任何缓存
+    cache-enabled: false
+    call-setters-on-nulls: true
+    #配置JdbcTypeForNull, oracle数据库必须配置
+    jdbc-type-for-null: 'null'
+    #MyBatis 自动映射时未知列或未知属性处理策略 NONE：不做任何处理 (默认值), WARNING：以日志的形式打印相关警告信息, FAILING：当作映射失败处理，并抛出异常和详细信息
+    auto-mapping-unknown-column-behavior: warning
+  global-config:
+    banner: false
+    db-config:
+      #主键类型  0:"数据库ID自增", 1:"未设置主键类型",2:"用户输入ID (该类型可以通过自己注册自动填充插件进行填充)", 3:"全局唯一ID (idWorker), 4:全局唯一ID (UUID), 5:字符串全局唯一ID (idWorker 的字符串表示)";
+      id-type: ASSIGN_ID
+      #字段验证策略 IGNORED:"忽略判断", NOT_NULL:"非NULL判断", NOT_EMPTY:"非空判断", DEFAULT 默认的,一般只用于注解里(1. 在全局里代表 NOT_NULL,2. 在注解里代表 跟随全局)
+      field-strategy: NOT_EMPTY
+      #数据库大写下划线转换
+      capital-mode: true
+      #逻辑删除值
+      logic-delete-value: 1
+      #逻辑未删除值
+      logic-not-delete-value: 0
+
+# 数据源配置
+spring:
+  redis:
+    database: 1 #Redis数据库索引（默认为0）
+    host: mpw:2E9HoOOXusIU22BFOQ8Jkg== # Redis服务器地址
+    port: 6379 # Redis服务器连接端口
+    password: mpw:wjRUZ6s1FKENxXSvWuhno6jgApwqbLCp/aWDTnpQ/ig= # Redis服务器连接密码（默认为空）
+    timeout: 5000 # 连接超时时间（毫秒）
+    jedis:
+      pool:
+        max-active: 10 # 连接池中的最小空闲连接
+        max-wait: 3s # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 20 # 连接池中的最大空闲连接
+        min-idle: 0 # 最大活跃连接数，负数为不限制
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure  # 为了某些版本的springboot  @SpringBootApplication(exclude= {DataSourceAutoConfiguration.class}) 无法生效
+  datasource:
+    druid:
+      stat-view-servlet:
+        loginUsername: admin
+        loginPassword: mpw:UByz+M4cr4n8EkCiGLQjZw==
+    dynamic:
+      primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
+      datasource:
+        master:
+          url: jdbc:mysql://db.xianyum.cn:3306/BASE_DEMO_TC?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: mpw:F3RIuQ2oysG5oe7LzHrHOQ==
+          password: mpw:wjRUZ6s1FKENxXSvWuhno6jgApwqbLCp/aWDTnpQ/ig=
+          driverClassName:  com.mysql.cj.jdbc.Driver
+        slave:
+          url: jdbc:mysql://localhost:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
+          username: root
+          password: 80616059
+          driverClassName:  com.mysql.cj.jdbc.Driver
+      initial-size: 10 # 以下是连接池配置
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      #validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: false
+        wall:
+          config:
+            multi-statement-allow: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
