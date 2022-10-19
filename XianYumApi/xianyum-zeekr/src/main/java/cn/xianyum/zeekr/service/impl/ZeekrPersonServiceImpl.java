@@ -17,10 +17,9 @@ import cn.xianyum.zeekr.service.ZeekrPersonService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -105,6 +104,7 @@ public class ZeekrPersonServiceImpl implements ZeekrPersonService {
 	public ReturnT executeZeekr(Map<String, String> jobMapParams, SchedulerTool tool) {
 		QueryWrapper<ZeekrPersonEntity> queryWrapper = new QueryWrapper<ZeekrPersonEntity>();
 		List<ZeekrPersonEntity> zeekrPersonEntities = zeekrPersonMapper.selectList(queryWrapper);
+		String isSleep = jobMapParams.get("sleep");
 		for(ZeekrPersonEntity zeekrPersonEntity : zeekrPersonEntities){
 			String token  = this.zeekrPersonInterfaceService.getToken(zeekrPersonEntity.getLoginName());
 			ZeekrPersonResult zeekrByDay = this.zeekrPersonInterfaceService.getZeekrByDay(token);
@@ -116,6 +116,20 @@ public class ZeekrPersonServiceImpl implements ZeekrPersonService {
 				zeekrByDay.setTsEmployeeNum(zeekrPersonEntity.getEmployeeNum());
 				zeekrByDay.setTsEmployeeName(zeekrPersonEntity.getEmployeeName());
 				zeekrByDay.setTsTime(DateTime.now().toString("yyyy-MM-dd 00:00:00"));
+
+
+				// 睡眠10分钟以内，在执行
+				if(Objects.equals("true",isSleep)){
+					Random random = new Random();
+					int time = 10*60*1000-1000*60;
+					int sleepTime = random.nextInt(time);
+					try {
+						Thread.sleep(sleepTime);
+					}catch (Exception e){
+						tool.error("执行zeekr睡眠失败");
+					}
+
+				}
 				String result = this.zeekrPersonInterfaceService.executeNowDayZeekr(token, zeekrByDay);
 
 				// 说明执行失败，发送消息
