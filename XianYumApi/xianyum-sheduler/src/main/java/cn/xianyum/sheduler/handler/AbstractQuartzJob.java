@@ -18,9 +18,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zhangwei
@@ -41,6 +39,9 @@ public abstract class AbstractQuartzJob implements Job {
         doBeforeJob(jobEntity,tool);
         try {
             Map<String,String> mapParam = JSONObject.parseObject(jobEntity.getJobParams(), Map.class);
+            if(Objects.isNull(mapParam)){
+                mapParam = new HashMap<>();
+            }
             returnT = doExecute(jobEntity.getJobHandler(), mapParam, tool);
         }catch (Exception e){
             returnT = ReturnT.FAILURE;
