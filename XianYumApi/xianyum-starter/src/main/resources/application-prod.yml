@@ -80,9 +80,7 @@ aj:
 
 ip:
   db:
-    path: /home/application/BaseDemo/ipdb/ip2region.db
-#    path: C:\xianyum\projects\BaseDemo\BaseApi\db\ip2region.db
-
+    path: /jdk/app/ipdb/ip2region.db
 
 #mybatis plus
 mybatis-plus:
@@ -120,7 +118,7 @@ spring:
     #    database: 0 #Redis数据库索引（默认为0）
     host: mpw:2E9HoOOXusIU22BFOQ8Jkg== # Redis服务器地址
     port: 6379 # Redis服务器连接端口
-    password: mpw:wjRUZ6s1FKENxXSvWuhno6jgApwqbLCp/aWDTnpQ/ig= # Redis服务器连接密码（默认为空）
+    password: mpw:SmSUEOjd/X4B3EIFAeURfg== # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
     jedis:
       pool:
@@ -139,12 +137,12 @@ spring:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
       datasource:
         master:
-          url: mpw:sR3rIglLgps1SmEJaf5ZL/sqWUPkJppWu8SeRPfUF7CLDNPhgX3WWezMKLeYVObRupy/VVERQXlRR74GXY/HSj03F+yPW0dUdHjMu+fm6ZP7pg5U8k39Q52k7h7ORumpHC3TwZCy70c/UCM0Mtxfoym3twgMG3t+EgBd0G/bFZiWir5+eSCeAbSCTBkDk0bJMVFHIzW4R3j6oxehXL2d0A==
+          url: mpw:sR3rIglLgps1SmEJaf5ZL/sqWUPkJppWu8SeRPfUF7CE1pGXJmozB9aLADOJJU3O8GBFDdhfeOgFnJordt6S/ePKzAmT+5CcqMNBVp1p6m5SQ20g+GKl7sMdFy48DxbhMfsifmVwmGCT4MpRhv4hKNAMEgihh+6TDhNmgQTe1TTLEQzXKT9gLwdQnZpiowUM7MyjWggS9tJ4VbkmnE/5Hg==
           username: mpw:F3RIuQ2oysG5oe7LzHrHOQ==
-          password: mpw:wjRUZ6s1FKENxXSvWuhno6jgApwqbLCp/aWDTnpQ/ig=
+          password: mpw:SmSUEOjd/X4B3EIFAeURfg==
           driverClassName:  com.mysql.cj.jdbc.Driver
         slave:
-          url: jdbc:mysql://localhost:3306/BaseDemo?useSSL=false&useUnicode=true&characterEncoding=utf8
+          url: jdbc:mysql://localhost:3306/BaseDemo?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
           username: root
           password: 80616059
           driverClassName:  com.mysql.cj.jdbc.Driver
