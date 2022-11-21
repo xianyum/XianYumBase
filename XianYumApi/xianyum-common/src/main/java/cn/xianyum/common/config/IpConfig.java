@@ -21,7 +21,7 @@ public class IpConfig {
     @Value("${ip.db.path:xxxxxx}")
     private String dbFile;
 
-    private final static String DWONLOAD_DB_URL = "http://oss.xianyum.cn/ip2region.db";
+    private final static String DWONLOAD_DB_URL = "https://cdn.jsdelivr.net/gh/xianyum/CDN@1.0.1/ipdb/ip2region.db";
     private final static String DB_PATH = System.getProperty("user.dir")+"/ipdb/ip2region.db";
 
     @Bean(name = "ipDbSearcherConfig")
