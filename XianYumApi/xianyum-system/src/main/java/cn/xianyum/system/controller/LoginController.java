@@ -97,7 +97,7 @@ public class LoginController {
         LoginUserEntity loginUserEntity = (LoginUserEntity)authentication.getPrincipal();
         UserEntity userEntity = BeanUtils.copy(loginUserEntity, UserEntity.class);
         DataResult result = userTokenService.createToken(userEntity);
-        return null;
+        return result;
     }
 
 
