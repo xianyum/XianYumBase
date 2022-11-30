@@ -16,10 +16,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class XianyumApplication {
 
     public static void main(String[] args) {
-        System.out.println("测试自动化部署1");
         SpringApplication.run(XianyumApplication.class, args);
         ProxyServerContainer proxyServerContainer = new ProxyServerContainer();
         proxyServerContainer.start();
+        System.out.println("测试自动化部署2");
     }
 
 }
