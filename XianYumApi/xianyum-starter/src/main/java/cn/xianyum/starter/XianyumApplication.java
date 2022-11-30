@@ -19,7 +19,6 @@ public class XianyumApplication {
         SpringApplication.run(XianyumApplication.class, args);
         ProxyServerContainer proxyServerContainer = new ProxyServerContainer();
         proxyServerContainer.start();
-        System.out.println("测试自动化部署2");
     }
 
 }
