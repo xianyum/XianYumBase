@@ -170,22 +170,3 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
-  boot:
-    admin:
-      client:
-        #springbootadmin server端服务器的部署地址
-        url: http://localhost:9100/
-        instance:
-          prefer-ip: true
-        username: mpw:pzpBku8etJqn4DsP9pndRQ==
-        password: mpw:UByz+M4cr4n8EkCiGLQjZw==
-
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: ALWAYS

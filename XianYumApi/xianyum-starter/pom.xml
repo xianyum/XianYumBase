@@ -20,16 +20,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-            <version>2.5.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-zeekr</artifactId>
             <version>0.0.1-SNAPSHOT</version>
