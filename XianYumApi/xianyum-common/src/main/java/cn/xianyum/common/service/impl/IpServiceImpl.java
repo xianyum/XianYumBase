@@ -33,6 +33,7 @@ public class IpServiceImpl implements IpService {
             ipInfoEntity.setIsp("0".equals(data[4])?"":data[4]);
             ipInfoEntity.setSupport("https://xiaoyaxiaokeai.gitee.io/base/20201224/thanks.jpg");
             ipInfoEntity.setEmail("80616059@qq.com");
+            ipInfoEntity.setRemark("2023年新年快乐~");
             ipInfoEntity.setIp(ip);
             return ipInfoEntity;
         }catch (Exception e){
