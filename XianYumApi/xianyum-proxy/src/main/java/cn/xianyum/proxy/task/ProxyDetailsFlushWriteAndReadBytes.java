@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author wei.zhang
@@ -28,11 +30,18 @@ public class ProxyDetailsFlushWriteAndReadBytes implements IJobHandler {
     @Override
     public ReturnT execute(Map<String, String> jobMapParams, SchedulerTool tool) throws Exception {
         List<ProxyDetailsEntity> proxyDetailsEntities = proxyDetailsMapper.selectList(new QueryWrapper<>());
+        String resetZeroFlag = jobMapParams.get("resetZeroFlag");
         for(ProxyDetailsEntity item : proxyDetailsEntities){
             MetricsCollector collector = MetricsCollector.getCollector(item.getInetPort());
-            long nowWroteBytes = collector.getWroteBytes().get();
-            long nowReadBytes = collector.getReadBytes().get();
+            AtomicLong wroteBytes = collector.getWroteBytes();
+            AtomicLong readBytes = collector.getReadBytes();
+            long nowWroteBytes = wroteBytes.get();
+            long nowReadBytes = readBytes.get();
             proxyDetailsMapper.flushBytes(item.getId(),nowWroteBytes,nowReadBytes);
+            if(Objects.equals(resetZeroFlag,"Y")){
+                wroteBytes.set(0);
+                readBytes.set(0);
+            }
         }
         return ReturnT.SUCCESS;
     }
