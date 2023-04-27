@@ -73,9 +73,8 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public ProxyResponse getById(ProxyRequest request) {
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
+
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
@@ -88,9 +87,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public Integer save(ProxyRequest request) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 
 		ProxyEntity bean = BeanUtils.copy(request,ProxyEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
@@ -103,9 +100,8 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public Integer update(ProxyRequest request) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
+
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
@@ -121,9 +117,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public void deleteById(String[] ids) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 
 		if(null == ids || ids.length == 0){
 			throw new SoException("id不能为空");
@@ -223,9 +217,7 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public void flushProxy() {
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 		ProxyChangedListener proxyChangedListener = new ProxyChannelManager();
 		ProxyChangedListener proxyChangedListener1 = new ProxyServerContainer();
 		proxyChangedListener.onChanged();
@@ -318,9 +310,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public String downloadConfig(ProxyRequest request) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("客户端授权码不能为空！");

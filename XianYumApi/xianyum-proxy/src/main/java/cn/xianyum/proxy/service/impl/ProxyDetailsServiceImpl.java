@@ -55,9 +55,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public ProxyDetailsResponse getById(ProxyDetailsRequest request) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
@@ -106,9 +104,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public Integer update(ProxyDetailsRequest request) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 
 		if(null == request.getInetPort()){
 			throw new SoException("公网端口不能为空");
@@ -135,9 +131,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public void deleteById(String[] ids) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
 
 		if(null == ids || ids.length == 0){
 			throw new SoException("id不能为空");
