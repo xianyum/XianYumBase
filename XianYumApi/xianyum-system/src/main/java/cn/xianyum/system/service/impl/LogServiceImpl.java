@@ -146,9 +146,9 @@ public class LogServiceImpl implements LogService {
     @Override
     public List<LogResponse> getVisitCountCharts(LogRequest request) {
 
-        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
-            return null;
-        }
+//        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+//            return null;
+//        }
         String endTime = request.getEndTime();
         Date date = new Date();
         if(StringUtil.isNotEmpty(endTime)){
@@ -166,6 +166,7 @@ public class LogServiceImpl implements LogService {
 //        String queryTimeStr = new DateTime(DateUtils.stringToDate(request.getEndTime())).minusDays(15).toString(DateUtils.START_DATE_PATTERN);
 //        request.setQueryTime(queryTimeStr);
 //        List<LogResponse> responses = logMapper.getVisitCountCharts(request);
+        Collections.reverse(responses);
         return responses;
     }
 

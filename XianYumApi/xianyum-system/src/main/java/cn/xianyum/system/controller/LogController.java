@@ -48,7 +48,6 @@ public class LogController {
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
     public DataResult getVisitCountCharts(@RequestBody LogRequest request){
         List<LogResponse> responses = logService.getVisitCountCharts(request);
-        Collections.reverse(responses);
         return DataResult.success(responses);
     }
 
