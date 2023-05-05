@@ -1,10 +1,9 @@
 package cn.xianyum.message.infra.sender;
 
-import cn.xianyum.common.async.AsyncManager;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
-import cn.xianyum.message.infra.factory.MessageSenderFactory;
 import cn.xianyum.message.service.MessageSendConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 
@@ -18,6 +17,9 @@ public class MessageSender {
 
     @Autowired
     private MessageSendConfigService messageSendConfigService;
+
+    @Autowired
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     /**
      * 同步发送消息
@@ -34,7 +36,7 @@ public class MessageSender {
      * @param messageSender
      */
     public void sendAsyncMessage(String messageCode, MessageSenderEntity messageSender){
-        AsyncManager.async().execute(MessageSenderFactory.sendMessage(messageCode,messageSender));
+        xianYumTaskExecutor.execute(()-> messageSendConfigService.sendMessage(messageCode,messageSender));
     }
 
     /**
@@ -54,7 +56,7 @@ public class MessageSender {
      * @param context
      */
     public void sendAsyncEmailTemplateMessage(String messageCode, MessageSenderEntity messageSender,Context context){
-        AsyncManager.async().execute(MessageSenderFactory.sendEmailTemplateMessage(messageCode,messageSender,context));
+        xianYumTaskExecutor.execute(()-> messageSendConfigService.sendEmailTemplateMessage(messageCode,messageSender,context));
     }
 
 }

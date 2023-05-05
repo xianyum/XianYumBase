@@ -1,6 +1,19 @@
 server:
   port: 9190
 
+xian_yum:
+  # 线程池配置
+  executor:
+    # 核心线程数
+    core-pool-size: 2
+    # 最大线程数
+    max-pool-size: 4
+    # 工作队列大小
+    queue-capacity: 100
+    #  最大存活时间
+    keep-alive-seconds: 60
+
+
 redis:
   captcha:
     prefix: '${spring.application.name}:xianyum-system:captcha:'

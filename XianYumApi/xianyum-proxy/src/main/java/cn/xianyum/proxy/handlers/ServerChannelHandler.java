@@ -1,17 +1,17 @@
 package cn.xianyum.proxy.handlers;
 
-import cn.xianyum.common.async.AsyncManager;
 import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.proxy.common.constant.ProxyConstants;
-import cn.xianyum.proxy.common.factory.AsyncXianYuOnlineFactory;
 import cn.xianyum.proxy.common.utils.ProxyMessage;
 import cn.xianyum.proxy.container.ProxyChannelManager;
 import cn.xianyum.proxy.service.ProxyDetailsService;
+import cn.xianyum.proxy.service.ProxyService;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.List;
 
 /**
@@ -144,7 +144,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
         }
 
         // 此处是客户端上线的
-        AsyncManager.async().execute(AsyncXianYuOnlineFactory.notify(clientKey));
+        ThreadPoolTaskExecutor xianYumTaskExecutor = SpringUtils.getBean("xianYumTaskExecutor");
+        xianYumTaskExecutor.execute(()->SpringUtils.getBean(ProxyService.class).onlineNotify(clientKey));
         logger.info("咸鱼客户端新上线，授权码：{},端口：{}，映射：{}", clientKey, ports, ctx.channel());
         ProxyChannelManager.addCmdChannel(ports, clientKey, ctx.channel());
     }

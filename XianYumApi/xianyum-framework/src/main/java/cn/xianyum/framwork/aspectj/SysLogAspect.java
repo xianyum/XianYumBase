@@ -1,14 +1,10 @@
 package cn.xianyum.framwork.aspectj;
 
 import cn.xianyum.common.annotation.SysLog;
-import cn.xianyum.common.async.AsyncManager;
-import cn.xianyum.common.utils.HttpContextUtils;
-import cn.xianyum.common.utils.IPUtils;
-import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.UUIDUtils;
-import cn.xianyum.system.common.factory.AsyncLogFactory;
+import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.UserRequest;
+import cn.xianyum.system.service.LogService;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,6 +12,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
@@ -31,6 +29,8 @@ import java.util.Date;
 @Component
 public class SysLogAspect {
 
+    @Autowired
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     @Pointcut("@annotation(cn.xianyum.common.annotation.SysLog)")
     public void logPointCut() {
@@ -96,6 +96,8 @@ public class SysLogAspect {
         logEntity.setCreateTime(new Date());
 
         //异步保存系统日志
-        AsyncManager.async().execute(AsyncLogFactory.save(logEntity));
+        xianYumTaskExecutor.execute(()->{
+            SpringUtils.getBean(LogService.class).saveLog(logEntity);
+        });
     }
 }

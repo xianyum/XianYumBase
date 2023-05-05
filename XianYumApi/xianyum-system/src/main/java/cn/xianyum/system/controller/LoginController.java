@@ -1,17 +1,11 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.async.AsyncManager;
-import cn.xianyum.common.utils.BeanUtils;
-import cn.xianyum.common.utils.DataResult;
-import cn.xianyum.common.utils.HttpContextUtils;
-import cn.xianyum.common.utils.IPUtils;
-import cn.xianyum.common.validator.ValidatorUtils;
-import cn.xianyum.system.common.factory.AsyncLogFactory;
+import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.po.LoginUserEntity;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UserRequest;
-import cn.xianyum.system.service.UserService;
+import cn.xianyum.system.service.LogService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson.JSON;
 import com.anji.captcha.model.common.ResponseModel;
@@ -20,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,8 +36,9 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class LoginController {
 
+
     @Autowired
-    private UserService userService;
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     @Autowired
     private UserTokenService userTokenService;
@@ -127,6 +123,6 @@ public class LoginController {
         String ip = IPUtils.getIpAddr(httpServletRequest);
         log.setIp(ip);
         log.setIpInfo(IPUtils.getIpInfo(ip));
-        AsyncManager.async().execute(AsyncLogFactory.save(log));
+        xianYumTaskExecutor.execute(()-> SpringUtils.getBean(LogService.class).saveLog(log));
     }
 }

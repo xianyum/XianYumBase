@@ -1,10 +1,7 @@
 package cn.xianyum.proxy.container;
 
-
-import cn.xianyum.common.async.AsyncManager;
 import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.proxy.common.constant.ProxyConstants;
-import cn.xianyum.proxy.common.factory.AsyncXianYuOfflineFactory;
 import cn.xianyum.proxy.handlers.ProxyChangedListener;
 import cn.xianyum.proxy.service.ProxyDetailsService;
 import cn.xianyum.proxy.service.ProxyService;
@@ -12,6 +9,7 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.Map.Entry;
@@ -166,7 +164,8 @@ public class ProxyChannelManager implements ProxyChangedListener {
         }
 
         String clientKey = channel.attr(CHANNEL_CLIENT_KEY).get();
-        AsyncManager.async().execute(AsyncXianYuOfflineFactory.notify(clientKey));
+        ThreadPoolTaskExecutor xianYumTaskExecutor = SpringUtils.getBean("xianYumTaskExecutor");
+        xianYumTaskExecutor.execute(()->SpringUtils.getBean(ProxyService.class).offlineNotify(clientKey));
         Channel channel0 = cmdChannels.remove(clientKey);
         if (channel != channel0) {
             cmdChannels.put(clientKey, channel);

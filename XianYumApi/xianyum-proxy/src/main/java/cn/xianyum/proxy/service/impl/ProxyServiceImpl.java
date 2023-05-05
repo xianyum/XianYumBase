@@ -147,7 +147,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public void onlineNotify(String clientKey) {
-
 		ProxyEntity proxyEntity = proxyMapper.selectById(clientKey);
 
 		if(proxyEntity != null){
@@ -160,15 +159,15 @@ public class ProxyServiceImpl implements ProxyService {
 
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
-			content.put("登录时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
 			if(StringUtil.isNotEmpty(proxyEntity.getMacAddress())){
-				content.put("登录mac：",proxyEntity.getMacAddress());
+				content.put("客户端mac：",proxyEntity.getMacAddress());
 			}
 			if(StringUtil.isNotEmpty(proxyEntity.getHostIp())){
-				content.put("登录ip：",proxyEntity.getHostIp());
+				content.put("客户端ip：",proxyEntity.getHostIp());
 			}
 			content.put("服务器节点：",IPUtils.getHostName());
 			content.put("登录次数：",proxyEntity.getLoginCount()+1);
+			content.put("登录时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
 			MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
 			messageSenderEntity.setTitle("xianyu客户端上线通知");
 			messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));

@@ -1,9 +1,7 @@
 package cn.xianyum.system.service.impl;
 
-import cn.xianyum.common.async.AsyncManager;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
-import cn.xianyum.system.common.factory.AsyncConstantFactory;
 import cn.xianyum.system.dao.SystemConstantMapper;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.SystemConstantRequest;
@@ -15,10 +13,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
 
@@ -32,6 +29,9 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Autowired
     private SystemConstantMapper systemConstantMapper;
+
+    @Autowired
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -61,7 +61,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         bean.setUpdateTime(new Date());
         bean.setConstantKey(null);
         int count = systemConstantMapper.updateById(bean);
-        AsyncManager.async().execute(AsyncConstantFactory.setSystemConstantToRedis(request.getConstantKey(),null));
+        xianYumTaskExecutor.execute(()-> SpringUtils.getBean(SystemConstantService.class).setSystemConstantToRedis(request.getConstantKey(),null));
         return count;
     }
 
@@ -78,7 +78,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
                 = new QueryWrapper<SystemConstantEntity>()
                 .eq("constant_key",key);
         SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
-        AsyncManager.async().execute(AsyncConstantFactory.setSystemConstantToRedis(key,systemConstantEntity));
+        xianYumTaskExecutor.execute(()-> SpringUtils.getBean(SystemConstantService.class).setSystemConstantToRedis(key,systemConstantEntity));
         return systemConstantEntity;
     }
 
