@@ -66,6 +66,23 @@
     </filter>
   </appender>
 
+
+
+  <appender name="plumelog" class="com.plumelog.lite.logback.appender.LiteAppender">
+    <appName>plumelog</appName>
+    <!-- 日志存储位置 -->
+    <logPath>/plumelog/lite</logPath>
+    <!-- 日志保留天数 -->
+    <keepDay>30</keepDay>
+  </appender>
+
+  <!-- 添加 ref-->
+  <root level="INFO">
+    <appender-ref ref="plumelog"/>
+  </root>
+
+
+
   <logger name="org.hibernate" level="WARN"/>
   <logger name="org.springframework" level="WARN"/>
   <logger name="io.undertow" level="INFO"/>

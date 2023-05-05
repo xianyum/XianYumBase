@@ -52,11 +52,19 @@
         <swagger.models.version>1.6.2</swagger.models.version>
         <quartz.version>2.3.2</quartz.version>
         <commons.codec.version>1.9</commons.codec.version>
+        <plumelog.version>3.5.3</plumelog.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+
+            <!-- 引入日志平台-->
+            <dependency>
+                <groupId>com.plumelog</groupId>
+                <artifactId>plumelog-lite-spring-boot-starter</artifactId>
+                <version>${plumelog.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>

@@ -56,7 +56,10 @@ public class RequestFilter implements Filter {
                 try {
                     chain.doFilter(httpRequest, httpResponse);
                 } finally {
-                    log.info("access url [{}], cost time [{}] ms )", path, watch.getTime());
+                    // 如果包含日志平台路径则过滤
+                    if(!path.contains("plumelog")){
+                        log.info("access url [{}], cost time [{}] ms )", path, watch.getTime());
+                    }
                     watch.stop();
                     MDC.clear();
                 }

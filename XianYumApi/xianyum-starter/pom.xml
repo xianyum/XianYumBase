@@ -20,6 +20,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.plumelog</groupId>
+            <artifactId>plumelog-lite-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-zeekr</artifactId>
             <version>0.0.1-SNAPSHOT</version>
