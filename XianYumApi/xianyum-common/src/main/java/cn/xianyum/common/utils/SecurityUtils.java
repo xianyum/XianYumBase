@@ -21,7 +21,13 @@ public class SecurityUtils {
      * @return
      */
     public static LoginUser getLoginUser(){
-        return (LoginUser) getAuthentication().getPrincipal();
+        // 有可能返回anonymousUser
+        Object principal = getAuthentication().getPrincipal();
+        if(principal instanceof LoginUser){
+            return (LoginUser)getAuthentication().getPrincipal();
+        }else{
+            return null;
+        }
     }
 
 
