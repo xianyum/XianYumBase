@@ -48,9 +48,9 @@ public class PermissionAspect {
             for(String permission : value){
                 if(authPermission.equals(permission)){
                     if(PermissionEnum.VISITOR.getName().equals(permission)){
-                        throw new SoException(HttpStatus.UNAUTHORIZED.value(),"对不起，您是游客身份没有权限操作！");
+                        throw new SoException(HttpStatus.FORBIDDEN.value(),"对不起，您是游客身份没有权限操作！");
                     }else{
-                        throw new SoException(HttpStatus.UNAUTHORIZED.value(),"对不起，您没有权限操作！");
+                        throw new SoException(HttpStatus.FORBIDDEN.value(),"对不起，您没有权限操作！");
                     }
                 }
             }
