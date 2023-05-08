@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
@@ -32,11 +33,35 @@ public class UserTokenServiceImpl implements UserTokenService {
      * @return
      */
     @Override
-    public UserEntity getUser(){
+    public LoginUser getUserSelf(){
+        return SecurityUtils.getLoginUser();
+    }
+
+    @Override
+    public void setExtraUserInfo(LoginUser loginUser) {
+        /** 增加浏览器标识以及登录ip等 */
+        HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
+        UserAgent userAgent = UserAgent.parseUserAgentString(httpServletRequest.getHeader("User-Agent"));
+        String ip = IPUtils.getIpAddr(httpServletRequest);
+        loginUser.setIpaddr(ip);
+        loginUser.setLoginLocation(IPUtils.getIpInfo(ip));
+        loginUser.setBrowser(userAgent.getBrowser().getName());
+        loginUser.setOs(userAgent.getOperatingSystem().getName());
+        loginUser.setLoginTime(new Date());
+        loginUser.setLoginSystem("本站(BaseDemo)");
+    }
+
+    /**
+     * 通过httpRequest获取当前登录用户
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public LoginUser getLoginUserByHttpRequest(HttpServletRequest request) {
         String token = HttpContextUtils.getRequestToken();
-        String userEntityJson = (String)redisUtils.get(prefix+token);
-        UserEntity userEntity = JSONObject.parseObject(userEntityJson, UserEntity.class);
-        return userEntity;
+        String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
+        return JSONObject.parseObject(userEntityJson, LoginUser.class);
     }
 
 
@@ -45,22 +70,12 @@ public class UserTokenServiceImpl implements UserTokenService {
         //生成token
         String token = UUIDUtils.UUIDReplace();
         Date now = new Date();
-
-        /** 增加浏览器标识以及登录ip等 */
-        HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
-        UserAgent userAgent = UserAgent.parseUserAgentString(httpServletRequest.getHeader("User-Agent"));
-        String ip = IPUtils.getIpAddr(httpServletRequest);
-        user.setIpaddr(ip);
-        user.setLoginLocation(IPUtils.getIpInfo(ip));
-        user.setBrowser(userAgent.getBrowser().getName());
-        user.setOs(userAgent.getOperatingSystem().getName());
-        user.setLoginTime(now);
-        user.setLoginSystem("本站(BaseDemo)");
-
         //过期时间
         Date expireTime = new Date(now.getTime() + expire * 1000);
-        UserEntity userEntity = BeanUtils.copy(user,UserEntity.class);
-        redisUtils.setMin(prefix+token,JSONObject.toJSONString(userEntity),expire);
+        LoginUser loginUser = BeanUtils.copy(user,LoginUser.class);
+        // 设置额外用户信息
+        this.setExtraUserInfo(loginUser);
+        redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
         DataResult result = DataResult.success().put("token", token).put("expire", expireTime);
         return result;
     }
@@ -80,6 +95,9 @@ public class UserTokenServiceImpl implements UserTokenService {
     public void refreshUser() {
         String token = HttpContextUtils.getRequestToken();
         UserEntity userEntity = userMapper.selectById(SecurityUtils.getLoginUser().getId());
-        redisUtils.setMin(prefix+token,userEntity,expire);
+
+        LoginUser loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+        this.setExtraUserInfo(loginUser);
+        redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
     }
 }

@@ -69,9 +69,8 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public Integer save(ProxyDetailsRequest request) {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			throw new SoException("您无权进行操作！");
-		}
+		SecurityUtils.allowAdminAuth();
+
 		if(null == request.getInetPort()){
 			// 默认数据库最大端口+1，推荐使用这种方式
 			QueryWrapper<ProxyDetailsEntity> queryWrapper

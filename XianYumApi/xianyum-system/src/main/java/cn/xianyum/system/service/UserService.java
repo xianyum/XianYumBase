@@ -1,6 +1,7 @@
 package cn.xianyum.system.service;
 
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
@@ -43,7 +44,7 @@ public interface UserService extends IService<UserEntity> {
 
     int updateCurrentUser(UserRequest user);
 
-    UserEntity getInfo();
+    LoginUser getUserSelf();
 
     String upload(MultipartFile file);
 }

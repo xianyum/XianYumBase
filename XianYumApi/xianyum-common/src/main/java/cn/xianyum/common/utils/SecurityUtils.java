@@ -1,8 +1,11 @@
 package cn.xianyum.common.utils;
 
-import cn.xianyum.common.entity.UserTokenEntity;
+import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
-import com.alibaba.fastjson.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * 安全服务工具类
@@ -11,20 +14,14 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class SecurityUtils {
 
-    private static final String prefix = PropertiesUtil.getString("redis.token.prefix");
-
     private static final String admin = "admin";
 
     /**
      * 获取当前登录用户信息
      * @return
      */
-    public static UserTokenEntity getLoginUser(){
-
-        String token = HttpContextUtils.getRequestToken();
-        String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
-        UserTokenEntity userEntity = JSONObject.parseObject(userEntityJson, UserTokenEntity.class);
-        return userEntity;
+    public static LoginUser getLoginUser(){
+        return (LoginUser) getAuthentication().getPrincipal();
     }
 
 
@@ -32,13 +29,19 @@ public class SecurityUtils {
      * 只能允许admin操作
      */
     public static void allowAdminAuth(){
-
-        String token = HttpContextUtils.getRequestToken();
-        String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
-        UserTokenEntity userEntity = JSONObject.parseObject(userEntityJson, UserTokenEntity.class);
-        if(userEntity == null || !admin.equals(userEntity.getUsername()) ){
-            throw new SoException("您无权进行操作！");
+        LoginUser userEntity = getLoginUser();
+        if(userEntity == null ||
+                (!admin.equals(userEntity.getUsername())  || userEntity.getPermission() != PermissionEnum.ADMIN.getStatus())){
+            throw new SoException(HttpStatus.UNAUTHORIZED.value(),"您无权进行操作！");
         }
+    }
+
+
+    /**
+     * 获取Authentication
+     */
+    public static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
 }

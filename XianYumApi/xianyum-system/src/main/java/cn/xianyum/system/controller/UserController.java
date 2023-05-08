@@ -2,6 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.common.validator.ValidatorUtils;
@@ -43,7 +44,7 @@ public class UserController {
     @GetMapping("/info")
     @ApiOperation(value = "获取登录的用户信息", httpMethod = "GET")
     public DataResult info(){
-        UserEntity userEntity = userService.getInfo();
+        LoginUser userEntity = userService.getUserSelf();
         return DataResult.success().put("user", userEntity);
     }
 

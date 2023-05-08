@@ -1,8 +1,11 @@
 package cn.xianyum.system.service;
 
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.UserEntity;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface UserTokenService {
 
@@ -27,6 +30,14 @@ public interface UserTokenService {
      * 获取当前登录user
      * @return
      */
-    UserEntity getUser();
+    LoginUser getUserSelf();
 
+    void setExtraUserInfo(LoginUser loginUser);
+
+    /**
+     * 通过httpRequest获取当前登录用户
+     * @param request
+     * @return
+     */
+    LoginUser getLoginUserByHttpRequest(HttpServletRequest request);
 }

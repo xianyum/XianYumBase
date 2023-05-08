@@ -1,6 +1,6 @@
 package cn.xianyum.message.service.impl;
 
-import cn.xianyum.common.entity.UserTokenEntity;
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
@@ -70,7 +70,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 		}
 
 		bean.setId(UUIDUtils.UUIDReplace());
-		UserTokenEntity loginUser = SecurityUtils.getLoginUser();
+		LoginUser loginUser = SecurityUtils.getLoginUser();
 		bean.setCreateUserId(loginUser.getId());
 		bean.setCreateUserName(loginUser.getUsername());
 		return messageTypeConfigMapper.insert(bean);

@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
-
 import java.util.List;
 
 /**
@@ -16,7 +14,7 @@ import java.util.List;
  */
 @Data
 @TableName(value = "menu")
-public class MenuEntity extends Model<MenuEntity> {
+public class MenuEntity{
 
     @TableId(type = IdType.AUTO)
     private Long menuId;
@@ -55,6 +53,11 @@ public class MenuEntity extends Model<MenuEntity> {
      * 排序
      */
     private Integer orderNum;
+
+    /**
+     * 删除标志（1：已删除）
+     */
+    private Integer delTag;
 
     /**
      * ztree属性

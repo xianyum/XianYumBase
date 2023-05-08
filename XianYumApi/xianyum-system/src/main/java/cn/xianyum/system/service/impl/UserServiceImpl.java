@@ -1,7 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.config.XianYumConfig;
-import cn.xianyum.common.entity.UserTokenEntity;
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.PermissionEnum;
@@ -82,9 +82,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public void deleteById(String[] userIds) {
 
-        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
-            throw new SoException("无权删除用户信息");
-        }
+        SecurityUtils.allowAdminAuth();
+
         UserEntity userEntity = new UserEntity();
         userEntity.setDelTag(UserStatusEnum.BAN.getStatus());
         for(String id : userIds){
@@ -131,7 +130,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     @Override
     public boolean updatePassword(UpdatePasswordRequest info) {
-        UserTokenEntity userEntity = SecurityUtils.getLoginUser();
+        LoginUser userEntity = SecurityUtils.getLoginUser();
         String password = info.getPassword();
         if(!SecretUtils.matchesPassword(password,userEntity.getPassword())){
             return false;
@@ -205,8 +204,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public UserEntity getInfo() {
-        UserEntity u = userTokenService.getUser();
+    public LoginUser getUserSelf() {
+        LoginUser u = userTokenService.getUserSelf();
         if(null != u && StringUtil.isEmpty(u.getAvatar())){
             SystemConstantEntity systemConstantEntity = systemConstantService.getByKey("avatar_url");
             if(systemConstantEntity != null){

@@ -1,6 +1,6 @@
 package cn.xianyum.message.service.impl;
 
-import cn.xianyum.common.entity.UserTokenEntity;
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.dao.MessageSendConfigMapper;
@@ -14,12 +14,9 @@ import cn.xianyum.message.infra.sender.EmailSender;
 import cn.xianyum.message.infra.sender.WebhookSender;
 import cn.xianyum.message.infra.sender.WechatSender;
 import cn.xianyum.message.service.MessageSendConfigService;
-import cn.xianyum.message.service.MessageSendRelationService;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -77,7 +74,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 
 		MessageSendConfigEntity bean = BeanUtils.copy(request,MessageSendConfigEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
-		UserTokenEntity loginUser = SecurityUtils.getLoginUser();
+		LoginUser loginUser = SecurityUtils.getLoginUser();
 		bean.setCreateUserId(loginUser.getId());
 		bean.setCreateUserName(loginUser.getUsername());
 		return messageSendConfigMapper.insert(bean);
@@ -117,7 +114,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 			count = messageSendConfigMapper.updateById(bean);
 		}else{
 			bean.setId(UUIDUtils.UUIDReplace());
-			UserTokenEntity loginUser = SecurityUtils.getLoginUser();
+			LoginUser loginUser = SecurityUtils.getLoginUser();
 			bean.setCreateUserId(loginUser.getId());
 			bean.setCreateUserName(loginUser.getUsername());
 			count = messageSendConfigMapper.insert(bean);
