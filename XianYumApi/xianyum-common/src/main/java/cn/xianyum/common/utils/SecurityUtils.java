@@ -38,7 +38,7 @@ public class SecurityUtils {
         LoginUser userEntity = getLoginUser();
         if(userEntity == null ||
                 (!admin.equals(userEntity.getUsername())  || userEntity.getPermission() != PermissionEnum.ADMIN.getStatus())){
-            throw new SoException(HttpStatus.FORBIDDEN.value(),"您无权进行操作！");
+            throw new SoException(HttpStatus.FORBIDDEN.value(),"对不起，您没有权限操作,请联系网站管理员！");
         }
     }
 

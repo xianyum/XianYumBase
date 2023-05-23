@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.LogEntity;
@@ -52,7 +53,7 @@ public class LogController {
     }
 
     @PostMapping("/delete")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除日志记录", httpMethod = "POST")
     public DataResult delete(@RequestBody String[] logIdS){
         try {

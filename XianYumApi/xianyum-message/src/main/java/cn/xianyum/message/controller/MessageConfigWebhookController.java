@@ -1,6 +1,7 @@
 package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigWebhookRequest;
@@ -39,7 +40,7 @@ public class MessageConfigWebhookController {
      */
 	@ApiOperation(value = "账户配置webhook分页查询数据")
 	@PostMapping(value = "/getPage")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(@RequestBody MessageConfigWebhookRequest request) {
 
 		IPage<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
@@ -52,7 +53,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook根据ID查询数据")
     @PostMapping(value = "/getById")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@RequestBody MessageConfigWebhookRequest request) {
 
         MessageConfigWebhookResponse response = messageConfigWebhookService.getById(request);
@@ -65,7 +66,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook保存数据")
     @PostMapping(value = "/save")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.save(request);
@@ -81,7 +82,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook修改数据")
     @PostMapping(value = "/update")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.update(request);
@@ -97,7 +98,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook删除数据")
     @PostMapping(value = "/delete")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
 		messageConfigWebhookService.deleteById(ids);
@@ -110,7 +111,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "webhook账户测试发送")
     @PostMapping(value = "/sendWebhook")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult sendWebhook(@RequestBody MessageSenderEntity request) {
         try {
             webhookSender.sendWebhook(request);

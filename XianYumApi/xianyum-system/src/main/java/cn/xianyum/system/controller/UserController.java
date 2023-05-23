@@ -3,6 +3,7 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.common.validator.ValidatorUtils;
@@ -55,7 +56,7 @@ public class UserController {
      */
     @PostMapping("/delete")
     @SysLog(value = "删除用户")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除用户", httpMethod = "POST")
     public DataResult delete(@RequestBody String[] userIds){
         try {
@@ -82,7 +83,7 @@ public class UserController {
     @PostMapping("/save")
     @SysLog(value = "新增用户")
     @ApiOperation(value = "保存用户", httpMethod = "POST")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody UserRequest user){
         try {
             ValidatorUtils.validateEntity(user);
@@ -103,7 +104,7 @@ public class UserController {
     @PostMapping("/update")
     @SysLog(value = "修改用户")
     @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody UserRequest user){
         try {
             int count = userService.update(user);

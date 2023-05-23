@@ -1,6 +1,7 @@
 package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigEmailRequest;
@@ -39,7 +40,7 @@ public class MessageConfigEmailController {
      */
 	@ApiOperation(value = "账户配置email分页查询数据")
 	@PostMapping(value = "/getPage")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(@RequestBody MessageConfigEmailRequest request) {
 
 		IPage<MessageConfigEmailResponse> response = messageConfigEmailService.getPage(request);
@@ -52,7 +53,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email根据ID查询数据")
     @PostMapping(value = "/getById")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@RequestBody MessageConfigEmailRequest request) {
 
         MessageConfigEmailResponse response = messageConfigEmailService.getById(request);
@@ -65,7 +66,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email保存数据")
     @PostMapping(value = "/save")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.save(request);
@@ -81,7 +82,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email修改数据")
     @PostMapping(value = "/update")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.update(request);
@@ -97,7 +98,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email删除数据")
     @PostMapping(value = "/delete")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
 		messageConfigEmailService.deleteById(ids);
@@ -110,7 +111,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "邮箱账户测试发送")
     @PostMapping(value = "/sendEmail")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult sendEmail(@RequestBody MessageSenderEntity request) {
         try {
             emailSender.sendEmail(request);

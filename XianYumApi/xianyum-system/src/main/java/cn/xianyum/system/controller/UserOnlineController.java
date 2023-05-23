@@ -2,6 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
@@ -46,7 +47,7 @@ public class UserOnlineController {
      */
     @PostMapping("/delete")
     @SysLog(value = "踢出用户")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "踢出用户", httpMethod = "POST")
     public DataResult delete(@RequestBody String[] tokenIds){
         userOnlineService.delete(tokenIds);

@@ -2,6 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.DataResult;
@@ -104,7 +105,7 @@ public class ProgramController {
 
     @PostMapping("/complete")
     @SysLog(value = "完成程序订单操作")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "完成程序订单操作", httpMethod = "POST")
     public DataResult complete(@RequestBody ProgramRequest request){
         try {

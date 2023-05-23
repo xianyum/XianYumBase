@@ -1,9 +1,10 @@
 package cn.xianyum.common.annotation;
 
+import cn.xianyum.common.enums.PermissionStrategy;
 import java.lang.annotation.*;
 
 /**
- * 此注解禁止操作
+ * 权限注解
  * @author zhangwei
  * @date 2020/11/5 21:14
  */
@@ -12,6 +13,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Permissions {
 
-    // 默认只校验游客身份
-    String[] value() default {"visitor"};
+    /** 权限校验策略 */
+    PermissionStrategy strategy() default PermissionStrategy.ALLOW_ALL;
 }

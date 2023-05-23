@@ -1,8 +1,8 @@
 package cn.xianyum.framwork.config;
 
 import cn.xianyum.framwork.security.filter.AuthenticationTokenFilter;
-import cn.xianyum.framwork.security.handle.AuthenticationEntryPointImpl;
-import cn.xianyum.framwork.security.handle.LogoutSuccessHandlerImpl;
+import cn.xianyum.framwork.security.handler.AuthenticationEntryPointImpl;
+import cn.xianyum.framwork.security.handler.LogoutSuccessHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;

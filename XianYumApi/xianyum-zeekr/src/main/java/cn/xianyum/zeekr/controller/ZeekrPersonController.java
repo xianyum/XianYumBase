@@ -1,6 +1,7 @@
 package cn.xianyum.zeekr.controller;
 
 import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.zeekr.entity.po.ZeekrPersonResult;
 import cn.xianyum.zeekr.entity.request.ZeekrPersonRequest;
@@ -42,7 +43,7 @@ public class ZeekrPersonController {
      */
 	@ApiOperation(value = "分页查询数据")
 	@PostMapping(value = "/getPage")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(@RequestBody ZeekrPersonRequest request) {
 
 		IPage<ZeekrPersonResponse> response = zeekrPersonService.getPage(request);
@@ -55,7 +56,7 @@ public class ZeekrPersonController {
      */
     @ApiOperation(value = "根据ID查询数据")
     @PostMapping(value = "/getById")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@RequestBody ZeekrPersonRequest request) {
 
         ZeekrPersonResponse response = zeekrPersonService.getById(request);
@@ -68,7 +69,7 @@ public class ZeekrPersonController {
      */
     @ApiOperation(value = "保存数据")
     @PostMapping(value = "/save")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody ZeekrPersonRequest request) {
 
 		Integer count = zeekrPersonService.save(request);
@@ -84,7 +85,7 @@ public class ZeekrPersonController {
      */
     @ApiOperation(value = "修改数据")
     @PostMapping(value = "/update")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody ZeekrPersonRequest request) {
 
 		Integer count = zeekrPersonService.update(request);
@@ -100,7 +101,7 @@ public class ZeekrPersonController {
      */
     @ApiOperation(value = "删除数据")
     @PostMapping(value = "/delete")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody Long[] ids) {
 
 		zeekrPersonService.deleteById(ids);
@@ -110,7 +111,7 @@ public class ZeekrPersonController {
 
     @ApiOperation(value = "查询项目列表")
     @PostMapping(value = "/getProjectList")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getProjectList(@RequestBody ZeekrPersonRequest request) {
 
         JSONObject resultObject = zeekrPersonInterfaceService.getZeekrProjectList(request.getLoginName());
@@ -119,7 +120,7 @@ public class ZeekrPersonController {
 
     @ApiOperation(value = "获取当月数据")
     @PostMapping(value = "/getZeekrByMonth")
-    @Permissions(value = {"visitor","common"})
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getZeekrByMonth(@RequestBody ZeekrPersonRequest request) {
 
         List<ZeekrPersonResult> resultObject = zeekrPersonInterfaceService.getZeekrByMonth(request.getLoginName());

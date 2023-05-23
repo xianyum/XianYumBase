@@ -166,6 +166,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 	@Override
 	public String getLanInfo(Integer port) {
+		log.info("根据端口号获取客户端配置明细【后期优化】，这里可能会被巨大调用，后期加入redis");
 		QueryWrapper<ProxyDetailsEntity> queryWrapper
 				= new QueryWrapper<ProxyDetailsEntity>().eq("inet_port",port);
 		ProxyDetailsEntity proxyDetailsEntity = proxyDetailsMapper.selectOne(queryWrapper);

@@ -1,6 +1,7 @@
 package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
@@ -36,7 +37,7 @@ public class MessageSendRelationController {
      */
 	@ApiOperation(value = "发送配置关联表分页查询数据")
 	@PostMapping(value = "/getPage")
-	@Permissions(value = {"visitor","common"})
+	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(@RequestBody MessageSendRelationRequest request) {
 
 		IPage<MessageSendRelationResponse> response = messageSendRelationService.getPage(request);
@@ -49,7 +50,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表删除数据")
 	@PostMapping(value = "/delete")
-	@Permissions(value = {"visitor","common"})
+	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult delete(@RequestBody MessageSendRelationRequest request) {
 
 		messageSendRelationService.deleteById(request.getId());
@@ -62,7 +63,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表保存数据")
 	@PostMapping(value = "/save")
-	@Permissions(value = {"visitor","common"})
+	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult save(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.save(request);
@@ -78,7 +79,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表修改数据")
 	@PostMapping(value = "/update")
-	@Permissions(value = {"visitor","common"})
+	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult update(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.update(request);
@@ -95,7 +96,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表根据ID查询数据")
 	@PostMapping(value = "/getById")
-	@Permissions(value = {"visitor","common"})
+	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getById(@RequestBody MessageSendRelationRequest request) {
 
 		MessageSendRelationResponse response = messageSendRelationService.getById(request);
@@ -108,7 +109,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "根据账户类型查询账户配置")
 	@PostMapping(value = "/getMessageConfigByAccountType")
-	@Permissions(value = {"visitor","common"})
+	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getMessageConfigByAccountType(@RequestBody MessageSendRelationRequest request) {
 
 		JSONArray response = messageSendRelationService.getMessageConfigByAccountType(request.getMessageConfigId(),request.getMessageAccountType());

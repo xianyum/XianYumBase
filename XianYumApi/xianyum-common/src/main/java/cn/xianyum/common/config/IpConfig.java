@@ -29,9 +29,8 @@ public class IpConfig {
         try {
             File file = new File(dbFile);
             if(!file.exists()){
-                log.info("本地未找到ip库(建议配置ip.db.path本地路径)，切换到从网络资源下载ip库，下载路径为：{}",DB_PATH);
-                FileUtils.copyByUrl(DWONLOAD_DB_URL,DB_PATH);
-                dbFile = DB_PATH;
+                log.info("本地未找到ip库(建议配置ip.db.path本地路径)，切换到从网络资源下载ip库，下载路径为：{}",dbFile);
+                FileUtils.copyByUrl(DWONLOAD_DB_URL,dbFile);
             }
             IpDbConfig config = new IpDbConfig();
             IpDbSearcher searcher = new IpDbSearcher(config, dbFile);

@@ -1,4 +1,4 @@
-package cn.xianyum.framwork.security.handle;
+package cn.xianyum.framwork.security.handler;
 
 
 import cn.xianyum.common.utils.DataResult;
