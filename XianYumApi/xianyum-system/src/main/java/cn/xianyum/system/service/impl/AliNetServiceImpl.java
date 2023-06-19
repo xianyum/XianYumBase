@@ -1,5 +1,9 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.message.entity.po.MessageSenderEntity;
+import cn.xianyum.message.enums.MessageCodeEnums;
+import cn.xianyum.message.infra.sender.MessageSender;
+import cn.xianyum.message.infra.utils.MessageUtils;
 import cn.xianyum.system.service.AliNetService;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
@@ -10,8 +14,12 @@ import com.alipay.api.request.AlipayUserInfoShareRequest;
 import com.alipay.api.response.AlipaySystemOauthTokenResponse;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author zhangwei
@@ -21,6 +29,9 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class AliNetServiceImpl implements AliNetService {
+
+    @Autowired
+    private MessageSender messageSender;
 
     @Value("${ali.login.app_private_key}")
     private String APP_PRIVATE_KEY;
@@ -68,5 +79,29 @@ public class AliNetServiceImpl implements AliNetService {
             log.error("获取支付宝用户详细信息失败，{}",e.getErrMsg());
         }
         return null;
+    }
+
+    @Override
+    public void yunXiaoFlowCallBack(String requestInfo) {
+        JSONObject callBackEventObj = JSONObject.parseObject(requestInfo);
+        JSONObject taskObj = JSONObject.parseObject(callBackEventObj.getString("task"));
+        // 流水线名称
+        String pipelineName = taskObj.getString("pipelineName");
+        // 任务名称
+        String taskName = taskObj.getString("taskName");
+        // 流水线运行状态
+        String statusName = taskObj.getString("statusName");
+        // 流水线url
+        String pipelineUrl = taskObj.getString("pipelineUrl");
+
+        Map<String,Object> content = new LinkedHashMap<>();
+        content.put("流水线名称：",pipelineName);
+        content.put("任务名称：",taskName);
+        content.put("运行状态：",statusName);
+        content.put("流水线详情：",pipelineUrl);
+        MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+        messageSenderEntity.setFormUrl(pipelineUrl);
+        messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
+        messageSender.sendAsyncMessage(MessageCodeEnums.ALI_YUN_XIAO_NOTIFY.getMessageCode(),messageSenderEntity);
     }
 }

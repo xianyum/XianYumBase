@@ -3,6 +3,7 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.UserEntity;
+import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson.JSON;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc
  */
 @RestController
-@RequestMapping("/ali")
-@Api(tags = "支付宝接口")
+@RequestMapping()
+@Api(tags = "阿里相关接口")
 public class AliController {
 
     @Autowired
@@ -31,7 +32,10 @@ public class AliController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
+    @Autowired
+    private AliNetService aliNetService;
+
+    @PostMapping("/ali/login")
     @SysLog(value = "支付宝第三方登录")
     @ApiOperation(value = "支付宝第三方登录", httpMethod = "POST")
     public DataResult login(@RequestBody String requestInfo) {
@@ -44,4 +48,13 @@ public class AliController {
             return DataResult.error();
         }
     }
+
+    @PostMapping("/p1/ali/yunXiao/flowCallBack")
+    @SysLog(value = "阿里云-云效-流水线执行结果回调")
+    @ApiOperation(value = "阿里云-云效-流水线执行结果回调", httpMethod = "POST")
+    public DataResult flowCallBack(@RequestBody String requestInfo) {
+        aliNetService.yunXiaoFlowCallBack(requestInfo);
+        return DataResult.success();
+    }
+
 }

@@ -23,4 +23,6 @@ public interface AliNetService {
      * @return
      */
     AlipayUserInfoShareResponse getALiUserInfo(String accessToken);
+
+    void yunXiaoFlowCallBack(String requestInfo);
 }
