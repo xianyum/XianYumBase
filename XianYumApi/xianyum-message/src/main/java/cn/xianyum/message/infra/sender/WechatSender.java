@@ -37,7 +37,11 @@ public class WechatSender {
 
     public void sendMessage(MessageSenderEntity messageSender) {
         MessageConfigWechatEntity messageConfigWechatEntity = messageConfigWechatService.getMessageConfigWithCache(messageSender.getMessageConfigId());
-        if(messageConfigWechatEntity != null && messageSender != null && StringUtil.isNotEmpty(messageSender.getWechatToUser())){
+        if(messageConfigWechatEntity != null && messageSender != null ){
+            if(StringUtil.isEmpty(messageSender.getWechatToUser())){
+                // 企微如果没有指定发送人的话，默认发全部
+                messageSender.setWechatToUser("@all");
+            }
             String mId = UUIDUtils.UUIDReplace();
             messageSender.setMessageId(mId);
             String messageContent = wechatSupporter.generateMessage(messageConfigWechatEntity.getAgentId(),messageSender);
