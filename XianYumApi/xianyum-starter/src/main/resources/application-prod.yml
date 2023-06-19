@@ -32,7 +32,9 @@ redis:
       token: '${spring.application.name}:xianyum-message:wechat:'
     config:
       prefix: '${spring.application.name}:xianyum-message:config:'
-
+  proxy:
+    proxy_details:
+      lan_info: '${spring.application.name}:xianyum-proxy:proxy_details:lan_info:'
 #七牛云配置
 oss:
   access_key: mpw:zwhl7cATylP4lLJAhou0pPv9trW1rACXhGBW7PsZkVBAocvTeLULeq/EIWTL/cbD

@@ -48,7 +48,7 @@ public class JobServiceImpl implements JobService {
 		for (JobEntity job : jobList) {
 			ScheduleUtils.createScheduleJob(scheduler, job);
 		}
-		log.info("初始化定时任务数据：{}",jobList.size());
+		log.info("init quartz job total size: {}",jobList.size());
 	}
 
 	@Override

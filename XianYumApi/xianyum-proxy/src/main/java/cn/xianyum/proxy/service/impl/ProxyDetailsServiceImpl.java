@@ -13,9 +13,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +28,13 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 	@Autowired
 	private ProxyDetailsMapper proxyDetailsMapper;
+
+	@Autowired
+	private RedisUtils redisUtils;
+
+	@Value("${redis.proxy.proxy_details.lan_info}")
+	private String proxyDetailsLanInfoRedisKey;
+
 
 	@Override
 	public IPage<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
@@ -67,6 +78,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer save(ProxyDetailsRequest request) {
 
 		SecurityUtils.allowAdminAuth();
@@ -96,11 +108,17 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		ProxyDetailsEntity bean = BeanUtils.copy(request,ProxyDetailsEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		bean.setCreateTime(new Date());
+
+		// 删除缓存,后续在重新缓存
+		String redisKey = proxyDetailsLanInfoRedisKey.concat(request.getInetPort().toString());
+		redisUtils.del(redisKey);
+
 		return proxyDetailsMapper.insert(bean);
 
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public Integer update(ProxyDetailsRequest request) {
 
 		SecurityUtils.allowAdminAuth();
@@ -123,6 +141,10 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		ProxyDetailsEntity bean = BeanUtils.copy(request,ProxyDetailsEntity.class);
 		bean.setReadBytes(null);
 		bean.setWriteBytes(null);
+
+		// 删除缓存,后续在重新缓存
+		String redisKey = proxyDetailsLanInfoRedisKey.concat(request.getInetPort().toString());
+		redisUtils.del(redisKey);
 		return proxyDetailsMapper.updateById(bean);
 
 	}
@@ -166,14 +188,22 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 	@Override
 	public String getLanInfo(Integer port) {
-		log.info("根据端口号获取客户端配置明细【后期优化】，这里可能会被巨大调用，后期加入redis，port：{}",port);
+		if(Objects.isNull(port)){
+			return null;
+		}
+		String redisKey = proxyDetailsLanInfoRedisKey.concat(port.toString());
+		if(redisUtils.hasKey(redisKey)){
+			return redisUtils.getString(redisKey);
+		}
 		QueryWrapper<ProxyDetailsEntity> queryWrapper
 				= new QueryWrapper<ProxyDetailsEntity>().eq("inet_port",port);
 		ProxyDetailsEntity proxyDetailsEntity = proxyDetailsMapper.selectOne(queryWrapper);
 		if(proxyDetailsEntity == null){
 			return null;
 		}
-		return proxyDetailsEntity.getLan();
+		String lanInfo = proxyDetailsEntity.getLan();
+		redisUtils.setDay(redisKey,lanInfo,1);
+		return lanInfo;
 	}
 
 }
