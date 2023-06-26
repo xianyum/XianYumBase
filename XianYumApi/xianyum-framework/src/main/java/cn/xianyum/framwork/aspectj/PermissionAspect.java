@@ -2,15 +2,24 @@ package cn.xianyum.framwork.aspectj;
 
 import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.XianYumConstant;
 import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.enums.PermissionStrategy;
+import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.SystemConstantUtils;
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 
 /**
@@ -21,6 +30,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PermissionAspect {
+
 
 
     /** 定义切点Pointcut */
@@ -38,7 +48,11 @@ public class PermissionAspect {
 
         PermissionStrategy strategy = adminPermission.strategy();
         LoginUser userEntity = SecurityUtils.getLoginUser();
-        String authPermission = PermissionEnum.getNameByStatus(userEntity.getPermission());
+        String authPermission = "";
+        if(Objects.nonNull(userEntity)){
+            authPermission = PermissionEnum.getNameByStatus(userEntity.getPermission());
+        }
+
         switch (strategy) {
             // 放行所有权限，不做任何拦截
             case ALLOW_ALL:
@@ -47,11 +61,41 @@ public class PermissionAspect {
             case ALLOW_ADMIN:
                 this.processAllowAdminPermission(authPermission);
                 break;
+                // 仅允许客户端模式进行访问
+            case ALLOW_CLIENT:
+                this.processAllowClientPermission();
+                break;
             default:
         }
 
         Object result = pjp.proceed();
         return result;
+    }
+
+    /**
+     * 允许client模式进行访问
+     */
+    private void processAllowClientPermission() {
+        String clientIdField = "clientId";
+        String clientSecretField = "clientSecret";
+        HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
+        String clientId = httpServletRequest.getParameter(clientIdField);
+        String clientSecret = httpServletRequest.getParameter(clientSecretField);
+        if(StringUtil.isBlank(clientId) || StringUtil.isBlank(clientSecret)){
+            throw new SoException(HttpStatus.FORBIDDEN.value(), XianYumConstant.Message.NO_PERMISSION_MESSAGE);
+        }
+
+        String permissionClientInfo = SystemConstantUtils.getValueByKey("permission_client");
+        if(StringUtil.isBlank(permissionClientInfo)){
+            throw new SoException(HttpStatus.FORBIDDEN.value(),XianYumConstant.Message.NO_PERMISSION_MESSAGE);
+        }
+        JSONObject permissionClientObj = JSONObject.parseObject(permissionClientInfo);
+
+        String permissionClientId = permissionClientObj.getString(clientIdField);
+        String permissionClientSecret = permissionClientObj.getString(clientSecretField);
+        if(!(clientId.equals(permissionClientId) && clientSecret.equals(permissionClientSecret))){
+            throw new SoException(HttpStatus.FORBIDDEN.value(),XianYumConstant.Message.NO_PERMISSION_MESSAGE);
+        }
     }
 
 

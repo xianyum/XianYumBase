@@ -216,7 +216,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public void flushProxy() {
-		SecurityUtils.allowAdminAuth();
 		ProxyChangedListener proxyChangedListener = new ProxyChannelManager();
 		ProxyChangedListener proxyChangedListener1 = new ProxyServerContainer();
 		proxyChangedListener.onChanged();

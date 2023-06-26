@@ -1,7 +1,9 @@
 package cn.xianyum.proxy.controller;
 
 
+import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
@@ -117,6 +119,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "刷入系统")
     @PostMapping(value = "/flushProxy")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult flushProxy(@RequestBody ProxyRequest request) {
         proxyService.flushProxy();
         return DataResult.success();

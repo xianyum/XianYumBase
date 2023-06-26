@@ -1,6 +1,7 @@
 package cn.xianyum.common.utils;
 
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.XianYumConstant;
 import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class SecurityUtils {
         LoginUser userEntity = getLoginUser();
         if(userEntity == null ||
                 (!admin.equals(userEntity.getUsername())  || userEntity.getPermission() != PermissionEnum.ADMIN.getStatus())){
-            throw new SoException(HttpStatus.FORBIDDEN.value(),"对不起，您没有权限操作,请联系网站管理员！");
+            throw new SoException(HttpStatus.FORBIDDEN.value(), XianYumConstant.Message.NO_PERMISSION_MESSAGE);
         }
     }
 
