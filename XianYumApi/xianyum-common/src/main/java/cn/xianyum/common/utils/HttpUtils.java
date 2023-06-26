@@ -25,16 +25,20 @@ public class HttpUtils {
     public static synchronized HTTP getHttpInstance() {
 
         if(null == http){
-            http = HTTP.builder().addMsgConvertor(new FastjsonMsgConvertor())
-                    .config((OkHttpClient.Builder builder) -> {
-                        // 连接超时时间（默认10秒）
-                        builder.connectTimeout(1, TimeUnit.SECONDS);
-                        // 写入超时时间（默认10秒）
-                        builder.writeTimeout(1, TimeUnit.SECONDS);
-                        // 读取超时时间（默认10秒）
-                        builder.readTimeout(1, TimeUnit.SECONDS);
-                    })
-                    .build();
+            synchronized (HTTP.class){
+                if(null == http){
+                    http = HTTP.builder().addMsgConvertor(new FastjsonMsgConvertor())
+                            .config((OkHttpClient.Builder builder) -> {
+                                // 连接超时时间（默认10秒）
+                                builder.connectTimeout(1, TimeUnit.SECONDS);
+                                // 写入超时时间（默认10秒）
+                                builder.writeTimeout(1, TimeUnit.SECONDS);
+                                // 读取超时时间（默认10秒）
+                                builder.readTimeout(1, TimeUnit.SECONDS);
+                            })
+                            .build();
+                }
+            }
         }
         return http;
     }
