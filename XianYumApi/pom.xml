@@ -26,7 +26,6 @@
         <module>xianyum-starter</module>
         <module>xianyum-message</module>
         <module>xianyum-sheduler</module>
-        <module>xianyum-zeekr</module>
     </modules>
 
     <properties>
