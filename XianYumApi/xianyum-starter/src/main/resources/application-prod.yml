@@ -5,11 +5,11 @@ xian_yum:
   # 线程池配置
   executor:
     # 核心线程数
-    core-pool-size: 2
+    core-pool-size: 3
     # 最大线程数
-    max-pool-size: 4
+    max-pool-size: 6
     # 工作队列大小
-    queue-capacity: 100
+    queue-capacity: 1000
     #  最大存活时间
     keep-alive-seconds: 60
 
