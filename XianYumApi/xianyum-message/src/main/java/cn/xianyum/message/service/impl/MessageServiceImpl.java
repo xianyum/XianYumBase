@@ -22,7 +22,7 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageSender messageSender;
 
-    private static final String MESSAGE_CONTENT_PREFIX = "消息内容： ";
+    private static final String MESSAGE_CONTENT_PREFIX = "";
     /**
      * 发送简单消息
      *
