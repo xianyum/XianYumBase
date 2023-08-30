@@ -52,7 +52,6 @@ public class SysLogAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         LogEntity logEntity = new LogEntity();
-        logEntity.setId(UUIDUtils.UUIDReplace());
         SysLog syslog = method.getAnnotation(SysLog.class);
         if(syslog != null){
             //注解上的描述

@@ -16,8 +16,8 @@ import java.util.Date;
 public class LogEntity {
     private static final long serialVersionUID = 1L;
 
-    @TableId(type = IdType.INPUT)
-    private String id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
     //用户名
     private String username;
     //用户操作

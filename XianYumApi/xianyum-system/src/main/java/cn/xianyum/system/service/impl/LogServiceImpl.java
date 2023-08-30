@@ -51,7 +51,6 @@ public class LogServiceImpl implements LogService {
     @Transactional(rollbackFor = Exception.class)
     public void saveLog(LogEntity logEntity) {
 
-        logEntity.setId(UUIDUtils.UUIDReplace());
         if(StringUtil.isEmpty(logEntity.getIp())){
             HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
             String ip = IPUtils.getIpAddr(httpServletRequest);
