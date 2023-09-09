@@ -91,11 +91,6 @@ public class LoginUser implements UserDetails {
     private String os;
 
     /**
-     * 登录系统（用来区分外部系统）
-     */
-    private String loginSystem;
-
-    /**
      * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
      */
     private int loginType;

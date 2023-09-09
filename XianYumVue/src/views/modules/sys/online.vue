@@ -62,12 +62,6 @@
         label="登录地点">
       </el-table-column>
       <el-table-column
-        prop="loginSystem"
-        header-align="center"
-        align="center"
-        label="登录来源">
-      </el-table-column>
-      <el-table-column
         prop="loginType"
         header-align="center"
         align="center"

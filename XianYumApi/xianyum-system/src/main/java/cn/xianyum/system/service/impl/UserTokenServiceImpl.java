@@ -48,7 +48,6 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setBrowser(userAgent.getBrowser().getName());
         loginUser.setOs(userAgent.getOperatingSystem().getName());
         loginUser.setLoginTime(new Date());
-        loginUser.setLoginSystem("本站(BaseDemo)");
     }
 
     /**
