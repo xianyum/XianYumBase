@@ -95,7 +95,7 @@ aj:
 
 ip:
   db:
-    path: /jdk/app/ipdb/ip2region.db
+    path: /jdk/app/ipdb/ip2region.xdb
 
 #mybatis plus
 mybatis-plus:

@@ -3,6 +3,7 @@ package cn.xianyum.common.service.impl;
 import cn.xianyum.common.entity.IpInfoEntity;
 import cn.xianyum.common.service.IpService;
 import cn.xianyum.common.utils.*;
+import cn.xianyum.common.utils.ip.IpSearcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -15,8 +16,8 @@ import javax.annotation.Resource;
 @Slf4j
 public class IpServiceImpl implements IpService {
 
-    @Resource(name = "ipDbSearcherConfig")
-    private IpDbSearcher ipDbSearcher;
+    @Resource(name = "ipSearcherConfig")
+    private IpSearcher ipSearcher;
 
     @Override
     public IpInfoEntity getIpInfo(String ip) {
@@ -24,8 +25,7 @@ public class IpServiceImpl implements IpService {
             ip = IPUtils.getIpAddr(HttpContextUtils.getHttpServletRequest());
         }
         try {
-            IpDataBlock dataBlock = ipDbSearcher.btreeSearch(ip);
-            String[] data = dataBlock.getRegion().split("\\|");
+            String[] data = ipSearcher.search(ip).split("\\|");
             IpInfoEntity ipInfoEntity = new IpInfoEntity();
             ipInfoEntity.setCountry("0".equals(data[0])?"":data[0]);
             ipInfoEntity.setProv("0".equals(data[2])?"":data[2]);
@@ -33,7 +33,7 @@ public class IpServiceImpl implements IpService {
             ipInfoEntity.setIsp("0".equals(data[4])?"":data[4]);
             ipInfoEntity.setSupport("https://xiaoyaxiaokeai.gitee.io/base/20201224/thanks.jpg");
             ipInfoEntity.setEmail("80616059@qq.com");
-            ipInfoEntity.setRemark("2023年五一劳动节快乐~");
+            ipInfoEntity.setRemark("2023年国庆节快乐~");
             ipInfoEntity.setIp(ip);
             return ipInfoEntity;
         }catch (Exception e){
