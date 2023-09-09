@@ -34,7 +34,7 @@ public class IpConfig {
             }
 
             // 1、从 dbPath 中预先加载 VectorIndex 缓存，并且把这个得到的数据作为全局变量，后续反复使用。
-            byte[] vIndex = new byte[0];
+            byte[] vIndex;
             try {
                 vIndex = IpSearcher.loadVectorIndexFromFile(dbFilePath);
             } catch (Exception e) {
@@ -43,7 +43,7 @@ public class IpConfig {
             }
 
             // 2、使用全局的 vIndex 创建带 VectorIndex 缓存的查询对象。
-            IpSearcher searcher = null;
+            IpSearcher searcher;
             try {
                 searcher = IpSearcher.newWithVectorIndex(dbFilePath, vIndex);
             } catch (Exception e) {
