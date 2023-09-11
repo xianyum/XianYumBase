@@ -10,8 +10,8 @@
       <el-form-item label="系统常量键" prop="constantKey">
         <el-input v-model="dataForm.constantKey" placeholder="系统常量键" :disabled=dataForm.id></el-input>
       </el-form-item>
-      <el-form-item label="系统常量描述" prop="constantDescribe">
-        <el-input type="textarea" :rows="2" v-model="dataForm.constantDescribe" placeholder="系统常量描述"></el-input>
+      <el-form-item label="系统常量值" prop="constantValue">
+        <el-input type="textarea" :rows="4" v-model="dataForm.constantValue" placeholder="系统常量值"></el-input>
       </el-form-item>
       <el-form-item label="可见性" prop="constantVisible">
         <el-switch
@@ -24,17 +24,9 @@
           :inactive-value=1>
         </el-switch>
       </el-form-item>
-      <el-form-item label="系统常量值：">
+      <el-form-item label="系统常量描述" prop="constantDescribe">
+        <el-input type="text" v-model="dataForm.constantDescribe" placeholder="系统常量描述"></el-input>
       </el-form-item>
-      <vue-json-editor
-        prop="constantValue"
-        style="height: 190px;margin-left: 20px"
-        v-model="dataForm.constantValue"
-        :showBtns="false"
-        :expandedOnStart="true"
-        :mode="'code'"
-        lang="zh"
-      />
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancel" plain>取消</el-button>
@@ -44,7 +36,7 @@
 </template>
 
 <script>
-import vueJsonEditor from 'vue-json-editor'
+
 
 export default {
   data() {
@@ -69,11 +61,9 @@ export default {
   },
   created() {
   },
-  components: {vueJsonEditor},
   methods: {
     cancel() {
       this.visible = false
-      this.dataForm.constantValue = {}
       this.$refs['dataForm'].resetFields()
     },
     getDataList() {
@@ -89,11 +79,11 @@ export default {
           }).then(({data}) => {
             if (data && data.code === 200) {
               this.dataForm = data.data
-              try {
-                this.dataForm.constantValue = JSON.parse(data.data.constantValue)
-              } catch (e) {
-                this.dataForm.constantValue = data.data.constantValue
-              }
+              // try {
+              //   this.dataForm.constantValue = JSON.parse(data.data.constantValue)
+              // } catch (e) {
+              //   this.dataForm.constantValue = data.data.constantValue
+              // }
             }
           })
         }
@@ -113,7 +103,6 @@ export default {
         this.$message.error('系统常量值不能为空')
         return
       }
-      this.dataForm.constantValue = JSON.stringify(this.dataForm.constantValue)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.$http({
@@ -132,7 +121,6 @@ export default {
                 }
               })
               this.$refs['dataForm'].resetFields()
-              this.dataForm.constantValue = {}
             } else {
               this.$message.error(data.msg)
             }
