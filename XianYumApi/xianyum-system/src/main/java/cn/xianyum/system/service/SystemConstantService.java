@@ -35,4 +35,6 @@ public interface SystemConstantService {
     void deleteByKey(String key);
 
     void deleteRedisCache(String key);
+
+    void refreshCache();
 }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 
@@ -157,6 +158,13 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         }
         String redisKey = systemConstantPrefix + key;
         redisUtils.del(redisKey);
+    }
+
+    @Override
+    public void refreshCache() {
+        Collection<String> keys = redisUtils.keys(systemConstantPrefix + "*");
+        redisUtils.deleteObject(keys);
+
     }
 
     @Override

@@ -41,8 +41,8 @@ public class SystemConstantController {
         return DataResult.success(response);
     }
 
-    @PostMapping("/update")
-    @ApiOperation(value = "更新系统参数", httpMethod = "POST")
+    @PutMapping("/update")
+    @ApiOperation(value = "更新系统参数", httpMethod = "PUT")
     public DataResult update(@RequestBody SystemConstantRequest request) {
         int count = systemConstantService.update(request);
         return DataResult.success(count);
@@ -94,7 +94,7 @@ public class SystemConstantController {
      *
      */
     @ApiOperation(value = "系统常量删除数据")
-    @GetMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     public DataResult delete(@RequestParam String key) {
         systemConstantService.deleteByKey(key);
         return DataResult.success();
@@ -109,11 +109,20 @@ public class SystemConstantController {
     }
 
 
-    @ApiOperation(value = "系统常量清除缓存")
+    @ApiOperation(value = "从缓存中获取系统常量")
     @GetMapping(value = "/getRedisCache")
     public DataResult getRedisCache(@RequestParam String key) {
         SecurityUtils.allowAdminAuth();
         SystemConstantEntity byKeyFromRedis = systemConstantService.getByKeyFromRedis(key);
         return DataResult.success(byKeyFromRedis);
+    }
+
+
+    @ApiOperation(value = "刷新系统常量")
+    @DeleteMapping(value = "/refreshCache")
+    public DataResult refreshCache() {
+        SecurityUtils.allowAdminAuth();
+        systemConstantService.refreshCache();
+        return DataResult.success();
     }
 }

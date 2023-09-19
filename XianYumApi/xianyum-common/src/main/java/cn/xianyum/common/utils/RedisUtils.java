@@ -634,5 +634,10 @@ public class RedisUtils {
     {
         return redisTemplate.keys(key);
     }
+
+
+    public boolean deleteObject(final Collection collection) {
+        return redisTemplate.delete(collection) > 0;
+    }
 }
 
