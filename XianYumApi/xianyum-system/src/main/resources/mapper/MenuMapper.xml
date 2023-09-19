@@ -4,13 +4,29 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.xianyum.system.dao.MenuMapper">
 
-    <select id="queryListParentId" resultType="cn.xianyum.system.entity.po.MenuEntity">
-		select * from menu where parent_id = #{parentId} and del_tag = 0 order by order_num asc
-	</select>
 
-	<select id="queryMenuID" resultType="java.lang.Long">
-
-		select menu_id from menu  where del_tag = 0
+	<select id="selectMenuTreeByUserId" resultType="cn.xianyum.system.entity.po.MenuEntity">
+		select
+		distinct m.menu_id,
+		         m.parent_id,
+		         m.menu_name,
+		         m.path,
+		         m.component,
+		         m.`query`,
+		         m.visible,
+		         m.status,
+		         ifnull(m.perms,'') as perms,
+		         m.is_frame,
+		         m.is_cache,
+		         m.menu_type,
+		         m.icon,
+		         m.order_num,
+		         m.create_time
+		from menu m
+		where
+		    m.menu_type in ('M', 'C')
+		  and m.status = 0
+		order by m.parent_id, m.order_num
 
 	</select>
 </mapper>

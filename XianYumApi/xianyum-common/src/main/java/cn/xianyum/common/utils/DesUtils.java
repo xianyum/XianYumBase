@@ -81,10 +81,4 @@ public class DesUtils {
         }
     }
 
-    public static void main(String[] args) {
-
-        String miyao = DesUtils.getEncryptString("{\"sslJksPath\":\"xianyu.jks\",\"keyStorePassword\":\"123456\",\"serverAddress\":\"mstsc.xianyum.cn\",\"serverPort\":\"9101\",\"userKey\":\"d8331bd8fecf42d4919b1d230470fcbc\",\"sslEnable\":true,\"autoStart\":false}\n");
-        System.out.println(miyao);
-        System.out.println(DesUtils.getDecryptString(miyao));
-    }
 }

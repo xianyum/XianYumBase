@@ -2,4 +2,4 @@ spring:
   profiles:
     active: prod
   application:
-    name: XianYumApi
+    name: XianYumApi_New

@@ -152,7 +152,7 @@ spring:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
       datasource:
         master:
-          url: mpw:sR3rIglLgps1SmEJaf5ZL/sqWUPkJppWu8SeRPfUF7CE1pGXJmozB9aLADOJJU3O8GBFDdhfeOgFnJordt6S/ePKzAmT+5CcqMNBVp1p6m5SQ20g+GKl7sMdFy48DxbhMfsifmVwmGCT4MpRhv4hKNAMEgihh+6TDhNmgQTe1TTLEQzXKT9gLwdQnZpiowUM7MyjWggS9tJ4VbkmnE/5Hg==
+          url: mpw:sR3rIglLgps1SmEJaf5ZL/sqWUPkJppWu8SeRPfUF7CziXaJrSPYPtehBvXN0ZDin9q/j+omBrOecezlqOeaUbUnQLssviTfU4tSVrr0sUZ3bIaTHUrb2m5KNjITbU5C9WJQxDMeEXWP1fWz9gymJmTBjV9p8Yej2XKLJ8t/PPMyOUKWBMdgYz6bwyKN8zsrz7ARfHmy/nACc4eTXH4UNg==
           username: mpw:F3RIuQ2oysG5oe7LzHrHOQ==
           password: mpw:SmSUEOjd/X4B3EIFAeURfg==
           driverClassName:  com.mysql.cj.jdbc.Driver

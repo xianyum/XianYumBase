@@ -1,7 +1,8 @@
 package cn.xianyum.system.service;
 
 import cn.xianyum.system.entity.po.MenuEntity;
-import com.baomidou.mybatisplus.extension.service.IService;
+import cn.xianyum.system.entity.response.MenuResponse;
+
 import java.util.List;
 
 /**
@@ -9,24 +10,20 @@ import java.util.List;
  * @date 2019/5/25 19:35
  * @email 80616059@qq.com
  */
-public interface MenuService extends IService<MenuEntity> {
+public interface MenuService{
 
     /**
      * 获取用户菜单列表
      */
-    List<MenuEntity> getUserMenuList();
+    List<MenuResponse> getUserMenuList();
 
-    /**
-     * 根据父菜单，查询子菜单
-     * @param parentId 父菜单ID
-     * @param menuIdList  用户菜单ID
-     */
-    List<MenuEntity> queryListParentId(Long parentId, List<Long> menuIdList);
+    List<MenuEntity> getChildPerms(List<MenuEntity> menus, int i);
 
+    void recursionFn(List<MenuEntity> menus, MenuEntity t);
 
-    /**
-     * 根据父菜单，查询子菜单
-     * @param parentId 父菜单ID
-     */
-    List<MenuEntity> queryListParentId(Long parentId);
+    boolean hasChild(List<MenuEntity> menus, MenuEntity tChild);
+
+    List<MenuEntity> getChildList(List<MenuEntity> menus, MenuEntity tChild);
+
+    List<MenuResponse> buildMenus(List<MenuEntity> menuChildList);
 }

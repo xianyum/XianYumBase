@@ -14,7 +14,5 @@ import java.util.List;
 @Mapper
 public interface MenuMapper extends BaseMapper<MenuEntity> {
 
-    List<MenuEntity> queryListParentId(Long parentId);
-
-    List<Long> queryMenuID();
+    List<MenuEntity> selectMenuTreeByUserId(String userId);
 }

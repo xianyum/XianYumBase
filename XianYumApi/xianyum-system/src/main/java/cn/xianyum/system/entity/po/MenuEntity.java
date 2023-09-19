@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,54 +19,52 @@ import java.util.List;
 public class MenuEntity{
 
     @TableId(type = IdType.AUTO)
+    /** 菜单ID */
     private Long menuId;
 
-    /**
-     * 父菜单ID，一级菜单为0
-     */
+    /** 菜单名称 */
+    private String menuName;
+
+    /** 父菜单名称 */
+    private String parentName;
+
+    /** 父菜单ID */
     private Long parentId;
 
-    /**
-     * 菜单名称
-     */
-    private String name;
-
-    /**
-     * 菜单URL
-     */
-    private String url;
-
-    /**
-     * 授权(多个用逗号分隔，如：user:list,user:create)
-     */
-    private String perms;
-
-    /**
-     * 类型     0：目录   1：菜单   2：按钮
-     */
-    private Integer type;
-
-    /**
-     * 菜单图标
-     */
-    private String icon;
-
-    /**
-     * 排序
-     */
+    /** 显示顺序 */
     private Integer orderNum;
 
-    /**
-     * 删除标志（1：已删除）
-     */
-    private Integer delTag;
+    /** 路由地址 */
+    private String path;
 
-    /**
-     * ztree属性
-     */
-    @TableField(exist=false)
-    private Boolean open;
+    /** 组件路径 */
+    private String component;
 
+    /** 路由参数 */
+    private String query;
+
+    /** 是否为外链（0是 1否） */
+    private String isFrame;
+
+    /** 是否缓存（0缓存 1不缓存） */
+    private String isCache;
+
+    /** 类型（M目录 C菜单 F按钮） */
+    private String menuType;
+
+    /** 显示状态（0显示 1隐藏） */
+    private String visible;
+
+    /** 菜单状态（0正常 1停用） */
+    private String status;
+
+    /** 权限字符串 */
+    private String perms;
+
+    /** 菜单图标 */
+    private String icon;
+
+    /** 子菜单 */
     @TableField(exist=false)
-    private List<?> list;
+    private List<MenuEntity> children = new ArrayList<>();
 }
