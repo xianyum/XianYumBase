@@ -1,10 +1,12 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.constant.Constants;
+import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.MenuMapper;
 import cn.xianyum.system.entity.po.MenuEntity;
+import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuMetaResponse;
 import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.service.MenuService;
@@ -20,14 +22,13 @@ import java.util.*;
  * @email 80616059@qq.com
  */
 @Service
-public class MenuServiceImpl  implements MenuService {
+public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private MenuMapper menuMapper;
 
     /**
      * 获取用户菜单列表
-     *
      */
     @Override
     public List<MenuResponse> getUserMenuList() {
@@ -43,7 +44,7 @@ public class MenuServiceImpl  implements MenuService {
     @Override
     public List<MenuEntity> getChildPerms(List<MenuEntity> menus, int parentId) {
         List<MenuEntity> returnList = new ArrayList<MenuEntity>();
-        for (Iterator<MenuEntity> iterator = menus.iterator(); iterator.hasNext();){
+        for (Iterator<MenuEntity> iterator = menus.iterator(); iterator.hasNext(); ) {
             MenuEntity t = iterator.next();
             // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
             if (t.getParentId() == parentId) {
@@ -100,8 +101,7 @@ public class MenuServiceImpl  implements MenuService {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));
-            }
-            else if (isMenuFrame(menu)) {
+            } else if (isMenuFrame(menu)) {
                 router.setMeta(null);
                 List<MenuResponse> childrenList = new ArrayList<>();
                 MenuResponse children = new MenuResponse();
@@ -112,8 +112,7 @@ public class MenuServiceImpl  implements MenuService {
                 children.setQuery(menu.getQuery());
                 childrenList.add(children);
                 router.setChildren(childrenList);
-            }
-            else if (menu.getParentId().intValue() == 0 && isInnerLink(menu)) {
+            } else if (menu.getParentId().intValue() == 0 && isInnerLink(menu)) {
                 router.setMeta(new MenuMetaResponse(menu.getMenuName(), menu.getIcon()));
                 router.setPath("/");
                 List<MenuResponse> childrenList = new ArrayList<>();
@@ -129,6 +128,72 @@ public class MenuServiceImpl  implements MenuService {
             routers.add(router);
         }
         return routers;
+    }
+
+    @Override
+    public List<MenuEntity> selectMenuList(MenuRequest menuRequest) {
+        List<MenuEntity> menus = menuMapper.selectMenuList(menuRequest);
+        return menus;
+    }
+
+    @Override
+    public MenuEntity selectMenuById(Long menuId) {
+        return menuMapper.selectById(menuId);
+    }
+
+    @Override
+    public int save(MenuEntity menuEntity) {
+        boolean isUnique = this.checkMenuNameUnique(menuEntity);
+        if (!isUnique) {
+            throw new SoException("新增菜单" + menuEntity.getMenuName() + "失败，菜单名称已存在");
+        }
+
+        if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !StringUtil.ishttp(menuEntity.getPath())) {
+            throw new SoException("新增菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
+        }
+        return menuMapper.insert(menuEntity);
+    }
+
+    @Override
+    public int update(MenuEntity menuEntity) {
+        if (!this.checkMenuNameUnique(menuEntity)) {
+            throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，菜单名称已存在");
+        } else if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !StringUtil.ishttp(menuEntity.getPath())) {
+            throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
+        } else if (menuEntity.getMenuId().equals(menuEntity.getParentId())) {
+            throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，上级菜单不能选择自己");
+        }
+        return menuMapper.updateById(menuEntity);
+    }
+
+    @Override
+    public boolean checkMenuNameUnique(MenuEntity menuEntity) {
+        Long menuId = Objects.isNull(menuEntity.getMenuId()) ? -1L : menuEntity.getMenuId();
+        MenuEntity info = menuMapper.checkMenuNameUnique(menuEntity.getMenuName(), menuEntity.getParentId());
+        if (Objects.nonNull(info) && info.getMenuId().longValue() != menuId.longValue()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int deleteMenuById(Long menuId) {
+        if (this.hasChildByMenuId(menuId)) {
+           throw new SoException("存在子菜单,不允许删除");
+        }
+        return menuMapper.deleteById(menuId);
+    }
+
+    /**
+     * 是否存在菜单子节点
+     *
+     * @param menuId 菜单ID
+     * @return 结果 true 存在 false 不存在
+     */
+    @Override
+    public boolean hasChildByMenuId(Long menuId) {
+        int result = menuMapper.hasChildByMenuId(menuId);
+        return result > 0;
     }
 
 
@@ -155,8 +220,8 @@ public class MenuServiceImpl  implements MenuService {
      * @return 替换后的内链域名
      */
     public String innerLinkReplaceEach(String path) {
-        return StringUtils.replaceEach(path, new String[] { Constants.HTTP, Constants.HTTPS, Constants.WWW, "." },
-                new String[] { "", "", "", "/" });
+        return StringUtils.replaceEach(path, new String[]{Constants.HTTP, Constants.HTTPS, Constants.WWW, "."},
+                new String[]{"", "", "", "/"});
     }
 
     /**
@@ -208,11 +273,9 @@ public class MenuServiceImpl  implements MenuService {
         String component = Constants.LAYOUT;
         if (StringUtils.isNotEmpty(menu.getComponent()) && !isMenuFrame(menu)) {
             component = menu.getComponent();
-        }
-        else if (StringUtils.isEmpty(menu.getComponent()) && menu.getParentId().intValue() != 0 && isInnerLink(menu)) {
+        } else if (StringUtils.isEmpty(menu.getComponent()) && menu.getParentId().intValue() != 0 && isInnerLink(menu)) {
             component = Constants.INNER_LINK;
-        }
-        else if (StringUtils.isEmpty(menu.getComponent()) && isParentView(menu)) {
+        } else if (StringUtils.isEmpty(menu.getComponent()) && isParentView(menu)) {
             component = Constants.PARENT_VIEW;
         }
         return component;

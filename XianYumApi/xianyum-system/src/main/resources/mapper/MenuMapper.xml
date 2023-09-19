@@ -4,6 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.xianyum.system.dao.MenuMapper">
 
+	<sql id="selectMenuVo">
+		select menu_id, menu_name, parent_id, order_num, path, component, `query`, is_frame, is_cache, menu_type, visible, status, ifnull(perms,'') as perms, icon, create_time
+		from menu
+	</sql>
 
 	<select id="selectMenuTreeByUserId" resultType="cn.xianyum.system.entity.po.MenuEntity">
 		select
@@ -28,5 +32,30 @@
 		  and m.status = 0
 		order by m.parent_id, m.order_num
 
+	</select>
+
+	<select id="selectMenuList" parameterType="cn.xianyum.system.entity.po.MenuEntity" resultType="cn.xianyum.system.entity.po.MenuEntity">
+		<include refid="selectMenuVo"/>
+		<where>
+			<if test="menuName != null and menuName != ''">
+				AND menu_name like concat('%', #{menuName}, '%')
+			</if>
+			<if test="visible != null and visible != ''">
+				AND visible = #{visible}
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+		</where>
+		order by parent_id, order_num
+	</select>
+
+	<select id="checkMenuNameUnique" resultType="cn.xianyum.system.entity.po.MenuEntity">
+		<include refid="selectMenuVo"/>
+		where menu_name=#{menuName} and parent_id = #{parentId} limit 1
+	</select>
+
+	<select id="hasChildByMenuId" resultType="Integer">
+		select count(1) from menu where parent_id = #{menuId}
 	</select>
 </mapper>

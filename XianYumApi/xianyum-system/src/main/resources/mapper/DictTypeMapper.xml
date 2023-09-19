@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.system.dao.DictTypeMapper">
+
+    <sql id="selectDictTypeVo">
+        select id, dict_name, dict_type, status, create_by, create_time, remark
+        from dict_type
+    </sql>
+
+    <select id="selectDictTypeList" parameterType="cn.xianyum.system.entity.request.DictTypeRequest" resultType="cn.xianyum.system.entity.po.DictTypeEntity">
+        <include refid="selectDictTypeVo"/>
+        <where>
+            <if test="request.dictName != null and request.dictName != ''">
+                AND dict_name like concat('%', #{request.dictName}, '%')
+            </if>
+            <if test="request.status != null and request.status != ''">
+                AND status = #{request.status}
+            </if>
+            <if test="request.dictType != null and request.dictType != ''">
+                AND dict_type like concat('%', #{request.dictType}, '%')
+            </if>
+            <if test="request.params.beginTime != null and request.params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{request.params.beginTime},'%y%m%d')
+            </if>
+            <if test="request.params.endTime != null and request.params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{request.params.endTime},'%y%m%d')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

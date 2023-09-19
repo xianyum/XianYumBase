@@ -3,14 +3,16 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.MenuEntity;
+import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -27,12 +29,63 @@ public class MenuController {
     private MenuService menuService;
 
     /**
-     * 导航菜单
+     * 导航栏菜单
      */
     @GetMapping("/nav")
     @ApiOperation(value = "获取导航菜单以及权限", httpMethod = "GET")
     public DataResult nav(){
         List<MenuResponse> menuResponses = menuService.getUserMenuList();
         return DataResult.success(menuResponses);
+    }
+
+    /**
+     * 查询菜单列表
+     */
+    @PostMapping("/list")
+    @ApiOperation(value = "查询菜单列表", httpMethod = "POST")
+    public DataResult selectMenuList(@RequestBody MenuRequest menuRequest){
+        List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
+        return DataResult.success(menuResponses);
+    }
+
+
+    /**
+     * 根据菜单编号获取详细信息
+     */
+    @GetMapping(value = "/{menuId}")
+    @ApiOperation(value = "根据菜单编号获取详细信息", httpMethod = "GET")
+    public DataResult getInfo(@PathVariable Long menuId) {
+        return DataResult.success(menuService.selectMenuById(menuId));
+    }
+
+
+    /**
+     * 保存菜单信息
+     */
+    @PostMapping(value = "/save")
+    @ApiOperation(value = "保存菜单信息", httpMethod = "POST")
+    public DataResult save(@RequestBody MenuEntity menuEntity) {
+        int count = menuService.save(menuEntity);
+        return DataResult.success();
+    }
+
+    /**
+     * 更新菜单信息
+     */
+    @PutMapping(value = "/update")
+    @ApiOperation(value = "保存菜单信息", httpMethod = "PUT")
+    public DataResult update(@RequestBody MenuEntity menuEntity) {
+        int count = menuService.update(menuEntity);
+        return DataResult.success();
+    }
+
+
+    /**
+     * 删除菜单
+     */
+    @DeleteMapping("/{menuId}")
+    @ApiOperation(value = "删除菜单", httpMethod = "DELETE")
+    public DataResult remove(@PathVariable("menuId") Long menuId) {
+        return DataResult.success(menuService.deleteMenuById(menuId));
     }
 }

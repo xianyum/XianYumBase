@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,6 +27,7 @@ public class MenuEntity{
     private String menuName;
 
     /** 父菜单名称 */
+    @TableField(exist=false)
     private String parentName;
 
     /** 父菜单ID */
@@ -63,6 +65,8 @@ public class MenuEntity{
 
     /** 菜单图标 */
     private String icon;
+
+    private Date createTime;
 
     /** 子菜单 */
     @TableField(exist=false)

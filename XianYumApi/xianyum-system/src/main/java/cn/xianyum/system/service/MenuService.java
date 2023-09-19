@@ -1,6 +1,7 @@
 package cn.xianyum.system.service;
 
 import cn.xianyum.system.entity.po.MenuEntity;
+import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuResponse;
 
 import java.util.List;
@@ -26,4 +27,24 @@ public interface MenuService{
     List<MenuEntity> getChildList(List<MenuEntity> menus, MenuEntity tChild);
 
     List<MenuResponse> buildMenus(List<MenuEntity> menuChildList);
+
+    List<MenuEntity> selectMenuList(MenuRequest menuRequest);
+
+    MenuEntity selectMenuById(Long menuId);
+
+    int save(MenuEntity menuEntity);
+
+    int update(MenuEntity menuEntity);
+
+    boolean checkMenuNameUnique(MenuEntity menuEntity);
+
+    int deleteMenuById(Long menuId);
+
+    /**
+     * 是否存在菜单子节点
+     *
+     * @param menuId 菜单ID
+     * @return 结果 true 存在 false 不存在
+     */
+    boolean hasChildByMenuId(Long menuId);
 }

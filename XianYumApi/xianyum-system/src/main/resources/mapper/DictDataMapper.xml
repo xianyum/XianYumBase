@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.system.dao.DictDataMapper">
+
+    <sql id="selectDictDataVo">
+        select id, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, remark
+        from dict_data
+    </sql>
+
+    <update id="updateDictDataType" parameterType="String">
+        update dict_data set dict_type = #{newDictType} where dict_type = #{oldDictType}
+    </update>
+
+
+    <select id="countDictDataByType" resultType="Integer">
+        select count(1) from dict_data where dict_type=#{dictType}
+    </select>
+
+
+    <select id="selectDictDataList" parameterType="cn.xianyum.system.entity.request.DictDataRequest" resultType="cn.xianyum.system.entity.po.DictDataEntity">
+        <include refid="selectDictDataVo"/>
+        <where>
+            <if test="request.dictType != null and request.dictType != ''">
+                AND dict_type = #{request.dictType}
+            </if>
+            <if test="request.dictLabel != null and request.dictLabel != ''">
+                AND dict_label like concat('%', #{request.dictLabel}, '%')
+            </if>
+            <if test="request.status != null and srequest.tatus != ''">
+                AND status = #{request.status}
+            </if>
+        </where>
+        order by dict_sort asc
+    </select>
+</mapper>

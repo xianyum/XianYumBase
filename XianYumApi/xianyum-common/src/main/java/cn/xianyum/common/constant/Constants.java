@@ -47,4 +47,7 @@ public class Constants {
     /** InnerLink组件标识 */
     public final static String INNER_LINK = "InnerLink";
 
+    /** 是否菜单外链（是） */
+    public static final String YES_FRAME = "0";
+
 }
