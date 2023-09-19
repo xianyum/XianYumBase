@@ -58,7 +58,6 @@
 
 <script>
 import JsonViewer from 'vue-json-viewer';
-import {getMessageAccountTypeList} from '@/api/common/systemConstant';
 import {getMessageDetailInfo} from '@/api/message/message';
 
 export default {
@@ -93,10 +92,7 @@ export default {
       return name
     },
     getMessageAccountTypeList() {
-      this.reqeustForm = {
-        'constantKey': 'message_account_type'
-      }
-      getMessageAccountTypeList(this.reqeustForm).then(res => {
+      this.getSystemConstant('message_account_type').then(res => {
         this.messageAccountTypeList = JSON.parse(res.data.constantValue)
       });
     },

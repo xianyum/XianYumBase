@@ -121,7 +121,7 @@
           <el-input v-model="form.password" type="password" placeholder="密码"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPassword" :class="{ 'is-required': !form.id }">
-          <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码"></el-input>
+          <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码" @input="changeInput"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="form.email" placeholder="邮箱"></el-input>
@@ -196,7 +196,8 @@ export default {
         { key: 6, label: `创建时间`, visible: true }
       ],
       // 表单参数
-      form: {},
+      form: {
+      },
       // 表单校验
       rules: {
         username: [
@@ -229,6 +230,9 @@ export default {
     this.getList()
   },
   methods: {
+    changeInput(){
+      this.$forceUpdate();
+    },
     /** 查询列表 */
     getList() {
       this.loading = true
@@ -292,7 +296,6 @@ export default {
       getUser(this.requestForm).then(response => {
         this.form = response.data
         this.form.password = null
-        this.form.confirmPassword = null
         this.open = true
         this.title = '修改用户'
       })

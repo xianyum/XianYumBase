@@ -3,17 +3,21 @@ import request from '@/utils/request'
 // 查询参数列表
 export function listConfig(query) {
   return request({
-    url: '/system/config/list',
-    method: 'get',
-    params: query
+    url: '/systemConstant/getPage',
+    method: 'post',
+    data: query
   })
 }
 
 // 查询参数详细
 export function getConfig(configId) {
+  const requestParam = {
+    "id":configId
+  }
   return request({
-    url: '/system/config/' + configId,
-    method: 'get'
+    url: '/systemConstant/getById',
+    method: 'post',
+    data: requestParam
   })
 }
 
@@ -28,7 +32,7 @@ export function getConfigKey(configKey) {
 // 新增参数配置
 export function addConfig(data) {
   return request({
-    url: '/system/config',
+    url: '/systemConstant/save',
     method: 'post',
     data: data
   })
@@ -37,7 +41,7 @@ export function addConfig(data) {
 // 修改参数配置
 export function updateConfig(data) {
   return request({
-    url: '/system/config',
+    url: '/systemConstant/update',
     method: 'put',
     data: data
   })
@@ -46,7 +50,7 @@ export function updateConfig(data) {
 // 删除参数配置
 export function delConfig(configId) {
   return request({
-    url: '/system/config/' + configId,
+    url: '/systemConstant/delete?key=' + configId,
     method: 'delete'
   })
 }
@@ -54,7 +58,26 @@ export function delConfig(configId) {
 // 刷新参数缓存
 export function refreshCache() {
   return request({
-    url: '/system/config/refreshCache',
+    url: '/systemConstant/refreshCache',
     method: 'delete'
+  })
+}
+
+// 从缓存查看系统常量
+export function getConfigByCache(query){
+  return request({
+    url: '/systemConstant/getRedisCache',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 从缓存查看系统常量
+export function deleteConfigByCache(query){
+  return request({
+    url: '/systemConstant/deleteRedisCache',
+    method: 'get',
+    params: query
   })
 }
