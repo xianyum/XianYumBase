@@ -1,5 +1,6 @@
 package cn.xianyum.framwork.security.handler;
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.system.entity.po.LogEntity;
@@ -14,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author zhangwei
@@ -33,10 +35,15 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 
         // 保存退出日志
         LogEntity log = new LogEntity();
-        log.setMethod("loguot");
+        log.setMethod("logout");
         log.setOperation("用户退出操作");
+        LoginUser tokenUserByCache = userTokenService.getLoginUserByHttpRequest();
+        if(Objects.nonNull(tokenUserByCache)){
+            log.setUsername(tokenUserByCache.getUsername());
+        }else{
+            log.setUsername("none");
+        }
         logService.saveLog(log);
-
         userTokenService.logout();
         HttpContextUtils.renderString(response, JSONObject.toJSONString(DataResult.success("退出成功")));
     }

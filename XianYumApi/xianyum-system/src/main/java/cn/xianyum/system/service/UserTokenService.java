@@ -36,8 +36,7 @@ public interface UserTokenService {
 
     /**
      * 通过httpRequest获取当前登录用户
-     * @param request
      * @return
      */
-    LoginUser getLoginUserByHttpRequest(HttpServletRequest request);
+    LoginUser getLoginUserByHttpRequest();
 }

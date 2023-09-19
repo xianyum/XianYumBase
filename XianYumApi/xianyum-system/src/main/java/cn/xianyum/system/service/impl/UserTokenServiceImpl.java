@@ -57,7 +57,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      * @return
      */
     @Override
-    public LoginUser getLoginUserByHttpRequest(HttpServletRequest request) {
+    public LoginUser getLoginUserByHttpRequest() {
         String token = HttpContextUtils.getRequestToken();
         String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
         return JSONObject.parseObject(userEntityJson, LoginUser.class);
@@ -81,12 +81,7 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public void logout() {
-        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
-        String token = request.getHeader("token");
-        //如果header中不存在token，则从参数中获取token
-        if(StringUtil.isEmpty(token)){
-            token = request.getParameter("token");
-        }
+        String token =  HttpContextUtils.getRequestToken();
         redisUtils.del(prefix+token);
     }
 

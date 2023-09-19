@@ -28,7 +28,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        LoginUser loginUser = userTokenService.getLoginUserByHttpRequest(request);
+        LoginUser loginUser = userTokenService.getLoginUserByHttpRequest();
         if(null != loginUser){
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
