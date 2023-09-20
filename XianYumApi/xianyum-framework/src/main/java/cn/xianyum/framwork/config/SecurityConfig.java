@@ -99,7 +99,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login",
                         "/captcha/get",
                         "/captcha/check",
-                        "/systemConstant/getPublicConstant",
+                        "/systemConstant/getPublicConstant/*",
                         "/proxy/sendEmail",
                         "/proxy/updateClientInfo",
                         "/v1/messageMonitor/getById",

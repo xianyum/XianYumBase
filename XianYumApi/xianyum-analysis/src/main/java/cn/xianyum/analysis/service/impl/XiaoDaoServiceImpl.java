@@ -61,7 +61,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
     }
 
     @Override
-    public IPage<XiaoDaoEntity> queryAll(XiaoDaoRequest request) {
+    public IPage<XiaoDaoEntity> getPage(XiaoDaoRequest request) {
         Page<XiaoDaoEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<XiaoDaoEntity> xiaoDaoEntityQueryWrapper  = new QueryWrapper<XiaoDaoEntity>()
                 .like(StringUtil.isNotEmpty(request.getTitle()),"title", request.getTitle()).orderByDesc("create_time");

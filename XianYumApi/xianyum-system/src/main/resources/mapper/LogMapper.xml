@@ -15,19 +15,11 @@
         SELECT
         <include refid="allColumns" />
         FROM user_log WHERE 1 = 1
-        <if test="logRequest.nameOrDesc != null and logRequest.nameOrDesc != ''">
-            AND
-            (
-            username LIKE CONCAT('%', #{logRequest.nameOrDesc}, '%')
-            OR
-            operation LIKE CONCAT('%', #{logRequest.nameOrDesc}, '%')
-            )
+        <if test="logRequest.params.beginTime != null and logRequest.params.beginTime != ''">
+            AND create_time &gt;= #{logRequest.params.beginTime}
         </if>
-        <if test="logRequest.startTime != null and logRequest.startTime != ''">
-            AND create_time &gt;= #{logRequest.startTime}
-        </if>
-        <if test="logRequest.endTime != null and logRequest.endTime != ''">
-            AND create_time &lt;= #{logRequest.endTime}
+        <if test="logRequest.params.endTime != null and logRequest.params.endTime != ''">
+            AND create_time &lt;= #{logRequest.params.endTime}
         </if>
         <if test="logRequest.username != null and logRequest.username != ''">
             AND username = #{logRequest.username}
@@ -74,4 +66,9 @@
         ORDER BY ul.create_time DESC
         LIMIT 15
     </select>
+
+
+    <update id="truncateLog">
+        truncate table user_log
+    </update>
 </mapper>

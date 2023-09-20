@@ -1,12 +1,15 @@
 import request from '@/utils/request'
 
-export function getSystemConstant(key) {
-  const requestParams = {
-    "constantKey": key
-  }
+export function getPublicSystemConstant(key) {
   return request({
-    url: '/systemConstant/getPublicConstant',
-    method: 'post',
-    data: requestParams
+    url: '/systemConstant/getPublicConstant/'+key,
+    method: 'get'
+  })
+}
+
+export function getPrivateSystemConstant(key) {
+  return request({
+    url: '/systemConstant/getPrivateConstant/'+key,
+    method: 'get'
   })
 }

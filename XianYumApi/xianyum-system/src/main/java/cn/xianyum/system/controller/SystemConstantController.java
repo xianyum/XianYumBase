@@ -25,19 +25,19 @@ public class SystemConstantController {
     @Autowired
     private SystemConstantService systemConstantService;
 
-    @PostMapping("/getPublicConstant")
-    @SysLog(value = "获取系统可见参数")
-    @ApiOperation(value = "获取系统可见参数", httpMethod = "POST")
-    public DataResult getPublicConstant(@RequestBody SystemConstantEntity request) {
-        SystemConstantEntity response = systemConstantService.getPublicConstant(request);
+    @GetMapping("/getPublicConstant/{key}")
+    @SysLog(value = "获取公开系统可见参数")
+    @ApiOperation(value = "获取系统可见参数")
+    public DataResult getPublicConstant(@PathVariable String key) {
+        SystemConstantEntity response = systemConstantService.getPublicConstant(key);
         return DataResult.success(response);
     }
 
 
-    @PostMapping("/getPrivateConstant")
-    @ApiOperation(value = "获取系统内部参数", httpMethod = "POST")
-    public DataResult getPrivateConstant(@RequestBody SystemConstantEntity request) {
-        SystemConstantEntity response = systemConstantService.getPrivateConstant(request);
+    @GetMapping("/getPrivateConstant/{key}")
+    @ApiOperation(value = "获取私有系统内部参数")
+    public DataResult getPrivateConstant(@PathVariable String key) {
+        SystemConstantEntity response = systemConstantService.getPrivateConstant(key);
         return DataResult.success(response);
     }
 

@@ -14,7 +14,7 @@ public interface ProxyService {
 
 	IPage<ProxyResponse> getPage(ProxyRequest request);
 
-	ProxyResponse getById(ProxyRequest request);
+	ProxyResponse getById(String id);
 
 	Integer save(ProxyRequest request);
 
@@ -40,15 +40,15 @@ public interface ProxyService {
 	 */
 	void offlineNotify(String clientKey);
 
-    List<ProxyResponse> getList(ProxyRequest request);
+    List<ProxyResponse> getList();
 
     void flushProxy();
 
     void sendProxyEmail(ProxyEntity proxyEntity);
 
-    String sendEmail(ProxyRequest request);
+    String sendEmail(String id);
 
-    String downloadConfig(ProxyRequest request);
+    String downloadConfig(String id);
 
 	/**
 	 * 更新客户端信息

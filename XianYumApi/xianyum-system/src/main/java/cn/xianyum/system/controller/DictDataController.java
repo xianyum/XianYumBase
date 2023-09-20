@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
@@ -60,15 +61,19 @@ public class DictDataController {
      * 新增字典类型
      */
     @PostMapping("/save")
+    @ApiOperation(value = "新增字典数据")
+    @SysLog(value = "新增字典数据")
     public DataResult add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
         return DataResult.success(count);
     }
 
     /**
-     * 修改保存字典类型
+     * 修改保存字典数据
      */
     @PutMapping("/update")
+    @ApiOperation(value = "修改字典数据")
+    @SysLog(value = "修改字典数据")
     public DataResult edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
         return DataResult.success(count);
@@ -78,6 +83,8 @@ public class DictDataController {
      * 删除字典类型
      */
     @DeleteMapping("/{ids}")
+    @ApiOperation(value = "删除字典数据")
+    @SysLog(value = "删除字典数据")
     public DataResult remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
         return DataResult.success();

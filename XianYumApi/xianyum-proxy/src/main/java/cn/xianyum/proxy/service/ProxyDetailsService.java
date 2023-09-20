@@ -10,7 +10,7 @@ public interface ProxyDetailsService {
 
 	IPage<ProxyDetailsResponse> getPage(ProxyDetailsRequest request);
 
-	ProxyDetailsResponse getById(ProxyDetailsRequest request);
+	ProxyDetailsResponse getById(String id);
 
 	Integer save(ProxyDetailsRequest request);
 

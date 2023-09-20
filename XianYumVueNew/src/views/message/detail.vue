@@ -92,7 +92,7 @@ export default {
       return name
     },
     getMessageAccountTypeList() {
-      this.getSystemConstant('message_account_type').then(res => {
+      this.getPublicSystemConstant('message_account_type').then(res => {
         this.messageAccountTypeList = JSON.parse(res.data.constantValue)
       });
     },

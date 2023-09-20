@@ -26,4 +26,6 @@ public interface LogService {
     List<LogResponse> getVisitCountCharts(LogRequest request);
 
     int getLogCountWithCache(String time);
+
+    void truncateLog();
 }

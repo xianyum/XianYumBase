@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author zhangwei
@@ -24,12 +21,11 @@ public class XiaoDaoController {
 
     @Autowired
     private XiaoDaoService xiaoDaoService;
-
-
-    @PostMapping("/list")
-    @ApiOperation(value = "获取小刀数据列表", httpMethod = "POST")
-    public DataResult list(@RequestBody XiaoDaoRequest request){
-        IPage<XiaoDaoEntity> list = xiaoDaoService.queryAll(request);
+    
+    @GetMapping("/getPage")
+    @ApiOperation(value = "获取小刀数据列表")
+    public DataResult getPage(XiaoDaoRequest request){
+        IPage<XiaoDaoEntity> list = xiaoDaoService.getPage(request);
         return DataResult.success(list);
     }
 }

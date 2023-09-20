@@ -19,4 +19,6 @@ public interface LogMapper extends BaseMapper<LogEntity> {
     int getCount(LogRequest logRequest);
 
     List<LogResponse> getVisitCountCharts(LogRequest request);
+
+    void truncateLog();
 }

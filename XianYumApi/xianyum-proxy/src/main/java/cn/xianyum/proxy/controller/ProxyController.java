@@ -13,10 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.List;
@@ -51,10 +49,10 @@ public class ProxyController {
      *
      */
     @ApiOperation(value = "客户端管理根据ID查询数据")
-    @PostMapping(value = "/getById")
-    public DataResult getById(@RequestBody ProxyRequest request) {
+    @GetMapping(value = "/getById/{id}")
+    public DataResult getById(@PathVariable String id) {
 
-        ProxyResponse response = proxyService.getById(request);
+        ProxyResponse response = proxyService.getById(id);
         return DataResult.success(response);
     }
 
@@ -78,7 +76,7 @@ public class ProxyController {
 	 *
      */
     @ApiOperation(value = "客户端管理修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     public DataResult update(@RequestBody ProxyRequest request) {
 
 		Integer count = proxyService.update(request);
@@ -93,9 +91,8 @@ public class ProxyController {
 	 *
      */
     @ApiOperation(value = "客户端管理删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     public DataResult delete(@RequestBody String[] ids) {
-
 		proxyService.deleteById(ids);
 	    return DataResult.success();
     }
@@ -105,10 +102,9 @@ public class ProxyController {
      *
      */
     @ApiOperation(value = "获取客户端所有数据")
-    @PostMapping(value = "/getList")
-    public DataResult getList(@RequestBody ProxyRequest request) {
-
-        List<ProxyResponse> response = proxyService.getList(request);
+    @GetMapping(value = "/getList")
+    public DataResult getList() {
+        List<ProxyResponse> response = proxyService.getList();
         return DataResult.success(response);
     }
 
@@ -118,9 +114,9 @@ public class ProxyController {
      *
      */
     @ApiOperation(value = "刷入系统")
-    @PostMapping(value = "/flushProxy")
+    @PutMapping(value = "/flushProxy")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult flushProxy(@RequestBody ProxyRequest request) {
+    public DataResult flushProxy() {
         proxyService.flushProxy();
         return DataResult.success();
     }
@@ -132,9 +128,9 @@ public class ProxyController {
      */
     @SysLog("发送客户端配置信息")
     @ApiOperation(value = "发送客户端配置信息")
-    @PostMapping(value = "/sendEmail")
-    public DataResult sendEmail(@RequestBody ProxyRequest request) {
-        String result = proxyService.sendEmail(request);
+    @GetMapping(value = "/sendEmail/{id}")
+    public DataResult sendEmail(@PathVariable String id) {
+        String result = proxyService.sendEmail(id);
         return DataResult.success(result);
     }
 
@@ -157,10 +153,10 @@ public class ProxyController {
      */
     @ApiOperation(value = "生成客户端配置信息")
     @PostMapping(value = "/downloadConfig")
-    public void downloadConfig(@RequestBody ProxyRequest request, HttpServletResponse response) {
+    public void downloadConfig(@RequestParam String id, HttpServletResponse response) {
         PrintWriter writer = null;
         try {
-            String configInfo = proxyService.downloadConfig(request);
+            String configInfo = proxyService.downloadConfig(id);
             response.setContentType("text/plain");
             response.setCharacterEncoding("utf-8");
             writer = response.getWriter();

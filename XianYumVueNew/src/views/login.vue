@@ -87,6 +87,7 @@ import Cookies from "js-cookie";
 import Verify from './../components/Verifition/Verify';
 import { encrypt, decrypt } from '@/utils/jsencrypt';
 import { Message } from 'element-ui'
+import { getPublicSystemConstant } from '@/api/common/systemConstant'
 
 
 export default {
@@ -128,9 +129,17 @@ export default {
     Verify
   },
   created() {
+    // 初始化验证码类型
+    this.getCaptchaTypeParams()
     this.getCookie();
   },
   methods: {
+    // 初始化验证码类型
+    getCaptchaTypeParams () {
+      this.getPublicSystemConstant('captcha_type').then(response => {
+        this.captchaType = response.data.constantValue
+      })
+    },
     qqLogin(){
       let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3a%2f%2fbase.xianyum.cn%2f%23%2fcheckQQLogin';
       window.location.replace(qqUrl)

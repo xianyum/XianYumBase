@@ -203,7 +203,6 @@ export default {
   },
   created() {
     this.queryParams.jobId = this.$route.params.jobId
-    console.log("获取的jobID参数："+this.queryParams.jobId)
     this.getList();
   },
   methods: {
@@ -227,6 +226,7 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.queryParams.jobId = undefined
       this.handleQuery();
     },
     // 多选框选中数据

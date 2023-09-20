@@ -11,9 +11,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  * @date 2020/11/3 19:26
  */
 public interface SystemConstantService {
-    SystemConstantEntity getPublicConstant(SystemConstantEntity request);
+    SystemConstantEntity getPublicConstant(String key);
 
-    SystemConstantEntity getPrivateConstant(SystemConstantEntity request);
+    SystemConstantEntity getPrivateConstant(String key);
 
     int update(SystemConstantRequest request);
 

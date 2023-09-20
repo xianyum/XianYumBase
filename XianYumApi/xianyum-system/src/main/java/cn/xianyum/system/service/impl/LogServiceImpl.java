@@ -89,10 +89,12 @@ public class LogServiceImpl implements LogService {
         Page<LogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
-        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+        if(!Objects.equals(SecurityUtils.getLoginUser().getPermission(),PermissionEnum.ADMIN.getStatus())){
             request.setUsername(SecurityUtils.getLoginUser().getUsername());
         }else{
-            request.setUsername(null);
+            if(StringUtil.isEmpty(request.getUsername())){
+                request.setUsername(null);
+            }
         }
         List<LogEntity> list = logMapper.queryAll(request, page);
         page.setRecords(list);
@@ -182,6 +184,11 @@ public class LogServiceImpl implements LogService {
             redisUtils.setDay(redisKey,count,16);
         }
         return count;
+    }
+
+    @Override
+    public void truncateLog() {
+        logMapper.truncateLog();
     }
 
 }

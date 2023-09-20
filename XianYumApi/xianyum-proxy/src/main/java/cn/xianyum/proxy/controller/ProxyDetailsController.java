@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 客户端配置详细接口
@@ -44,10 +41,9 @@ public class ProxyDetailsController {
      *
      */
     @ApiOperation(value = "客户端配置详细根据ID查询数据")
-    @PostMapping(value = "/getById")
-    public DataResult getById(@RequestBody ProxyDetailsRequest request) {
-
-        ProxyDetailsResponse response = proxyDetailsService.getById(request);
+    @GetMapping(value = "/getById/{id}")
+    public DataResult getById(@PathVariable String id) {
+        ProxyDetailsResponse response = proxyDetailsService.getById(id);
         return DataResult.success(response);
     }
 
@@ -71,7 +67,7 @@ public class ProxyDetailsController {
 	 *
      */
     @ApiOperation(value = "客户端配置详细修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     public DataResult update(@RequestBody ProxyDetailsRequest request) {
         ValidatorUtils.validateEntity(request);
 		Integer count = proxyDetailsService.update(request);
@@ -86,7 +82,7 @@ public class ProxyDetailsController {
 	 *
      */
     @ApiOperation(value = "客户端配置详细删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     public DataResult delete(@RequestBody String[] ids) {
 
 		proxyDetailsService.deleteById(ids);

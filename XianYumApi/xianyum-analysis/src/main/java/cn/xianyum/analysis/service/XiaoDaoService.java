@@ -13,5 +13,5 @@ public interface XiaoDaoService {
 
     void push();
 
-    IPage<XiaoDaoEntity> queryAll(XiaoDaoRequest request);
+    IPage<XiaoDaoEntity> getPage(XiaoDaoRequest request);
 }

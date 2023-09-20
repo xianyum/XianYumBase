@@ -54,7 +54,7 @@ public class ProxyServiceImpl implements ProxyService {
 				.like(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
 				.like(StringUtil.isNotEmpty(request.getName()),"name",request.getName())
 				.orderByDesc("create_time")
-				.orderByDesc("id");
+				.orderByDesc("login_count");
 		IPage<ProxyEntity> pageResult = proxyMapper.selectPage(page,queryWrapper);
 
 		responseIPage.setTotal(pageResult.getTotal());
@@ -72,13 +72,13 @@ public class ProxyServiceImpl implements ProxyService {
 	}
 
 	@Override
-	public ProxyResponse getById(ProxyRequest request) {
+	public ProxyResponse getById(String id) {
 		SecurityUtils.allowAdminAuth();
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		ProxyEntity result = proxyMapper.selectById(request.getId());
+		ProxyEntity result = proxyMapper.selectById(id);
 		ProxyResponse response = BeanUtils.copy(result, ProxyResponse.class);
 		return response;
 
@@ -203,7 +203,7 @@ public class ProxyServiceImpl implements ProxyService {
 	}
 
 	@Override
-	public List<ProxyResponse> getList(ProxyRequest request) {
+	public List<ProxyResponse> getList() {
 
 		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
 			return null;
@@ -284,13 +284,10 @@ public class ProxyServiceImpl implements ProxyService {
 	}
 
 	@Override
-	public String sendEmail(ProxyRequest request) {
+	public String sendEmail(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
-			throw new SoException("客户端授权码不能为空！");
-		}
 
-		ProxyEntity proxyEntity = proxyMapper.selectById(request.getId());
+		ProxyEntity proxyEntity = proxyMapper.selectById(id);
 		if(proxyEntity == null){
 			throw new SoException("客户端授权信息不存在！");
 		}
@@ -306,15 +303,11 @@ public class ProxyServiceImpl implements ProxyService {
 	}
 
 	@Override
-	public String downloadConfig(ProxyRequest request) {
+	public String downloadConfig(String id) {
 
 		SecurityUtils.allowAdminAuth();
 
-		if(StringUtil.isEmpty(request.getId())){
-			throw new SoException("客户端授权码不能为空！");
-		}
-
-		ProxyEntity proxyEntity = proxyMapper.selectById(request.getId());
+		ProxyEntity proxyEntity = proxyMapper.selectById(id);
 		if(proxyEntity == null){
 			throw new SoException("客户端授权信息不存在！");
 		}

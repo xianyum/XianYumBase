@@ -41,9 +41,9 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     private String systemConstantPrefix;
 
     @Override
-    public SystemConstantEntity getPublicConstant(SystemConstantEntity request) {
+    public SystemConstantEntity getPublicConstant(String key) {
 
-        SystemConstantEntity systemConstantEntity = getByKey(request.getConstantKey());
+        SystemConstantEntity systemConstantEntity = getByKey(key);
         if(systemConstantEntity != null && 0 == systemConstantEntity.getConstantVisible()){
             return systemConstantEntity;
         }
@@ -51,8 +51,8 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     }
 
     @Override
-    public SystemConstantEntity getPrivateConstant(SystemConstantEntity request) {
-        return getByKey(request.getConstantKey());
+    public SystemConstantEntity getPrivateConstant(String key) {
+        return getByKey(key);
     }
 
     @Override

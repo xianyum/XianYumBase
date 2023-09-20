@@ -64,14 +64,14 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	}
 
 	@Override
-	public ProxyDetailsResponse getById(ProxyDetailsRequest request) {
+	public ProxyDetailsResponse getById(String id) {
 
 		SecurityUtils.allowAdminAuth();
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		ProxyDetailsEntity result = proxyDetailsMapper.selectById(request.getId());
+		ProxyDetailsEntity result = proxyDetailsMapper.selectById(id);
 		ProxyDetailsResponse response = BeanUtils.copy(result, ProxyDetailsResponse.class);
 		return response;
 
