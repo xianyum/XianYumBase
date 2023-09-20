@@ -40,12 +40,12 @@ public class JobLogServiceImpl implements JobLogService {
 	}
 
 	@Override
-	public JobLogResponse getById(JobLogRequest request) {
+	public JobLogResponse getById(Long id) {
 
-		if(null == request.getId()){
+		if(null == id){
 			throw new SoException("id不能为空");
 		}
-		JobLogEntity result = jobLogMapper.selectById(request.getId());
+		JobLogEntity result = jobLogMapper.selectById(id);
 		JobLogResponse response = BeanUtils.copy(result, JobLogResponse.class);
 		return response;
 
@@ -82,7 +82,7 @@ public class JobLogServiceImpl implements JobLogService {
 	}
 
 	@Override
-	public void truncateLog(JobLogRequest request) {
+	public void truncateLog() {
 		jobLogMapper.truncateLog();
 	}
 

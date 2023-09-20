@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.List;
@@ -108,7 +105,7 @@ public class MessageTypeConfigController {
      *
      */
     @ApiOperation(value = "消息类型配置查询全量数据")
-    @PostMapping(value = "/getList")
+    @GetMapping(value = "/getList")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getList() {
         List<MessageTypeConfigResponse> responseList = messageTypeConfigService.getList();

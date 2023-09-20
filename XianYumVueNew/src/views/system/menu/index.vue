@@ -65,17 +65,17 @@
 <!--      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>-->
       <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="status" label="状态" width="80">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button
             size="mini"
             type="text"
@@ -347,10 +347,8 @@ export default {
       };
     },
     /** 查询菜单下拉树结构 */
-    getTreeselect() {
-      this.form = {
-        "pageSize":10000
-      }
+    getTreeSelect() {
+      this.form.pageSize = 5000
       listMenu(this.form).then(response => {
         this.menuOptions = [];
         const menu = { menuId: 0, menuName: '主类目', children: [] };
@@ -391,7 +389,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.reset();
-      this.getTreeselect();
+      this.getTreeSelect();
       if (row != null && row.menuId) {
         this.form.parentId = row.menuId;
       } else {
@@ -411,7 +409,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      this.getTreeselect();
+      this.getTreeSelect();
       getMenu(row.menuId).then(response => {
         this.form = response.data;
         this.open = true;

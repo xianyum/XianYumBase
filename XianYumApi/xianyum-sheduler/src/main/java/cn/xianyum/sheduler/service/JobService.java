@@ -9,7 +9,7 @@ public interface JobService {
 
 	IPage<JobResponse> getPage(JobRequest request);
 
-	JobResponse getById(JobRequest request);
+	JobResponse getById(Long jobId);
 
 	Integer save(JobRequest request) throws SchedulerException;
 
@@ -44,4 +44,10 @@ public interface JobService {
 	 * @param jobHandler
 	 */
 	void checkJobHandler(String jobHandler);
+
+	/**
+	 * 校验jobParams是否为json类型
+	 * @param jobParams
+	 */
+	void checkJobParams(String jobParams);
 }

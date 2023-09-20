@@ -121,4 +121,11 @@ public class Jvm {
     {
         return DateUtils.getDatePoor(new Date(), DateUtils.getServerStartDate());
     }
+
+    /**
+     * 运行参数
+     */
+    public String getInputArgs() {
+        return ManagementFactory.getRuntimeMXBean().getInputArguments().toString();
+    }
 }

@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-// 获取服务信息
-export function getServer() {
+
+export function getMessageTypeList() {
   return request({
-    url: 'server/get',
+    url: '/v1/messageTypeConfig/getList',
     method: 'get'
   })
 }

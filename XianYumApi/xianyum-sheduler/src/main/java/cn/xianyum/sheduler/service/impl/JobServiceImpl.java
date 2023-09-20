@@ -11,6 +11,7 @@ import cn.xianyum.sheduler.entity.po.JobEntity;
 import cn.xianyum.sheduler.entity.request.JobRequest;
 import cn.xianyum.sheduler.entity.response.JobResponse;
 import cn.xianyum.sheduler.service.JobService;
+import com.alibaba.fastjson.JSONObject;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -67,12 +68,12 @@ public class JobServiceImpl implements JobService {
 	}
 
 	@Override
-	public JobResponse getById(JobRequest request) {
+	public JobResponse getById(Long jobId) {
 
-		if(null == request.getJobId()){
+		if(null == jobId){
 			throw new SoException("id不能为空");
 		}
-		JobEntity result = jobMapper.selectById(request.getJobId());
+		JobEntity result = jobMapper.selectById(jobId);
 		JobResponse response = BeanUtils.copy(result, JobResponse.class);
 		if(response != null){
 			response.setNextValidTime(CronUtils.getNextExecution(response.getCronExpression()));
@@ -88,6 +89,7 @@ public class JobServiceImpl implements JobService {
 			throw new SoException("定时任务名称不能为空！");
 		}
 		this.checkJobHandler(request.getJobHandler());
+		this.checkJobParams(request.getJobParams());
 		if (!CronUtils.isValid(request.getCronExpression())) {
 			throw new SoException("新增任务'" + request.getJobName() + "'失败，Cron表达式不正确！");
 		}
@@ -115,6 +117,7 @@ public class JobServiceImpl implements JobService {
 			throw new SoException("新增任务'" + request.getJobName() + "'失败，Cron表达式不正确！");
 		}
 		this.checkJobHandler(request.getJobHandler());
+		this.checkJobParams(request.getJobParams());
 		JobEntity bean = BeanUtils.copy(request,JobEntity.class);
 		int rows = jobMapper.updateById(bean);
 		if(rows > 0){
@@ -205,7 +208,7 @@ public class JobServiceImpl implements JobService {
 		}
 		JobEntity properties = jobMapper.selectById(jobId);
 		if(Objects.isNull(properties)){
-			throw new SoException("定时任务不存在！");
+			throw new SoException("定时任务不存在");
 		}
 		// 参数
 		JobDataMap dataMap = new JobDataMap();
@@ -230,6 +233,22 @@ public class JobServiceImpl implements JobService {
 		}
 		if(!(iJobHandler instanceof IJobHandler)){
 			throw new SoException("jobHandler not implements IJobHandler interface methods.");
+		}
+	}
+
+	/**
+	 * 校验jobParams是否为json类型
+	 *
+	 * @param jobParams
+	 */
+	@Override
+	public void checkJobParams(String jobParams) {
+		if(StringUtil.isNotEmpty(jobParams)){
+			try {
+				JSONObject.parseObject(jobParams);
+			}catch (Exception e){
+				throw new SoException("任务参数必须是JSON类型");
+			}
 		}
 	}
 

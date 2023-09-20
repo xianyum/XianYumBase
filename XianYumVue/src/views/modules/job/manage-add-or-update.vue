@@ -161,7 +161,7 @@ export default {
         data: this.$http.adornData({})
       }).then(({data}) => {
         if (data && data.code === 200) {
-          this.messageTypeList = data.data
+            this.messageTypeList = data.data
         }
       })
     },

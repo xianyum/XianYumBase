@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -46,10 +43,10 @@ public class JobLogController {
      *
      */
     @ApiOperation(value = "定时任务调度日志表根据ID查询数据")
-    @PostMapping(value = "/getById")
-    public DataResult getById(@RequestBody JobLogRequest request) {
+    @GetMapping(value = "/getById/{id}")
+    public DataResult getById(@PathVariable Long id) {
 
-        JobLogResponse response = jobLogService.getById(request);
+        JobLogResponse response = jobLogService.getById(id);
         return DataResult.success(response);
     }
 
@@ -58,11 +55,10 @@ public class JobLogController {
      *
      */
     @ApiOperation(value = "清空日志")
-    @PostMapping(value = "/truncateLog")
+    @DeleteMapping(value = "/truncateLog")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult truncateLog(@RequestBody JobLogRequest request) {
-
-        jobLogService.truncateLog(request);
+    public DataResult truncateLog() {
+        jobLogService.truncateLog();
         return DataResult.success();
     }
 
@@ -71,7 +67,7 @@ public class JobLogController {
 	 *
      */
     @ApiOperation(value = "定时任务调度日志表删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 

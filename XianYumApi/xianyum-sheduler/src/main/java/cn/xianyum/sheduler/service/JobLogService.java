@@ -8,7 +8,7 @@ public interface JobLogService {
 
 	IPage<JobLogResponse> getPage(JobLogRequest request);
 
-	JobLogResponse getById(JobLogRequest request);
+	JobLogResponse getById(Long id);
 
 	Integer save(JobLogRequest request);
 
@@ -20,5 +20,5 @@ public interface JobLogService {
 	 * 清空日志
 	 * @param request
 	 */
-	void truncateLog(JobLogRequest request);
+	void truncateLog();
 }

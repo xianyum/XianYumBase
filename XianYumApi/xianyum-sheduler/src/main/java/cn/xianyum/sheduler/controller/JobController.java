@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -47,10 +44,10 @@ public class JobController {
      *
      */
     @ApiOperation(value = "定时任务调度表根据ID查询数据")
-    @PostMapping(value = "/getById")
+    @GetMapping(value = "/getById/{jobId}")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@RequestBody JobRequest request) {
-        JobResponse response = jobService.getById(request);
+    public DataResult getById(@PathVariable Long jobId){
+        JobResponse response = jobService.getById(jobId);
         return DataResult.success(response);
     }
 
@@ -79,7 +76,7 @@ public class JobController {
 	 *
      */
     @ApiOperation(value = "定时任务调度表修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody JobRequest request) {
 
@@ -99,7 +96,7 @@ public class JobController {
 	 *
      */
     @ApiOperation(value = "定时任务调度表删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody Long[] ids) {
         try {
@@ -116,7 +113,7 @@ public class JobController {
      *
      */
     @ApiOperation(value = "更新任务状态")
-    @PostMapping(value = "/changeStatus")
+    @PutMapping(value = "/changeStatus")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult changeStatus(@RequestBody JobRequest request) {
         try {
@@ -133,7 +130,7 @@ public class JobController {
      * @return
      */
     @ApiOperation(value = "立即执行一次")
-    @PostMapping(value = "/runOnce")
+    @PutMapping(value = "/runOnce")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult runOnce(@RequestBody JobRequest request) {
         try {
