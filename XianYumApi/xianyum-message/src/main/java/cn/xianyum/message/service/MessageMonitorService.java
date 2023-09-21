@@ -18,4 +18,6 @@ public interface MessageMonitorService {
 	void deleteById(String[] ids);
 
 	void insertMessageLog(String mId, String toUser,MessageSenderEntity messageSender, String sendResult);
+
+	void truncate();
 }

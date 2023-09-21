@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import java.util.Objects;
+
 @Service
 @Slf4j
 public class MessageMonitorServiceImpl implements MessageMonitorService {
@@ -40,8 +42,8 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 				.like(StringUtil.isNotEmpty(request.getMessageCode()),"message_code",request.getMessageCode())
 				.like(StringUtil.isNotEmpty(request.getMessageTitle()),"message_title",request.getMessageTitle())
 				.like(StringUtil.isNotEmpty(request.getMessageContent()),"message_content",request.getMessageContent())
-				.gt(null != request.getStartTime(),"create_time",request.getStartTime())
-				.lt(null != request.getEndTime(),"create_time",request.getEndTime())
+				.gt(Objects.nonNull(request.getParams().get("beginTime")),"create_time",request.getParams().get("beginTime"))
+				.lt(Objects.nonNull(request.getParams().get("endTime")),"create_time",request.getParams().get("endTime"))
 				.orderByDesc("create_time");;
 		IPage<MessageMonitorEntity> pageResult = messageMonitorMapper.selectPage(page,queryWrapper);
 		IPage<MessageMonitorResponse> responseIPage = new Page<>();
@@ -107,6 +109,11 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 		messageMonitorMapper.insert(bean);
 
 		messageTypeConfigService.updateSendCount(messageCode);
+	}
+
+	@Override
+	public void truncate() {
+		messageMonitorMapper.truncate();
 	}
 
 }

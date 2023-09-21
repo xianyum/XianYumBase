@@ -21,7 +21,7 @@ public class XiaoDaoController {
 
     @Autowired
     private XiaoDaoService xiaoDaoService;
-    
+
     @GetMapping("/getPage")
     @ApiOperation(value = "获取小刀数据列表")
     public DataResult getPage(XiaoDaoRequest request){

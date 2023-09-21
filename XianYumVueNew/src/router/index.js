@@ -47,13 +47,9 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/checkAliLogin',
-    component: () => import('@/views/checkAliLogin'),
-    hidden: true
-  },
-  {
-    path: '/checkQQLogin',
-    component: () => import('@/views/checkQQLogin'),
+    // 三方登录路由地址
+    path: '/thirdLogin',
+    component: () => import('@/views/thirdLogin'),
     hidden: true
   },
   {

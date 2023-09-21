@@ -36,8 +36,4 @@ public class MessageMonitorRequest extends BaseRequest {
     /** 发送时间 */
     private Date createTime;
 
-    private Date startTime;
-
-    private Date endTime;
-
 }

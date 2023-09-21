@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -34,9 +31,9 @@ public class MessageMonitorController {
      *
      */
 	@ApiOperation(value = "消息监控分页查询数据")
-	@PostMapping(value = "/getPage")
+	@GetMapping(value = "/getPage")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(@RequestBody MessageMonitorRequest request) {
+	public DataResult getPage(MessageMonitorRequest request) {
 
 		IPage<MessageMonitorResponse> response = messageMonitorService.getPage(request);
         return DataResult.success(response);
@@ -90,12 +87,23 @@ public class MessageMonitorController {
 	 *
      */
     @ApiOperation(value = "消息监控删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
-
 		messageMonitorService.deleteById(ids);
 	    return DataResult.success();
     }
 
+
+    /**
+     * 清空监控删除数据
+     *
+     */
+    @ApiOperation(value = "清空监控删除数据")
+    @DeleteMapping(value = "/truncate")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    public DataResult truncate() {
+        messageMonitorService.truncate();
+        return DataResult.success();
+    }
 }

@@ -3,6 +3,7 @@ package cn.xianyum.common.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -16,5 +17,5 @@ public class BaseRequest {
     public Integer pageSize;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, Object> params;
+    private Map<String, Object> params = new HashMap<>();
 }

@@ -151,6 +151,7 @@ public class MenuServiceImpl implements MenuService {
         if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !StringUtil.ishttp(menuEntity.getPath())) {
             throw new SoException("新增菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
+        menuEntity.setCreateTime(new Date());
         return menuMapper.insert(menuEntity);
     }
 

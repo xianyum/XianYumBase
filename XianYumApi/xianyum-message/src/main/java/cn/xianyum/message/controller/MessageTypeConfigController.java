@@ -106,7 +106,6 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置查询全量数据")
     @GetMapping(value = "/getList")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getList() {
         List<MessageTypeConfigResponse> responseList = messageTypeConfigService.getList();
         return DataResult.success(responseList);
