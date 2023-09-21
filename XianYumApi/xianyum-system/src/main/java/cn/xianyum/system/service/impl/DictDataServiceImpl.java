@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.po.DictTypeEntity;
@@ -47,11 +48,14 @@ public class DictDataServiceImpl implements DictDataService {
     @Override
     public int save(DictDataEntity dict) {
         dict.setCreateTime(new Date());
+        dict.setCreateBy(SecurityUtils.getLoginUser().getUsername());
         return dictDataMapper.insert(dict);
     }
 
     @Override
     public int update(DictDataEntity dict) {
+        dict.setUpdateTime(new Date());
+        dict.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
         return dictDataMapper.updateById(dict);
     }
 

@@ -43,7 +43,10 @@ public class DictDataEntity {
     /** 状态（0正常 1停用） */
     private String status;
 
-    private Date createTime;
-
     private String remark;
+
+    private Date createTime;
+    private String createBy;
+    private Date updateTime;
+    private String updateBy;
 }
