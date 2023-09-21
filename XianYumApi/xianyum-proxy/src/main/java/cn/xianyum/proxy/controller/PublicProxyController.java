@@ -2,13 +2,18 @@ package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.enums.PermissionStrategy;
+import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.proxy.service.ProxyService;
+import cn.xianyum.proxy.task.ProxyDetailsFlushWriteAndReadBytes;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author zhangwei
@@ -22,13 +27,15 @@ public class PublicProxyController {
 
 
     @Autowired
-    private ProxyService proxyService;
+    private ProxyDetailsFlushWriteAndReadBytes proxyDetailsFlushWriteAndReadBytes;
 
     @ApiOperation(value = "刷入系统")
     @GetMapping(value = "/flushProxy")
     @Permissions(strategy = PermissionStrategy.ALLOW_CLIENT)
-    public DataResult flushProxy() {
-        proxyService.flushProxy();
-        return DataResult.success();
+    public DataResult flushProxy() throws Exception {
+        Map<String, String> jobMapParams = new HashMap<>();
+        jobMapParams.put("resetZeroFlag","Y");
+        ReturnT returnT = proxyDetailsFlushWriteAndReadBytes.execute(jobMapParams,null);
+        return DataResult.success(returnT.getValue());
     }
 }
