@@ -12,10 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -39,9 +36,9 @@ public class MessageConfigWechatController {
      *
      */
 	@ApiOperation(value = "账户配置wechat分页查询数据")
-	@PostMapping(value = "/getPage")
+	@GetMapping(value = "/getPage")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(@RequestBody MessageConfigWechatRequest request) {
+	public DataResult getPage(MessageConfigWechatRequest request) {
 
 		IPage<MessageConfigWechatResponse> response = messageConfigWechatService.getPage(request);
         return DataResult.success(response);
@@ -52,11 +49,10 @@ public class MessageConfigWechatController {
      *
      */
     @ApiOperation(value = "账户配置wechat根据ID查询数据")
-    @PostMapping(value = "/getById")
+    @GetMapping(value = "/getById/{id}")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@RequestBody MessageConfigWechatRequest request) {
-
-        MessageConfigWechatResponse response = messageConfigWechatService.getById(request);
+    public DataResult getById(@PathVariable String id) {
+        MessageConfigWechatResponse response = messageConfigWechatService.getById(id);
         return DataResult.success(response);
     }
 
@@ -81,7 +77,7 @@ public class MessageConfigWechatController {
 	 *
      */
     @ApiOperation(value = "账户配置wechat修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageConfigWechatRequest request) {
 
@@ -97,7 +93,7 @@ public class MessageConfigWechatController {
 	 *
      */
     @ApiOperation(value = "账户配置wechat删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
@@ -110,7 +106,7 @@ public class MessageConfigWechatController {
      *
      */
     @ApiOperation(value = "企业微信账户测试发送")
-    @PostMapping(value = "/sendWechat")
+    @PutMapping(value = "/sendWechat")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult sendWechat(@RequestBody MessageSenderEntity request) {
         try {

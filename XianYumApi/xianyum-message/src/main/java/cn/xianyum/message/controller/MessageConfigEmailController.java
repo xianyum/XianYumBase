@@ -12,10 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -39,9 +36,9 @@ public class MessageConfigEmailController {
      *
      */
 	@ApiOperation(value = "账户配置email分页查询数据")
-	@PostMapping(value = "/getPage")
+	@GetMapping(value = "/getPage")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(@RequestBody MessageConfigEmailRequest request) {
+	public DataResult getPage(MessageConfigEmailRequest request) {
 
 		IPage<MessageConfigEmailResponse> response = messageConfigEmailService.getPage(request);
         return DataResult.success(response);
@@ -52,11 +49,11 @@ public class MessageConfigEmailController {
      *
      */
     @ApiOperation(value = "账户配置email根据ID查询数据")
-    @PostMapping(value = "/getById")
+    @PostMapping(value = "/getById/{id}")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@RequestBody MessageConfigEmailRequest request) {
+    public DataResult getById(@PathVariable String id) {
 
-        MessageConfigEmailResponse response = messageConfigEmailService.getById(request);
+        MessageConfigEmailResponse response = messageConfigEmailService.getById(id);
         return DataResult.success(response);
     }
 
@@ -81,7 +78,7 @@ public class MessageConfigEmailController {
 	 *
      */
     @ApiOperation(value = "账户配置email修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageConfigEmailRequest request) {
 
@@ -97,7 +94,7 @@ public class MessageConfigEmailController {
 	 *
      */
     @ApiOperation(value = "账户配置email删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
@@ -110,7 +107,7 @@ public class MessageConfigEmailController {
      *
      */
     @ApiOperation(value = "邮箱账户测试发送")
-    @PostMapping(value = "/sendEmail")
+    @PutMapping(value = "/sendEmail")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult sendEmail(@RequestBody MessageSenderEntity request) {
         try {

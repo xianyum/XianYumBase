@@ -55,16 +55,22 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
-      <el-table-column prop="icon" label="图标" align="center" width="100">
-        <template slot-scope="scope">
+      <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="180"></el-table-column>
+      <el-table-column prop="icon" label="图标" align="center" >
+        <template v-slot="scope">
           <svg-icon :icon-class="scope.row.icon" />
         </template>
       </el-table-column>
-      <el-table-column prop="orderNum" label="排序" width="60"></el-table-column>
-<!--      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>-->
+      <el-table-column prop="menuType" label="类型">
+        <template v-slot="scope">
+          <div v-if="scope.row.menuType === 'M'" size="small" type="danger">目录</div>
+          <div v-else-if="scope.row.menuType === 'C'" size="small">菜单</div>
+          <div v-else-if="scope.row.menuType === 'F'" size="small">按钮</div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="orderNum" label="排序" ></el-table-column>
       <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
-      <el-table-column prop="status" label="状态" width="80">
+      <el-table-column prop="status" label="状态">
         <template v-slot="scope">
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>

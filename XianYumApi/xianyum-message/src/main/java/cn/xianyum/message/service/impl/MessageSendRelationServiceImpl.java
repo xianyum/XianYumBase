@@ -93,12 +93,12 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 	}
 
 	@Override
-	public MessageSendRelationResponse getById(MessageSendRelationRequest request) {
+	public MessageSendRelationResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageSendRelationEntity result = messageSendRelationMapper.selectById(request.getId());
+		MessageSendRelationEntity result = messageSendRelationMapper.selectById(id);
 		MessageSendRelationResponse response = BeanUtils.copy(result, MessageSendRelationResponse.class);
 		return response;
 

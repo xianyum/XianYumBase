@@ -11,10 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -35,9 +32,9 @@ public class MessageSendConfigController {
      *
      */
 	@ApiOperation(value = "消息发送配置分页查询数据")
-	@PostMapping(value = "/getPage")
+	@GetMapping(value = "/getPage")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(@RequestBody MessageSendConfigRequest request) {
+	public DataResult getPage(MessageSendConfigRequest request) {
 
 		IPage<MessageSendConfigResponse> response = messageSendConfigService.getPage(request);
         return DataResult.success(response);
@@ -48,11 +45,10 @@ public class MessageSendConfigController {
      *
      */
     @ApiOperation(value = "消息发送配置根据ID查询数据")
-    @PostMapping(value = "/getById")
+    @GetMapping(value = "/getById/{id}")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@RequestBody MessageSendConfigRequest request) {
-
-        MessageSendConfigResponse response = messageSendConfigService.getById(request);
+    public DataResult getById(@PathVariable String id) {
+        MessageSendConfigResponse response = messageSendConfigService.getById(id);
         return DataResult.success(response);
     }
 
@@ -77,7 +73,7 @@ public class MessageSendConfigController {
 	 *
      */
     @ApiOperation(value = "消息发送配置修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageSendConfigRequest request) {
 
@@ -93,7 +89,7 @@ public class MessageSendConfigController {
 	 *
      */
     @ApiOperation(value = "消息发送配置删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 

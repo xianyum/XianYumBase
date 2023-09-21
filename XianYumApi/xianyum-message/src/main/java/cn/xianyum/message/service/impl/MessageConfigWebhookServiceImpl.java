@@ -49,12 +49,12 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 	}
 
 	@Override
-	public MessageConfigWebhookResponse getById(MessageConfigWebhookRequest request) {
+	public MessageConfigWebhookResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageConfigWebhookEntity result = messageConfigWebhookMapper.selectById(request.getId());
+		MessageConfigWebhookEntity result = messageConfigWebhookMapper.selectById(id);
 		MessageConfigWebhookResponse response = BeanUtils.copy(result, MessageConfigWebhookResponse.class);
 		return response;
 

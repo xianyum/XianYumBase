@@ -58,12 +58,12 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 	}
 
 	@Override
-	public MessageSendConfigResponse getById(MessageSendConfigRequest request) {
+	public MessageSendConfigResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageSendConfigEntity result = messageSendConfigMapper.selectById(request.getId());
+		MessageSendConfigEntity result = messageSendConfigMapper.selectById(id);
 		MessageSendConfigResponse response = BeanUtils.copy(result, MessageSendConfigResponse.class);
 		return response;
 

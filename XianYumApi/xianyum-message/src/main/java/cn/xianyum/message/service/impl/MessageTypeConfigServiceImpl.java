@@ -45,12 +45,12 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 	}
 
 	@Override
-	public MessageTypeConfigResponse getById(MessageTypeConfigRequest request) {
+	public MessageTypeConfigResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageTypeConfigEntity result = messageTypeConfigMapper.selectById(request.getId());
+		MessageTypeConfigEntity result = messageTypeConfigMapper.selectById(id);
 		MessageTypeConfigResponse response = BeanUtils.copy(result, MessageTypeConfigResponse.class);
 		return response;
 

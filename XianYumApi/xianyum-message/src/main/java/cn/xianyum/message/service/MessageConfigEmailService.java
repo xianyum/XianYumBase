@@ -9,7 +9,7 @@ public interface MessageConfigEmailService {
 
 	IPage<MessageConfigEmailResponse> getPage(MessageConfigEmailRequest request);
 
-	MessageConfigEmailResponse getById(MessageConfigEmailRequest request);
+	MessageConfigEmailResponse getById(String id);
 
 	Integer save(MessageConfigEmailRequest request);
 

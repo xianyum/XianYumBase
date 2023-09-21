@@ -11,7 +11,7 @@ public interface MessageTypeConfigService {
 
 	IPage<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request);
 
-	MessageTypeConfigResponse getById(MessageTypeConfigRequest request);
+	MessageTypeConfigResponse getById(String id);
 
 	Integer save(MessageTypeConfigRequest request);
 

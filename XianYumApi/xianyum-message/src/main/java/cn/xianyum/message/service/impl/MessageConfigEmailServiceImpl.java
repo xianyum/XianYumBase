@@ -48,12 +48,12 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	}
 
 	@Override
-	public MessageConfigEmailResponse getById(MessageConfigEmailRequest request) {
+	public MessageConfigEmailResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageConfigEmailEntity result = messageConfigEmailMapper.selectById(request.getId());
+		MessageConfigEmailEntity result = messageConfigEmailMapper.selectById(id);
 		MessageConfigEmailResponse response = BeanUtils.copy(result, MessageConfigEmailResponse.class);
 		return response;
 

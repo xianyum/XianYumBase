@@ -33,9 +33,9 @@ public class MessageTypeConfigController {
      *
      */
 	@ApiOperation(value = "消息类型配置表分页查询数据")
-	@PostMapping(value = "/getPage")
+	@GetMapping(value = "/getPage")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(@RequestBody MessageTypeConfigRequest request) {
+	public DataResult getPage(MessageTypeConfigRequest request) {
 
 		IPage<MessageTypeConfigResponse> response = messageTypeConfigService.getPage(request);
         return DataResult.success(response);
@@ -46,11 +46,11 @@ public class MessageTypeConfigController {
      *
      */
     @ApiOperation(value = "消息类型配置表根据ID查询数据")
-    @PostMapping(value = "/getById")
+    @GetMapping(value = "/getById/{id}")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@RequestBody MessageTypeConfigRequest request) {
+    public DataResult getById(@PathVariable String id) {
 
-        MessageTypeConfigResponse response = messageTypeConfigService.getById(request);
+        MessageTypeConfigResponse response = messageTypeConfigService.getById(id);
         return DataResult.success(response);
     }
 
@@ -75,7 +75,7 @@ public class MessageTypeConfigController {
 	 *
      */
     @ApiOperation(value = "消息类型配置表修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageTypeConfigRequest request) {
 
@@ -91,7 +91,7 @@ public class MessageTypeConfigController {
 	 *
      */
     @ApiOperation(value = "消息类型配置表删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
@@ -101,7 +101,7 @@ public class MessageTypeConfigController {
 
 
     /**
-     * 消息类型配置表删除数据
+     * 消息类型配置查询全量数据
      *
      */
     @ApiOperation(value = "消息类型配置查询全量数据")

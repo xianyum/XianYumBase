@@ -47,12 +47,12 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	}
 
 	@Override
-	public MessageConfigWechatResponse getById(MessageConfigWechatRequest request) {
+	public MessageConfigWechatResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageConfigWechatEntity result = messageConfigWechatMapper.selectById(request.getId());
+		MessageConfigWechatEntity result = messageConfigWechatMapper.selectById(id);
 		MessageConfigWechatResponse response = BeanUtils.copy(result, MessageConfigWechatResponse.class);
 		return response;
 

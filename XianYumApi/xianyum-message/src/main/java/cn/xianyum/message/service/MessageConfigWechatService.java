@@ -9,7 +9,7 @@ public interface MessageConfigWechatService {
 
 	IPage<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request);
 
-	MessageConfigWechatResponse getById(MessageConfigWechatRequest request);
+	MessageConfigWechatResponse getById(String id);
 
 	Integer save(MessageConfigWechatRequest request);
 

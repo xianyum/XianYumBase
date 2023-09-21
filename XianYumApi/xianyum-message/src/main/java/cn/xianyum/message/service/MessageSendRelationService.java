@@ -16,7 +16,7 @@ public interface MessageSendRelationService {
 
     Integer update(MessageSendRelationRequest request);
 
-    MessageSendRelationResponse getById(MessageSendRelationRequest request);
+    MessageSendRelationResponse getById(String id);
 
     JSONArray getMessageConfigByAccountType(String messageConfigId, String messageAccountType);
 }
