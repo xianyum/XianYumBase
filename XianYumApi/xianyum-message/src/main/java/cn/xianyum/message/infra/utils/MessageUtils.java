@@ -43,6 +43,6 @@ public class MessageUtils {
      */
     public static String getFormUrl(String id){
         String webUrl = XianYumConfig.getXianYumConfig().getWebUrl();
-        return webUrl+"/#/messageDetail?messageId="+id;
+        return webUrl+"/messageDetail?messageId="+id;
     }
 }
