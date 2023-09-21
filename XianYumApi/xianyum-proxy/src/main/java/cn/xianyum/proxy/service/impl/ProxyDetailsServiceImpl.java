@@ -66,8 +66,6 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public ProxyDetailsResponse getById(String id) {
 
-		SecurityUtils.allowAdminAuth();
-
 		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
@@ -80,8 +78,6 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Integer save(ProxyDetailsRequest request) {
-
-		SecurityUtils.allowAdminAuth();
 
 		if(null == request.getInetPort()){
 			// 默认数据库最大端口+1，推荐使用这种方式
@@ -121,8 +117,6 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Transactional(rollbackFor = Exception.class)
 	public Integer update(ProxyDetailsRequest request) {
 
-		SecurityUtils.allowAdminAuth();
-
 		if(null == request.getInetPort()){
 			throw new SoException("公网端口不能为空");
 		}
@@ -151,8 +145,6 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 	@Override
 	public void deleteById(String[] ids) {
-
-		SecurityUtils.allowAdminAuth();
 
 		if(null == ids || ids.length == 0){
 			throw new SoException("id不能为空");

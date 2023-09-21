@@ -1,6 +1,8 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permissions;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
@@ -63,6 +65,7 @@ public class DictDataController {
     @PostMapping("/save")
     @ApiOperation(value = "新增字典数据")
     @SysLog(value = "新增字典数据")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
         return DataResult.success(count);
@@ -74,6 +77,7 @@ public class DictDataController {
     @PutMapping("/update")
     @ApiOperation(value = "修改字典数据")
     @SysLog(value = "修改字典数据")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
         return DataResult.success(count);
@@ -85,6 +89,7 @@ public class DictDataController {
     @DeleteMapping("/{ids}")
     @ApiOperation(value = "删除字典数据")
     @SysLog(value = "删除字典数据")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
         return DataResult.success();
