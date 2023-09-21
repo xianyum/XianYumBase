@@ -46,11 +46,10 @@ public class MessageSendRelationController {
 	 *
 	 */
 	@ApiOperation(value = "发送配置关联表删除数据")
-	@DeleteMapping(value = "/delete")
+	@DeleteMapping(value = "/delete/{id}")
 	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult delete(@RequestBody MessageSendRelationRequest request) {
-
-		messageSendRelationService.deleteById(request.getId());
+	public DataResult delete(@PathVariable String id) {
+		messageSendRelationService.deleteById(id);
 		return DataResult.success();
 	}
 

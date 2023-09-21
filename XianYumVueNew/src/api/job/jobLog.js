@@ -2,11 +2,11 @@ import request from '@/utils/request'
 import data from '@/views/system/dict/data'
 
 // 查询调度日志列表
-export function listJobLog(data) {
+export function listJobLog(query) {
   return request({
     url: '/v1/jobLog/getPage',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: query
   })
 }
 

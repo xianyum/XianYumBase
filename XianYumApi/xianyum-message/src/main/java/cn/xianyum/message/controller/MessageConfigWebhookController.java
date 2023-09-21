@@ -49,7 +49,7 @@ public class MessageConfigWebhookController {
      *
      */
     @ApiOperation(value = "账户配置webhook根据ID查询数据")
-    @PostMapping(value = "/getById/{id}")
+    @GetMapping(value = "/getById/{id}")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@PathVariable String id) {
 

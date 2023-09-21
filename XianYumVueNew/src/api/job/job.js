@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 查询定时任务调度列表
-export function listJob(data) {
+export function listJob(query) {
   return request({
     url: '/v1/job/getPage',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: query
   })
 }
 

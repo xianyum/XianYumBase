@@ -22,7 +22,7 @@ import java.util.List;
  * @date 2019/6/20 14:16
  */
 @RestController
-@RequestMapping("/log")
+@RequestMapping("/v1/log")
 @Api(tags = "系统日志接口")
 public class LogController {
 
@@ -32,9 +32,9 @@ public class LogController {
     /**
      * 获取系统日志
      */
-    @PostMapping("/getPage")
+    @GetMapping("/getPage")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public DataResult list(@RequestBody LogRequest request){
+    public DataResult list(LogRequest request){
         IPage<LogEntity> list = logService.queryAll(request);
         return DataResult.success(list);
     }

@@ -31,9 +31,9 @@ public class JobController {
      *
      */
 	@ApiOperation(value = "定时任务调度表分页查询数据")
-	@PostMapping(value = "/getPage")
+	@GetMapping(value = "/getPage")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(@RequestBody JobRequest request) {
+	public DataResult getPage(JobRequest request) {
 
 		IPage<JobResponse> response = jobService.getPage(request);
         return DataResult.success(response);

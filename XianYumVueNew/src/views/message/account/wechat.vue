@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="83px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="消息编码" prop="messageCode">
         <el-input
           v-model="queryParams.messageCode"
@@ -9,10 +9,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="消息描述" prop="description">
+      <el-form-item label="配置描述" prop="description">
         <el-input
           v-model="queryParams.description"
-          placeholder="请输入消息描述"
+          placeholder="请输入配置描述"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -59,10 +59,10 @@
     <el-table v-loading="loading" :data="proxyList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" align="center" width="50" />
-      <el-table-column label="消息编码" align="center" prop="messageCode" />
-      <el-table-column label="类型描述" align="center" prop="description" />
-      <el-table-column label="发送量" align="center" prop="sendCount" />
-      <el-table-column label="类型描述" align="center" prop="description" />
+      <el-table-column label="配置描述" align="center" prop="description" />
+      <el-table-column label="企业ID" align="center" prop="corpId" />
+      <el-table-column label="应用ID" align="center" prop="agentId" />
+      <el-table-column label="应用秘钥" align="center" prop="corpSecret" :show-overflow-tooltip="true"/>
       <el-table-column label="创建日期" align="center" prop="createTime" width="180">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -70,6 +70,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template v-slot="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-flag"
+            @click="openSendWechatDrawer(scope.row)"
+          >测试</el-button>
           <el-button
             size="mini"
             type="text"
@@ -97,11 +103,17 @@
     <!-- 添加或修改客户端管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="95px">
-        <el-form-item label="消息编码" prop="messageCode">
-          <el-input v-model="form.messageCode" placeholder="请输入消息编码" />
+        <el-form-item label="配置描述" prop="description">
+          <el-input v-model="form.description" placeholder="请输入描述" />
         </el-form-item>
-        <el-form-item label="类型描述" prop="description">
-          <el-input v-model="form.description" placeholder="请输入类型描述" />
+        <el-form-item label="企业ID" prop="corpId">
+          <el-input v-model="form.corpId" placeholder="请输入企业ID" />
+        </el-form-item>
+        <el-form-item label="应用ID" prop="agentId">
+          <el-input v-model="form.agentId" placeholder="请输入应用ID" />
+        </el-form-item>
+        <el-form-item label="应用秘钥" prop="corpSecret">
+          <el-input v-model="form.corpSecret" placeholder="请输入应用秘钥"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -109,16 +121,52 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+<!--    微信账号发送测试-->
+    <el-drawer
+      title="微信账户发信测试"
+      :visible.sync="drawer"
+      :direction="direction">
+      <el-form :model="wechatForm" :rules="wechatFormRule" ref="wechatForm"
+               @keyup.enter.native="sendWechat()" label-width="120px" style="width: 85%">
+        <el-form-item label="消息编码" prop="messageCode">
+          <el-input v-model="wechatForm.messageCode" placeholder="消息编码"></el-input>
+        </el-form-item>
+        <el-form-item label="发送标题" prop="title">
+          <el-input v-model="wechatForm.title" placeholder="发送标题"></el-input>
+        </el-form-item>
+        <el-form-item label="发送内容" prop="content">
+          <el-input type="textarea" :rows="5" v-model="wechatForm.content" placeholder="发送内容"></el-input>
+        </el-form-item>
+        <el-form-item label="发送用户" prop="wechatToUser">
+          <el-input v-model="wechatForm.wechatToUser" placeholder="发送用户"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div style="position: absolute;bottom: 0;width: 100%;height: 100px;clear:both;">
+        <el-divider></el-divider>
+        <div style="float: right;padding-right:20px">
+          <el-button type="primary" :loading= 'sendWechatLoading' @click="sendWechat()">测试</el-button>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { getMessageTypeConfigPage, getMessageTypeConfigById, addMessageTypeConfig, updateMessageTypeConfig, delMessageTypeConfig } from '@/api/message/messageTypeConfig'
+import { getMessageWechatConfigPage,
+  getMessageWechatConfigById, addMessageWechatConfig,
+  updateMessageWechatConfig, delMessageWechatConfig,sendWechat} from '@/api/message/wechat'
+
+
 
 export default {
-  name: "Proxy",
+  name: "Wechat",
   data() {
     return {
+      sendWechatLoading: false,
+      drawer: false,
+      direction: 'rtl',
       // 遮罩层
       loading: true,
       // 选中数组
@@ -144,27 +192,69 @@ export default {
         messageCode: undefined,
         description: undefined
       },
+      wechatForm: {
+        wechatToUser: '',
+        title: '',
+        content: '',
+        messageConfigId: '',
+        messageCode: 'SYSTEM_TEST_NOTIFY'
+      },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        messageCode: [
-          {required: true, message: '消息编码名称不能为空', trigger: 'blur'}
+        corpId: [
+          {required: true, message: '企业id不能为空', trigger: 'blur'}
+        ],
+        corpSecret: [
+          {required: true, message: '应用秘钥不能为空', trigger: 'blur'}
+        ],
+        agentId: [
+          {required: true, message: '应用id不能为空', trigger: 'blur'}
         ],
         description: [
-          {required: true, message: '类型描述名称不能为空', trigger: 'blur'}
+          {required: true, message: '配置描述不能为空', trigger: 'blur'}
         ]
+      },
+      wechatFormRule: {
+        title: [
+          {required: true, message: '发送标题不能为空', trigger: 'blur'}
+        ],
+        content: [
+          {required: true, message: '发送内容不能为空', trigger: 'blur'}
+        ],
+        wechatToUser: [
+          {required: true, message: '发送用户不能为空', trigger: 'blur'}
+        ],
       }
-    };
+    }
   },
   created() {
     this.getList();
   },
   methods: {
+    sendWechat(){
+      this.$refs["wechatForm"].validate(valid => {
+        if(valid){
+          this.sendWechatLoading = true
+          sendWechat(this.wechatForm).then(res => {
+            this.$modal.msgSuccess("执行成功，请看收信");
+            this.sendWechatLoading = false
+          })
+        }
+      });
+    },
+    openSendWechatDrawer(row){
+      this.resetForm("wechatForm");
+      this.wechatForm.messageCode = 'SYSTEM_TEST_NOTIFY'
+      this.drawer = true
+      this.sendWechatLoading = false
+      this.wechatForm.messageConfigId = row.id
+    },
     /** 查询客户端管理列表 */
     getList() {
       this.loading = true;
-      getMessageTypeConfigPage(this.queryParams).then(response => {
+      getMessageWechatConfigPage(this.queryParams).then(response => {
         this.proxyList = response.data.records;
         this.total = response.data.total;
         this.loading = false;
@@ -179,7 +269,9 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        messageCode: undefined,
+        corpId: undefined,
+        corpSecret: undefined,
+        agentId: undefined,
         description: undefined
       };
       this.resetForm("form");
@@ -210,7 +302,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getMessageTypeConfigById(id).then(response => {
+      getMessageWechatConfigById(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改消息类型配置";
@@ -221,13 +313,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateMessageTypeConfig(this.form).then(response => {
+            updateMessageWechatConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addMessageTypeConfig(this.form).then(response => {
+            addMessageWechatConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -239,8 +331,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id ?[row.id] : this.ids;
-      this.$modal.confirm('是否确认删除消息类型配置数据？').then(function() {
-        return delMessageTypeConfig(ids);
+      this.$modal.confirm('是否确认删除企业微信配置数据？').then(function() {
+        return delMessageWechatConfig(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

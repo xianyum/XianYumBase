@@ -128,7 +128,20 @@ export const dynamicRoutes = [
         meta: { title: '字典数据', activeMenu: '/system/dict' }
       }
     ]
-  }
+  },
+  {
+    path: '',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/message/send-config/addOrUpdate',
+        component: () => import('@/views/message/sendConfigAddOrUpdate'),
+        name: 'SendConfigAddOrUpdate',
+        meta: { title: '消息发送配置', activeMenu: '/message/send-config' }
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

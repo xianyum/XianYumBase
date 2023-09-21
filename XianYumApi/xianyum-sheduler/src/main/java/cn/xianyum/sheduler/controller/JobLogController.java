@@ -32,8 +32,8 @@ public class JobLogController {
      *
      */
 	@ApiOperation(value = "定时任务调度日志表分页查询数据")
-	@PostMapping(value = "/getPage")
-	public DataResult getPage(@RequestBody JobLogRequest request) {
+	@GetMapping(value = "/getPage")
+	public DataResult getPage(JobLogRequest request) {
 
 		IPage<JobLogResponse> response = jobLogService.getPage(request);
         return DataResult.success(response);

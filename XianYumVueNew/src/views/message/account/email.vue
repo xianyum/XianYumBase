@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="83px">
-      <el-form-item label="消息编码" prop="messageCode">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="邮箱账号" prop="emailUserName">
         <el-input
-          v-model="queryParams.messageCode"
-          placeholder="请输入消息编码"
+          v-model="queryParams.emailUserName"
+          placeholder="请输入邮箱账号"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="消息描述" prop="description">
+      <el-form-item label="配置描述" prop="description">
         <el-input
           v-model="queryParams.description"
-          placeholder="请输入消息描述"
+          placeholder="请输入配置描述"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -59,10 +59,10 @@
     <el-table v-loading="loading" :data="proxyList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" align="center" width="50" />
-      <el-table-column label="消息编码" align="center" prop="messageCode" />
-      <el-table-column label="类型描述" align="center" prop="description" />
-      <el-table-column label="发送量" align="center" prop="sendCount" />
-      <el-table-column label="类型描述" align="center" prop="description" />
+      <el-table-column label="配置描述" align="center" prop="description" />
+      <el-table-column label="邮箱账号" align="center" prop="emailUserName" />
+      <el-table-column label="邮箱密码" align="center" prop="emailUserPassword" />
+      <el-table-column label="smtp地址" align="center" prop="emailSmtp"/>
       <el-table-column label="创建日期" align="center" prop="createTime" width="180">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -70,6 +70,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template v-slot="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-flag"
+            @click="openSendEmailDrawer(scope.row)"
+          >测试</el-button>
           <el-button
             size="mini"
             type="text"
@@ -97,28 +103,70 @@
     <!-- 添加或修改客户端管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="95px">
-        <el-form-item label="消息编码" prop="messageCode">
-          <el-input v-model="form.messageCode" placeholder="请输入消息编码" />
+        <el-form-item label="配置描述" prop="description">
+          <el-input v-model="form.description" placeholder="请输入配置描述" />
         </el-form-item>
-        <el-form-item label="类型描述" prop="description">
-          <el-input v-model="form.description" placeholder="请输入类型描述" />
+        <el-form-item label="邮箱账号" prop="emailUserName">
+          <el-input v-model="form.emailUserName" placeholder="请输入应用ID" />
         </el-form-item>
+        <el-form-item label="邮箱密码" prop="emailUserPassword">
+          <el-input v-model="form.emailUserPassword" placeholder="请输入应用秘钥"/>
+        </el-form-item>
+        <el-form-item label="smtp地址" prop="emailSmtp">
+          <el-input v-model="form.emailSmtp" placeholder="请输入smtp地址" />
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!--    测试发送-->
+    <el-drawer
+      title="邮箱账户发信测试"
+      :visible.sync="drawer"
+      :direction="direction">
+      <el-form :model="emailForm" :rules="emailFormRule" ref="emailForm"
+               @keyup.enter.native="sendEmail()" label-width="120px" style="width: 85%">
+        <el-form-item label="消息编码" prop="messageCode">
+          <el-input v-model="emailForm.messageCode" placeholder="消息编码"></el-input>
+        </el-form-item>
+        <el-form-item label="发送标题" prop="title">
+          <el-input v-model="emailForm.title" placeholder="发送标题"></el-input>
+        </el-form-item>
+        <el-form-item label="发送内容" prop="content">
+          <el-input type="textarea" :rows="5" v-model="emailForm.content" placeholder="发送内容"></el-input>
+        </el-form-item>
+        <el-form-item label="发送用户" prop="emailToUser">
+          <el-input v-model="emailForm.emailToUser" placeholder="发送用户"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div style="position: absolute;bottom: 0;width: 100%;height: 100px;clear:both;">
+        <el-divider></el-divider>
+        <div style="float: right;padding-right:20px">
+          <el-button type="primary" :loading= 'sendEmailLoading' @click="sendEmail()">测试</el-button>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { getMessageTypeConfigPage, getMessageTypeConfigById, addMessageTypeConfig, updateMessageTypeConfig, delMessageTypeConfig } from '@/api/message/messageTypeConfig'
+import { getMessageEmailConfigPage,
+  getMessageEmailConfigById, addMessageEmailConfig,
+  updateMessageEmailConfig, delMessageEmailConfig,sendEmail } from '@/api/message/email'
+
 
 export default {
-  name: "Proxy",
+  name: "Email",
   data() {
     return {
+      sendEmailLoading: false,
+      drawer: false,
+      direction: 'rtl',
       // 遮罩层
       loading: true,
       // 选中数组
@@ -141,18 +189,45 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        messageCode: undefined,
+        emailUserName: undefined,
         description: undefined
+      },
+      emailForm: {
+        emailToUser: '',
+        title: '',
+        content: '',
+        messageConfigId: '',
+        messageCode: 'SYSTEM_TEST_NOTIFY'
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        messageCode: [
-          {required: true, message: '消息编码名称不能为空', trigger: 'blur'}
+        emailSmtp: [
+          {required: true, message: 'smtp地址不能为空', trigger: 'blur'}
+        ],
+        emailUserName: [
+          {required: true, message: '邮箱账号不能为空', trigger: 'blur'}
+        ],
+        emailUserPassword: [
+          {required: true, message: '邮箱密码不能为空', trigger: 'blur'}
         ],
         description: [
-          {required: true, message: '类型描述名称不能为空', trigger: 'blur'}
+          {required: true, message: '配置描述不能为空', trigger: 'blur'}
+        ]
+      },
+      emailFormRule: {
+        title: [
+          {required: true, message: '发送标题不能为空', trigger: 'blur'}
+        ],
+        content: [
+          {required: true, message: '发送内容不能为空', trigger: 'blur'}
+        ],
+        emailToUser: [
+          {required: true, message: '发送用户不能为空', trigger: 'blur'}
+        ],
+        messageCode: [
+          {required: true, message: '消息编码不能为空', trigger: 'blur'}
         ]
       }
     };
@@ -161,10 +236,28 @@ export default {
     this.getList();
   },
   methods: {
+    sendEmail(){
+      this.$refs["emailForm"].validate(valid => {
+        if(valid){
+          this.sendEmailLoading = true
+          sendEmail(this.emailForm).then(res => {
+            this.$modal.msgSuccess("执行成功，请看收信");
+            this.sendEmailLoading = false
+          })
+        }
+      });
+    },
+    openSendEmailDrawer(row){
+      this.resetForm("emailForm");
+      this.emailForm.messageCode = 'SYSTEM_TEST_NOTIFY'
+      this.drawer = true
+      this.sendEmailLoading = false
+      this.emailForm.messageConfigId = row.id
+    },
     /** 查询客户端管理列表 */
     getList() {
       this.loading = true;
-      getMessageTypeConfigPage(this.queryParams).then(response => {
+      getMessageEmailConfigPage(this.queryParams).then(response => {
         this.proxyList = response.data.records;
         this.total = response.data.total;
         this.loading = false;
@@ -179,7 +272,9 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        messageCode: undefined,
+        emailUserName: undefined,
+        emailUserPassword: undefined,
+        emailSmtp: undefined,
         description: undefined
       };
       this.resetForm("form");
@@ -210,7 +305,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getMessageTypeConfigById(id).then(response => {
+      getMessageEmailConfigById(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改消息类型配置";
@@ -221,13 +316,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateMessageTypeConfig(this.form).then(response => {
+            updateMessageEmailConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addMessageTypeConfig(this.form).then(response => {
+            addMessageEmailConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -239,8 +334,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id ?[row.id] : this.ids;
-      this.$modal.confirm('是否确认删除消息类型配置数据？').then(function() {
-        return delMessageTypeConfig(ids);
+      this.$modal.confirm('是否确认删除邮箱配置数据？').then(function() {
+        return delMessageEmailConfig(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
