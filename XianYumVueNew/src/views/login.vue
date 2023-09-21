@@ -141,14 +141,14 @@ export default {
       })
     },
     qqLogin(){
-      let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3a%2f%2fbase.xianyum.cn%2f%23%2fcheckQQLogin';
+      let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dqq';
       window.location.replace(qqUrl)
     },
     wechatLogin(){
       Message.error('微信登录功能待完善')
     },
     aliLogin(){
-      let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3a%2f%2fbase.xianyum.cn%2f%23%2fcheckAliLogin'
+      let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dalipay'
       window.location.replace(aliUrl)
     },
     success(params){
