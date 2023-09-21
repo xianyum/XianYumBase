@@ -283,7 +283,6 @@ import { getMessageTypeList } from '@/api/message/messageTypeConfig'
 export default {
   components: { Crontab },
   name: "Job",
-  dicts: ['sys_job_group', 'sys_job_status'],
   data() {
     return {
       messageTypeList: [],

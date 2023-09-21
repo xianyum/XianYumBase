@@ -67,8 +67,13 @@ public class MenuEntity{
     private String icon;
 
     private Date createTime;
+    private String createBy;
 
     /** 子菜单 */
     @TableField(exist=false)
     private List<MenuEntity> children = new ArrayList<>();
+
+    private Date updateTime;
+
+    private String updateBy;
 }

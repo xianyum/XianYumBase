@@ -22,3 +22,5 @@ npm run build:stage
 # 构建生产环境
 npm run build:prod
 ```
+
+关于icon图标设置，一定要手动去掉fill属性 //https://github.com/PanJiaChen/vue-element-admin/issues/330

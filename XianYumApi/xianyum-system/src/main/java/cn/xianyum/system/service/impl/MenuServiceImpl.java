@@ -152,6 +152,7 @@ public class MenuServiceImpl implements MenuService {
             throw new SoException("新增菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
         menuEntity.setCreateTime(new Date());
+        menuEntity.setCreateBy(SecurityUtils.getLoginUser().getUsername());
         return menuMapper.insert(menuEntity);
     }
 
@@ -164,6 +165,8 @@ public class MenuServiceImpl implements MenuService {
         } else if (menuEntity.getMenuId().equals(menuEntity.getParentId())) {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，上级菜单不能选择自己");
         }
+        menuEntity.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
+        menuEntity.setUpdateTime(new Date());
         return menuMapper.updateById(menuEntity);
     }
 
