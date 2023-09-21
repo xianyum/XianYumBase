@@ -1,12 +1,13 @@
 {
-  "name": "ruoyi",
-  "version": "3.8.6",
-  "description": "若依管理系统",
-  "author": "若依",
+  "name": "xianyum",
+  "version": "1.0.0",
+  "description": "XianYum平台",
+  "author": "80616059@qq.com",
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
+    "build": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "preview": "node build/index.js --preview",
     "lint": "eslint --ext .js,.vue src"
