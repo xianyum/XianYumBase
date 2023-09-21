@@ -45,11 +45,10 @@
  * VerifySlide
  * @description 滑块
  * */
-import {aesEncrypt} from "./../utils/ase"
-import {resetSize} from './../utils/util'
+import {aesEncrypt} from "@/components/Verifition/utils/ase"
+import {resetSize} from '@/components/Verifition/utils/util'
 import {reqGet,reqCheck}  from "@/api/verify"
 
-//  "captchaType":"blockPuzzle",
 export default {
   name: 'VerifySlide',
   props: {

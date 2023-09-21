@@ -44,12 +44,13 @@
   </div>
 </template>
 <script type="text/babel">
+
 /**
  * VerifyPoints
  * @description 点选
  * */
-import {resetSize, _code_chars, _code_color1, _code_color2} from './../utils/util'
-import {aesEncrypt} from "./../utils/ase"
+import {resetSize} from '@/components/Verifition/utils/util'
+import {aesEncrypt} from "@/components/Verifition/utils/ase"
 import {reqGet,reqCheck}  from "@/api/verify"
 
 export default {

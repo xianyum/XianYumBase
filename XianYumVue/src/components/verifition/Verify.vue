@@ -31,8 +31,9 @@
  * Verify 验证码组件
  * @description 分发验证码使用
  * */
-import VerifySlide from './Verify/VerifySlide'
-import VerifyPoints from './Verify/VerifyPoints'
+import VerifySlide from '@/components/Verifition/Verify/VerifySlide'
+import VerifyPoints from '@/components/Verifition/Verify/VerifyPoints'
+
 
 export default {
   name: 'Vue2Verify',

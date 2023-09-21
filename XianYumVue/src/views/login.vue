@@ -84,11 +84,9 @@
 
 <script>
 import Cookies from "js-cookie";
-import Verify from './../components/Verifition/Verify';
+import Verify from '@/components/Verifition/Verify';
 import { encrypt, decrypt } from '@/utils/jsencrypt';
 import { Message } from 'element-ui'
-import { getPublicSystemConstant } from '@/api/common/systemConstant'
-
 
 export default {
   name: "Login",
