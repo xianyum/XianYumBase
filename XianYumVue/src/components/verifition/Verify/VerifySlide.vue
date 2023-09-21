@@ -47,7 +47,7 @@
  * */
 import {aesEncrypt} from "./../utils/ase"
 import {resetSize} from './../utils/util'
-import {reqGet,reqCheck}  from "./../api/index"
+import {reqGet,reqCheck}  from "@/api/verify"
 
 //  "captchaType":"blockPuzzle",
 export default {
@@ -255,7 +255,8 @@ export default {
             if (this.mode=='pop') {
               setTimeout(()=>{
                 this.$parent.clickShow = false;
-                this.refresh();
+                // 注释掉这里，因为三方登录这里会提示数据重复校验
+                // this.refresh();
               },1500)
             }
             this.passFlag = true

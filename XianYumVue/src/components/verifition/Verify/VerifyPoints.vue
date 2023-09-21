@@ -50,7 +50,7 @@
  * */
 import {resetSize, _code_chars, _code_color1, _code_color2} from './../utils/util'
 import {aesEncrypt} from "./../utils/ase"
-import {reqGet,reqCheck}  from "./../api/index"
+import {reqGet,reqCheck}  from "@/api/verify"
 
 export default {
   name: 'VerifyPoints',
@@ -153,7 +153,7 @@ export default {
               if (this.mode=='pop') {
                 setTimeout(()=>{
                   this.$parent.clickShow = false;
-                  this.refresh();
+                  // this.refresh();
                 },1500)
               }
               this.$parent.$emit('success', {captchaVerification})
