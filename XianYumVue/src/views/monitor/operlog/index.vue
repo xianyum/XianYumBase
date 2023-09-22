@@ -64,7 +64,7 @@
         </template>
       </el-table-column>
       <el-table-column label="IP地址" align="center" prop="ip" width="150"/>
-      <el-table-column label="IP地点" align="center" prop="ipInfo"/>
+      <el-table-column label="IP地点" align="center" prop="ipInfo" width="180"/>
       <el-table-column label="创建日期" align="center" prop="createTime" width="180">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
