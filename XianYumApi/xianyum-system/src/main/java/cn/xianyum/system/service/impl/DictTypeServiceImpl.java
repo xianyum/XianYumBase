@@ -7,12 +7,14 @@ import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.dao.DictTypeMapper;
 import cn.xianyum.system.entity.po.DictTypeEntity;
 import cn.xianyum.system.entity.request.DictTypeRequest;
+import cn.xianyum.system.infra.adaptor.DictCacheAdaptor;
 import cn.xianyum.system.service.DictTypeService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -30,6 +32,9 @@ public class DictTypeServiceImpl implements DictTypeService {
 
     @Autowired
     private DictDataMapper dictDataMapper;
+
+    @Autowired
+    private DictCacheAdaptor dictCacheAdaptor;
 
     @Override
     public IPage<DictTypeEntity> selectDictTypeList(DictTypeRequest request) {
@@ -56,6 +61,7 @@ public class DictTypeServiceImpl implements DictTypeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(DictTypeEntity dictTypeEntity) {
         boolean isUnique = this.checkDictTypeUnique(dictTypeEntity);
         if(!isUnique){
@@ -65,6 +71,7 @@ public class DictTypeServiceImpl implements DictTypeService {
         dictDataMapper.updateDictDataType(oldDict.getDictType(), dictTypeEntity.getDictType());
         dictTypeEntity.setUpdateTime(new Date());
         dictTypeEntity.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
+        dictCacheAdaptor.delDictDataByTypeKey(dictTypeEntity.getDictType());
         return dictTypeMapper.updateById(dictTypeEntity);
     }
 
@@ -86,9 +93,11 @@ public class DictTypeServiceImpl implements DictTypeService {
     @Override
     public void resetDictCache() {
         //TODO
+        dictCacheAdaptor.truncateDictDataByTypeKey();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDictTypeByIds(Long[] ids) {
         for(Long id : ids){
             DictTypeEntity dictTypeEntity = dictTypeMapper.selectById(id);
@@ -96,6 +105,7 @@ public class DictTypeServiceImpl implements DictTypeService {
             if(count > 0){
                 throw new SoException(String.format("%1$s已分配,不能删除", dictTypeEntity.getDictName()));
             }
+            dictCacheAdaptor.delDictDataByTypeKey(dictTypeEntity.getDictType());
             dictTypeMapper.deleteById(id);
         }
     }

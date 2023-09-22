@@ -35,6 +35,8 @@ redis:
   proxy:
     proxy_details:
       lan_info: '${spring.application.name}:xianyum-proxy:proxy_details:lan_info:'
+  dict:
+    type_prefix: '${spring.application.name}:xianyum-system:dict_type:'
 #七牛云配置
 oss:
   access_key: mpw:zwhl7cATylP4lLJAhou0pPv9trW1rACXhGBW7PsZkVBAocvTeLULeq/EIWTL/cbD

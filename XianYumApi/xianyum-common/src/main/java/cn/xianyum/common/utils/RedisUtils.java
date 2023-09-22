@@ -275,6 +275,28 @@ public class RedisUtils {
         }
     }
 
+
+    /**
+     * HashSet 并设置时间
+     *
+     * @param key  键
+     * @param map  对应多个键值
+     * @param time 时间(秒)
+     * @return true成功 false失败
+     */
+    public boolean hMSet(String key, Map<String, Object> map, long time,TimeUnit timeUnit) {
+        try {
+            redisTemplate.opsForHash().putAll(key, map);
+            if (time > 0) {
+                redisTemplate.expire(key, time, timeUnit);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /**
      * 向一张hash表中放入数据,如果不存在将创建
      *
@@ -630,8 +652,7 @@ public class RedisUtils {
      * @param key 字符串前缀
      * @return 对象列表
      */
-    public Collection<String> keys(final String key)
-    {
+    public Collection<String> keys(final String key) {
         return redisTemplate.keys(key);
     }
 

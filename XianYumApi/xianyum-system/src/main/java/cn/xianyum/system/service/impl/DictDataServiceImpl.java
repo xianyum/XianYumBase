@@ -3,17 +3,18 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.entity.po.DictDataEntity;
-import cn.xianyum.system.entity.po.DictTypeEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
+import cn.xianyum.system.infra.adaptor.DictCacheAdaptor;
 import cn.xianyum.system.service.DictDataService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author zhangwei
@@ -25,11 +26,21 @@ public class DictDataServiceImpl implements DictDataService {
     @Autowired
     private DictDataMapper dictDataMapper;
 
+    @Autowired
+    private DictCacheAdaptor dictCacheAdaptor;
+
     @Override
     public List<DictDataEntity> selectDictDataByType(String dictType) {
+        if(dictCacheAdaptor.hasDictDataByTypeKey(dictType)){
+            return dictCacheAdaptor.getDictDataByTypeCache(dictType);
+        }
         QueryWrapper<DictDataEntity> queryWrapper = new QueryWrapper<DictDataEntity>();
         queryWrapper.eq("dict_type",dictType).eq("status","0").orderByAsc("dict_sort");
-        return dictDataMapper.selectList(queryWrapper);
+        List<DictDataEntity> dictDataEntities = dictDataMapper.selectList(queryWrapper);
+        if(Objects.nonNull(dictDataEntities) && dictDataEntities.size() > 0){
+            dictCacheAdaptor.setDictDataByTypeCache(dictType,dictDataEntities);
+        }
+        return dictDataEntities;
     }
 
     @Override
@@ -53,15 +64,22 @@ public class DictDataServiceImpl implements DictDataService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int update(DictDataEntity dict) {
         dict.setUpdateTime(new Date());
         dict.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
+        dictCacheAdaptor.delDictDataByTypeKey(dict.getDictType());
         return dictDataMapper.updateById(dict);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDictDataByIds(Long[] ids) {
         for(Long id : ids){
+            DictDataEntity dictDataEntity = dictDataMapper.selectById(id);
+            if(Objects.nonNull(dictDataEntity)){
+                dictCacheAdaptor.delDictDataByTypeKey(dictDataEntity.getDictType());
+            }
             dictDataMapper.deleteById(id);
         }
     }
