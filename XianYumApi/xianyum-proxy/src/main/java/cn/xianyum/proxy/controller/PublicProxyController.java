@@ -1,6 +1,7 @@
 package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.DataResult;
@@ -32,6 +33,7 @@ public class PublicProxyController {
     @ApiOperation(value = "刷入系统")
     @GetMapping(value = "/flushProxy")
     @Permissions(strategy = PermissionStrategy.ALLOW_CLIENT)
+    @SysLog(value = "远程调用刷入系统操作")
     public DataResult flushProxy() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>();
         jobMapParams.put("resetZeroFlag","Y");
