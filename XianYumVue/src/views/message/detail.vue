@@ -2,6 +2,20 @@
   <div>
     <el-card style="width:100%; margin-top:10px; clear:both;">
       <div slot="header" class="clearfix">
+        <span> {{ dataForm.messageTitle }}</span>
+      </div>
+      <el-form>
+        <template v-for="(item,index) in messageContentListForm">
+          <el-form-item  :label=item.label>
+            {{ item.value }}
+          </el-form-item>
+        </template>
+      </el-form>
+    </el-card>
+    <el-divider><el-button type="text" @click="clickMore">{{clickMoreText}}</el-button></el-divider>
+
+    <el-card v-show="showMoreInfo" style="width:100%; margin-top:10px; clear:both;">
+      <div slot="header" class="clearfix">
         <span>消息详情</span>
       </div>
       <div>
@@ -28,7 +42,7 @@
       </div>
     </el-card>
 
-    <el-card style="width:100%; margin-top:30px; clear:both;">
+    <el-card v-show="showMoreInfo" style="width:100%; margin-top:30px; clear:both;">
       <div slot="header" class="clearfix">
         <span>消息内容</span>
       </div>
@@ -41,7 +55,7 @@
       </div>
     </el-card>
 
-    <el-card style="width:100%; margin-top:30px; clear:both;">
+    <el-card v-show="showMoreInfo" style="width:100%; margin-top:30px; clear:both;">
       <div slot="header" class="clearfix">
         <span>推送结果</span>
       </div>
@@ -63,6 +77,9 @@ import {getMessageDetailInfo} from '@/api/message/message';
 export default {
   data() {
     return {
+      clickMoreText: '查看详情',
+      showMoreInfo: false,
+      messageContentListForm: [],
       messageAccountTypeList: [],
       dataForm: {
         messageId: ''
@@ -79,6 +96,15 @@ export default {
     this.getDataList()
   },
   methods: {
+    clickMore(){
+      if(this.showMoreInfo){
+        this.showMoreInfo = false
+        this.clickMoreText = "查看详情"
+      }else{
+        this.showMoreInfo = true
+        this.clickMoreText = "隐藏详情"
+      }
+    },
     formatMessageType(type) {
       if (!type) {
         return ''
@@ -97,12 +123,10 @@ export default {
       });
     },
     getDataList() {
-      this.reqeustForm = {
-        'id': this.dataForm.messageId
-      }
-      getMessageDetailInfo(this.reqeustForm).then(res => {
+      getMessageDetailInfo(this.dataForm.messageId).then(res => {
         this.dataForm = res.data
         this.messageContent = JSON.parse(res.data.messageContent)
+        this.messageContentListForm = this.messageContent.messageContents
         try {
           this.messageResponse = JSON.parse(res.data.messageResponse)
         }catch(e) {
