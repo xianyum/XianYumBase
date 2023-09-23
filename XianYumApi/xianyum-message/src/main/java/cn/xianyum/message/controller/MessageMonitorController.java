@@ -44,9 +44,9 @@ public class MessageMonitorController {
      *
      */
     @ApiOperation(value = "消息监控根据ID查询数据")
-    @PostMapping(value = "/getById")
-    public DataResult getById(@RequestBody MessageMonitorRequest request) {
-        MessageMonitorResponse response = messageMonitorService.getById(request);
+    @GetMapping(value = "/getById")
+    public DataResult getById(@RequestParam String id) {
+        MessageMonitorResponse response = messageMonitorService.getById(id);
         return DataResult.success(response);
     }
 
@@ -71,7 +71,7 @@ public class MessageMonitorController {
 	 *
      */
     @ApiOperation(value = "消息监控修改数据")
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageMonitorRequest request) {
 

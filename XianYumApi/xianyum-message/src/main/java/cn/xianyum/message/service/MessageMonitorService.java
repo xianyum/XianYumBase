@@ -9,7 +9,7 @@ public interface MessageMonitorService {
 
 	IPage<MessageMonitorResponse> getPage(MessageMonitorRequest request);
 
-	MessageMonitorResponse getById(MessageMonitorRequest request);
+	MessageMonitorResponse getById(String id);
 
 	Integer save(MessageMonitorRequest request);
 

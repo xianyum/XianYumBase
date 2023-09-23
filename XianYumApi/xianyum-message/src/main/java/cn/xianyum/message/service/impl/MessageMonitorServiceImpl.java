@@ -5,7 +5,6 @@ import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageMonitorMapper;
-import cn.xianyum.message.dao.MessageTypeConfigMapper;
 import cn.xianyum.message.entity.po.MessageMonitorEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
@@ -53,12 +52,12 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	}
 
 	@Override
-	public MessageMonitorResponse getById(MessageMonitorRequest request) {
+	public MessageMonitorResponse getById(String id) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
-		MessageMonitorEntity result = messageMonitorMapper.selectById(request.getId());
+		MessageMonitorEntity result = messageMonitorMapper.selectById(id);
 		MessageMonitorResponse response = BeanUtils.copy(result, MessageMonitorResponse.class);
 		return response;
 
