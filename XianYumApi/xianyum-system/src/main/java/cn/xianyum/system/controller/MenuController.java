@@ -1,6 +1,8 @@
 package cn.xianyum.system.controller;
 
 
+import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
@@ -64,6 +66,7 @@ public class MenuController {
      */
     @PostMapping(value = "/save")
     @ApiOperation(value = "保存菜单信息", httpMethod = "POST")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
         return DataResult.success();
@@ -74,6 +77,7 @@ public class MenuController {
      */
     @PutMapping(value = "/update")
     @ApiOperation(value = "保存菜单信息", httpMethod = "PUT")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
         return DataResult.success();
@@ -85,6 +89,7 @@ public class MenuController {
      */
     @DeleteMapping("/{menuId}")
     @ApiOperation(value = "删除菜单", httpMethod = "DELETE")
+    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult remove(@PathVariable("menuId") Long menuId) {
         return DataResult.success(menuService.deleteMenuById(menuId));
     }
