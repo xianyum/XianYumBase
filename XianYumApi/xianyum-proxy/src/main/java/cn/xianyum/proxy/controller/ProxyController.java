@@ -146,6 +146,17 @@ public class ProxyController {
         return DataResult.success();
     }
 
+
+    /**
+     * 获取在线online数量
+     *
+     */
+    @ApiOperation(value = "获取在线online数量")
+    @GetMapping(value = "/getOnlineProxyCount")
+    public DataResult getOnlineProxyCount() {
+        return DataResult.success(proxyService.getOnlineProxyCount());
+    }
+
     /**
      * 下载配置
      * @param request

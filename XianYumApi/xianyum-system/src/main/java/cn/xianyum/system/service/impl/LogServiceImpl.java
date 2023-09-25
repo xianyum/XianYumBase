@@ -145,16 +145,13 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public List<LogResponse> getVisitCountCharts(LogRequest request) {
+    public List<LogResponse> getVisitCountCharts() {
 
 //        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
 //            return null;
 //        }
-        String endTime = request.getEndTime();
+
         Date date = new Date();
-        if(StringUtil.isNotEmpty(endTime)){
-            date = DateUtils.stringToDate(endTime);
-        }
 
         List<String> dateStrings = DateUtils.minusDate(date, DateUtils.DATE_PATTERN, 15);
         List<LogResponse> responses = new ArrayList<>();
@@ -189,6 +186,11 @@ public class LogServiceImpl implements LogService {
     @Override
     public void truncateLog() {
         logMapper.truncateLog();
+    }
+
+    @Override
+    public Long getLogCount() {
+        return logMapper.selectCount(null);
     }
 
 }

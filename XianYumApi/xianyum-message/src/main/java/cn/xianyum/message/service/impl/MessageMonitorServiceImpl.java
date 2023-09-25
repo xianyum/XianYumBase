@@ -115,4 +115,10 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 		messageMonitorMapper.truncate();
 	}
 
+	@Override
+	public Long getOnlineProxyCount() {
+		QueryWrapper<MessageMonitorEntity> queryWrapper = new QueryWrapper<>();
+		return messageMonitorMapper.selectCount(queryWrapper);
+	}
+
 }

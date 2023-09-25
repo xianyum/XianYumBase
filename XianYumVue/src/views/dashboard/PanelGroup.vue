@@ -1,15 +1,15 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" @click="handleSetLineChartData('operLog')">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            访客
+            接口访问量
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= operLogCount :duration="1000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -20,35 +20,35 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            消息
+            消息发送量
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= messageLogCount :duration="1000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel" @click="handleSetLineChartData('job')">
         <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
+          <svg-icon icon-class="job-home-index" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            金额
+            任务调度量
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= jobLogCount :duration="1000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel" @click="handleSetLineChartData('proxy')">
         <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+          <svg-icon icon-class="proxy" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            订单
+            远程在线量
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= onlineProxyCount :duration="1000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,12 +57,53 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import {getOnlineProxyCount} from "@/api/xianyu/proxy";
+import {getMessageLogCount} from "@/api/message/monitor";
+import {getJobLogCount} from "@/api/job/jobLog";
+import {getOperLogCount} from "@/api/monitor/operlog";
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      onlineProxyCount: 0,
+      messageLogCount: 0,
+      jobLogCount: 0,
+      operLogCount: 0
+    }
+  },
+  created() {
+    this.getVisitCountByBase();
+  },
   methods: {
+    getVisitCountByBase(){
+      this.getOnlineProxyCount()
+      this.getMessageLogCount()
+      this.getJobLogCount()
+      this.getOperLogCount()
+    },
+    getOnlineProxyCount(){
+      getOnlineProxyCount().then(res => {
+        this.onlineProxyCount = res.data
+      });
+    },
+    getOperLogCount(){
+      getOperLogCount().then(res => {
+        this.operLogCount = res.data
+      });
+    },
+    getMessageLogCount(){
+      getMessageLogCount().then(res => {
+        this.messageLogCount = res.data
+      });
+    },
+    getJobLogCount(){
+      getJobLogCount().then(res => {
+        this.jobLogCount = res.data
+      });
+    },
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
     }
@@ -103,7 +144,7 @@ export default {
       }
 
       .icon-money {
-        background: #f4516c;
+        background: #5e00ff;
       }
 
       .icon-shopping {
@@ -120,7 +161,7 @@ export default {
     }
 
     .icon-money {
-      color: #f4516c;
+      color: #51f49d;
     }
 
     .icon-shopping {

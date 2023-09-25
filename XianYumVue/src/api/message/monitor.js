@@ -26,3 +26,9 @@ export function cleanMessageMonitor() {
   })
 }
 
+export function getMessageLogCount() {
+  return request({
+    url: '/v1/messageMonitor/getMessageLogCount',
+    method: 'get',
+  })
+}

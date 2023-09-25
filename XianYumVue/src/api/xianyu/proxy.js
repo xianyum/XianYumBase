@@ -67,3 +67,11 @@ export function getAllProxyList() {
     method: 'get'
   })
 }
+
+
+export function getOnlineProxyCount() {
+  return request({
+    url: '/proxy/getOnlineProxyCount',
+    method: 'get'
+  })
+}

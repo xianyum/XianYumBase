@@ -21,4 +21,6 @@ public interface JobLogService {
 	 * @param request
 	 */
 	void truncateLog();
+
+	Long getJobLogCount();
 }

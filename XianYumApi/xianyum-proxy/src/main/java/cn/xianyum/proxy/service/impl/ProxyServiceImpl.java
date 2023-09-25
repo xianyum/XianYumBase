@@ -71,6 +71,25 @@ public class ProxyServiceImpl implements ProxyService {
 		return responseIPage;
 	}
 
+	/**
+	 * 获取在线数量
+	 *
+	 * @return
+	 */
+	@Override
+	public int getOnlineProxyCount() {
+		int count = 0;
+		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>();
+		List<ProxyEntity> proxyEntities = proxyMapper.selectList(queryWrapper);
+		for(ProxyEntity item : proxyEntities){
+			Channel channel = ProxyChannelManager.getCmdChannel(item.getId());
+			if (channel != null) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 	@Override
 	public ProxyResponse getById(String id) {
 		SecurityUtils.allowAdminAuth();

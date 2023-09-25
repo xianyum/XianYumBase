@@ -23,9 +23,11 @@ public interface LogService {
 
     void push();
 
-    List<LogResponse> getVisitCountCharts(LogRequest request);
+    List<LogResponse> getVisitCountCharts();
 
     int getLogCountWithCache(String time);
 
     void truncateLog();
+
+    Long getLogCount();
 }

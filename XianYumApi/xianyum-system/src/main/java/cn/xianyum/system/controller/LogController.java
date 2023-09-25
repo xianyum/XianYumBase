@@ -42,10 +42,10 @@ public class LogController {
     /**
      * 获取七天趋势图
      */
-    @PostMapping("/getVisitCountCharts")
+    @GetMapping("/getVisitCountCharts")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public DataResult getVisitCountCharts(@RequestBody LogRequest request){
-        List<LogResponse> responses = logService.getVisitCountCharts(request);
+    public DataResult getVisitCountCharts(){
+        List<LogResponse> responses = logService.getVisitCountCharts();
         return DataResult.success(responses);
     }
 
@@ -72,5 +72,16 @@ public class LogController {
         }catch(SoException exception){
             return DataResult.error(exception.getMsg());
         }
+    }
+
+
+    /**
+     * 获取接口日志数量
+     *
+     */
+    @ApiOperation(value = "获取接口日志数量")
+    @GetMapping(value = "/getLogCount")
+    public DataResult getLogCount() {
+        return DataResult.success(logService.getLogCount());
     }
 }

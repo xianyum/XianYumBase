@@ -14,6 +14,12 @@ public interface ProxyService {
 
 	IPage<ProxyResponse> getPage(ProxyRequest request);
 
+	/**
+	 * 获取在线数量
+	 * @return
+	 */
+	int getOnlineProxyCount();
+
 	ProxyResponse getById(String id);
 
 	Integer save(ProxyRequest request);

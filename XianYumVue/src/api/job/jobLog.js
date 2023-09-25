@@ -26,3 +26,10 @@ export function cleanJobLog() {
     method: 'delete'
   })
 }
+
+export function getJobLogCount() {
+  return request({
+    url: '/v1/jobLog/getJobLogCount',
+    method: 'get'
+  })
+}

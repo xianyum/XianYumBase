@@ -86,4 +86,9 @@ public class JobLogServiceImpl implements JobLogService {
 		jobLogMapper.truncateLog();
 	}
 
+	@Override
+	public Long getJobLogCount() {
+		return jobLogMapper.selectCount(null);
+	}
+
 }

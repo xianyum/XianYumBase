@@ -78,4 +78,14 @@ public class JobLogController {
 	    return DataResult.success();
     }
 
+
+    /**
+     * 获取任务调度数量
+     *
+     */
+    @ApiOperation(value = "获取任务调度数量")
+    @GetMapping(value = "/getJobLogCount")
+    public DataResult getJobLogCount() {
+        return DataResult.success(jobLogService.getJobLogCount());
+    }
 }

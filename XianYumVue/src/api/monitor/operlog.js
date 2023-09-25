@@ -25,3 +25,20 @@ export function cleanOperLog() {
     method: 'delete'
   })
 }
+
+
+
+export function getLogVisitCountCharts() {
+  return request({
+    url: '/v1/log/getVisitCountCharts',
+    method: 'get'
+  })
+}
+
+
+export function getOperLogCount() {
+  return request({
+    url: '/v1/log/getLogCount',
+    method: 'get'
+  })
+}

@@ -106,4 +106,15 @@ public class MessageMonitorController {
         messageMonitorService.truncate();
         return DataResult.success();
     }
+
+
+    /**
+     * 获取消息发送数量
+     *
+     */
+    @ApiOperation(value = "获取消息发送数量")
+    @GetMapping(value = "/getMessageLogCount")
+    public DataResult getMessageLogCount() {
+        return DataResult.success(messageMonitorService.getOnlineProxyCount());
+    }
 }

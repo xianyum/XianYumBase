@@ -20,4 +20,6 @@ public interface MessageMonitorService {
 	void insertMessageLog(String mId, String toUser,MessageSenderEntity messageSender, String sendResult);
 
 	void truncate();
+
+    Long getOnlineProxyCount();
 }
