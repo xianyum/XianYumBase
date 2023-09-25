@@ -63,6 +63,12 @@
       <el-table-column label="类型描述" align="center" prop="description" />
       <el-table-column label="发送量" align="center" prop="sendCount" />
       <el-table-column label="类型描述" align="center" prop="description" />
+      <el-table-column label="echarts" align="center" prop="echartsTag" >
+        <template v-slot="scope">
+          <el-tag v-if="scope.row.echartsTag === 0" size="small" type="danger">隐藏</el-tag>
+          <el-tag  v-else type="success" size="small">显示</el-tag >
+        </template>
+      </el-table-column>
       <el-table-column label="创建日期" align="center" prop="createTime" width="180">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -96,12 +102,18 @@
 
     <!-- 添加或修改客户端管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="95px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="消息编码" prop="messageCode">
           <el-input v-model="form.messageCode" placeholder="请输入消息编码" />
         </el-form-item>
         <el-form-item label="类型描述" prop="description">
           <el-input v-model="form.description" placeholder="请输入类型描述" />
+        </el-form-item>
+        <el-form-item label="echarts状态" prop="echartsTag">
+          <el-radio-group v-model="form.echartsTag">
+            <el-radio :label=1>显示</el-radio>
+            <el-radio :label=0>隐藏</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -153,6 +165,9 @@ export default {
         ],
         description: [
           {required: true, message: '类型描述名称不能为空', trigger: 'blur'}
+        ],
+        echartsTag: [
+          {required: true, message: 'echarts状态不能为空', trigger: 'blur'}
         ]
       }
     };
@@ -180,7 +195,8 @@ export default {
       this.form = {
         id: undefined,
         messageCode: undefined,
-        description: undefined
+        description: undefined,
+        echartsTag: 1,
       };
       this.resetForm("form");
     },

@@ -49,12 +49,14 @@ export default {
     getChartData(){
       getMessageTypeList().then(res => {
         res.data.forEach((item,index)=>{
-          this.chartData.chartTitle.push(item.description)
-          let data = {
-            value: item.sendCount,
-            name: item.description,
+          if(item.echartsTag === 1){
+            this.chartData.chartTitle.push(item.description)
+            let data = {
+              value: item.sendCount,
+              name: item.description,
+            }
+            this.chartData.chartData.push(data)
           }
-          this.chartData.chartData.push(data)
         });
         this.initChart();
       });
