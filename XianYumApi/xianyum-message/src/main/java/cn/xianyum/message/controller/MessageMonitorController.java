@@ -32,7 +32,6 @@ public class MessageMonitorController {
      */
 	@ApiOperation(value = "消息监控分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(MessageMonitorRequest request) {
 
 		IPage<MessageMonitorResponse> response = messageMonitorService.getPage(request);

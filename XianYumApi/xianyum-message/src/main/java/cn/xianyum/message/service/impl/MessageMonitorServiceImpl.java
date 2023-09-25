@@ -2,6 +2,7 @@ package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageMonitorMapper;
@@ -33,8 +34,10 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 
 	@Override
 	public IPage<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
-
 		Page<MessageMonitorEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
+		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
+			return new Page<>();
+		}
 		QueryWrapper<MessageMonitorEntity> queryWrapper = new QueryWrapper<MessageMonitorEntity>()
 				.eq(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
 				.eq(StringUtil.isNotEmpty(request.getMessageType()),"message_type",request.getMessageType())
