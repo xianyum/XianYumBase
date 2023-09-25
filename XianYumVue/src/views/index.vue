@@ -85,7 +85,7 @@ export default {
     handleSetLineChartData(type) {
       if(type === 'operLog'){
         this.$router.push({ path: "/monitor/operlog" });
-      }else if(type === 'message'){
+      }else if(type === 'messages'){
         this.$router.push({ path: "/message/monitor" });
       }else if(type === 'job'){
         this.$router.push({ path: "/job/log" });
