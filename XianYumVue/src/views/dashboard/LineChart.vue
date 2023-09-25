@@ -65,7 +65,7 @@ export default {
       this.chart.setOption({
         xAxis: {
           data: xData,
-          boundaryGap: false,
+          boundaryGap: true,
           axisTick: {
             show: false
           }
@@ -97,7 +97,7 @@ export default {
             normal: {
               color: '#2597e7',
               lineStyle: {
-                color: '#006fff',
+                color: '#51bbf4',
                 width: 2
               }
             }
