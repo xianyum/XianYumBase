@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             接口访问量
           </div>
-          <count-to :start-val="0" :end-val= operLogCount :duration="1000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= operLogCount :duration="1500" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             消息发送量
           </div>
-          <count-to :start-val="0" :end-val= messageLogCount :duration="1000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= messageLogCount :duration="1500" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             任务调度量
           </div>
-          <count-to :start-val="0" :end-val= jobLogCount :duration="1000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= jobLogCount :duration="1500" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             远程在线量
           </div>
-          <count-to :start-val="0" :end-val= onlineProxyCount :duration="1000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val= onlineProxyCount :duration="1500" class="card-panel-num" />
         </div>
       </div>
     </el-col>

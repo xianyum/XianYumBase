@@ -6,6 +6,7 @@
 import * as echarts from 'echarts';
 require('echarts/theme/macarons') // echarts theme
 import resize from './mixins/resize'
+import {getMessageTypeList} from "@/api/message/messageTypeConfig";
 
 export default {
   mixins: [resize],
@@ -25,12 +26,16 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      chartData:{
+        chartTitle: [],
+        chartData:[]
+      }
     }
   },
   mounted() {
     this.$nextTick(() => {
-      this.initChart()
+      this.getChartData()
     })
   },
   beforeDestroy() {
@@ -41,6 +46,19 @@ export default {
     this.chart = null
   },
   methods: {
+    getChartData(){
+      getMessageTypeList().then(res => {
+        res.data.forEach((item,index)=>{
+          this.chartData.chartTitle.push(item.description)
+          let data = {
+            value: item.sendCount,
+            name: item.description,
+          }
+          this.chartData.chartData.push(data)
+        });
+        this.initChart();
+      });
+    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -51,23 +69,17 @@ export default {
         },
         legend: {
           left: 'center',
-          bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          bottom: '5',
+          data: this.chartData.chartTitle
         },
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '消息发送量',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
-            data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
-            ],
+            data: this.chartData.chartData,
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
