@@ -87,6 +87,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 		MessageTypeConfigEntity bean = new MessageTypeConfigEntity();
 		bean.setDescription(request.getDescription());
 		bean.setId(request.getId());
+		bean.setEchartsTag(request.getEchartsTag());
 		return messageTypeConfigMapper.updateById(bean);
 
 	}

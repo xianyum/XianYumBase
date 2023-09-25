@@ -34,5 +34,7 @@ public class MessageTypeConfigResponse{
     /** 删除标志（0：未删除，1：删除） */
     private Integer delTag;
 
+    /** echarts显示（0：隐藏 ，1：显示） */
+    private Integer echartsTag;
 
 }
