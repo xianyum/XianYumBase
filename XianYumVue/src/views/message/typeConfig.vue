@@ -65,7 +65,7 @@
       <el-table-column label="类型描述" align="center" prop="description" />
       <el-table-column label="echarts" align="center" prop="echartsTag" >
         <template v-slot="scope">
-          <el-tag v-if="scope.row.echartsTag === 0" size="small" type="danger">隐藏</el-tag>
+          <el-tag v-if="scope.row.echartsTag === 0" size="small" type="warning">隐藏</el-tag>
           <el-tag  v-else type="success" size="small">显示</el-tag >
         </template>
       </el-table-column>
