@@ -14,7 +14,8 @@ public enum MessageCodeEnums {
     SYSTEM_TEST_NOTIFY("SYSTEM_TEST_NOTIFY","系统测试消息通知"),
     SYSTEM_EXCEPTION_NOTIFY("SYSTEM_EXCEPTION_NOTIFY","系统异常消息通知"),
     ZEEKR_EXECUTE_FAIL_NOTIFY("ZEEKR_EXECUTE_FAIL_NOTIFY","zeekr执行失败消息通知"),
-    ALI_YUN_XIAO_NOTIFY("ALI_YUN_XIAO_NOTIFY","云效流水线执行结果通知");
+    ALI_YUN_XIAO_NOTIFY("ALI_YUN_XIAO_NOTIFY","云效流水线执行结果通知"),
+    HAO_KA_LOT_ARTICLE_NOTIFY("HAO_KA_ARTICLE_NOTIFY","172号卡系统通知"),;
 
     private String messageCode;
     private String description;
