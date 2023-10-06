@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card style="width:100%; margin-top:10px; clear:both;">
+    <el-card style="width:100%; clear:both;">
       <div slot="header" class="clearfix">
         <span> {{ dataForm.messageTitle }}</span>
       </div>
@@ -14,7 +14,7 @@
     </el-card>
     <el-divider><el-button type="text" @click="clickMore">{{clickMoreText}}</el-button></el-divider>
 
-    <el-card v-show="showMoreInfo" style="width:100%; margin-top:10px; clear:both;">
+    <el-card v-if="showMoreInfo" style="width:100%; clear:both;">
       <div slot="header" class="clearfix">
         <span>消息详情</span>
       </div>
@@ -42,7 +42,7 @@
       </div>
     </el-card>
 
-    <el-card v-show="showMoreInfo" style="width:100%; margin-top:30px; clear:both;">
+    <el-card v-if="showMoreInfo" style="width:100%; clear:both;">
       <div slot="header" class="clearfix">
         <span>消息内容</span>
       </div>
@@ -55,7 +55,7 @@
       </div>
     </el-card>
 
-    <el-card v-show="showMoreInfo" style="width:100%; margin-top:30px; clear:both;">
+    <el-card v-if="showMoreInfo" style="width:100%; clear:both;">
       <div slot="header" class="clearfix">
         <span>推送结果</span>
       </div>
