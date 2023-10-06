@@ -78,7 +78,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
             messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
             messageSender.sendAsyncMessage(MessageCodeEnums.HAO_KA_LOT_ARTICLE_NOTIFY.getMessageCode(),messageSenderEntity);
         }
-        redisUtils.set(haoKaLotArticleIndexPrefix,articleIndex);
+        redisUtils.set(haoKaLotArticleIndexPrefix,String.valueOf(articleIndex));
         return ReturnT.SUCCESS;
     }
 

@@ -18,7 +18,7 @@ redis:
   analysis:
     hao_kao_lot:
       token: '${spring.application.name}:xianyum-analysis:hao_kao_lot:access_token:'
-      article_index: '${spring.application.name}:xianyum-analysis:hao_kao_lot:article_index:'
+      article_index: '${spring.application.name}:xianyum-analysis:hao_kao_lot:article_index'
   baidu-ai:
     access_token: '${spring.application.name}:xianyum-common:baidu-ai:'
   captcha:
