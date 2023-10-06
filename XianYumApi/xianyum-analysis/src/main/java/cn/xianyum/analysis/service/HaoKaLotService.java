@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public interface HaoKaLotService {
 
-    ReturnT pushMessage(Map<String, String> jobMapParams, SchedulerTool tool);
+    ReturnT pushArticleMessage(Map<String, String> jobMapParams, SchedulerTool tool);
 
     /**
      * 获取172号卡登录token

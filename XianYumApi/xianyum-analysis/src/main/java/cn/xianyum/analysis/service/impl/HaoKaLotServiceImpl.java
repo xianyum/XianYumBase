@@ -55,7 +55,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
     private String haoKaLotArticleIndexPrefix;
 
     @Override
-    public ReturnT pushMessage(Map<String, String> jobMapParams, SchedulerTool tool) {
+    public ReturnT pushArticleMessage(Map<String, String> jobMapParams, SchedulerTool tool) {
         List<HaoKaLotArticleEntity> haoKaLotArticleEntities = this.getHaoKaLotArticleList();
         Long articleIndex;
         if(redisUtils.hasKey(haoKaLotArticleIndexPrefix)){

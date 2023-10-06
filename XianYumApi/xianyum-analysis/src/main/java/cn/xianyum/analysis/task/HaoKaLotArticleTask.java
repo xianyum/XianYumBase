@@ -15,14 +15,14 @@ import java.util.Map;
  * @author zhangwei
  * @date 2023/10/6 18:29
  */
-@JobHandler("haoKaLotMessageTask")
-public class HaoKaLotMessageTask implements IJobHandler {
+@JobHandler("haoKaLotArticleTask")
+public class HaoKaLotArticleTask implements IJobHandler {
 
     @Autowired
     HaoKaLotService haoKaLotService;
 
     @Override
     public ReturnT execute(Map<String, String> jobMapParams, SchedulerTool tool) throws Exception {
-        return haoKaLotService.pushMessage(jobMapParams,tool);
+        return haoKaLotService.pushArticleMessage(jobMapParams,tool);
     }
 }
