@@ -72,4 +72,23 @@ export default {
   background-color: #c0c0c0;
   border-radius: 3px;
 }
+
+//宽度可以使用max-width显示,占比为屏幕占比，高度用max-height是行不通的,于是就用的超出行省略，当
+//在限制的宽度之内多少行限制(不限制当内容几千几万字时就挂了),padding为了调整我这个正好15行省略看
+//起来样式不会出问题,有问题的话可以调padding,line-height,font-size保证展示框样式完整
+.el-tooltip__popper{
+  max-width:30%;
+  padding-bottom: 5px!important;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 15;
+  -webkit-box-orient: vertical;
+
+}
+.el-tooltip__popper,.el-tooltip__popper.is-dark{
+  background:rgb(48, 65, 86) !important;
+  color: #fff !important;
+  line-height: 24px;
+}
 </style>

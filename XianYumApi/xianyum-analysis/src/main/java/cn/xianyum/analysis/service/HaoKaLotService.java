@@ -1,8 +1,11 @@
 package cn.xianyum.analysis.service;
 
 import cn.xianyum.analysis.entity.po.HaoKaLotArticleEntity;
+import cn.xianyum.analysis.entity.po.HaoKaLotProductEntity;
+import cn.xianyum.analysis.entity.request.HaoKaLotProductRequest;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.SchedulerTool;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.List;
 import java.util.Map;
@@ -26,4 +29,11 @@ public interface HaoKaLotService {
      * @return
      */
     List<HaoKaLotArticleEntity> getHaoKaLotArticleList();
+
+    /**
+     * 分页获取172号卡商品列表
+     * @param request
+     * @return
+     */
+    IPage<HaoKaLotProductEntity> getPage(HaoKaLotProductRequest request);
 }
