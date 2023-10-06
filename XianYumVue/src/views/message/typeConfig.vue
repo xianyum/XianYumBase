@@ -59,10 +59,9 @@
     <el-table v-loading="loading" :data="proxyList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" align="center" width="50" />
-      <el-table-column label="消息编码" align="center" prop="messageCode" />
+      <el-table-column label="消息编码" align="center" prop="messageCode" width="400"/>
       <el-table-column label="类型描述" align="center" prop="description" />
       <el-table-column label="发送量" align="center" prop="sendCount" />
-      <el-table-column label="类型描述" align="center" prop="description" />
       <el-table-column label="echarts" align="center" prop="echartsTag" >
         <template v-slot="scope">
           <el-tag v-if="scope.row.echartsTag === 0" size="small" type="warning">隐藏</el-tag>
@@ -104,7 +103,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="消息编码" prop="messageCode">
-          <el-input v-model="form.messageCode" placeholder="请输入消息编码" />
+          <el-input v-model="form.messageCode" placeholder="请输入消息编码" :disabled="form.id"/>
         </el-form-item>
         <el-form-item label="类型描述" prop="description">
           <el-input v-model="form.description" placeholder="请输入类型描述" />

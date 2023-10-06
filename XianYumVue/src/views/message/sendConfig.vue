@@ -60,7 +60,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" align="center" width="50" />
       <el-table-column label="消息标题" align="center" prop="messageTitle" />
-      <el-table-column label="消息编码" align="center" prop="messageCode" />
+      <el-table-column label="消息编码" align="center" prop="messageCode" width="400"/>
       <el-table-column label="消息类型描述" align="center" prop="messageTypeDescription" />
       <el-table-column label="状态" align="center" prop="status">
         <template v-slot="scope">

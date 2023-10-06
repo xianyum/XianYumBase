@@ -10,7 +10,7 @@
       <div>
         <el-form :inline="true" :model="dataForm" :rules="dataFormRule" ref="dataForm" label-width="80px">
           <el-form-item label="消息类型" prop="messageCode" style="width: 30%">
-            <el-select v-model="dataForm.messageCode" placeholder="请选择消息类型配置" filterable>
+            <el-select v-model="dataForm.messageCode" placeholder="请选择消息类型配置" filterable :disabled="dataForm.id">
               <el-option
                 v-for="item in messageTypeList"
                 :key="item.messageCode"
