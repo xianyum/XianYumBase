@@ -97,11 +97,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 对于登录login 验证码captchaImage 允许匿名访问
                 // 使用 permitAll() 方法所有人都能访问，包括带上 token 访问
                 .antMatchers("/login",
-                        "/captcha/get",
-                        "/captcha/check",
+                        "/captcha/*",
                         "/systemConstant/getPublicConstant/*",
-                        "/proxy/sendEmail",
-                        "/proxy/updateClientInfo",
                         "/v1/messageMonitor/getById",
                         "/p1/**").permitAll()
                 .antMatchers(

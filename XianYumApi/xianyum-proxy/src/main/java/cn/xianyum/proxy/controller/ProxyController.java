@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.List;
@@ -132,18 +131,6 @@ public class ProxyController {
     public DataResult sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
         return DataResult.success(result);
-    }
-
-    /**
-     * 更新客户端信息
-     *
-     */
-    @SysLog("更新客户端信息")
-    @ApiOperation(value = "更新客户端信息")
-    @PostMapping(value = "/updateClientInfo")
-    public DataResult updateClientInfo(@RequestBody ProxyRequest request) {
-        proxyService.updateClientInfo(request);
-        return DataResult.success();
     }
 
 
