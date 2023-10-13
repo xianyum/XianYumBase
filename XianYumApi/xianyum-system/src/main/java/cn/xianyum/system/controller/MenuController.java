@@ -21,7 +21,7 @@ import java.util.List;
  * @email 80616059@qq.com
  */
 @RestController
-@RequestMapping("/system/menu")
+@RequestMapping("/xianyum-system/v1/menu")
 @Api(tags = "菜单接口")
 public class MenuController {
 
@@ -41,9 +41,9 @@ public class MenuController {
     /**
      * 查询菜单列表
      */
-    @PostMapping("/list")
-    @ApiOperation(value = "查询菜单列表", httpMethod = "POST")
-    public DataResult selectMenuList(@RequestBody MenuRequest menuRequest){
+    @GetMapping("/getPage")
+    @ApiOperation(value = "查询菜单列表")
+    public DataResult selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
         return DataResult.success(menuResponses);
     }

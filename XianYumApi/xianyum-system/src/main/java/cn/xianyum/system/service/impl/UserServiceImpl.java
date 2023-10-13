@@ -93,8 +93,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public UserEntity selectOneById(UserRequest user) {
-        return userMapper.selectById(user.getId());
+    public UserEntity selectOneById(String id) {
+        return userMapper.selectById(id);
     }
 
     @Override

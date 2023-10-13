@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "定时任务调度表接口")
 @RestController
-@RequestMapping(value = "/v1/job")
+@RequestMapping(value = "/xianyum-sheduler/v1/job")
 @Slf4j
 public class JobController {
 

@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "账户配置webhook接口")
 @RestController
-@RequestMapping(value = "/v1/messageConfigWebhook")
+@RequestMapping(value = "/xianyum-message/v1/messageConfigWebhook")
 @Slf4j
 public class MessageConfigWebhookController {
 

@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "消息监控接口")
 @RestController
-@RequestMapping(value = "/v1/messageMonitor")
+@RequestMapping(value = "/xianyum-message/v1/messageMonitor")
 @Slf4j
 public class MessageMonitorController {
 
@@ -43,9 +43,9 @@ public class MessageMonitorController {
      *
      */
     @ApiOperation(value = "消息监控根据ID查询数据")
-    @GetMapping(value = "/getById")
+    @GetMapping(value = "/getById/{id}")
     @Permission(publicApi = true)
-    public DataResult getById(@RequestParam String id) {
+    public DataResult getById(@PathVariable String id) {
         MessageMonitorResponse response = messageMonitorService.getById(id);
         return DataResult.success(response);
     }

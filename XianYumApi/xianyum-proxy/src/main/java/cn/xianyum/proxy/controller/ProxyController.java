@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Api(tags = "客户端管理接口")
 @RestController
-@RequestMapping(value = "/proxy")
+@RequestMapping(value = "/xianyum-proxy/v1/proxy")
 @Slf4j
 public class ProxyController {
 
@@ -146,7 +146,7 @@ public class ProxyController {
 
     /**
      * 下载配置
-     * @param request
+     * @param id
      * @return
      */
     @ApiOperation(value = "生成客户端配置信息")

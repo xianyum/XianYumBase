@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "账户配置wechat接口")
 @RestController
-@RequestMapping(value = "/v1/messageConfigWechat")
+@RequestMapping(value = "/xianyum-message/v1/messageConfigWechat")
 @Slf4j
 public class MessageConfigWechatController {
 

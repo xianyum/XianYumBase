@@ -22,7 +22,7 @@ import java.util.Objects;
  * @date 2023/9/19 17:23
  */
 @RestController
-@RequestMapping("/dict/data")
+@RequestMapping("/xianyum-system/v1/dict/data")
 @Api(tags = "字典类型接口")
 public class DictDataController {
 
@@ -33,7 +33,7 @@ public class DictDataController {
      * 根据字典类型查询字典数据信息
      */
     @GetMapping(value = "/type/{dictType}")
-    @ApiOperation(value = "根据字典类型查询字典数据信息", httpMethod = "GET")
+    @ApiOperation(value = "根据字典类型查询字典数据信息")
     public DataResult dictType(@PathVariable String dictType) {
         List<DictDataEntity> data = dictDataService.selectDictDataByType(dictType);
         if (Objects.isNull(data)) {
@@ -42,15 +42,15 @@ public class DictDataController {
         return DataResult.success(data);
     }
 
-    @PostMapping("/list")
-    @ApiOperation(value = "分页查询字典数据信息", httpMethod = "POST")
-    public DataResult list(@RequestBody DictDataRequest dictData) {
+    @GetMapping("/getPage")
+    @ApiOperation(value = "分页查询字典数据信息")
+    public DataResult list(DictDataRequest dictData) {
         IPage<DictDataEntity> list = dictDataService.selectDictDataList(dictData);
         return DataResult.success(list);
     }
 
     @GetMapping(value = "/{id}")
-    @ApiOperation(value = "查询单条信息", httpMethod = "GET")
+    @ApiOperation(value = "查询单条信息")
     public DataResult getInfo(@PathVariable Long id) {
         DictDataEntity dictDataEntity = dictDataService.getInfo(id);
         return DataResult.success(dictDataEntity);

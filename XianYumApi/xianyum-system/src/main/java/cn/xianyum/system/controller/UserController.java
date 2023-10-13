@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
  * 用户相关
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/xianyum-system/v1/user")
 @Api(tags = "用户接口")
 public class UserController {
 
@@ -32,9 +32,9 @@ public class UserController {
     /**
      * 所有用户列表
      */
-    @PostMapping("/list")
-    @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public DataResult list(@RequestBody UserRequest user){
+    @GetMapping("/getPage")
+    @ApiOperation(value = "获取用户列表")
+    public DataResult list(UserRequest user){
         IPage<UserEntity> list = userService.queryAll(user);
         return DataResult.success(list);
     }
@@ -54,10 +54,10 @@ public class UserController {
      * @param userIds
      * @return
      */
-    @PostMapping("/delete")
+    @DeleteMapping("/delete")
     @SysLog(value = "删除用户")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    @ApiOperation(value = "删除用户", httpMethod = "POST")
+    @ApiOperation(value = "删除用户")
     public DataResult delete(@RequestBody String[] userIds){
         try {
             userService.deleteById(userIds);
@@ -70,10 +70,10 @@ public class UserController {
     /**
      * 根据Id查询用户
      */
-    @PostMapping("/selectOneById")
-    @ApiOperation(value = "根据Id查询用户", httpMethod = "POST")
-    public DataResult selectOneById(@RequestBody UserRequest user){
-        UserEntity info = userService.selectOneById(user);
+    @GetMapping("/getById/{id}")
+    @ApiOperation(value = "根据Id查询用户")
+    public DataResult selectOneById(@PathVariable String id){
+        UserEntity info = userService.selectOneById(id);
         return DataResult.success(info);
     }
 
@@ -101,7 +101,7 @@ public class UserController {
     /**
      * 修改用户
      */
-    @PostMapping("/update")
+    @PutMapping("/update")
     @SysLog(value = "修改用户")
     @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
@@ -118,7 +118,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/password")
+    @PutMapping("/password")
     @ApiOperation(value = "修改密码", httpMethod = "POST", notes = "修改密码")
     public DataResult updatePassword(@RequestBody UpdatePasswordRequest info){
         ValidatorUtils.validateEntity(info);
@@ -132,7 +132,7 @@ public class UserController {
     /**
      * 更新当前用户信息
      */
-    @PostMapping ("/updateCurrentUser")
+    @PutMapping ("/updateCurrentUser")
     @SysLog(value = "更新当前用户信息")
     @ApiOperation(value = "更新当前用户信息", httpMethod = "POST")
     public DataResult updateCurrentUser(@RequestBody UserRequest user){

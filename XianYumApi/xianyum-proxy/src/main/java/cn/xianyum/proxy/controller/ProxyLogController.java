@@ -17,7 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "远程代理日志接口")
 @RestController
-@RequestMapping(value = "/v1/proxyLog")
+@RequestMapping(value = "/xianyum-proxy/v1/proxyLog")
 @Slf4j
 public class ProxyLogController {
 

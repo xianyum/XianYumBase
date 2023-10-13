@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "账户配置email接口")
 @RestController
-@RequestMapping(value = "/v1/messageConfigEmail")
+@RequestMapping(value = "/xianyum-message/v1/messageConfigEmail")
 @Slf4j
 public class MessageConfigEmailController {
 

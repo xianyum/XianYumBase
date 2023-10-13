@@ -20,7 +20,7 @@ import java.util.List;
  * @date 2023/9/19 17:22
  */
 @RestController
-@RequestMapping("/dict/type")
+@RequestMapping("/xianyum-system/v1/dict/type")
 @Api(tags = "字典类型接口")
 public class DictTypeController {
 
@@ -30,9 +30,9 @@ public class DictTypeController {
     /**
      * 获取字典类型列表
      */
-    @PostMapping("/list")
-    @ApiOperation(value = "获取字典类型列表", httpMethod = "POST")
-    public DataResult list(@RequestBody DictTypeRequest request){
+    @GetMapping("/getPage")
+    @ApiOperation(value = "获取字典类型列表")
+    public DataResult list(DictTypeRequest request){
         IPage<DictTypeEntity> list = dictTypeService.selectDictTypeList(request);
         return DataResult.success(list);
     }
@@ -42,7 +42,7 @@ public class DictTypeController {
      * 查询字典类型详细
      */
     @GetMapping(value = "/{id}")
-    @ApiOperation(value = "查询字典类型详细", httpMethod = "GET")
+    @ApiOperation(value = "查询字典类型详细")
     public DataResult getInfo(@PathVariable Long id) {
         return DataResult.success(dictTypeService.selectDictTypeById(id));
     }
@@ -51,7 +51,7 @@ public class DictTypeController {
      * 新增字典类型
      */
     @PostMapping(value = "/save")
-    @ApiOperation(value = "新增字典类型", httpMethod = "POST")
+    @ApiOperation(value = "新增字典类型")
     @SysLog(value = "新增字典类型")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody DictTypeEntity dictTypeEntity) {
@@ -90,7 +90,7 @@ public class DictTypeController {
 
 
     @GetMapping("/optionSelect")
-    @ApiOperation(value = "获取字典选择框列表", httpMethod = "GET")
+    @ApiOperation(value = "获取字典选择框列表")
     public DataResult optionSelect() {
         List<DictTypeEntity> resultList = dictTypeService.optionSelect();
         return DataResult.success(resultList);

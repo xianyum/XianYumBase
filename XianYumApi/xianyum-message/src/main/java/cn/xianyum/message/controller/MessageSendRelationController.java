@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 @Api(tags = "发送配置关联表接口")
 @RestController
-@RequestMapping(value = "/v1/messageSendRelation")
+@RequestMapping(value = "/xianyum-message/v1/messageSendRelation")
 @Slf4j
 public class MessageSendRelationController {
 
