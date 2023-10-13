@@ -3,7 +3,7 @@ import request from '@/utils/request'
 
 export function getMessageTypeList() {
   return request({
-    url: '/v1/messageTypeConfig/getList',
+    url: '/xianyum-message/v1/messageTypeConfig/getList',
     method: 'get'
   })
 }
@@ -12,7 +12,7 @@ export function getMessageTypeList() {
 // 分页查询消息类型配置
 export function getMessageTypeConfigPage(query) {
   return request({
-    url: '/v1/messageTypeConfig/getPage',
+    url: '/xianyum-message/v1/messageTypeConfig/getPage',
     method: 'get',
     params: query
   })
@@ -22,7 +22,7 @@ export function getMessageTypeConfigPage(query) {
 // 查询消息类型配置详细
 export function getMessageTypeConfigById(id) {
   return request({
-    url: '/v1/messageTypeConfig/getById/' + id,
+    url: '/xianyum-message/v1/messageTypeConfig/getById/' + id,
     method: 'get'
   })
 }
@@ -30,7 +30,7 @@ export function getMessageTypeConfigById(id) {
 // 保存消息类型配置
 export function addMessageTypeConfig(data) {
   return request({
-    url: '/v1/messageTypeConfig/save',
+    url: '/xianyum-message/v1/messageTypeConfig/save',
     method: 'post',
     data: data
   })
@@ -39,7 +39,7 @@ export function addMessageTypeConfig(data) {
 // 更新消息类型配置
 export function updateMessageTypeConfig(data) {
   return request({
-    url: '/v1/messageTypeConfig/update',
+    url: '/xianyum-message/v1/messageTypeConfig/update',
     method: 'put',
     data: data
   })
@@ -49,7 +49,7 @@ export function updateMessageTypeConfig(data) {
 // 删除消息类型配置
 export function delMessageTypeConfig(data) {
   return request({
-    url: '/v1/messageTypeConfig/delete',
+    url: '/xianyum-message/v1/messageTypeConfig/delete',
     method: 'delete',
     data: data
   })

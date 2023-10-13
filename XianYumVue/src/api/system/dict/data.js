@@ -3,16 +3,16 @@ import request from '@/utils/request'
 // 查询字典数据列表
 export function listData(query) {
   return request({
-    url: '/dict/data/list',
-    method: 'post',
-    data: query
+    url: '/xianyum-system/v1/dict/data/getPage',
+    method: 'get',
+    params: query
   })
 }
 
 // 查询字典数据详细
 export function getData(id) {
   return request({
-    url: '/dict/data/' + id,
+    url: '/xianyum-system/v1/dict/data/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getData(id) {
 // 根据字典类型查询字典数据信息
 export function getDicts(dictType) {
   return request({
-    url: '/dict/data/type/' + dictType,
+    url: '/xianyum-system/v1/dict/data/type/' + dictType,
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function getDicts(dictType) {
 // 新增字典数据
 export function addData(data) {
   return request({
-    url: '/dict/data/save',
+    url: '/xianyum-system/v1/dict/data/save',
     method: 'post',
     data: data
   })
@@ -37,7 +37,7 @@ export function addData(data) {
 // 修改字典数据
 export function updateData(data) {
   return request({
-    url: '/dict/data/update',
+    url: '/xianyum-system/v1/dict/data/update',
     method: 'put',
     data: data
   })
@@ -46,7 +46,7 @@ export function updateData(data) {
 // 删除字典数据
 export function delData(dictCode) {
   return request({
-    url: '/dict/data/' + dictCode,
+    url: '/xianyum-system/v1/dict/data/' + dictCode,
     method: 'delete'
   })
 }

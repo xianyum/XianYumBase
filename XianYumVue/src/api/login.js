@@ -34,7 +34,7 @@ export function register(data) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/user/info',
+    url: '/xianyum-system/v1/user/info',
     method: 'get'
   })
 }

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询操作日志列表
 export function list(query) {
   return request({
-    url: '/v1/log/getPage',
+    url: '/xianyum-system/v1/log/getPage',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function list(query) {
 // 删除操作日志
 export function delOperLog(data) {
   return request({
-    url: '/v1/log/delete',
+    url: '/xianyum-system/v1/log/delete',
     method: 'delete',
     data: data
   })
@@ -21,7 +21,7 @@ export function delOperLog(data) {
 // 清空操作日志
 export function cleanOperLog() {
   return request({
-    url: '/v1/log/truncateLog',
+    url: '/xianyum-system/v1/log/truncateLog',
     method: 'delete'
   })
 }
@@ -30,7 +30,7 @@ export function cleanOperLog() {
 
 export function getLogVisitCountCharts() {
   return request({
-    url: '/v1/log/getVisitCountCharts',
+    url: '/xianyum-system/v1/log/getVisitCountCharts',
     method: 'get'
   })
 }
@@ -38,7 +38,7 @@ export function getLogVisitCountCharts() {
 
 export function getOperLogCount() {
   return request({
-    url: '/v1/log/getLogCount',
+    url: '/xianyum-system/v1/log/getLogCount',
     method: 'get'
   })
 }

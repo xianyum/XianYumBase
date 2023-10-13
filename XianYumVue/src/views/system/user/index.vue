@@ -290,10 +290,7 @@ export default {
     handleUpdate(row) {
       this.reset()
       const id = row.id || this.ids[0]
-      this.requestForm = {
-        'id':id
-      }
-      getUser(this.requestForm).then(response => {
+      getUser(id).then(response => {
         this.form = response.data
         this.form.password = null
         this.open = true
