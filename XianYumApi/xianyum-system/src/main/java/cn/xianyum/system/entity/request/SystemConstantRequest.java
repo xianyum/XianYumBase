@@ -1,8 +1,7 @@
 package cn.xianyum.system.entity.request;
 
-import cn.xianyum.common.entity.BaseRequest;
+import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 系统常用常量(system_constant)

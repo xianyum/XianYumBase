@@ -1,6 +1,6 @@
 package cn.xianyum.system.entity.request;
 
-import cn.xianyum.common.entity.BaseRequest;
+import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;

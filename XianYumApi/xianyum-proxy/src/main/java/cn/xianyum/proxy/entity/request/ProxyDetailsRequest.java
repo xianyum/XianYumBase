@@ -1,9 +1,8 @@
 package cn.xianyum.proxy.entity.request;
 
-import cn.xianyum.common.entity.BaseRequest;
+import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 客户端配置详细(proxy_details)

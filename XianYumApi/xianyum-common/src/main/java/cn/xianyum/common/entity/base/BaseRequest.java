@@ -1,4 +1,4 @@
-package cn.xianyum.common.entity;
+package cn.xianyum.common.entity.base;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.Map;
  * @date 2019/5/24 16:02
  */
 @Data
-public class BaseRequest {
+public abstract class BaseRequest {
 
     public Integer pageNum;
     public Integer pageSize;

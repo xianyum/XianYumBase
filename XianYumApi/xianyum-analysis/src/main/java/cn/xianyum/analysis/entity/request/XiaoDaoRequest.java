@@ -1,6 +1,6 @@
 package cn.xianyum.analysis.entity.request;
 
-import cn.xianyum.common.entity.BaseRequest;
+import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
 
 /**
