@@ -1,20 +1,16 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.DictTypeEntity;
-import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.DictTypeRequest;
-import cn.xianyum.system.entity.request.LogRequest;
-import cn.xianyum.system.service.DictDataService;
 import cn.xianyum.system.service.DictTypeService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,7 +53,7 @@ public class DictTypeController {
     @PostMapping(value = "/save")
     @ApiOperation(value = "新增字典类型", httpMethod = "POST")
     @SysLog(value = "新增字典类型")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody DictTypeEntity dictTypeEntity) {
         return DataResult.success(dictTypeService.save(dictTypeEntity));
     }
@@ -69,7 +65,7 @@ public class DictTypeController {
     @PutMapping(value = "/update")
     @ApiOperation(value = "更新字典类型详细")
     @SysLog(value = "更新字典类型详细")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody DictTypeEntity dictTypeEntity) {
         return DataResult.success(dictTypeService.update(dictTypeEntity));
     }
@@ -77,7 +73,7 @@ public class DictTypeController {
     @ApiOperation(value = "刷新字典缓存")
     @DeleteMapping("/refreshCache")
     @SysLog(value = "刷新字典缓存")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult refreshCache() {
         dictTypeService.resetDictCache();
         return DataResult.success();
@@ -86,7 +82,7 @@ public class DictTypeController {
     @DeleteMapping("/{ids}")
     @ApiOperation(value = "批量删除字典类型")
     @SysLog(value = "批量删除字典类型")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult remove(@PathVariable Long[] ids) {
         dictTypeService.deleteDictTypeByIds(ids);
         return DataResult.success();

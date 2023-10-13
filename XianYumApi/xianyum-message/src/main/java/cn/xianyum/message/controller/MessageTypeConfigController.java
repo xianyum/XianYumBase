@@ -1,6 +1,6 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.request.MessageTypeConfigRequest;
@@ -34,7 +34,7 @@ public class MessageTypeConfigController {
      */
 	@ApiOperation(value = "消息类型配置表分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(MessageTypeConfigRequest request) {
 
 		IPage<MessageTypeConfigResponse> response = messageTypeConfigService.getPage(request);
@@ -47,7 +47,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@PathVariable String id) {
 
         MessageTypeConfigResponse response = messageTypeConfigService.getById(id);
@@ -60,7 +60,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表保存数据")
     @PostMapping(value = "/save")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MessageTypeConfigRequest request) {
 
 		Integer count = messageTypeConfigService.save(request);
@@ -76,7 +76,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表修改数据")
     @PutMapping(value = "/update")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageTypeConfigRequest request) {
 
 		Integer count = messageTypeConfigService.update(request);
@@ -92,7 +92,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表删除数据")
     @DeleteMapping(value = "/delete")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
 		messageTypeConfigService.deleteById(ids);

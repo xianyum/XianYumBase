@@ -1,6 +1,6 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
@@ -44,6 +44,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "消息监控根据ID查询数据")
     @GetMapping(value = "/getById")
+    @Permission(publicApi = true)
     public DataResult getById(@RequestParam String id) {
         MessageMonitorResponse response = messageMonitorService.getById(id);
         return DataResult.success(response);
@@ -55,7 +56,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "消息监控保存数据")
     @PostMapping(value = "/save")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MessageMonitorRequest request) {
 
 		Integer count = messageMonitorService.save(request);
@@ -71,7 +72,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "消息监控修改数据")
     @PutMapping(value = "/update")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageMonitorRequest request) {
 
 		Integer count = messageMonitorService.update(request);
@@ -87,7 +88,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "消息监控删除数据")
     @DeleteMapping(value = "/delete")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 		messageMonitorService.deleteById(ids);
 	    return DataResult.success();
@@ -100,7 +101,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "清空监控删除数据")
     @DeleteMapping(value = "/truncate")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult truncate() {
         messageMonitorService.truncate();
         return DataResult.success();

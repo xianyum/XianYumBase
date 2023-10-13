@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.service.GiteeSerivce;
 import io.swagger.annotations.Api;
@@ -25,7 +26,8 @@ public class GiteeController {
     private GiteeSerivce giteeSerivce;
 
     @PostMapping("/push")
-    @ApiOperation(value = "接受仓库推送请求", httpMethod = "POST")
+    @ApiOperation(value = "接受仓库推送请求")
+    @Permission(publicApi = true)
     public DataResult getIpInfo(@RequestBody String json) {
         log.info("接受的参数:{}",json);
         giteeSerivce.push(json);

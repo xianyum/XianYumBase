@@ -17,13 +17,13 @@ import java.util.*;
  * @date 2023/9/20 12:37
  */
 @RestController
-@RequestMapping("/monitor/cache")
+@RequestMapping("/xianyum-system/v1/cache")
 public class CacheController {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @GetMapping()
+    @GetMapping("/getInfo")
     @ApiOperation(value = "查询Redis缓存基本信息", httpMethod = "GET")
     public DataResult getInfo() {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());

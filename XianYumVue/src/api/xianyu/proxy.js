@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 查询客户端管理列表
-export function listProxy(data) {
+export function listProxy(query) {
   return request({
     url: '/proxy/getPage',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: query
   })
 }
 

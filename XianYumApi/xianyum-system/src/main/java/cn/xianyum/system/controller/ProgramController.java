@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
@@ -33,7 +33,7 @@ import java.util.List;
  * @date 2020/11/20 20:29
  */
 @RestController
-@RequestMapping("/program")
+@RequestMapping("/xianyum-system/v1/program")
 @Api(tags = "程序设计接口")
 @Slf4j
 public class ProgramController {
@@ -64,7 +64,7 @@ public class ProgramController {
 
     @PostMapping("/save")
     @SysLog(value = "保存程序记录操作")
-    @Permissions()
+    @Permission()
     @ApiOperation(value = "保存程序记录操作", httpMethod = "POST")
     public DataResult save(@RequestBody ProgramRequest request){
         int count = programService.save(request);
@@ -78,7 +78,7 @@ public class ProgramController {
 
     @PostMapping("/update")
     @SysLog(value = "更新程序记录操作")
-    @Permissions()
+    @Permission()
     @ApiOperation(value = "更新程序记录操作", httpMethod = "POST")
     public DataResult update(@RequestBody ProgramRequest request){
         int count = programService.update(request);
@@ -90,7 +90,7 @@ public class ProgramController {
     }
 
     @PostMapping("/delete")
-    @Permissions()
+    @Permission()
     @SysLog(value = "删除程序记录操作")
     @ApiOperation(value = "删除程序操作", httpMethod = "POST")
     public DataResult delete(@RequestBody String[] ids){
@@ -105,7 +105,7 @@ public class ProgramController {
 
     @PostMapping("/complete")
     @SysLog(value = "完成程序订单操作")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "完成程序订单操作", httpMethod = "POST")
     public DataResult complete(@RequestBody ProgramRequest request){
         try {
@@ -126,7 +126,7 @@ public class ProgramController {
 
 
     @PostMapping("/export")
-    @Permissions
+    @Permission
     @ApiOperation(value = "导出程序订单列表", httpMethod = "POST")
     public void export(@RequestBody ProgramRequest request, HttpServletResponse response){
         ExcelWriter excelWriter = null;

@@ -11,8 +11,12 @@ import java.lang.annotation.*;
 @Target( ElementType.METHOD )
 @Retention( RetentionPolicy.RUNTIME )
 @Documented
-public @interface Permissions {
+public @interface Permission {
 
-    /** 权限校验策略 */
+    /** 用户权限校验策略 */
     PermissionStrategy strategy() default PermissionStrategy.ALLOW_ALL;
+
+    /** 是否公开接口 */
+    boolean publicApi() default false;
+
 }

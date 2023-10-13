@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.UserEntity;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc
  */
 @RestController
-@RequestMapping("/qq")
+@RequestMapping("/xianyum-system/v1/qq")
 @Api(tags = "qq接口")
 public class QqController {
 
@@ -33,7 +34,8 @@ public class QqController {
 
     @PostMapping("/login")
     @SysLog(value = "QQ第三方登录")
-    @ApiOperation(value = "QQ第三方登录", httpMethod = "POST")
+    @ApiOperation(value = "QQ第三方登录")
+    @Permission(publicApi = true)
     public DataResult login(@RequestBody String requestInfo) {
         JSONObject jsonObject = JSON.parseObject(requestInfo);
         String authCode = jsonObject.getString("authCode");

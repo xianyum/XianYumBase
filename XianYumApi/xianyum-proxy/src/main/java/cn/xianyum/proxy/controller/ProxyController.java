@@ -1,7 +1,7 @@
 package cn.xianyum.proxy.controller;
 
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
@@ -36,8 +36,8 @@ public class ProxyController {
      *
      */
 	@ApiOperation(value = "客户端管理分页查询数据")
-	@PostMapping(value = "/getPage")
-	public DataResult getPage(@RequestBody ProxyRequest request) {
+	@GetMapping(value = "/getPage")
+	public DataResult getPage(ProxyRequest request) {
 
 		IPage<ProxyResponse> response = proxyService.getPage(request);
         return DataResult.success(response);
@@ -114,7 +114,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "刷入系统")
     @PutMapping(value = "/flushProxy")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult flushProxy() {
         proxyService.flushProxy();
         return DataResult.success();

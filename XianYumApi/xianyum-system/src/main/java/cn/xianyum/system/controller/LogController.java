@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
@@ -50,7 +50,7 @@ public class LogController {
     }
 
     @DeleteMapping("/delete")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除日志记录", httpMethod = "POST")
     public DataResult delete(@RequestBody String[] logIdS){
         try {
@@ -62,7 +62,7 @@ public class LogController {
     }
 
     @DeleteMapping("/truncateLog")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "清空日志", httpMethod = "POST")
     @SysLog(value = "清空用户操作日志")
     public DataResult truncateLog(){

@@ -1,8 +1,10 @@
 package cn.xianyum.framwork.config;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.framwork.security.filter.AuthenticationTokenFilter;
 import cn.xianyum.framwork.security.handler.AuthenticationEntryPointImpl;
 import cn.xianyum.framwork.security.handler.LogoutSuccessHandlerImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -10,13 +12,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhangwei
@@ -47,6 +57,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Autowired
     private AuthenticationTokenFilter authenticationTokenFilter;
+
+
+    @Autowired
+    private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     /**
      * 跨域过滤器
@@ -96,34 +110,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // 对于登录login 验证码captchaImage 允许匿名访问
                 // 使用 permitAll() 方法所有人都能访问，包括带上 token 访问
-                .antMatchers("/login",
-                        "/captcha/*",
-                        "/systemConstant/getPublicConstant/*",
-                        "/v1/messageMonitor/getById",
-                        "/p1/**").permitAll()
-                .antMatchers(
-                        HttpMethod.GET,
-                        "/",
-                        "/*.html",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js",
-                        "/profile/**"
-                ).permitAll()
-                // 使用 anonymous() 匿名访问，带上token访问失败
-                .antMatchers("/swagger-ui.html").anonymous()
-                .antMatchers("/swagger-resources/**").anonymous()
-                .antMatchers("/webjars/**").anonymous()
-                .antMatchers("/*/api-docs").anonymous()
-                .antMatchers("/druid/**").anonymous()
-                .antMatchers("/plumelog/**").anonymous()
-                .antMatchers("/getIpInfo").anonymous()
-                .antMatchers("/oss/getImage").anonymous()
-                .antMatchers("/ali/login").anonymous()
-                .antMatchers("/qq/login").anonymous()
-                .antMatchers("/getPhoneCode").anonymous()
-                .antMatchers("/gitee/push").anonymous()
-                .antMatchers("/actuator/**").anonymous()
+//                .antMatchers("/login",
+//                        "/captcha/*",
+//                        "/systemConstant/getPublicConstant/*",
+//                        "/v1/messageMonitor/getById",
+//                        "/p1/**").permitAll()
+//                .antMatchers(
+//                        HttpMethod.GET,
+//                        "/",
+//                        "/*.html",
+//                        "/**/*.html",
+//                        "/**/*.css",
+//                        "/**/*.js",
+//                        "/profile/**"
+//                ).permitAll()
+//                // 使用 anonymous() 匿名访问，带上token访问失败
+//                .antMatchers("/swagger-ui.html").anonymous()
+//                .antMatchers("/swagger-resources/**").anonymous()
+//                .antMatchers("/webjars/**").anonymous()
+//                .antMatchers("/*/api-docs").anonymous()
+//                .antMatchers("/druid/**").anonymous()
+//                .antMatchers("/plumelog/**").anonymous()
+//                .antMatchers("/getIpInfo").anonymous()
+//                .antMatchers("/oss/getImage").anonymous()
+//                .antMatchers("/ali/login").anonymous()
+//                .antMatchers("/qq/login").anonymous()
+//                .antMatchers("/getPhoneCode").anonymous()
+//                .antMatchers("/gitee/push").anonymous()
+//                .antMatchers("/actuator/**").anonymous()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
                 .and()
@@ -134,6 +148,58 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 添加CORS filter
         httpSecurity.addFilterBefore(corsFilter, AuthenticationTokenFilter.class);
         httpSecurity.addFilterBefore(corsFilter, LogoutFilter.class);
+    }
+
+
+    @Override
+    public void configure(WebSecurity web){
+        WebSecurity.IgnoredRequestConfigurer ignoring = web.ignoring();
+        ignoring.antMatchers(
+                "/",
+                "/*.html",
+                "/**/*.html",
+                "/**/*.css",
+                "/**/*.js",
+                "/swagger-resources/**",
+                "/webjars/**",
+                "/*/api-docs",
+                "/actuator/**",
+                "/druid/**",
+                "/plumelog/**",
+                "/login",
+                "/captcha/*",
+                "/oss/getImage"
+        );
+        this.ignorePermissionByAnnotation(ignoring, this.requestMappingHandlerMapping);
+    }
+
+    /**
+     * 从注解上忽略权限
+     * @param ignoring
+     * @param requestMappingHandlerMapping
+     */
+    private void ignorePermissionByAnnotation(WebSecurity.IgnoredRequestConfigurer ignoring, RequestMappingHandlerMapping requestMappingHandlerMapping) {
+        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
+            HandlerMethod handlerMethod = entry.getValue();
+            if (handlerMethod.hasMethodAnnotation(Permission.class)) {
+                Permission permissionAnnotation = handlerMethod.getMethodAnnotation(Permission.class);
+                if(permissionAnnotation.publicApi()){
+                    Set<String> patternValues = entry.getKey().getPatternValues();
+                    Set<RequestMethod> methods = entry.getKey().getMethodsCondition().getMethods();
+                    if (CollectionUtils.isEmpty(methods)) {
+                        // RequestMapping没有指定method
+                        ignoring.antMatchers(patternValues.toArray(new String[0]));
+                    } else {
+                        for (RequestMethod method : methods) {
+                            // RequestMapping指定了method
+                            ignoring.antMatchers(HttpMethod.resolve(method.name()), patternValues.toArray(new String[0]));
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 

@@ -1,6 +1,6 @@
 package cn.xianyum.framwork.aspectj;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.XianYumConstant;
 import cn.xianyum.common.enums.PermissionEnum;
@@ -34,32 +34,26 @@ public class PermissionAspect {
 
 
     /** 定义切点Pointcut */
-    @Pointcut("@annotation(cn.xianyum.common.annotation.Permissions)")
+    @Pointcut("@annotation(cn.xianyum.common.annotation.Permission)")
     public void verify(){
     }
 
     @Around("@annotation(adminPermission)")
-    public Object doAround(ProceedingJoinPoint pjp, Permissions adminPermission) throws Throwable {
+    public Object doAround(ProceedingJoinPoint pjp, Permission adminPermission) throws Throwable {
 
         return process(pjp,adminPermission);
     }
 
-    public Object process(ProceedingJoinPoint pjp, Permissions adminPermission) throws Throwable {
+    public Object process(ProceedingJoinPoint pjp, Permission adminPermission) throws Throwable {
 
         PermissionStrategy strategy = adminPermission.strategy();
-        LoginUser userEntity = SecurityUtils.getLoginUser();
-        String authPermission = "";
-        if(Objects.nonNull(userEntity)){
-            authPermission = PermissionEnum.getNameByStatus(userEntity.getPermission());
-        }
-
         switch (strategy) {
             // 放行所有权限，不做任何拦截
             case ALLOW_ALL:
                 break;
             // 仅允许管理员身份访问
             case ALLOW_ADMIN:
-                this.processAllowAdminPermission(authPermission);
+                this.processAllowAdminPermission(this.getAuthPermissionByLoginUser());
                 break;
                 // 仅允许客户端模式进行访问
             case ALLOW_CLIENT:
@@ -70,6 +64,19 @@ public class PermissionAspect {
 
         Object result = pjp.proceed();
         return result;
+    }
+
+    /**
+     * 获取当前登录用户权限标识符
+     * @return
+     */
+    private String getAuthPermissionByLoginUser() {
+        LoginUser userEntity = SecurityUtils.getLoginUser();
+        String authPermission = "";
+        if(Objects.nonNull(userEntity)){
+            authPermission = PermissionEnum.getNameByStatus(userEntity.getPermission());
+        }
+        return authPermission;
     }
 
     /**

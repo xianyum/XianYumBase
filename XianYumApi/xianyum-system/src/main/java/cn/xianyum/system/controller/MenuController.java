@@ -1,7 +1,7 @@
 package cn.xianyum.system.controller;
 
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.system.entity.po.MenuEntity;
@@ -10,9 +10,7 @@ import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,7 +64,7 @@ public class MenuController {
      */
     @PostMapping(value = "/save")
     @ApiOperation(value = "保存菜单信息", httpMethod = "POST")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
         return DataResult.success();
@@ -77,7 +75,7 @@ public class MenuController {
      */
     @PutMapping(value = "/update")
     @ApiOperation(value = "保存菜单信息", httpMethod = "PUT")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
         return DataResult.success();
@@ -89,7 +87,7 @@ public class MenuController {
      */
     @DeleteMapping("/{menuId}")
     @ApiOperation(value = "删除菜单", httpMethod = "DELETE")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult remove(@PathVariable("menuId") Long menuId) {
         return DataResult.success(menuService.deleteMenuById(menuId));
     }

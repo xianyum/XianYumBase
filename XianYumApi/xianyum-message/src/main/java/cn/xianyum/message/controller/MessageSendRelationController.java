@@ -1,13 +1,12 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
 import cn.xianyum.message.service.MessageSendRelationService;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ public class MessageSendRelationController {
      */
 	@ApiOperation(value = "发送配置关联表分页查询数据")
 	@GetMapping(value = "/getPage")
-	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(MessageSendRelationRequest request) {
 
 		IPage<MessageSendRelationResponse> response = messageSendRelationService.getPage(request);
@@ -47,7 +46,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表删除数据")
 	@DeleteMapping(value = "/delete/{id}")
-	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult delete(@PathVariable String id) {
 		messageSendRelationService.deleteById(id);
 		return DataResult.success();
@@ -59,7 +58,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表保存数据")
 	@PostMapping(value = "/save")
-	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult save(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.save(request);
@@ -75,7 +74,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表修改数据")
 	@PutMapping(value = "/update")
-	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult update(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.update(request);
@@ -92,7 +91,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表根据ID查询数据")
 	@GetMapping(value = "/getById/{id}")
-	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getById(@PathVariable String id) {
 		MessageSendRelationResponse response = messageSendRelationService.getById(id);
 		return DataResult.success(response);
@@ -104,7 +103,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "根据账户类型查询账户配置")
 	@PostMapping(value = "/getMessageConfigByAccountType")
-	@Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getMessageConfigByAccountType(@RequestBody MessageSendRelationRequest request) {
 
 		JSONArray response = messageSendRelationService.getMessageConfigByAccountType(request.getMessageConfigId(),request.getMessageAccountType());

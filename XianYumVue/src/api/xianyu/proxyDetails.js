@@ -2,11 +2,11 @@ import request from '@/utils/request'
 import data from '@/views/system/dict/data'
 
 // 查询客户端配置详细列表
-export function listDetails(data) {
+export function listDetails(query) {
   return request({
     url: '/proxyDetails/getPage',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: query
   })
 }
 

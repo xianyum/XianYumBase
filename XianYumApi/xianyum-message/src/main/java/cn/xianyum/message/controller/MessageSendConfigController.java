@@ -1,6 +1,6 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.po.MessageSendConfigEntity;
@@ -33,7 +33,7 @@ public class MessageSendConfigController {
      */
 	@ApiOperation(value = "消息发送配置分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(MessageSendConfigRequest request) {
 
 		IPage<MessageSendConfigResponse> response = messageSendConfigService.getPage(request);
@@ -46,7 +46,7 @@ public class MessageSendConfigController {
      */
     @ApiOperation(value = "消息发送配置根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@PathVariable String id) {
         MessageSendConfigResponse response = messageSendConfigService.getById(id);
         return DataResult.success(response);
@@ -58,7 +58,7 @@ public class MessageSendConfigController {
      */
     @ApiOperation(value = "消息发送配置保存数据")
     @PostMapping(value = "/save")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MessageSendConfigRequest request) {
 
 		Integer count = messageSendConfigService.save(request);
@@ -74,7 +74,7 @@ public class MessageSendConfigController {
      */
     @ApiOperation(value = "消息发送配置修改数据")
     @PutMapping(value = "/update")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageSendConfigRequest request) {
 
 		Integer count = messageSendConfigService.update(request);
@@ -90,7 +90,7 @@ public class MessageSendConfigController {
      */
     @ApiOperation(value = "消息发送配置删除数据")
     @DeleteMapping(value = "/delete")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
 		messageSendConfigService.deleteById(ids);
@@ -104,7 +104,7 @@ public class MessageSendConfigController {
      */
     @ApiOperation(value = "消息发送配置保存数据")
     @PostMapping(value = "/saveOrUpdate")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult saveOrUpdate(@RequestBody MessageSendConfigRequest request) {
 
         MessageSendConfigEntity messageSendConfigEntity = messageSendConfigService.saveOrUpdate(request);

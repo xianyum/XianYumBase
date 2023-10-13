@@ -7,6 +7,9 @@ import cn.xianyum.common.exception.SoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Objects;
+
 /**
  * 安全服务工具类
  * @author zhangwei
@@ -22,12 +25,15 @@ public class SecurityUtils {
      */
     public static LoginUser getLoginUser(){
         // 有可能返回anonymousUser
-        Object principal = getAuthentication().getPrincipal();
-        if(principal instanceof LoginUser){
-            return (LoginUser)getAuthentication().getPrincipal();
-        }else{
+        Authentication authentication = getAuthentication();
+        if(Objects.isNull(authentication)){
             return null;
         }
+        Object principal = authentication.getPrincipal();
+        if(principal instanceof LoginUser){
+            return (LoginUser)principal;
+        }
+        return null;
     }
 
 

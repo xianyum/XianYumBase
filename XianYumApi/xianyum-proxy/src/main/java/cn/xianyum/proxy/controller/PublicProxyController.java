@@ -1,6 +1,6 @@
 package cn.xianyum.proxy.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.enums.ReturnT;
@@ -36,7 +36,7 @@ public class PublicProxyController {
 
     @ApiOperation(value = "刷入系统")
     @GetMapping(value = "/flushProxy")
-    @Permissions(strategy = PermissionStrategy.ALLOW_CLIENT)
+    @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)
     @SysLog(value = "远程调用刷入系统操作")
     public DataResult flushProxy() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>();
@@ -54,6 +54,7 @@ public class PublicProxyController {
     @SysLog("更新客户端信息")
     @ApiOperation(value = "更新客户端信息")
     @PostMapping(value = "/updateClientInfo")
+    @Permission(publicApi = true)
     public DataResult updateClientInfo(@RequestBody ProxyRequest request) {
         proxyService.updateClientInfo(request);
         return DataResult.success();
@@ -67,6 +68,7 @@ public class PublicProxyController {
     @SysLog("客户端发送客户端配置信息")
     @ApiOperation(value = "客户端发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
+    @Permission(publicApi = true)
     public DataResult sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
         return DataResult.success(result);

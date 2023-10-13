@@ -119,7 +119,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
                 .setBodyPara(requestObject.toJSONString()).post().getBody().toString();
         JSONObject loginResultObject = JSONObject.parseObject(loginResultStr);
         String token = JSONObject.parseObject(loginResultObject.getString("data")).getString("token");
-        log.error("172号卡系统生成token,{}",token);
+        log.info("172号卡系统生成token,{}",token);
         if(StringUtil.isNotEmpty(token)){
             redisUtils.setMin(redisKey,token,120);
         }

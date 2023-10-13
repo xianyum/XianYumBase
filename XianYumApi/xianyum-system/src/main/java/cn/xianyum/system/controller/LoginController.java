@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.LogEntity;
@@ -56,7 +57,8 @@ public class LoginController {
      * @return
      */
     @PostMapping("/login")
-    @ApiOperation(value = "登录系统", httpMethod = "POST")
+    @ApiOperation(value = "登录系统")
+    @Permission(publicApi = true)
     public DataResult login(@RequestBody UserRequest userRequest) {
         long beginTime = System.currentTimeMillis();
 
@@ -101,7 +103,8 @@ public class LoginController {
      * 获取手机验证码
      */
     @PostMapping("/getPhoneCode")
-    @ApiOperation(value = "获取手机验证码", httpMethod = "POST")
+    @ApiOperation(value = "获取手机验证码")
+    @Permission(publicApi = true)
     public DataResult getPhoneCode(@RequestBody UserRequest request) {
         //captchaService.getPhoneCaptcha(request);
         return DataResult.error("短信接口停用，无法发送短信！");

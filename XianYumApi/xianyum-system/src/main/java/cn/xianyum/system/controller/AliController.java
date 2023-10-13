@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
@@ -37,9 +37,10 @@ public class AliController {
     @Autowired
     private AliNetService aliNetService;
 
-    @PostMapping("/ali/login")
+    @PostMapping("/xianyum-system/v1/ali/login")
     @SysLog(value = "支付宝第三方登录")
-    @ApiOperation(value = "支付宝第三方登录", httpMethod = "POST")
+    @ApiOperation(value = "支付宝第三方登录")
+    @Permission(publicApi = true)
     public DataResult login(@RequestBody String requestInfo) {
         JSONObject jsonObject = JSON.parseObject(requestInfo);
         String authCode = jsonObject.getString("authCode");
@@ -53,8 +54,8 @@ public class AliController {
 
     @PostMapping("/p1/ali/yunXiao/flowCallBack")
     @SysLog(value = "阿里云-云效-流水线执行结果回调")
-    @ApiOperation(value = "阿里云-云效-流水线执行结果回调", httpMethod = "POST")
-    @Permissions(strategy = PermissionStrategy.ALLOW_CLIENT)
+    @ApiOperation(value = "阿里云-云效-流水线执行结果回调")
+    @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)
     public DataResult flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
         return DataResult.success();

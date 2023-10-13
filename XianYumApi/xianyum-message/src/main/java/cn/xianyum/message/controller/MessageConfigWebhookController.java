@@ -1,6 +1,6 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permissions;
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -37,7 +37,7 @@ public class MessageConfigWebhookController {
      */
 	@ApiOperation(value = "账户配置webhook分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
 	public DataResult getPage(MessageConfigWebhookRequest request) {
 
 		IPage<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
@@ -50,7 +50,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult getById(@PathVariable String id) {
 
         MessageConfigWebhookResponse response = messageConfigWebhookService.getById(id);
@@ -63,7 +63,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook保存数据")
     @PostMapping(value = "/save")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult save(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.save(request);
@@ -79,7 +79,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook修改数据")
     @PutMapping(value = "/update")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult update(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.update(request);
@@ -95,7 +95,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "账户配置webhook删除数据")
     @DeleteMapping(value = "/delete")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody String[] ids) {
 
 		messageConfigWebhookService.deleteById(ids);
@@ -108,7 +108,7 @@ public class MessageConfigWebhookController {
      */
     @ApiOperation(value = "webhook账户测试发送")
     @PutMapping(value = "/sendWebhook")
-    @Permissions(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult sendWebhook(@RequestBody MessageSenderEntity request) {
         try {
             webhookSender.sendWebhook(request);

@@ -64,7 +64,7 @@ export function getCodeImg() {
 // 退出方法
 export function aliLogin(data) {
   return request({
-    url: '/ali/login',
+    url: '/xianyum-system/v1/ali/login',
     method: 'post',
     data: data
   })
@@ -73,7 +73,7 @@ export function aliLogin(data) {
 
 export function qqLogin(data) {
   return request({
-    url: '/qq/login',
+    url: '/xianyum-system/v1/qq/login',
     method: 'post',
     data: data
   })
