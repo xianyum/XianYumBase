@@ -168,12 +168,9 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     }
 
     @Override
-    public SystemConstantResponse getById(SystemConstantRequest request) {
+    public SystemConstantResponse getById(String id) {
         SecurityUtils.allowAdminAuth();
-        if(StringUtil.isEmpty(request.getId())){
-            throw new SoException("id不能为空");
-        }
-        SystemConstantEntity result = systemConstantMapper.selectById(request.getId());
+        SystemConstantEntity result = systemConstantMapper.selectById(id);
         SystemConstantResponse response = BeanUtils.copy(result, SystemConstantResponse.class);
         return response;
 

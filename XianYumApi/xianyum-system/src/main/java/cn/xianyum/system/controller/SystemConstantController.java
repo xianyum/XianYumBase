@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2020/11/3 19:25
  */
 @RestController
-@RequestMapping("/systemConstant")
+@RequestMapping("/xianyum-system/v1/systemConstant")
 @Api(tags = "系统常用参数")
 public class SystemConstantController {
 
@@ -56,8 +56,8 @@ public class SystemConstantController {
      *
      */
     @ApiOperation(value = "系统常量分页查询数据")
-    @PostMapping(value = "/getPage")
-    public DataResult getPage(@RequestBody SystemConstantRequest request) {
+    @GetMapping(value = "/getPage")
+    public DataResult getPage(SystemConstantRequest request) {
 
         IPage<SystemConstantResponse> response = systemConstantService.getPage(request);
         return DataResult.success(response);
@@ -68,10 +68,9 @@ public class SystemConstantController {
      *
      */
     @ApiOperation(value = "系统常量根据ID查询数据")
-    @PostMapping(value = "/getById")
-    public DataResult getById(@RequestBody SystemConstantRequest request) {
-
-        SystemConstantResponse response = systemConstantService.getById(request);
+    @GetMapping(value = "/getById/{id}")
+    public DataResult getById(@PathVariable String id) {
+        SystemConstantResponse response = systemConstantService.getById(id);
         return DataResult.success(response);
     }
 

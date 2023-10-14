@@ -28,7 +28,7 @@ public interface SystemConstantService {
 
     Integer save(SystemConstantRequest request);
 
-    SystemConstantResponse getById(SystemConstantRequest request);
+    SystemConstantResponse getById(String id);
 
     IPage<SystemConstantResponse> getPage(SystemConstantRequest request);
 
