@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.IpInfoEntity;
 import cn.xianyum.common.service.IpService;
@@ -28,6 +29,7 @@ public class IpController {
     @GetMapping("/getIpInfo")
     @SysLog(value = "查询IP地理位置")
     @ApiOperation(value = "查询IP地理位置", httpMethod = "POST")
+    @Permission(publicApi = true)
     public DataResult getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
         return DataResult.success(result);
