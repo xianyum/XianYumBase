@@ -1,13 +1,14 @@
 package cn.xianyum.proxy.controller;
 
-
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
+import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
 import cn.xianyum.proxy.service.ProxyService;
+import cn.xianyum.proxy.task.ProxyDetailsFlushWriteAndReadBytes;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 客户端管理接口
@@ -30,6 +33,9 @@ public class ProxyController {
 
 	@Autowired
 	private ProxyService proxyService;
+
+    @Autowired
+    private ProxyDetailsFlushWriteAndReadBytes proxyDetailsFlushWriteAndReadBytes;
 
     /**
      * 客户端管理分页查询数据
@@ -128,6 +134,7 @@ public class ProxyController {
     @SysLog("发送客户端配置信息")
     @ApiOperation(value = "发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
+    @Permission(publicApi = true)
     public DataResult sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
         return DataResult.success(result);
@@ -166,5 +173,17 @@ public class ProxyController {
                 writer.close();
             }
         }
+    }
+
+
+    @ApiOperation(value = "重启java应用刷入写入量和读取量")
+    @GetMapping(value = "/flushWriteAndReadBytes")
+    @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)
+    @SysLog(value = "重启java应用刷入写入量和读取量")
+    public DataResult flushWriteAndReadBytes() throws Exception {
+        Map<String, String> jobMapParams = new HashMap<>(2);
+        jobMapParams.put("resetZeroFlag","Y");
+        ReturnT returnT = proxyDetailsFlushWriteAndReadBytes.execute(jobMapParams,null);
+        return DataResult.success(returnT.getValue());
     }
 }
