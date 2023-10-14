@@ -3,28 +3,24 @@ import request from '@/utils/request'
 // 查询参数列表
 export function listConfig(query) {
   return request({
-    url: '/systemConstant/getPage',
-    method: 'post',
-    data: query
+    url: '/xianyum-system/v1/systemConstant/getPage',
+    method: 'get',
+    params: query
   })
 }
 
 // 查询参数详细
 export function getConfig(configId) {
-  const requestParam = {
-    "id":configId
-  }
   return request({
-    url: '/systemConstant/getById',
-    method: 'post',
-    data: requestParam
+    url: '/xianyum-system/v1/systemConstant/getById/'+configId,
+    method: 'get'
   })
 }
 
 // 根据参数键名查询参数值
 export function getConfigKey(configKey) {
   return request({
-    url: '/system/config/configKey/' + configKey,
+    url: '/xianyum-system/v1/system/config/configKey/' + configKey,
     method: 'get'
   })
 }
@@ -32,7 +28,7 @@ export function getConfigKey(configKey) {
 // 新增参数配置
 export function addConfig(data) {
   return request({
-    url: '/systemConstant/save',
+    url: '/xianyum-system/v1/systemConstant/save',
     method: 'post',
     data: data
   })
@@ -41,7 +37,7 @@ export function addConfig(data) {
 // 修改参数配置
 export function updateConfig(data) {
   return request({
-    url: '/systemConstant/update',
+    url: '/xianyum-system/v1/systemConstant/update',
     method: 'put',
     data: data
   })
@@ -50,7 +46,7 @@ export function updateConfig(data) {
 // 删除参数配置
 export function delConfig(configId) {
   return request({
-    url: '/systemConstant/delete?key=' + configId,
+    url: '/xianyum-system/v1/systemConstant/delete?key=' + configId,
     method: 'delete'
   })
 }
@@ -58,7 +54,7 @@ export function delConfig(configId) {
 // 刷新参数缓存
 export function refreshCache() {
   return request({
-    url: '/systemConstant/refreshCache',
+    url: '/xianyum-system/v1/systemConstant/refreshCache',
     method: 'delete'
   })
 }
@@ -66,7 +62,7 @@ export function refreshCache() {
 // 从缓存查看系统常量
 export function getConfigByCache(query){
   return request({
-    url: '/systemConstant/getRedisCache',
+    url: '/xianyum-system/v1/systemConstant/getRedisCache',
     method: 'get',
     params: query
   })
