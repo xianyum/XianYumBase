@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc
  */
 @RestController
-@RequestMapping()
+@RequestMapping("/xianyum-system/v1/ali")
 @Api(tags = "阿里相关接口")
 public class AliController {
 
@@ -37,7 +37,7 @@ public class AliController {
     @Autowired
     private AliNetService aliNetService;
 
-    @PostMapping("/xianyum-system/v1/ali/login")
+    @PostMapping("/login")
     @SysLog(value = "支付宝第三方登录")
     @ApiOperation(value = "支付宝第三方登录")
     @Permission(publicApi = true)
@@ -52,7 +52,7 @@ public class AliController {
         }
     }
 
-    @PostMapping("/p1/ali/yunXiao/flowCallBack")
+    @PostMapping("/yunXiao/flowCallBack")
     @SysLog(value = "阿里云-云效-流水线执行结果回调")
     @ApiOperation(value = "阿里云-云效-流水线执行结果回调")
     @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)

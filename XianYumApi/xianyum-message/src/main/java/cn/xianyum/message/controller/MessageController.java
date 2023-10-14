@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "消息接口")
 @RestController
+@RequestMapping("/xianyum-message/v1/message")
 @Slf4j
 public class MessageController {
 
     @Autowired
     private MessageService messageService;
 
-    @PostMapping("/p1/message/sendSimpleMessage")
+    @PostMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
     public DataResult sendSimpleMessageForPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
@@ -30,7 +31,7 @@ public class MessageController {
         return DataResult.success();
     }
 
-    @GetMapping("/p1/message/sendSimpleMessage")
+    @GetMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
     public DataResult sendSimpleMessageForGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
