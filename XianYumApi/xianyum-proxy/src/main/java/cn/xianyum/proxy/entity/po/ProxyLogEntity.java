@@ -36,4 +36,6 @@ public class ProxyLogEntity extends BaseEntity {
 
     private String computerUserName;
 
+    private String onlineTime;
+
 }

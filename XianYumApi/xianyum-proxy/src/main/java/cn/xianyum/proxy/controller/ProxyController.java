@@ -7,6 +7,7 @@ import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
+import cn.xianyum.proxy.service.ProxyLogService;
 import cn.xianyum.proxy.service.ProxyService;
 import cn.xianyum.proxy.task.ProxyDetailsFlushWriteAndReadBytes;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -33,6 +34,9 @@ public class ProxyController {
 
 	@Autowired
 	private ProxyService proxyService;
+
+    @Autowired
+    private ProxyLogService proxyLogService;
 
     @Autowired
     private ProxyDetailsFlushWriteAndReadBytes proxyDetailsFlushWriteAndReadBytes;
@@ -184,6 +188,7 @@ public class ProxyController {
         Map<String, String> jobMapParams = new HashMap<>(2);
         jobMapParams.put("resetZeroFlag","Y");
         ReturnT returnT = proxyDetailsFlushWriteAndReadBytes.execute(jobMapParams,null);
+        proxyLogService.setIgnoreSaveFlag();
         return DataResult.success(returnT.getValue());
     }
 }

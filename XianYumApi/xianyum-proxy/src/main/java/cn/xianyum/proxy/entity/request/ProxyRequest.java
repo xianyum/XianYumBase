@@ -23,21 +23,6 @@ public class ProxyRequest extends BaseRequest {
     /** 是否通知，0：不通知 1：通知 */
     private Integer notify;
 
-    /** mac地址 */
-    private String macAddress;
-
-    /** hostIp地址 */
-    private String hostIp;
-
-    /** 主机名 */
-    private String hostName;
-
-    /** 操作系统 */
-    private String osName;
-
-    /** 客户端版本号 */
-    private Double clientVersion;
-
     /** 当前读取量 */
     private Long readBytes;
 

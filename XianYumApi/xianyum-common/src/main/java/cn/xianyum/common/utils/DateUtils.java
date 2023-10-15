@@ -184,8 +184,7 @@ public class DateUtils {
     /**
      * 计算两个时间差
      */
-    public static String getDatePoor(Date endDate, Date nowDate)
-    {
+    public static String getDatePoor(Date endDate, Date nowDate) {
         long nd = 1000 * 24 * 60 * 60;
         long nh = 1000 * 60 * 60;
         long nm = 1000 * 60;

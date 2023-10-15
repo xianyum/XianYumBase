@@ -12,9 +12,11 @@ import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
 import cn.xianyum.proxy.entity.po.ProxyDetailsEntity;
 import cn.xianyum.proxy.entity.po.ProxyEntity;
+import cn.xianyum.proxy.entity.po.ProxyLogEntity;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
 import cn.xianyum.proxy.handlers.ProxyChangedListener;
+import cn.xianyum.proxy.service.ProxyLogService;
 import cn.xianyum.proxy.service.ProxyService;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,6 +43,9 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Autowired
 	private MessageSender messageSender;
+
+	@Autowired
+	private ProxyLogService proxyLogService;
 
 	@Override
 	public IPage<ProxyResponse> getPage(ProxyRequest request) {
@@ -110,7 +115,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 		ProxyEntity bean = BeanUtils.copy(request,ProxyEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
-		bean.setCreateTime(new Date());
 		bean.setLoginCount(0);
 		return proxyMapper.insert(bean);
 
@@ -167,22 +171,22 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public void onlineNotify(String clientKey) {
 		ProxyEntity proxyEntity = proxyMapper.selectById(clientKey);
-
 		if(proxyEntity != null){
 			DateTime now = new DateTime();
 			ProxyEntity updateBean = new ProxyEntity();
 			updateBean.setId(clientKey);
 			updateBean.setLoginCount(proxyEntity.getLoginCount()+1);
-			updateBean.setLoginTime(now.toDate());
 			proxyMapper.updateById(updateBean);
+
+			ProxyLogEntity proxyLogEntity = proxyLogService.saveLog(clientKey);
 
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
-			if(StringUtil.isNotEmpty(proxyEntity.getMacAddress())){
-				content.put("客户端mac：",proxyEntity.getMacAddress());
+			if(StringUtil.isNotEmpty(proxyLogEntity.getMacAddress())){
+				content.put("客户端mac：",proxyLogEntity.getMacAddress());
 			}
-			if(StringUtil.isNotEmpty(proxyEntity.getHostIp())){
-				content.put("客户端ip：",proxyEntity.getHostIp());
+			if(StringUtil.isNotEmpty(proxyLogEntity.getHostIp())){
+				content.put("客户端ip：",proxyLogEntity.getHostIp());
 			}
 			content.put("服务器节点：",IPUtils.getHostName());
 			content.put("登录次数：",proxyEntity.getLoginCount()+1);
@@ -207,15 +211,21 @@ public class ProxyServiceImpl implements ProxyService {
 		ProxyEntity proxyEntity = proxyMapper.selectById(clientKey);
 
 		if(proxyEntity != null){
+
+			ProxyLogEntity proxyLogEntity = proxyLogService.getLatestProxyLog(clientKey);
 			DateTime now = new DateTime();
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
-			content.put("在线时长：",DateUtils.getDatePoor(now.toDate(),proxyEntity.getLoginTime()));
+			// onlineTime如果不为空，说明有可能获取的不是最新的一条数据，可能客户端登录的时候未上报登录数据
+			if(Objects.nonNull(proxyLogEntity.getId()) && StringUtil.isEmpty(proxyLogEntity.getOnlineTime())){
+				String onlineTime = DateUtils.getDatePoor(now.toDate(), proxyLogEntity.getCreateTime());
+				content.put("在线时长：",onlineTime);
+				proxyLogEntity.setOnlineTime(onlineTime);
+				proxyLogService.update(proxyLogEntity);
+			}
 			content.put("下线时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
-
 			MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
 			messageSenderEntity.setTitle("xianyu客户端下线通知");
-			messageSenderEntity.setWechatToUser(proxyEntity.getWxUserId());
 			messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
 			messageSender.sendAsyncMessage(MessageCodeEnums.XIANYU_ONLINE_OFFLINE_NOTIFY.getMessageCode(),messageSenderEntity);
 		}
@@ -279,9 +289,10 @@ public class ProxyServiceImpl implements ProxyService {
 			context.setVariable("remoteAddr", "暂未配置");
 		}
 
+		ProxyLogEntity proxyLogEntity = proxyLogService.getLatestProxyLog(proxyEntity.getId());
 		context.setVariable("loginCount", proxyEntity.getLoginCount()+"次");
-		if(null != proxyEntity.getLoginTime()){
-			context.setVariable("loginTime", DateUtils.format(proxyEntity.getLoginTime(),DateUtils.DATE_TIME_PATTERN));
+		if(null != proxyLogEntity.getCreateTime()){
+			context.setVariable("loginTime", DateUtils.format(proxyLogEntity.getCreateTime(),DateUtils.DATE_TIME_PATTERN));
 		}else{
 			context.setVariable("loginTime", DateTime.now().toString(DateUtils.DATE_TIME_PATTERN));
 		}
@@ -293,8 +304,8 @@ public class ProxyServiceImpl implements ProxyService {
 		}else {
 			context.setVariable("online", "离线");
 		}
-		context.setVariable("macAddress", proxyEntity.getMacAddress());
-		context.setVariable("hostIp", proxyEntity.getHostIp());
+		context.setVariable("macAddress", proxyLogEntity.getMacAddress());
+		context.setVariable("hostIp", proxyLogEntity.getHostIp());
 		MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
 		messageSenderEntity.setTitle("xianyu客户端代理配置详情");
 		messageSenderEntity.setEmailHtmlPath("clientHtml");
@@ -346,27 +357,6 @@ public class ProxyServiceImpl implements ProxyService {
 		}
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);
-	}
-
-	/**
-	 * 更新客户端信息
-	 *
-	 * @param request
-	 */
-	@Override
-	public void updateClientInfo(ProxyRequest request) {
-		if(StringUtil.isEmpty(request.getId())){
-			throw new SoException("客户端秘钥不能为空！");
-		}
-		ProxyEntity updateBean = new ProxyEntity();
-		updateBean.setId(request.getId());
-		updateBean.setMacAddress(request.getMacAddress());
-		updateBean.setHostIp(request.getHostIp());
-		updateBean.setHostName(request.getHostName());
-		updateBean.setOsName(request.getOsName());
-		updateBean.setClientVersion(request.getClientVersion());
-		proxyMapper.updateById(updateBean);
-
 	}
 
 }

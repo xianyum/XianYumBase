@@ -39,6 +39,9 @@ redis:
     config:
       prefix: '${spring.application.name}:xianyum-message:config:'
   proxy:
+    proxy_log:
+      ignore_save: '${spring.application.name}:xianyum-proxy:proxy_log:ignore_save:flag'
+      log_data: '${spring.application.name}:xianyum-proxy:proxy_log:log_data:'
     proxy_details:
       lan_info: '${spring.application.name}:xianyum-proxy:proxy_details:lan_info:'
   dict:

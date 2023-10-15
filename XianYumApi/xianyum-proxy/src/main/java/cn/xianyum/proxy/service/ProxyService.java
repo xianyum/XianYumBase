@@ -56,9 +56,4 @@ public interface ProxyService {
 
     String downloadConfig(String id);
 
-	/**
-	 * 更新客户端信息
-	 * @param request
-	 */
-	void updateClientInfo(ProxyRequest request);
 }

@@ -24,16 +24,11 @@ public class CustomerFillHandler implements MetaObjectHandler {
         if(Objects.isNull(loginUser)){
             this.strictInsertFill(metaObject,"createBy",String.class,"-1");
             this.strictInsertFill(metaObject,"createByName", String.class, "system");
-            this.strictUpdateFill(metaObject,"updateBy",String.class,"-1");
-            this.strictUpdateFill(metaObject,"updateByName", String.class, "system");
         }else{
             this.strictInsertFill(metaObject,"createBy",String.class,loginUser.getId());
             this.strictInsertFill(metaObject,"createByName",String.class,loginUser.getUsername());
-            this.strictUpdateFill(metaObject,"updateBy",String.class,loginUser.getId());
-            this.strictUpdateFill(metaObject,"updateByName",String.class,loginUser.getUsername());
         }
         this.strictInsertFill(metaObject,"createTime",Date.class,DateTime.now().toDate());
-        this.strictUpdateFill(metaObject,"updateTime",Date.class,DateTime.now().toDate());
     }
 
     @Override
