@@ -58,16 +58,12 @@ public class DictDataServiceImpl implements DictDataService {
 
     @Override
     public int save(DictDataEntity dict) {
-        dict.setCreateTime(new Date());
-        dict.setCreateBy(SecurityUtils.getLoginUser().getUsername());
         return dictDataMapper.insert(dict);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(DictDataEntity dict) {
-        dict.setUpdateTime(new Date());
-        dict.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
         dictCacheAdaptor.delDictDataByTypeKey(dict.getDictType());
         return dictDataMapper.updateById(dict);
     }

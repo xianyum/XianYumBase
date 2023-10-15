@@ -1,11 +1,11 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.util.Date;
 
 /**
  * @author zhangwei
@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "dict_type")
-public class DictTypeEntity {
+public class DictTypeEntity extends BaseEntity{
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -29,8 +29,4 @@ public class DictTypeEntity {
 
     private String remark;
 
-    private Date createTime;
-    private String createBy;
-    private Date updateTime;
-    private String updateBy;
 }

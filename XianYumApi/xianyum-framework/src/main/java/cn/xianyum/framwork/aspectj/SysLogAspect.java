@@ -92,8 +92,6 @@ public class SysLogAspect {
 
 
         logEntity.setTime(time);
-        logEntity.setCreateTime(new Date());
-
         //异步保存系统日志
         xianYumTaskExecutor.execute(()->{
             SpringUtils.getBean(LogService.class).saveLog(logEntity);

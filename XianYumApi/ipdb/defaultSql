@@ -1,0 +1,7 @@
+ALTER TABLE `xianyum`.`proxy_details`
+ADD COLUMN `create_time` datetime NULL,
+ADD COLUMN `create_by` varchar(64) NULL AFTER `create_time`,
+ADD COLUMN `create_by_name` varchar(50) NULL AFTER `create_by`,
+ADD COLUMN `update_time` datetime NULL AFTER `create_by_name`,
+ADD COLUMN `update_by` varchar(64) NULL AFTER `update_time`,
+ADD COLUMN `update_by_name` varchar(50) NULL AFTER `update_by`;

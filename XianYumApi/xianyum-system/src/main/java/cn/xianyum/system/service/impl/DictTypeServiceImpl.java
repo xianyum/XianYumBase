@@ -55,8 +55,6 @@ public class DictTypeServiceImpl implements DictTypeService {
         if(!isUnique){
             throw new SoException("字典类型重复！");
         }
-        dictTypeEntity.setCreateTime(new Date());
-        dictTypeEntity.setCreateBy(SecurityUtils.getLoginUser().getUsername());
         return dictTypeMapper.insert(dictTypeEntity);
     }
 
@@ -69,8 +67,6 @@ public class DictTypeServiceImpl implements DictTypeService {
         }
         DictTypeEntity oldDict = dictTypeMapper.selectById(dictTypeEntity.getId());
         dictDataMapper.updateDictDataType(oldDict.getDictType(), dictTypeEntity.getDictType());
-        dictTypeEntity.setUpdateTime(new Date());
-        dictTypeEntity.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
         dictCacheAdaptor.delDictDataByTypeKey(dictTypeEntity.getDictType());
         return dictTypeMapper.updateById(dictTypeEntity);
     }

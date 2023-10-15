@@ -58,7 +58,6 @@ public class LogServiceImpl implements LogService {
             logEntity.setIpInfo(IPUtils.getIpInfo(ip));
         }
 
-        logEntity.setCreateTime(new Date());
         if(StringUtil.isEmpty(logEntity.getMethod())){
             logEntity.setMethod(this.getClass().toString());
         }

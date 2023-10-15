@@ -1,5 +1,6 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "gitee_commit")
-public class GiteeCommitEntity {
+public class GiteeCommitEntity extends BaseEntity {
 
     private String id;
 

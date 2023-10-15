@@ -1,11 +1,10 @@
 package cn.xianyum.message.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * 发送配置关联表(message_send_relation)
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "message_send_relation")
-public class MessageSendRelationEntity{
+public class MessageSendRelationEntity extends BaseEntity {
 
     /** id */
 	@TableId(type = IdType.INPUT)
@@ -31,5 +30,4 @@ public class MessageSendRelationEntity{
     /** 发送用户，多个用|隔开 */
     private String toUser;
 
-    private Date createTime;
 }

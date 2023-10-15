@@ -1,5 +1,6 @@
 package cn.xianyum.message.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "message_config_wechat")
-public class MessageConfigWechatEntity{
+public class MessageConfigWechatEntity extends BaseEntity {
 
     /** id */
     private String id;
@@ -29,17 +30,7 @@ public class MessageConfigWechatEntity{
     /** 描述 */
     private String description;
 
-    /** 创建时间 */
-    private Date createTime;
-
-    /** 创建人ID */
-    private String createUserId;
-
-    /** 创建人名称 */
-    private String createUserName;
-
     /** 删除标志（0：未删除，1：删除） */
     private Integer delTag;
-
 
 }

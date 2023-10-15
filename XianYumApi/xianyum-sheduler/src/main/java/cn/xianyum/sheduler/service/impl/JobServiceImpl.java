@@ -94,9 +94,6 @@ public class JobServiceImpl implements JobService {
 			throw new SoException("新增任务'" + request.getJobName() + "'失败，Cron表达式不正确！");
 		}
 		JobEntity bean = BeanUtils.copy(request,JobEntity.class);
-		bean.setCreateTime(new Date());
-		bean.setCreateUserId(SecurityUtils.getLoginUser().getId());
-		bean.setCreateUserName(SecurityUtils.getLoginUser().getUsername());
 		bean.setStatus(ScheduleConstants.Status.PAUSE.getValue());
 		int rows = jobMapper.insert(bean);
 		if (rows > 0) {

@@ -1,5 +1,6 @@
 package cn.xianyum.message.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import java.util.Date;
@@ -10,7 +11,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "message_send_config")
-public class MessageSendConfigEntity{
+public class MessageSendConfigEntity extends BaseEntity {
 
     /** id */
 	@TableId(type = IdType.INPUT)
@@ -24,15 +25,6 @@ public class MessageSendConfigEntity{
 
     /** 是否启用(0:启用 1：禁用) */
     private Integer status;
-
-    /** 创建时间 */
-    private Date createTime;
-
-    /** 创建人ID */
-    private String createUserId;
-
-    /** 创建人名称 */
-    private String createUserName;
 
     /** 限制发送开始时间（期间内不能发送消息） */
     @TableField(updateStrategy = FieldStrategy.IGNORED)

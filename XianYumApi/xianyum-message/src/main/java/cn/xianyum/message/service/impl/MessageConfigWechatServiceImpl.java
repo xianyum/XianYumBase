@@ -1,6 +1,5 @@
 package cn.xianyum.message.service.impl;
 
-import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -63,9 +62,6 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 
 		MessageConfigWechatEntity bean = BeanUtils.copy(request,MessageConfigWechatEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
-		LoginUser loginUser = SecurityUtils.getLoginUser();
-		bean.setCreateUserId(loginUser.getId());
-		bean.setCreateUserName(loginUser.getUsername());
 		return messageConfigWechatMapper.insert(bean);
 
 	}

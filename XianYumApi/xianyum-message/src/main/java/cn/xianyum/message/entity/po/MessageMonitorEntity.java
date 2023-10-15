@@ -1,10 +1,11 @@
 package cn.xianyum.message.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import java.util.Date;
+
 
 /**
  * 消息监控(message_monitor)
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "message_monitor")
-public class MessageMonitorEntity{
+public class MessageMonitorEntity extends BaseEntity {
 
     /** id */
 	@TableId(type = IdType.INPUT)
@@ -35,9 +36,5 @@ public class MessageMonitorEntity{
 
     /** 消息类型 */
     private String messageType;
-
-    /** 发送时间 */
-    private Date createTime;
-
 
 }

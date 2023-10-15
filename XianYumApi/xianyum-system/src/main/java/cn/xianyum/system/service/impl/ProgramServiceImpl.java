@@ -67,15 +67,11 @@ public class ProgramServiceImpl implements ProgramService {
         ProgramEntity bean = BeanUtils.copy(request, ProgramEntity.class);
         String id = UUIDUtils.UUIDReplace();
         bean.setId(id);
-        bean.setCreateTime(new Date());
-        bean.setCreateUserId(SecurityUtils.getLoginUser().getId().toString());
-        bean.setCreateUserName(SecurityUtils.getLoginUser().getUsername());
         bean.setStatus(1);
 
         GiteeCommitEntity giteeCommitEntity = new GiteeCommitEntity();
         giteeCommitEntity.setId(UUIDUtils.UUIDReplace());
         giteeCommitEntity.setProgramId(id);
-        giteeCommitEntity.setCreateTime(new Date());
         giteeCommitEntity.setCommitMessage("感谢您的信任，["+bean.getProgramTitle()+"] 订单已经录入系统，等待管理员审核订单后，订单状态会进入开发期！");
         giteeCommitMapper.insert(giteeCommitEntity);
         return programMapper.insert(bean);
@@ -88,9 +84,6 @@ public class ProgramServiceImpl implements ProgramService {
             throw new SoException("订单已完成不能再次修改！");
         }
         ProgramEntity bean = BeanUtils.copy(request, ProgramEntity.class);
-        bean.setUpdateTime(new Date());
-        bean.setUpdateUserId(SecurityUtils.getLoginUser().getId());
-        bean.setUpdateUserName(SecurityUtils.getLoginUser().getUsername());
         return programMapper.updateById(bean);
     }
 
@@ -123,7 +116,6 @@ public class ProgramServiceImpl implements ProgramService {
         GiteeCommitEntity giteeCommitEntity = new GiteeCommitEntity();
         giteeCommitEntity.setId(UUIDUtils.UUIDReplace());
         giteeCommitEntity.setProgramId(request.getId());
-        giteeCommitEntity.setCreateTime(new Date());
         if("success".equals(request.getTag())){
             bean.setStatus(0);
             bean.setCompletionTime(new Date());

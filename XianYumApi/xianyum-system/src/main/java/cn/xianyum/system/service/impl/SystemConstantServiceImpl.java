@@ -17,7 +17,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -59,7 +58,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     public int update(SystemConstantRequest request) {
         SecurityUtils.allowAdminAuth();
         SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
-        bean.setUpdateTime(new Date());
         bean.setConstantKey(null);
         int count = systemConstantMapper.updateById(bean);
         xianYumTaskExecutor.execute(()-> SpringUtils.getBean(SystemConstantService.class).setSystemConstantToRedis(request.getConstantKey(),null));
@@ -190,9 +188,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         }
         SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
         bean.setId(UUIDUtils.UUIDReplace());
-        Date date = new Date();
-        bean.setCreateTime(date);
-        bean.setUpdateTime(date);
         return systemConstantMapper.insert(bean);
     }
 

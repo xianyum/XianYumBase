@@ -1,6 +1,5 @@
 package cn.xianyum.message.service.impl;
 
-import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -65,9 +64,6 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 
 		MessageConfigWebhookEntity bean = BeanUtils.copy(request,MessageConfigWebhookEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
-		LoginUser loginUser = SecurityUtils.getLoginUser();
-		bean.setCreateUserId(loginUser.getId());
-		bean.setCreateUserName(loginUser.getUsername());
 		return messageConfigWebhookMapper.insert(bean);
 
 	}

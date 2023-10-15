@@ -1,20 +1,18 @@
 package cn.xianyum.sheduler.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import cn.xianyum.sheduler.common.constant.ScheduleConstants;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
-import java.util.Date;
-
 /**
  * @author zhangwei
  * @date 2022/5/12 21:44
  */
 @Data
 @TableName(value = "job")
-public class JobEntity {
+public class JobEntity extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
     private Long jobId;
@@ -42,15 +40,6 @@ public class JobEntity {
 
     /** 任务备注 */
     private String remark;
-
-    /** 创建时间 */
-    private Date createTime;
-
-    /** 创建人ID */
-    private String createUserId;
-
-    /** 创建人名称 */
-    private String createUserName;
 
     /** 消息编码 */
     private String messageCode;

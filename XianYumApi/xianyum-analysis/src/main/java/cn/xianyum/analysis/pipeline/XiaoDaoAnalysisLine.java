@@ -53,7 +53,6 @@ public class XiaoDaoAnalysisLine implements Pipeline<XiaoDaoAnalysis> {
                     }
                     XiaoDaoEntity bean = BeanUtils.copy(item,XiaoDaoEntity.class);
                     bean.setId(UUIDUtils.UUIDReplace());
-                    bean.setCreateTime(new Date());
                     bean.setPushStatus(0);
                     xiaoDaoMapper.insert(bean);
                 }

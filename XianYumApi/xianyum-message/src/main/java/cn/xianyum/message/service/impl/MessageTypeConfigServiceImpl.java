@@ -1,10 +1,8 @@
 package cn.xianyum.message.service.impl;
 
-import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
-import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageTypeConfigMapper;
@@ -70,11 +68,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 		}
 
 		bean.setId(UUIDUtils.UUIDReplace());
-		LoginUser loginUser = SecurityUtils.getLoginUser();
-		bean.setCreateUserId(loginUser.getId());
-		bean.setCreateUserName(loginUser.getUsername());
 		return messageTypeConfigMapper.insert(bean);
-
 	}
 
 	@Override

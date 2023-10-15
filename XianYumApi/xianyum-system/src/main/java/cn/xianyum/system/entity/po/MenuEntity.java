@@ -1,13 +1,12 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ import java.util.List;
  */
 @Data
 @TableName(value = "menu")
-public class MenuEntity{
+public class MenuEntity extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
     /** 菜单ID */
@@ -66,14 +65,8 @@ public class MenuEntity{
     /** 菜单图标 */
     private String icon;
 
-    private Date createTime;
-    private String createBy;
-
     /** 子菜单 */
     @TableField(exist=false)
     private List<MenuEntity> children = new ArrayList<>();
 
-    private Date updateTime;
-
-    private String updateBy;
 }

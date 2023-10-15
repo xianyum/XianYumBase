@@ -104,7 +104,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             throw new SoException("用户名或手机号已被使用！");
         }
         UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
-        userEntity.setCreateTime(new Date());
         userEntity.setPassword(SecretUtils.encryptPassword(user.getPassword()));
         userEntity.setDelTag(DeleteTagEnum.Delete.getDeleteTag());
         if(userEntity.getStatus() == null){

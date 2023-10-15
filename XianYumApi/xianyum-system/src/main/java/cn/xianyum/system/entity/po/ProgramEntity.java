@@ -1,10 +1,10 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
 import java.util.Date;
 
 /**
@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "program")
-public class ProgramEntity {
+public class ProgramEntity extends BaseEntity {
 
     /** id */
     @TableId(type = IdType.INPUT)
@@ -32,12 +32,6 @@ public class ProgramEntity {
     /** 联系方式 */
     private String contactPhone;
 
-    /** 创建人ID */
-    private String createUserId;
-
-    /** 创建人名称 */
-    private String createUserName;
-
     /** 预计完成时间 */
     private Date expectTime;
 
@@ -50,9 +44,6 @@ public class ProgramEntity {
     /** 最终完成时间 */
     private Date completionTime;
 
-    /** 创建时间 */
-    private Date createTime;
-
     /** 订单类型 0：系统 1：系统+论文 2：论文 */
     private Integer type;
 
@@ -61,10 +52,6 @@ public class ProgramEntity {
 
     /** 订单备注 */
     private String remark;
-
-    private String updateUserId;
-    private String updateUserName;
-    private Date updateTime;
 
     private String giteeUrl;
 }

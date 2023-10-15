@@ -1,11 +1,10 @@
 package cn.xianyum.proxy.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * 客户端配置详细(proxy_details)
@@ -13,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "proxy_details")
-public class ProxyDetailsEntity{
+public class ProxyDetailsEntity extends BaseEntity {
 
     /** id */
 	@TableId(type = IdType.INPUT)
@@ -30,9 +29,6 @@ public class ProxyDetailsEntity{
 
     /** 代理名称 */
     private String name;
-
-    /** 创建时间 */
-    private Date createTime;
 
     /** 当前读取量 */
     private Long readBytes;

@@ -1,5 +1,6 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -12,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "user")
-public class UserEntity {
+public class UserEntity extends BaseEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
@@ -25,11 +26,9 @@ public class UserEntity {
 
     private String email;
 
-    private Integer status;//状态吗  1：允许登录 0：禁止登录
+    private Integer status;
 
-    private Date createTime;//创建时间
-
-    private Integer delTag;//删除标记
+    private Integer delTag;
 
     private Integer permission;
 

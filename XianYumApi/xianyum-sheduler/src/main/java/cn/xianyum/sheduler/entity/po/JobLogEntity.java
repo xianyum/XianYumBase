@@ -1,5 +1,6 @@
 package cn.xianyum.sheduler.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "job_log")
-public class JobLogEntity {
+public class JobLogEntity extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
     private Long id;

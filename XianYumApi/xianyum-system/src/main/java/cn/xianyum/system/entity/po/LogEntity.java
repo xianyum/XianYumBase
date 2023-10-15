@@ -1,11 +1,10 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
-import java.util.Date;
 
 /** 系统日志
  * @author zhangwei
@@ -13,8 +12,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "user_log")
-public class LogEntity {
-    private static final long serialVersionUID = 1L;
+public class LogEntity extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -32,6 +30,4 @@ public class LogEntity {
     private String ip;
     //IP地点
     private String ipInfo;
-    //创建时间
-    private Date createTime;
 }

@@ -1,5 +1,6 @@
 package cn.xianyum.analysis.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "xiao_dao")
-public class XiaoDaoEntity {
+public class XiaoDaoEntity extends BaseEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
@@ -28,7 +29,5 @@ public class XiaoDaoEntity {
     private Integer pushStatus;
 
     private Date pushTime;
-
-    private Date createTime;
 
 }

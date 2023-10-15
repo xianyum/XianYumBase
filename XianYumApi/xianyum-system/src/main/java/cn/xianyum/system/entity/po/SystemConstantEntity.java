@@ -1,12 +1,10 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * 系统常用参数
@@ -15,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value = "system_constant")
-public class SystemConstantEntity {
+public class SystemConstantEntity extends BaseEntity {
 
     @TableId(type = IdType.INPUT)
     private String id;
@@ -29,10 +27,4 @@ public class SystemConstantEntity {
 
     /** 0:公用 1：私有 */
     private Integer constantVisible;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date createTime;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date updateTime;
 }

@@ -37,7 +37,6 @@ public class GiteeSerivceImpl implements GiteeSerivce {
 
         GiteeCommitEntity giteeCommitEntity = new GiteeCommitEntity();
         giteeCommitEntity.setId(UUIDUtils.UUIDReplace());
-        giteeCommitEntity.setCreateTime(new Date());
         giteeCommitEntity.setRepositoryName(repositoryName);
         giteeCommitEntity.setCommitMessage(commitMessage);
         giteeCommitEntity.setRepositoryUrl(url);
