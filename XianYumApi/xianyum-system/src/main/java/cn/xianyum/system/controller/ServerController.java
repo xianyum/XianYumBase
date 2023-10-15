@@ -2,7 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.server.Server;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,15 +21,15 @@ public class ServerController {
 
     @GetMapping("/get")
     @ApiOperation(value = "获取服务器相关信息", httpMethod = "GET")
-    public DataResult getServerInfo(){
+    public Result getServerInfo(){
         try {
             Server server = new Server();
             server.copyTo();
-            return DataResult.success(server);
+            return Result.success(server);
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }catch(Exception exception){
-            return DataResult.error("系统异常");
+            return Result.error("系统异常");
         }
     }
 }

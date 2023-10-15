@@ -1,7 +1,7 @@
 package cn.xianyum.system.infra.handler;
 
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -32,8 +32,8 @@ public class SystemExceptionHandler {
      * 处理自定义异常
      */
     @ExceptionHandler(SoException.class)
-    public DataResult handleRRException(SoException e){
-        DataResult result = new DataResult();
+    public Result handleRRException(SoException e){
+        Result result = new Result();
         result.put("code", e.getCode());
         result.put("msg", e.getMessage());
         return result;
@@ -41,10 +41,10 @@ public class SystemExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    public DataResult handleException(Exception e){
+    public Result handleException(Exception e){
         this.sendFailedExceptionMessage(e);
         logger.error(e.getMessage(), e);
-        return DataResult.error();
+        return Result.error();
     }
 
     /**

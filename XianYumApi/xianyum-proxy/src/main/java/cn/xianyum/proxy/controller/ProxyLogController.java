@@ -2,7 +2,7 @@ package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
 import cn.xianyum.proxy.entity.response.ProxyLogResponse;
 import cn.xianyum.proxy.service.ProxyLogService;
@@ -33,10 +33,10 @@ public class ProxyLogController {
      */
 	@ApiOperation(value = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
-	public DataResult getPage(ProxyLogRequest request) {
+	public Result getPage(ProxyLogRequest request) {
 
 		IPage<ProxyLogResponse> response = proxyLogService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -45,9 +45,9 @@ public class ProxyLogController {
      */
     @ApiOperation(value = "远程代理日志根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    public DataResult getById(@PathVariable Long id) {
+    public Result getById(@PathVariable Long id) {
         ProxyLogResponse response = proxyLogService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
 
@@ -59,12 +59,12 @@ public class ProxyLogController {
     @ApiOperation(value = "通过客户端上报数据")
     @PostMapping(value = "/reportClientInfo")
     @Permission(publicApi = true)
-    public DataResult reportClientInfo(@RequestBody ProxyLogRequest request) {
+    public Result reportClientInfo(@RequestBody ProxyLogRequest request) {
         Integer count = proxyLogService.save(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("保存失败");
+		return Result.error("保存失败");
     }
 
 
@@ -75,9 +75,9 @@ public class ProxyLogController {
     @ApiOperation(value = "远程代理日志删除数据")
     @PostMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult delete(@RequestBody Long[] ids) {
+    public Result delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
 }

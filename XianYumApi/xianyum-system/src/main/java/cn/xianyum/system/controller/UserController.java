@@ -5,7 +5,7 @@ import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.common.validator.ValidatorUtils;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
@@ -34,9 +34,9 @@ public class UserController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取用户列表")
-    public DataResult list(UserRequest user){
+    public Result list(UserRequest user){
         IPage<UserEntity> list = userService.queryAll(user);
-        return DataResult.success(list);
+        return Result.page(list);
     }
 
     /**
@@ -44,9 +44,9 @@ public class UserController {
      */
     @GetMapping("/info")
     @ApiOperation(value = "获取登录的用户信息", httpMethod = "GET")
-    public DataResult info(){
+    public Result info(){
         LoginUser userEntity = userService.getUserSelf();
-        return DataResult.success().put("user", userEntity);
+        return Result.success().put("user", userEntity);
     }
 
     /**
@@ -58,12 +58,12 @@ public class UserController {
     @SysLog(value = "删除用户")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除用户")
-    public DataResult delete(@RequestBody String[] userIds){
+    public Result delete(@RequestBody String[] userIds){
         try {
             userService.deleteById(userIds);
-            return DataResult.success();
+            return Result.success();
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
@@ -72,9 +72,9 @@ public class UserController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation(value = "根据Id查询用户")
-    public DataResult selectOneById(@PathVariable String id){
+    public Result selectOneById(@PathVariable String id){
         UserEntity info = userService.selectOneById(id);
-        return DataResult.success(info);
+        return Result.success(info);
     }
 
     /**
@@ -84,17 +84,17 @@ public class UserController {
     @SysLog(value = "新增用户")
     @ApiOperation(value = "保存用户", httpMethod = "POST")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody UserRequest user){
+    public Result save(@RequestBody UserRequest user){
         try {
             ValidatorUtils.validateEntity(user);
             int count = userService.save(user);
             if(count>0){
-                return DataResult.success();
+                return Result.success();
             }else {
-                return DataResult.error("保存用户失败！");
+                return Result.error("保存用户失败！");
             }
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
@@ -105,28 +105,28 @@ public class UserController {
     @SysLog(value = "修改用户")
     @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody UserRequest user){
+    public Result update(@RequestBody UserRequest user){
         try {
             int count = userService.update(user);
             if(count>0){
-                return DataResult.success();
+                return Result.success();
             }else {
-                return DataResult.error("修改用户失败！");
+                return Result.error("修改用户失败！");
             }
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
     @PutMapping("/password")
     @ApiOperation(value = "修改密码", httpMethod = "POST", notes = "修改密码")
-    public DataResult updatePassword(@RequestBody UpdatePasswordRequest info){
+    public Result updatePassword(@RequestBody UpdatePasswordRequest info){
         ValidatorUtils.validateEntity(info);
         boolean flag = userService.updatePassword(info);
         if(!flag){
-            return DataResult.error("原密码错误");
+            return Result.error("原密码错误");
         }
-        return DataResult.success();
+        return Result.success();
     }
 
     /**
@@ -135,20 +135,20 @@ public class UserController {
     @PutMapping ("/updateCurrentUser")
     @SysLog(value = "更新当前用户信息")
     @ApiOperation(value = "更新当前用户信息", httpMethod = "POST")
-    public DataResult updateCurrentUser(@RequestBody UserRequest user){
+    public Result updateCurrentUser(@RequestBody UserRequest user){
         int count = userService.updateCurrentUser(user);
         if(count>0){
-            return DataResult.success();
+            return Result.success();
         }else {
-            return DataResult.error("更新当前用户信息失败！");
+            return Result.error("更新当前用户信息失败！");
         }
     }
 
 
     @PostMapping("/upload")
     @ApiOperation(value = "上传图像接口", httpMethod = "POST")
-    public DataResult upload(@RequestParam("file") MultipartFile file){
+    public Result upload(@RequestParam("file") MultipartFile file){
         String imageUrl = userService.upload(file);
-        return DataResult.success(imageUrl);
+        return Result.success(imageUrl);
     }
 }

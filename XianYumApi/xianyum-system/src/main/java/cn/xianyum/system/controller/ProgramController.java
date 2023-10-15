@@ -5,7 +5,7 @@ import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.system.entity.po.ExportProgramEntity;
 import cn.xianyum.system.entity.po.ProgramEntity;
 import cn.xianyum.system.entity.request.ProgramRequest;
@@ -46,9 +46,9 @@ public class ProgramController {
      */
     @PostMapping("/list")
     @ApiOperation(value = "获取程序设计列表", httpMethod = "POST")
-    public DataResult list(@RequestBody ProgramRequest request){
+    public Result list(@RequestBody ProgramRequest request){
         IPage<ProgramEntity> list = programService.queryAll(request);
-        return DataResult.success(list);
+        return Result.page(list);
     }
 
 
@@ -57,21 +57,21 @@ public class ProgramController {
      */
     @PostMapping("/selectById")
     @ApiOperation(value = "根据Id查询程序设计", httpMethod = "POST")
-    public DataResult selectOneById(@RequestBody ProgramRequest request){
+    public Result selectOneById(@RequestBody ProgramRequest request){
         ProgramEntity info = programService.selectOneById(request);
-        return DataResult.success(info);
+        return Result.success(info);
     }
 
     @PostMapping("/save")
     @SysLog(value = "保存程序记录操作")
     @Permission()
     @ApiOperation(value = "保存程序记录操作", httpMethod = "POST")
-    public DataResult save(@RequestBody ProgramRequest request){
+    public Result save(@RequestBody ProgramRequest request){
         int count = programService.save(request);
         if(count>0){
-            return DataResult.success();
+            return Result.success();
         }else {
-            return DataResult.error("保存程序记录失败！");
+            return Result.error("保存程序记录失败！");
         }
     }
 
@@ -80,12 +80,12 @@ public class ProgramController {
     @SysLog(value = "更新程序记录操作")
     @Permission()
     @ApiOperation(value = "更新程序记录操作", httpMethod = "POST")
-    public DataResult update(@RequestBody ProgramRequest request){
+    public Result update(@RequestBody ProgramRequest request){
         int count = programService.update(request);
         if(count>0){
-            return DataResult.success();
+            return Result.success();
         }else {
-            return DataResult.error("更新程序记录失败！");
+            return Result.error("更新程序记录失败！");
         }
     }
 
@@ -93,12 +93,12 @@ public class ProgramController {
     @Permission()
     @SysLog(value = "删除程序记录操作")
     @ApiOperation(value = "删除程序操作", httpMethod = "POST")
-    public DataResult delete(@RequestBody String[] ids){
+    public Result delete(@RequestBody String[] ids){
         try {
             programService.deleteById(ids);
-            return DataResult.success();
+            return Result.success();
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
@@ -107,21 +107,21 @@ public class ProgramController {
     @SysLog(value = "完成程序订单操作")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "完成程序订单操作", httpMethod = "POST")
-    public DataResult complete(@RequestBody ProgramRequest request){
+    public Result complete(@RequestBody ProgramRequest request){
         try {
             programService.complete(request);
-            return DataResult.success();
+            return Result.success();
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
 
     @PostMapping("/schedule")
     @ApiOperation(value = "查询订单实时进度", httpMethod = "POST")
-    public DataResult schedule(@RequestBody ProgramRequest request){
+    public Result schedule(@RequestBody ProgramRequest request){
         List<JSONObject> info = programService.schedule(request);
-        return DataResult.success(info);
+        return Result.success(info);
     }
 
 

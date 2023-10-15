@@ -2,10 +2,8 @@ package cn.xianyum.system.service;
 
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.system.entity.po.UserEntity;
-
-import javax.servlet.http.HttpServletRequest;
 
 public interface UserTokenService {
 
@@ -14,7 +12,7 @@ public interface UserTokenService {
      * @param user
      * @return
      */
-    DataResult createToken(UserEntity user);
+    Result createToken(UserEntity user);
 
     /**
      * 退出，修改token值

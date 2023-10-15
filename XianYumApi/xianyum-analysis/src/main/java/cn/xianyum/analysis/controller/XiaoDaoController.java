@@ -3,7 +3,7 @@ package cn.xianyum.analysis.controller;
 import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
 import cn.xianyum.analysis.service.XiaoDaoService;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,8 +24,8 @@ public class XiaoDaoController {
 
     @GetMapping("/getPage")
     @ApiOperation(value = "获取小刀数据列表")
-    public DataResult getPage(XiaoDaoRequest request){
+    public Result getPage(XiaoDaoRequest request){
         IPage<XiaoDaoEntity> list = xiaoDaoService.getPage(request);
-        return DataResult.success(list);
+        return Result.page(list);
     }
 }

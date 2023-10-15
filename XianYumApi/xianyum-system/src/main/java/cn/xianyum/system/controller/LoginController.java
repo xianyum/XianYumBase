@@ -59,7 +59,7 @@ public class LoginController {
     @PostMapping("/login")
     @ApiOperation(value = "登录系统")
     @Permission(publicApi = true)
-    public DataResult login(@RequestBody UserRequest userRequest) {
+    public Result login(@RequestBody UserRequest userRequest) {
         long beginTime = System.currentTimeMillis();
 
         CaptchaVO captchaVO = new CaptchaVO();
@@ -68,7 +68,7 @@ public class LoginController {
         if(response.isSuccess() == false){
             long time = System.currentTimeMillis() - beginTime;
             saveLoginLog(userRequest,"验证码不正确",time);
-            return DataResult.error("验证码不正确");
+            return Result.error("验证码不正确");
         }
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication = null;
@@ -80,11 +80,11 @@ public class LoginController {
             long time = System.currentTimeMillis() - beginTime;
             if (e instanceof BadCredentialsException) {
                 saveLoginLog(userRequest,"用户不存在或密码错误",time);
-                return DataResult.error("用户不存在或密码错误");
+                return Result.error("用户不存在或密码错误");
             }
             else {
                 saveLoginLog(userRequest,e.getMessage(),time);
-                return DataResult.error(e.getMessage());
+                return Result.error(e.getMessage());
             }
         }
 
@@ -94,7 +94,7 @@ public class LoginController {
         //生成token，并保存到数据库
         LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
         UserEntity userEntity = BeanUtils.copy(loginUserEntity, UserEntity.class);
-        DataResult result = userTokenService.createToken(userEntity);
+        Result result = userTokenService.createToken(userEntity);
         return result;
     }
 
@@ -105,9 +105,9 @@ public class LoginController {
     @PostMapping("/getPhoneCode")
     @ApiOperation(value = "获取手机验证码")
     @Permission(publicApi = true)
-    public DataResult getPhoneCode(@RequestBody UserRequest request) {
+    public Result getPhoneCode(@RequestBody UserRequest request) {
         //captchaService.getPhoneCaptcha(request);
-        return DataResult.error("短信接口停用，无法发送短信！");
+        return Result.error("短信接口停用，无法发送短信！");
     }
 
 

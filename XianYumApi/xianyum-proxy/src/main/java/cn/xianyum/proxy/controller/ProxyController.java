@@ -4,7 +4,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.enums.ReturnT;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
 import cn.xianyum.proxy.service.ProxyLogService;
@@ -47,10 +47,10 @@ public class ProxyController {
      */
 	@ApiOperation(value = "客户端管理分页查询数据")
 	@GetMapping(value = "/getPage")
-	public DataResult getPage(ProxyRequest request) {
+	public Result getPage(ProxyRequest request) {
 
 		IPage<ProxyResponse> response = proxyService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -59,10 +59,10 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    public DataResult getById(@PathVariable String id) {
+    public Result getById(@PathVariable String id) {
 
         ProxyResponse response = proxyService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -71,13 +71,13 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理保存数据")
     @PostMapping(value = "/save")
-    public DataResult save(@RequestBody ProxyRequest request) {
+    public Result save(@RequestBody ProxyRequest request) {
 
 		Integer count = proxyService.save(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("保存失败");
+		return Result.error("保存失败");
     }
 
     /**
@@ -86,13 +86,13 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理修改数据")
     @PutMapping(value = "/update")
-    public DataResult update(@RequestBody ProxyRequest request) {
+    public Result update(@RequestBody ProxyRequest request) {
 
 		Integer count = proxyService.update(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("修改失败");
+		return Result.error("修改失败");
     }
 
 	/**
@@ -101,9 +101,9 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理删除数据")
     @DeleteMapping(value = "/delete")
-    public DataResult delete(@RequestBody String[] ids) {
+    public Result delete(@RequestBody String[] ids) {
 		proxyService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
     /**
@@ -112,9 +112,9 @@ public class ProxyController {
      */
     @ApiOperation(value = "获取客户端所有数据")
     @GetMapping(value = "/getList")
-    public DataResult getList() {
+    public Result getList() {
         List<ProxyResponse> response = proxyService.getList();
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
 
@@ -125,9 +125,9 @@ public class ProxyController {
     @ApiOperation(value = "刷入系统")
     @PutMapping(value = "/flushProxy")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult flushProxy() {
+    public Result flushProxy() {
         proxyService.flushProxy();
-        return DataResult.success();
+        return Result.success();
     }
 
 
@@ -139,9 +139,9 @@ public class ProxyController {
     @ApiOperation(value = "发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
     @Permission(publicApi = true)
-    public DataResult sendEmail(@PathVariable String id) {
+    public Result sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
-        return DataResult.success(result);
+        return Result.success(result);
     }
 
 
@@ -151,8 +151,8 @@ public class ProxyController {
      */
     @ApiOperation(value = "获取在线online数量")
     @GetMapping(value = "/getOnlineProxyCount")
-    public DataResult getOnlineProxyCount() {
-        return DataResult.success(proxyService.getOnlineProxyCount());
+    public Result getOnlineProxyCount() {
+        return Result.success(proxyService.getOnlineProxyCount());
     }
 
     /**
@@ -184,11 +184,11 @@ public class ProxyController {
     @GetMapping(value = "/flushWriteAndReadBytes")
     @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)
     @SysLog(value = "重启java应用刷入写入量和读取量")
-    public DataResult flushWriteAndReadBytes() throws Exception {
+    public Result flushWriteAndReadBytes() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>(2);
         jobMapParams.put("resetZeroFlag","Y");
         ReturnT returnT = proxyDetailsFlushWriteAndReadBytes.execute(jobMapParams,null);
         proxyLogService.setIgnoreSaveFlag();
-        return DataResult.success(returnT.getValue());
+        return Result.success(returnT.getValue());
     }
 }

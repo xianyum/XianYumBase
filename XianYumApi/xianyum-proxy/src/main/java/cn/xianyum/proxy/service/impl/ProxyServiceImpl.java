@@ -352,8 +352,6 @@ public class ProxyServiceImpl implements ProxyService {
 		if(StringUtil.isNotEmpty(systemConstantJson)){
 			JSONObject systemConstantObject = JSONObject.parseObject(systemConstantJson);
 			jsonObject.put("apiUrl",systemConstantObject.getString("apiUrl"));
-			jsonObject.put("serverAddress",systemConstantObject.getString("serverAddress"));
-			jsonObject.put("serverPort",systemConstantObject.getString("serverPort"));
 		}
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);

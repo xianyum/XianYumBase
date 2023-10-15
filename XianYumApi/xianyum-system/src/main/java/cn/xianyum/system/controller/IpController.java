@@ -4,7 +4,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.IpInfoEntity;
 import cn.xianyum.common.service.IpService;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class IpController {
     @SysLog(value = "查询IP地理位置")
     @ApiOperation(value = "查询IP地理位置", httpMethod = "POST")
     @Permission(publicApi = true)
-    public DataResult getIpInfo(@RequestParam(required = false) String ip) {
+    public Result getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
-        return DataResult.success(result);
+        return Result.success(result);
     }
 }

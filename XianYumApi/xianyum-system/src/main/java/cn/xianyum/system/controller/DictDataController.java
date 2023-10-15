@@ -3,7 +3,7 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
 import cn.xianyum.system.service.DictDataService;
@@ -34,26 +34,26 @@ public class DictDataController {
      */
     @GetMapping(value = "/type/{dictType}")
     @ApiOperation(value = "根据字典类型查询字典数据信息")
-    public DataResult dictType(@PathVariable String dictType) {
+    public Result dictType(@PathVariable String dictType) {
         List<DictDataEntity> data = dictDataService.selectDictDataByType(dictType);
         if (Objects.isNull(data)) {
             data = new ArrayList<>();
         }
-        return DataResult.success(data);
+        return Result.success(data);
     }
 
     @GetMapping("/getPage")
     @ApiOperation(value = "分页查询字典数据信息")
-    public DataResult list(DictDataRequest dictData) {
+    public Result list(DictDataRequest dictData) {
         IPage<DictDataEntity> list = dictDataService.selectDictDataList(dictData);
-        return DataResult.success(list);
+        return Result.page(list);
     }
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "查询单条信息")
-    public DataResult getInfo(@PathVariable Long id) {
+    public Result getInfo(@PathVariable Long id) {
         DictDataEntity dictDataEntity = dictDataService.getInfo(id);
-        return DataResult.success(dictDataEntity);
+        return Result.success(dictDataEntity);
     }
 
     /**
@@ -63,9 +63,9 @@ public class DictDataController {
     @ApiOperation(value = "新增字典数据")
     @SysLog(value = "新增字典数据")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult add(@RequestBody DictDataEntity dict) {
+    public Result add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
-        return DataResult.success(count);
+        return Result.success(count);
     }
 
     /**
@@ -75,9 +75,9 @@ public class DictDataController {
     @ApiOperation(value = "修改字典数据")
     @SysLog(value = "修改字典数据")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult edit(@RequestBody DictDataEntity dict) {
+    public Result edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
-        return DataResult.success(count);
+        return Result.success(count);
     }
 
     /**
@@ -87,8 +87,8 @@ public class DictDataController {
     @ApiOperation(value = "删除字典数据")
     @SysLog(value = "删除字典数据")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult remove(@PathVariable Long[] ids) {
+    public Result remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
-        return DataResult.success();
+        return Result.success();
     }
 }

@@ -3,7 +3,7 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.system.entity.po.DictTypeEntity;
 import cn.xianyum.system.entity.request.DictTypeRequest;
 import cn.xianyum.system.service.DictTypeService;
@@ -32,9 +32,9 @@ public class DictTypeController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取字典类型列表")
-    public DataResult list(DictTypeRequest request){
+    public Result list(DictTypeRequest request){
         IPage<DictTypeEntity> list = dictTypeService.selectDictTypeList(request);
-        return DataResult.success(list);
+        return Result.page(list);
     }
 
 
@@ -43,8 +43,8 @@ public class DictTypeController {
      */
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "查询字典类型详细")
-    public DataResult getInfo(@PathVariable Long id) {
-        return DataResult.success(dictTypeService.selectDictTypeById(id));
+    public Result getInfo(@PathVariable Long id) {
+        return Result.success(dictTypeService.selectDictTypeById(id));
     }
 
     /**
@@ -54,8 +54,8 @@ public class DictTypeController {
     @ApiOperation(value = "新增字典类型")
     @SysLog(value = "新增字典类型")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody DictTypeEntity dictTypeEntity) {
-        return DataResult.success(dictTypeService.save(dictTypeEntity));
+    public Result save(@RequestBody DictTypeEntity dictTypeEntity) {
+        return Result.success(dictTypeService.save(dictTypeEntity));
     }
 
 
@@ -66,33 +66,33 @@ public class DictTypeController {
     @ApiOperation(value = "更新字典类型详细")
     @SysLog(value = "更新字典类型详细")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody DictTypeEntity dictTypeEntity) {
-        return DataResult.success(dictTypeService.update(dictTypeEntity));
+    public Result update(@RequestBody DictTypeEntity dictTypeEntity) {
+        return Result.success(dictTypeService.update(dictTypeEntity));
     }
 
     @ApiOperation(value = "刷新字典缓存")
     @DeleteMapping("/refreshCache")
     @SysLog(value = "刷新字典缓存")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult refreshCache() {
+    public Result refreshCache() {
         dictTypeService.resetDictCache();
-        return DataResult.success();
+        return Result.success();
     }
 
     @DeleteMapping("/{ids}")
     @ApiOperation(value = "批量删除字典类型")
     @SysLog(value = "批量删除字典类型")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult remove(@PathVariable Long[] ids) {
+    public Result remove(@PathVariable Long[] ids) {
         dictTypeService.deleteDictTypeByIds(ids);
-        return DataResult.success();
+        return Result.success();
     }
 
 
     @GetMapping("/optionSelect")
     @ApiOperation(value = "获取字典选择框列表")
-    public DataResult optionSelect() {
+    public Result optionSelect() {
         List<DictTypeEntity> resultList = dictTypeService.optionSelect();
-        return DataResult.success(resultList);
+        return Result.success(resultList);
     }
 }

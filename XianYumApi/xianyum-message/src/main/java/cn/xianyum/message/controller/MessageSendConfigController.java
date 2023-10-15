@@ -2,7 +2,7 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.message.entity.po.MessageSendConfigEntity;
 import cn.xianyum.message.entity.request.MessageSendConfigRequest;
 import cn.xianyum.message.entity.response.MessageSendConfigResponse;
@@ -34,10 +34,10 @@ public class MessageSendConfigController {
 	@ApiOperation(value = "消息发送配置分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(MessageSendConfigRequest request) {
+	public Result getPage(MessageSendConfigRequest request) {
 
 		IPage<MessageSendConfigResponse> response = messageSendConfigService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -47,9 +47,9 @@ public class MessageSendConfigController {
     @ApiOperation(value = "消息发送配置根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@PathVariable String id) {
+    public Result getById(@PathVariable String id) {
         MessageSendConfigResponse response = messageSendConfigService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -59,13 +59,13 @@ public class MessageSendConfigController {
     @ApiOperation(value = "消息发送配置保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody MessageSendConfigRequest request) {
+    public Result save(@RequestBody MessageSendConfigRequest request) {
 
 		Integer count = messageSendConfigService.save(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("保存失败");
+		return Result.error("保存失败");
     }
 
     /**
@@ -75,13 +75,13 @@ public class MessageSendConfigController {
     @ApiOperation(value = "消息发送配置修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody MessageSendConfigRequest request) {
+    public Result update(@RequestBody MessageSendConfigRequest request) {
 
 		Integer count = messageSendConfigService.update(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("修改失败");
+		return Result.error("修改失败");
     }
 
 	/**
@@ -91,10 +91,10 @@ public class MessageSendConfigController {
     @ApiOperation(value = "消息发送配置删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult delete(@RequestBody String[] ids) {
+    public Result delete(@RequestBody String[] ids) {
 
 		messageSendConfigService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
 
@@ -105,9 +105,9 @@ public class MessageSendConfigController {
     @ApiOperation(value = "消息发送配置保存数据")
     @PostMapping(value = "/saveOrUpdate")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult saveOrUpdate(@RequestBody MessageSendConfigRequest request) {
+    public Result saveOrUpdate(@RequestBody MessageSendConfigRequest request) {
 
         MessageSendConfigEntity messageSendConfigEntity = messageSendConfigService.saveOrUpdate(request);
-        return DataResult.success(messageSendConfigEntity);
+        return Result.success(messageSendConfigEntity);
     }
 }

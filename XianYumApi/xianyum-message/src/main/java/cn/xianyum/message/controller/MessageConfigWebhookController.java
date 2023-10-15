@@ -2,7 +2,7 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigWebhookRequest;
 import cn.xianyum.message.entity.response.MessageConfigWebhookResponse;
@@ -38,10 +38,10 @@ public class MessageConfigWebhookController {
 	@ApiOperation(value = "账户配置webhook分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(MessageConfigWebhookRequest request) {
+	public Result getPage(MessageConfigWebhookRequest request) {
 
 		IPage<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -51,10 +51,10 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@PathVariable String id) {
+    public Result getById(@PathVariable String id) {
 
         MessageConfigWebhookResponse response = messageConfigWebhookService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -64,13 +64,13 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody MessageConfigWebhookRequest request) {
+    public Result save(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.save(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("保存失败");
+		return Result.error("保存失败");
     }
 
     /**
@@ -80,13 +80,13 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody MessageConfigWebhookRequest request) {
+    public Result update(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.update(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("修改失败");
+		return Result.error("修改失败");
     }
 
 	/**
@@ -96,10 +96,10 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult delete(@RequestBody String[] ids) {
+    public Result delete(@RequestBody String[] ids) {
 
 		messageConfigWebhookService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
     /**
@@ -109,13 +109,13 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "webhook账户测试发送")
     @PutMapping(value = "/sendWebhook")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult sendWebhook(@RequestBody MessageSenderEntity request) {
+    public Result sendWebhook(@RequestBody MessageSenderEntity request) {
         try {
             webhookSender.sendWebhook(request);
-            return DataResult.success();
+            return Result.success();
         }catch (Exception e){
             log.error("webhook账户测试发送异常. ",e);
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 }

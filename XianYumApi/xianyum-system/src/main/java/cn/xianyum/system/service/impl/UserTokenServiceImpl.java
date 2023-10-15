@@ -65,7 +65,7 @@ public class UserTokenServiceImpl implements UserTokenService {
 
 
     @Override
-    public DataResult createToken(UserEntity user) {
+    public Result createToken(UserEntity user) {
         //生成token
         String token = UUIDUtils.UUIDReplace();
         Date now = new Date();
@@ -75,7 +75,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
         redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
-        DataResult result = DataResult.success().put("token", token).put("expire", expireTime);
+        Result result = Result.success().put("token", token).put("expire", expireTime);
         return result;
     }
 

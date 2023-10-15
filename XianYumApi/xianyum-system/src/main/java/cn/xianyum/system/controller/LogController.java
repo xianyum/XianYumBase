@@ -4,7 +4,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.LogRequest;
 import cn.xianyum.system.entity.response.LogResponse;
@@ -34,9 +34,9 @@ public class LogController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public DataResult list(LogRequest request){
+    public Result list(LogRequest request){
         IPage<LogEntity> list = logService.queryAll(request);
-        return DataResult.success(list);
+        return Result.page(list);
     }
 
     /**
@@ -44,20 +44,20 @@ public class LogController {
      */
     @GetMapping("/getVisitCountCharts")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public DataResult getVisitCountCharts(){
+    public Result getVisitCountCharts(){
         List<LogResponse> responses = logService.getVisitCountCharts();
-        return DataResult.success(responses);
+        return Result.success(responses);
     }
 
     @DeleteMapping("/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除日志记录", httpMethod = "POST")
-    public DataResult delete(@RequestBody String[] logIdS){
+    public Result delete(@RequestBody String[] logIdS){
         try {
             logService.deleteById(logIdS);
-            return DataResult.success();
+            return Result.success();
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
@@ -65,12 +65,12 @@ public class LogController {
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "清空日志", httpMethod = "POST")
     @SysLog(value = "清空用户操作日志")
-    public DataResult truncateLog(){
+    public Result truncateLog(){
         try {
             logService.truncateLog();
-            return DataResult.success();
+            return Result.success();
         }catch(SoException exception){
-            return DataResult.error(exception.getMsg());
+            return Result.error(exception.getMsg());
         }
     }
 
@@ -81,7 +81,7 @@ public class LogController {
      */
     @ApiOperation(value = "获取接口日志数量")
     @GetMapping(value = "/getLogCount")
-    public DataResult getLogCount() {
-        return DataResult.success(logService.getLogCount());
+    public Result getLogCount() {
+        return Result.success(logService.getLogCount());
     }
 }

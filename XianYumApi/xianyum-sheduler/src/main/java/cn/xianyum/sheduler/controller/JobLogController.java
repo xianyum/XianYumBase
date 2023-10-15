@@ -3,7 +3,7 @@ package cn.xianyum.sheduler.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
 import cn.xianyum.sheduler.entity.response.JobLogResponse;
 import cn.xianyum.sheduler.service.JobLogService;
@@ -33,10 +33,10 @@ public class JobLogController {
      */
 	@ApiOperation(value = "定时任务调度日志表分页查询数据")
 	@GetMapping(value = "/getPage")
-	public DataResult getPage(JobLogRequest request) {
+	public Result getPage(JobLogRequest request) {
 
 		IPage<JobLogResponse> response = jobLogService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -45,10 +45,10 @@ public class JobLogController {
      */
     @ApiOperation(value = "定时任务调度日志表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    public DataResult getById(@PathVariable Long id) {
+    public Result getById(@PathVariable Long id) {
 
         JobLogResponse response = jobLogService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -59,9 +59,9 @@ public class JobLogController {
     @DeleteMapping(value = "/truncateLog")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @SysLog(value = "清空调度任务日志")
-    public DataResult truncateLog() {
+    public Result truncateLog() {
         jobLogService.truncateLog();
-        return DataResult.success();
+        return Result.success();
     }
 
 	/**
@@ -72,10 +72,10 @@ public class JobLogController {
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @SysLog(value = "批量删除调度任务日志")
-    public DataResult delete(@RequestBody String[] ids) {
+    public Result delete(@RequestBody String[] ids) {
 
 		jobLogService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
 
@@ -85,7 +85,7 @@ public class JobLogController {
      */
     @ApiOperation(value = "获取任务调度数量")
     @GetMapping(value = "/getJobLogCount")
-    public DataResult getJobLogCount() {
-        return DataResult.success(jobLogService.getJobLogCount());
+    public Result getJobLogCount() {
+        return Result.success(jobLogService.getJobLogCount());
     }
 }

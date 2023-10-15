@@ -2,7 +2,7 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigEmailRequest;
 import cn.xianyum.message.entity.response.MessageConfigEmailResponse;
@@ -38,10 +38,10 @@ public class MessageConfigEmailController {
 	@ApiOperation(value = "账户配置email分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(MessageConfigEmailRequest request) {
+	public Result getPage(MessageConfigEmailRequest request) {
 
 		IPage<MessageConfigEmailResponse> response = messageConfigEmailService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -51,10 +51,10 @@ public class MessageConfigEmailController {
     @ApiOperation(value = "账户配置email根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@PathVariable String id) {
+    public Result getById(@PathVariable String id) {
 
         MessageConfigEmailResponse response = messageConfigEmailService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -64,13 +64,13 @@ public class MessageConfigEmailController {
     @ApiOperation(value = "账户配置email保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody MessageConfigEmailRequest request) {
+    public Result save(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.save(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("保存失败");
+		return Result.error("保存失败");
     }
 
     /**
@@ -80,13 +80,13 @@ public class MessageConfigEmailController {
     @ApiOperation(value = "账户配置email修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody MessageConfigEmailRequest request) {
+    public Result update(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.update(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("修改失败");
+		return Result.error("修改失败");
     }
 
 	/**
@@ -96,10 +96,10 @@ public class MessageConfigEmailController {
     @ApiOperation(value = "账户配置email删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult delete(@RequestBody String[] ids) {
+    public Result delete(@RequestBody String[] ids) {
 
 		messageConfigEmailService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
     /**
@@ -109,13 +109,13 @@ public class MessageConfigEmailController {
     @ApiOperation(value = "邮箱账户测试发送")
     @PutMapping(value = "/sendEmail")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult sendEmail(@RequestBody MessageSenderEntity request) {
+    public Result sendEmail(@RequestBody MessageSenderEntity request) {
         try {
             emailSender.sendEmail(request);
-            return DataResult.success();
+            return Result.success();
         }catch (Exception e){
             log.error("邮箱账户测试发送异常. ",e);
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 }

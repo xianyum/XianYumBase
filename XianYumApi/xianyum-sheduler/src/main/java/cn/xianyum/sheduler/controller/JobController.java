@@ -2,7 +2,7 @@ package cn.xianyum.sheduler.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.sheduler.entity.request.JobRequest;
 import cn.xianyum.sheduler.entity.response.JobResponse;
 import cn.xianyum.sheduler.service.JobService;
@@ -33,10 +33,10 @@ public class JobController {
 	@ApiOperation(value = "定时任务调度表分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public DataResult getPage(JobRequest request) {
+	public Result getPage(JobRequest request) {
 
 		IPage<JobResponse> response = jobService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -46,9 +46,9 @@ public class JobController {
     @ApiOperation(value = "定时任务调度表根据ID查询数据")
     @GetMapping(value = "/getById/{jobId}")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult getById(@PathVariable Long jobId){
+    public Result getById(@PathVariable Long jobId){
         JobResponse response = jobService.getById(jobId);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -58,17 +58,17 @@ public class JobController {
     @ApiOperation(value = "定时任务调度表保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody JobRequest request) {
+    public Result save(@RequestBody JobRequest request) {
 
         try {
             Integer count = jobService.save(request);
             if(count>0){
-                return DataResult.success();
+                return Result.success();
             }
         }catch (Exception e){
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
-        return DataResult.error("保存失败");
+        return Result.error("保存失败");
     }
 
     /**
@@ -78,17 +78,17 @@ public class JobController {
     @ApiOperation(value = "定时任务调度表修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody JobRequest request) {
+    public Result update(@RequestBody JobRequest request) {
 
         try {
             Integer count = jobService.update(request);
             if(count>0){
-                return DataResult.success();
+                return Result.success();
             }
         }catch (Exception e){
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
-        return DataResult.error("修改失败");
+        return Result.error("修改失败");
     }
 
 	/**
@@ -98,12 +98,12 @@ public class JobController {
     @ApiOperation(value = "定时任务调度表删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult delete(@RequestBody Long[] ids) {
+    public Result delete(@RequestBody Long[] ids) {
         try {
             jobService.deleteById(ids);
-            return DataResult.success();
+            return Result.success();
         }catch (Exception e){
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 
@@ -115,12 +115,12 @@ public class JobController {
     @ApiOperation(value = "更新任务状态")
     @PutMapping(value = "/changeStatus")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult changeStatus(@RequestBody JobRequest request) {
+    public Result changeStatus(@RequestBody JobRequest request) {
         try {
             jobService.changeStatus(request);
-            return DataResult.success();
+            return Result.success();
         }catch (Exception e){
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 
@@ -132,12 +132,12 @@ public class JobController {
     @ApiOperation(value = "立即执行一次")
     @PutMapping(value = "/runOnce")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult runOnce(@RequestBody JobRequest request) {
+    public Result runOnce(@RequestBody JobRequest request) {
         try {
             jobService.runOnce(request);
-            return DataResult.success();
+            return Result.success();
         }catch (Exception e){
-            return DataResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 }

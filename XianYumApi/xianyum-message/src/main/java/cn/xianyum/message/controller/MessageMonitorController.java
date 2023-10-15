@@ -2,7 +2,7 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.DataResult;
+import cn.xianyum.common.utils.Result;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
 import cn.xianyum.message.entity.response.MessageMonitorResponse;
 import cn.xianyum.message.service.MessageMonitorService;
@@ -32,10 +32,10 @@ public class MessageMonitorController {
      */
 	@ApiOperation(value = "消息监控分页查询数据")
 	@GetMapping(value = "/getPage")
-	public DataResult getPage(MessageMonitorRequest request) {
+	public Result getPage(MessageMonitorRequest request) {
 
 		IPage<MessageMonitorResponse> response = messageMonitorService.getPage(request);
-        return DataResult.success(response);
+        return Result.page(response);
 	}
 
     /**
@@ -45,9 +45,9 @@ public class MessageMonitorController {
     @ApiOperation(value = "消息监控根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(publicApi = true)
-    public DataResult getById(@PathVariable String id) {
+    public Result getById(@PathVariable String id) {
         MessageMonitorResponse response = messageMonitorService.getById(id);
-        return DataResult.success(response);
+        return Result.success(response);
     }
 
     /**
@@ -57,13 +57,13 @@ public class MessageMonitorController {
     @ApiOperation(value = "消息监控保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult save(@RequestBody MessageMonitorRequest request) {
+    public Result save(@RequestBody MessageMonitorRequest request) {
 
 		Integer count = messageMonitorService.save(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("保存失败");
+		return Result.error("保存失败");
     }
 
     /**
@@ -73,13 +73,13 @@ public class MessageMonitorController {
     @ApiOperation(value = "消息监控修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult update(@RequestBody MessageMonitorRequest request) {
+    public Result update(@RequestBody MessageMonitorRequest request) {
 
 		Integer count = messageMonitorService.update(request);
 		if(count>0){
-			return DataResult.success();
+			return Result.success();
 		}
-		return DataResult.error("修改失败");
+		return Result.error("修改失败");
     }
 
 	/**
@@ -89,9 +89,9 @@ public class MessageMonitorController {
     @ApiOperation(value = "消息监控删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult delete(@RequestBody String[] ids) {
+    public Result delete(@RequestBody String[] ids) {
 		messageMonitorService.deleteById(ids);
-	    return DataResult.success();
+	    return Result.success();
     }
 
 
@@ -102,9 +102,9 @@ public class MessageMonitorController {
     @ApiOperation(value = "清空监控删除数据")
     @DeleteMapping(value = "/truncate")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public DataResult truncate() {
+    public Result truncate() {
         messageMonitorService.truncate();
-        return DataResult.success();
+        return Result.success();
     }
 
 
@@ -114,7 +114,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "获取消息发送数量")
     @GetMapping(value = "/getMessageLogCount")
-    public DataResult getMessageLogCount() {
-        return DataResult.success(messageMonitorService.getOnlineProxyCount());
+    public Result getMessageLogCount() {
+        return Result.success(messageMonitorService.getOnlineProxyCount());
     }
 }
