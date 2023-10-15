@@ -66,7 +66,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 			throw new SoException("客户端未上传授权码");
 		}
 		String redisKey = logDataRedisKey+proxyId;
-		redisUtils.set(redisKey, JSONObject.toJSONString(request),60);
+		redisUtils.set(redisKey, JSONObject.toJSONString(request),120);
 		return 1;
 	}
 
@@ -114,7 +114,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Override
 	public void setIgnoreSaveFlag() {
-		redisUtils.set(ignoreSaveFlagRedisKey,"1",120);
+		redisUtils.set(ignoreSaveFlagRedisKey,"1",360);
 	}
 
 }
