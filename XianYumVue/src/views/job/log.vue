@@ -210,8 +210,8 @@ export default {
     getList() {
       this.loading = true;
       listJobLog(this.queryParams).then(response => {
-          this.jobLogList = response.data.records;
-          this.total = response.data.total;
+          this.jobLogList = response.data;
+          this.total = response.total;
           this.loading = false;
         }
       );

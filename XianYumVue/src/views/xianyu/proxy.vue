@@ -62,31 +62,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="proxyList" @selection-change="handleSelectionChange">
-      <el-table-column type="expand">
-        <template v-slot="props">
-          <el-form label-position="left" inline class="proxy-table-expand">
-            <el-form-item label="最近登录时间：">
-              <span>{{parseTime(props.row.loginTime)}}</span>
-            </el-form-item>
-            <el-form-item label="最近登录mac地址：">
-              <span>{{ props.row.macAddress }}</span>
-            </el-form-item>
-            <el-form-item label="最近登录ip：">
-              <span>{{ props.row.hostIp }}</span>
-            </el-form-item>
-            <el-form-item label="最近登录计算机名：">
-              <span>{{ props.row.hostName }}</span>
-            </el-form-item>
-            <el-form-item label="最近登录操作系统：">
-              <span>{{ props.row.osName }}</span>
-            </el-form-item>
-            <el-form-item label="最近登录版本号：">
-              <span>V {{ numFilter(props.row.clientVersion) }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" align="center" width="50" />
       <el-table-column label="客户端名称" align="center" prop="name" >
@@ -250,8 +225,8 @@ export default {
     getList() {
       this.loading = true;
       listProxy(this.queryParams).then(response => {
-        this.proxyList = response.data.records;
-        this.total = response.data.total;
+        this.proxyList = response.data;
+        this.total = response.total;
         this.loading = false;
       });
     },

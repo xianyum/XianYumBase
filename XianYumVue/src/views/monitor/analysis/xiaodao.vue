@@ -106,8 +106,8 @@ export default {
     getList() {
       this.loading = true;
       getPageList(this.queryParams).then(response => {
-        this.daoList = response.data.records;
-        this.total = response.data.total;
+        this.daoList = response.data;
+        this.total = response.total;
         this.loading = false;
       });
     },

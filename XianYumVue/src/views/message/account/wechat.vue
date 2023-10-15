@@ -255,8 +255,8 @@ export default {
     getList() {
       this.loading = true;
       getMessageWechatConfigPage(this.queryParams).then(response => {
-        this.proxyList = response.data.records;
-        this.total = response.data.total;
+        this.proxyList = response.data;
+        this.total = response.total;
         this.loading = false;
       });
     },
