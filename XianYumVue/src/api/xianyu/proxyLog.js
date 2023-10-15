@@ -13,7 +13,7 @@ export function getProxyLogList(query) {
 // 删除远程代理日志接口
 export function delProxyLog(data) {
   return request({
-    url: '/xianyum-proxy/v1/proxyLog/delete/',
+    url: '/xianyum-proxy/v1/proxyLog/delete',
     method: 'delete',
     data: data
   })

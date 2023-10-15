@@ -73,7 +73,7 @@ public class ProxyLogController {
 	 *
      */
     @ApiOperation(value = "远程代理日志删除数据")
-    @PostMapping(value = "/delete")
+    @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public Result delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
