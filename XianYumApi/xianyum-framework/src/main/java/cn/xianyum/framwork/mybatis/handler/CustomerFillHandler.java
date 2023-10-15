@@ -2,6 +2,7 @@ package cn.xianyum.framwork.mybatis.handler;
 
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.SecurityUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
@@ -22,25 +23,30 @@ public class CustomerFillHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         if(Objects.isNull(loginUser)){
-            this.strictInsertFill(metaObject,"createBy",String.class,"-1");
-            this.strictInsertFill(metaObject,"createByName", String.class, "system");
+            this.setFieldValByName("createBy","-1",metaObject);
+            this.setFieldValByName("createByName", "system",metaObject);
+            this.setFieldValByName("updateBy","-1",metaObject);
+            this.setFieldValByName("updateByName", "system",metaObject);
         }else{
-            this.strictInsertFill(metaObject,"createBy",String.class,loginUser.getId());
-            this.strictInsertFill(metaObject,"createByName",String.class,loginUser.getUsername());
+            this.setFieldValByName("createBy",loginUser.getId(),metaObject);
+            this.setFieldValByName("createByName",loginUser.getUsername(),metaObject);
+            this.setFieldValByName("updateBy",loginUser.getId(),metaObject);
+            this.setFieldValByName("updateByName",loginUser.getUsername(),metaObject);
         }
-        this.strictInsertFill(metaObject,"createTime",Date.class,DateTime.now().toDate());
+        this.setFieldValByName("createTime",DateTime.now().toDate(),metaObject);
+        this.setFieldValByName("updateTime",DateTime.now().toDate(),metaObject);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         if(Objects.isNull(loginUser)){
-            this.strictUpdateFill(metaObject,"updateBy",String.class,"-1");
-            this.strictUpdateFill(metaObject,"updateByName", String.class, "system");
+            this.setFieldValByName("updateBy","-1",metaObject);
+            this.setFieldValByName("updateByName", "system",metaObject);
         }else{
-            this.strictUpdateFill(metaObject,"updateBy",String.class,loginUser.getId());
-            this.strictUpdateFill(metaObject,"updateByName",String.class,loginUser.getUsername());
+            this.setFieldValByName("updateBy",loginUser.getId(),metaObject);
+            this.setFieldValByName("updateByName",loginUser.getUsername(),metaObject);
         }
-        this.strictUpdateFill(metaObject,"updateTime",Date.class,DateTime.now().toDate());
+        this.setFieldValByName("updateTime",DateTime.now().toDate(),metaObject);
     }
 }
