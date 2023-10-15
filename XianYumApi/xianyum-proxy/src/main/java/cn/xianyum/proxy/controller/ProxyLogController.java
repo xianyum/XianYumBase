@@ -1,5 +1,7 @@
 package cn.xianyum.proxy.controller;
 
+import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.DataResult;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
 import cn.xianyum.proxy.entity.response.ProxyLogResponse;
@@ -48,12 +50,13 @@ public class ProxyLogController {
     }
 
     /**
-     * 远程代理日志保存数据
+     * 通过客户端上报数据
 	 *
      */
-    @ApiOperation(value = "远程代理日志保存数据")
-    @PostMapping(value = "/save")
-    public DataResult save(@RequestBody ProxyLogRequest request) {
+    @ApiOperation(value = "通过客户端上报数据")
+    @PostMapping(value = "/reportClientInfo")
+    @Permission(publicApi = true)
+    public DataResult reportClientInfo(@RequestBody ProxyLogRequest request) {
 
 		Integer count = proxyLogService.save(request);
 		if(count>0){
@@ -62,19 +65,6 @@ public class ProxyLogController {
 		return DataResult.error("保存失败");
     }
 
-    /**
-     * 远程代理日志修改数据
-	 *
-     */
-    @ApiOperation(value = "远程代理日志修改数据")
-    @PutMapping(value = "/update")
-    public DataResult update(@RequestBody ProxyLogRequest request) {
-		Integer count = proxyLogService.update(request);
-		if(count>0){
-			return DataResult.success();
-		}
-		return DataResult.error("修改失败");
-    }
 
 	/**
      * 远程代理日志删除数据
@@ -82,6 +72,7 @@ public class ProxyLogController {
      */
     @ApiOperation(value = "远程代理日志删除数据")
     @PostMapping(value = "/delete")
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     public DataResult delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
 	    return DataResult.success();
