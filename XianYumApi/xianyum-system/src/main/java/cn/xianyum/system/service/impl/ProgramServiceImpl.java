@@ -46,7 +46,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         Page<ProgramEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<ProgramEntity> queryWrapper = new QueryWrapper<ProgramEntity>()
-                .eq(PermissionEnum.ADMIN.getStatus() != SecurityUtils.getLoginUser().getPermission(),"create_user_id",SecurityUtils.getLoginUser().getId())
+                .eq(PermissionEnum.ADMIN.getStatus() != SecurityUtils.getLoginUser().getPermission(),"create_by",SecurityUtils.getLoginUser().getId())
                 .like(StringUtil.isNotEmpty(request.getContactName()),"contact_name",request.getContactName())
                 .like(StringUtil.isNotEmpty(request.getProgramTitle()),"program_title",request.getProgramTitle())
                 .eq(null != request.getStatus(),"status",request.getStatus())

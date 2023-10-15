@@ -2,13 +2,11 @@ package cn.xianyum.framwork.mybatis.handler;
 
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.SecurityUtils;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
-import java.util.Date;
 import java.util.Objects;
 
 /**

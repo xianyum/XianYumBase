@@ -43,8 +43,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 	public IPage<ProxyLogResponse> getPage(ProxyLogRequest request) {
 
 		Page<ProxyLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-		QueryWrapper<ProxyLogEntity> queryWrapper = new QueryWrapper<ProxyLogEntity>();
-		IPage<ProxyLogEntity> pageResult = proxyLogMapper.selectPage(page,queryWrapper);
+		IPage<ProxyLogEntity> pageResult = proxyLogMapper.getPage(request,page);
 		IPage<ProxyLogResponse> responseIPage = new Page<>();
 		responseIPage.setTotal(pageResult.getTotal());
 		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),ProxyLogResponse.class));

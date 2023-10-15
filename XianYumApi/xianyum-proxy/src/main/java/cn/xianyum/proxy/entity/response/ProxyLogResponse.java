@@ -30,5 +30,9 @@ public class ProxyLogResponse extends BaseResponse {
 
     private String computerUserName;
 
+    /** 客户端名称 */
+    private String proxyName;
+
+    private String onlineTime;
 
 }
