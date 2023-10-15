@@ -26,9 +26,9 @@ public class ProxyLogResponse extends BaseResponse {
 
     private String userDir;
 
-    private String computeName;
+    private String computerName;
 
-    private String userName;
+    private String computerUserName;
 
 
 }

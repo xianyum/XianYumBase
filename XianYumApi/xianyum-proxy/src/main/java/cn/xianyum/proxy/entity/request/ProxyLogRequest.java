@@ -27,8 +27,8 @@ public class ProxyLogRequest extends BaseRequest {
 
     private String userDir;
 
-    private String computeName;
+    private String computerName;
 
-    private String userName;
+    private String computerUserName;
 
 }

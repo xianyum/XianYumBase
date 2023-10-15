@@ -26,6 +26,7 @@ public class ProxyLogController {
 	@Autowired
 	private ProxyLogService proxyLogService;
 
+
     /**
      * 远程代理日志分页查询数据
      *
@@ -49,6 +50,8 @@ public class ProxyLogController {
         return DataResult.success(response);
     }
 
+
+
     /**
      * 通过客户端上报数据
 	 *
@@ -57,8 +60,7 @@ public class ProxyLogController {
     @PostMapping(value = "/reportClientInfo")
     @Permission(publicApi = true)
     public DataResult reportClientInfo(@RequestBody ProxyLogRequest request) {
-
-		Integer count = proxyLogService.save(request);
+        Integer count = proxyLogService.save(request);
 		if(count>0){
 			return DataResult.success();
 		}

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import java.util.Date;
+
 
 /**
  * 远程代理日志(proxy_log)
@@ -32,21 +32,8 @@ public class ProxyLogEntity extends BaseEntity {
 
     private String userDir;
 
-    private String computeName;
+    private String computerName;
 
-    private String userName;
-
-    private String createBy;
-
-    private String createByName;
-
-    private Date createTime;
-
-    private String updateBy;
-
-    private String updateByName;
-
-    private Date updateTime;
-
+    private String computerUserName;
 
 }

@@ -19,14 +19,14 @@ public abstract class BaseEntity {
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
+    @TableField(fill = FieldFill.INSERT)
+    private String createByName;
+
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
-
-    @TableField(fill = FieldFill.INSERT)
-    private String createByName;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateByName;
