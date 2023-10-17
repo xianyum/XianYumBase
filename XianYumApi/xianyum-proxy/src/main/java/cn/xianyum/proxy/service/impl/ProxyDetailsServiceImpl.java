@@ -36,8 +36,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 	@Override
 	public PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
-
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
+		if(SecurityUtils.isAdminAuth()){
 			return PageResponse.EMPTY_PAGE();
 		}
 		Page<ProxyDetailsEntity> page = new Page<>(request.getPageNum(),request.getPageSize());

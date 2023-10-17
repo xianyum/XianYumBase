@@ -43,9 +43,19 @@ public class SecurityUtils {
     public static void allowAdminAuth(){
         LoginUser userEntity = getLoginUser();
         if(userEntity == null ||
-                (!admin.equals(userEntity.getUsername())  || userEntity.getPermission() != PermissionEnum.ADMIN.getStatus())){
+                (!admin.equals(userEntity.getUsername())  || !Objects.equals(userEntity.getPermission(),PermissionEnum.ADMIN.getStatus()))){
             throw new SoException(HttpStatus.FORBIDDEN.value(), XianYumConstant.Message.NO_PERMISSION_MESSAGE);
         }
+    }
+
+    /**
+     * 判断是不是系统管理员
+     * @return
+     */
+    public static boolean isAdminAuth(){
+        LoginUser userEntity = getLoginUser();
+        return (Objects.nonNull(userEntity) && (admin.equals(userEntity.getUsername())
+                || Objects.equals(PermissionEnum.ADMIN.getStatus(),userEntity.getPermission())));
     }
 
 

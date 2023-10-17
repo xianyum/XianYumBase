@@ -50,9 +50,10 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
-//		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-//			return PageResponse.EMPTY_PAGE();
-//		}
+
+		if(SecurityUtils.isAdminAuth()){
+			return PageResponse.EMPTY_PAGE();
+		}
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>()
 				.like(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
