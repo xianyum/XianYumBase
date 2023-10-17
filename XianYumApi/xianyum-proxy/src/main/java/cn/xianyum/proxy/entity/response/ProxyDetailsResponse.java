@@ -1,5 +1,6 @@
 package cn.xianyum.proxy.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,7 +11,7 @@ import java.util.List;
  *
  */
 @Data
-public class ProxyDetailsResponse{
+public class ProxyDetailsResponse extends BaseResponse {
 
     /** id */
     private String id;

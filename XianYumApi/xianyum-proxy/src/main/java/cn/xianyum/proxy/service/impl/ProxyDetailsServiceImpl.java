@@ -1,5 +1,6 @@
 package cn.xianyum.proxy.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
@@ -9,15 +10,12 @@ import cn.xianyum.proxy.entity.response.ProxyDetailsResponse;
 import cn.xianyum.proxy.metrics.MetricsCollector;
 import cn.xianyum.proxy.service.ProxyDetailsService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,11 +35,10 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 
 	@Override
-	public IPage<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
+	public PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
 
-		IPage<ProxyDetailsResponse> responseIPage = new Page<>();
 		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			return responseIPage;
+			return PageResponse.EMPTY_PAGE();
 		}
 		Page<ProxyDetailsEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 
@@ -58,9 +55,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 				item.setReadBytesStr(ByteUtils.byteFormat(item.getReadBytes(),true));
 			}
 		}
-		responseIPage.setTotal(page.getTotal());
-		responseIPage.setRecords(list);
-		return responseIPage;
+		return PageResponse.of(page,ProxyDetailsResponse.class);
 	}
 
 	@Override

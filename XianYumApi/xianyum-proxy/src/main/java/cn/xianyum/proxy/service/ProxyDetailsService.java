@@ -1,5 +1,6 @@
 package cn.xianyum.proxy.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.proxy.entity.request.ProxyDetailsRequest;
 import cn.xianyum.proxy.entity.response.ProxyDetailsResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface ProxyDetailsService {
 
-	IPage<ProxyDetailsResponse> getPage(ProxyDetailsRequest request);
+	PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request);
 
 	ProxyDetailsResponse getById(String id);
 

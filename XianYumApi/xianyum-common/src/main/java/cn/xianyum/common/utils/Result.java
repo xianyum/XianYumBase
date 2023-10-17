@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.util.HashMap;
 
@@ -51,6 +52,13 @@ public class Result extends HashMap<String, Object> {
     public static Result page(IPage<?> page) {
         Result result = new Result();
         result.put("data",page.getRecords());
+        result.put("total",page.getTotal());
+        return result;
+    }
+
+    public static Result page(PageResponse page) {
+        Result result = new Result();
+        result.put("data",page.getDataList());
         result.put("total",page.getTotal());
         return result;
     }

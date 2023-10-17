@@ -1,6 +1,7 @@
 package cn.xianyum.proxy.service.impl;
 
 import cn.xianyum.common.entity.base.BaseEntity;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.RedisUtils;
@@ -17,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import java.util.Objects;
 
 @Service
@@ -40,14 +39,10 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 	private RedisUtils redisUtils;
 
 	@Override
-	public IPage<ProxyLogResponse> getPage(ProxyLogRequest request) {
-
+	public PageResponse<ProxyLogResponse> getPage(ProxyLogRequest request) {
 		Page<ProxyLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		IPage<ProxyLogEntity> pageResult = proxyLogMapper.getPage(request,page);
-		IPage<ProxyLogResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),ProxyLogResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,ProxyLogResponse.class);
 	}
 
 	@Override

@@ -2,17 +2,16 @@ package cn.xianyum.proxy.service;
 
 
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.proxy.entity.po.ProxyEntity;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
 import cn.xianyum.proxy.entity.response.ProxyResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-
 import java.util.List;
 import java.util.Set;
 
 public interface ProxyService {
 
-	IPage<ProxyResponse> getPage(ProxyRequest request);
+	PageResponse<ProxyResponse> getPage(ProxyRequest request);
 
 	/**
 	 * 获取在线数量

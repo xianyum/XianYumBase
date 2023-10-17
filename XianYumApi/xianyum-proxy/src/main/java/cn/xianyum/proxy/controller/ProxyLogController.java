@@ -1,6 +1,7 @@
 package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Result;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
@@ -11,7 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * 远程代理日志接口
@@ -34,8 +34,7 @@ public class ProxyLogController {
 	@ApiOperation(value = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
 	public Result getPage(ProxyLogRequest request) {
-
-		IPage<ProxyLogResponse> response = proxyLogService.getPage(request);
+        PageResponse<ProxyLogResponse> response = proxyLogService.getPage(request);
         return Result.page(response);
 	}
 

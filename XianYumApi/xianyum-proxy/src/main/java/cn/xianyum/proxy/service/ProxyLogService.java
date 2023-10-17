@@ -1,13 +1,13 @@
 package cn.xianyum.proxy.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.proxy.entity.po.ProxyLogEntity;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
 import cn.xianyum.proxy.entity.response.ProxyLogResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 public interface ProxyLogService {
 
-	IPage<ProxyLogResponse> getPage(ProxyLogRequest request);
+	PageResponse getPage(ProxyLogRequest request);
 
 	ProxyLogResponse getById(Long id);
 

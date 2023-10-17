@@ -1,11 +1,16 @@
 package cn.xianyum.common.utils;
 
 
+import cn.xianyum.common.entity.base.BaseResponse;
+import cn.xianyum.common.exception.SoException;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.cglib.beans.BeanCopier;
-
+import org.springframework.util.CollectionUtils;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,6 +137,20 @@ public class BeanUtils {
         }
         return result;
     }
+
+    public static <T, R> List<T> copyList(List<R> srcList,final Class<T> clazz,BiConsumer<T, R> biConsumer) {
+        if (CollectionUtils.isEmpty(srcList)) {
+            return Collections.emptyList();
+        }
+        List<T> result = new ArrayList<>(srcList.size());
+        for (R srcObject : srcList) {
+            result.add(copy(srcObject,clazz, biConsumer));
+        }
+        return result;
+    }
+
+
+
     public static <T> T copy(final Object source, final Class<T> clazz) {
         try {
             if (source == null) {
@@ -146,4 +165,39 @@ public class BeanUtils {
         }
         return null;
     }
+
+
+    private static <T, R> T copy( R src,Class<T> clazz,BiConsumer<T, R> trans) {
+        if (src == null) {
+            return null;
+        }
+        T instance;
+        try {
+            instance = clazz.newInstance();
+        } catch (Exception e) {
+            throw new SoException(e.getMessage());
+        }
+        org.springframework.beans.BeanUtils.copyProperties(src, instance, getNullPropertyNames(src));
+        if (trans != null) {
+            trans.accept(instance, src);
+        }
+        return instance;
+    }
+
+
+    private static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) {
+                emptyNames.add(pd.getName());
+            }
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
 }

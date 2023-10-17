@@ -1,13 +1,13 @@
 package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Result;
 import cn.xianyum.common.validator.ValidatorUtils;
 import cn.xianyum.proxy.entity.request.ProxyDetailsRequest;
 import cn.xianyum.proxy.entity.response.ProxyDetailsResponse;
 import cn.xianyum.proxy.service.ProxyDetailsService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class ProxyDetailsController {
 	@ApiOperation(value = "客户端配置详细分页查询数据")
 	@GetMapping(value = "/getPage")
 	public Result getPage(ProxyDetailsRequest request) {
-		IPage<ProxyDetailsResponse> response = proxyDetailsService.getPage(request);
+		PageResponse<ProxyDetailsResponse> response = proxyDetailsService.getPage(request);
         return Result.page(response);
 	}
 

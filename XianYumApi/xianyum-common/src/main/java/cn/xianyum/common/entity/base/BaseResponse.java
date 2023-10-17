@@ -1,8 +1,8 @@
 package cn.xianyum.common.entity.base;
 
 import lombok.Data;
-
 import java.util.Date;
+
 
 /**
  * @author zhangwei

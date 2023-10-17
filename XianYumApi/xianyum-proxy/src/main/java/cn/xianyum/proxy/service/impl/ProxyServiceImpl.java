@@ -1,5 +1,6 @@
 package cn.xianyum.proxy.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -48,12 +49,10 @@ public class ProxyServiceImpl implements ProxyService {
 	private ProxyLogService proxyLogService;
 
 	@Override
-	public IPage<ProxyResponse> getPage(ProxyRequest request) {
-
-		IPage<ProxyResponse> responseIPage = new Page<>();
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			return responseIPage;
-		}
+	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
+//		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
+//			return PageResponse.EMPTY_PAGE();
+//		}
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>()
 				.like(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
@@ -61,19 +60,14 @@ public class ProxyServiceImpl implements ProxyService {
 				.orderByDesc("create_time")
 				.orderByDesc("login_count");
 		IPage<ProxyEntity> pageResult = proxyMapper.selectPage(page,queryWrapper);
-
-		responseIPage.setTotal(pageResult.getTotal());
-		List<ProxyResponse> proxyResponses = BeanUtils.copyList(pageResult.getRecords(), ProxyResponse.class);
-		responseIPage.setRecords(proxyResponses);
-		for(ProxyResponse item : proxyResponses){
+		return PageResponse.of(pageResult,ProxyResponse.class,(response,item)->{
 			Channel channel = ProxyChannelManager.getCmdChannel(item.getId());
 			if (channel != null) {
-				item.setStatus(1);// online
+				response.setStatus(1);// online
 			} else {
-				item.setStatus(0);// offline
+				response.setStatus(0);// offline
 			}
-		}
-		return responseIPage;
+		});
 	}
 
 	/**
