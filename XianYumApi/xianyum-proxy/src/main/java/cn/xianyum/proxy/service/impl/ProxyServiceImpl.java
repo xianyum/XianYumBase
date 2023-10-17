@@ -51,7 +51,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
 
-		if(SecurityUtils.isAdminAuth()){
+		if(!SecurityUtils.isAdminAuth()){
 			return PageResponse.EMPTY_PAGE();
 		}
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());

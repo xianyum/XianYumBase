@@ -5,6 +5,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.RedisUtils;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.proxy.dao.ProxyLogMapper;
 import cn.xianyum.proxy.entity.po.ProxyLogEntity;
@@ -40,6 +41,9 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Override
 	public PageResponse<ProxyLogResponse> getPage(ProxyLogRequest request) {
+		if(!SecurityUtils.isAdminAuth()){
+			return PageResponse.EMPTY_PAGE();
+		}
 		Page<ProxyLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		IPage<ProxyLogEntity> pageResult = proxyLogMapper.getPage(request,page);
 		return PageResponse.of(pageResult,ProxyLogResponse.class);
