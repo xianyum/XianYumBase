@@ -1,7 +1,7 @@
 package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.service.MessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,17 +26,17 @@ public class MessageController {
     @PostMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
-    public Result sendSimpleMessageForPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+    public Results sendSimpleMessageForPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
-        return Result.success();
+        return Results.success();
     }
 
     @GetMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
-    public Result sendSimpleMessageForGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+    public Results sendSimpleMessageForGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
-        return Result.success();
+        return Results.success();
     }
 
 }

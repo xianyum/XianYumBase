@@ -1,9 +1,9 @@
 package cn.xianyum.system.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-
+import cn.xianyum.system.entity.response.DictDataResponse;
 import java.util.List;
 
 /**
@@ -13,9 +13,9 @@ import java.util.List;
 public interface DictDataService {
     List<DictDataEntity> selectDictDataByType(String dictType);
 
-    IPage<DictDataEntity> selectDictDataList(DictDataRequest request);
+    PageResponse<DictDataResponse> selectDictDataList(DictDataRequest request);
 
-    DictDataEntity getInfo(Long id);
+    DictDataResponse getInfo(Long id);
 
     int save(DictDataEntity dict);
 

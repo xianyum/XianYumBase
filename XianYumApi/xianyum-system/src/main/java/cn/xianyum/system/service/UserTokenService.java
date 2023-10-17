@@ -2,7 +2,7 @@ package cn.xianyum.system.service;
 
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.UserEntity;
 
 public interface UserTokenService {
@@ -12,7 +12,7 @@ public interface UserTokenService {
      * @param user
      * @return
      */
-    Result createToken(UserEntity user);
+    Results createToken(UserEntity user);
 
     /**
      * 退出，修改token值

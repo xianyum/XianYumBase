@@ -1,13 +1,13 @@
 package cn.xianyum.sheduler.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.sheduler.entity.request.JobRequest;
 import cn.xianyum.sheduler.entity.response.JobResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.quartz.SchedulerException;
 
 public interface JobService {
 
-	IPage<JobResponse> getPage(JobRequest request);
+	PageResponse<JobResponse> getPage(JobRequest request);
 
 	JobResponse getById(Long jobId);
 

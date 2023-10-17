@@ -2,6 +2,7 @@ package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.config.XianYumConfig;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.PermissionEnum;
@@ -17,17 +18,16 @@ import cn.xianyum.system.entity.po.ThirdUserEntity;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
+import cn.xianyum.system.entity.response.UserResponse;
 import cn.xianyum.system.service.*;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     private UserTokenService userTokenService;
 
     @Override
-    public IPage<UserEntity> queryAll(UserRequest user) {
+    public PageResponse<UserResponse> getPage(UserRequest user) {
         Page<UserEntity> page = new Page<>(user.getPageNum(),user.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
@@ -68,7 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         List<UserEntity> list = userMapper.queryAll(user, page);
         page.setRecords(list);
-        return page;
+        return PageResponse.of(page,UserResponse.class);
     }
 
     @Override

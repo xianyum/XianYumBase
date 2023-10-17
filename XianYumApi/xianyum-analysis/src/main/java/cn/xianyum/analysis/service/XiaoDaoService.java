@@ -1,9 +1,9 @@
 package cn.xianyum.analysis.service;
 
 
-import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import cn.xianyum.analysis.entity.response.XiaoDaoResponse;
+import cn.xianyum.common.entity.base.PageResponse;
 
 /**
  * @author zhangwei
@@ -13,5 +13,5 @@ public interface XiaoDaoService {
 
     void push();
 
-    IPage<XiaoDaoEntity> getPage(XiaoDaoRequest request);
+    PageResponse<XiaoDaoResponse> getPage(XiaoDaoRequest request);
 }

@@ -1,13 +1,13 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.request.MessageConfigWechatRequest;
 import cn.xianyum.message.entity.response.MessageConfigWechatResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 public interface MessageConfigWechatService {
 
-	IPage<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request);
+	PageResponse<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request);
 
 	MessageConfigWechatResponse getById(String id);
 

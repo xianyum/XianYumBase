@@ -3,7 +3,9 @@ package cn.xianyum.analysis.service.impl;
 import cn.xianyum.analysis.dao.XiaoDaoMapper;
 import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
+import cn.xianyum.analysis.entity.response.XiaoDaoResponse;
 import cn.xianyum.analysis.service.XiaoDaoService;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -61,12 +63,12 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
     }
 
     @Override
-    public IPage<XiaoDaoEntity> getPage(XiaoDaoRequest request) {
+    public PageResponse<XiaoDaoResponse> getPage(XiaoDaoRequest request) {
         Page<XiaoDaoEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<XiaoDaoEntity> xiaoDaoEntityQueryWrapper  = new QueryWrapper<XiaoDaoEntity>()
                 .like(StringUtil.isNotEmpty(request.getTitle()),"title", request.getTitle()).orderByDesc("create_time");
-        IPage<XiaoDaoEntity> iPage = xiaoDaoMapper.selectPage(page, xiaoDaoEntityQueryWrapper);
-        return iPage;
+        IPage<XiaoDaoEntity> xiaoDaoEntityPage = xiaoDaoMapper.selectPage(page, xiaoDaoEntityQueryWrapper);
+        return PageResponse.of(xiaoDaoEntityPage,XiaoDaoResponse.class);
     }
 
 }

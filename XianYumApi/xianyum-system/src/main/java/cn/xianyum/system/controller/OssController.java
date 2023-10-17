@@ -2,7 +2,7 @@ package cn.xianyum.system.controller;
 
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.OssFileEntity;
 import cn.xianyum.system.service.OssService;
 import io.swagger.annotations.Api;
@@ -28,22 +28,22 @@ public class OssController {
     @PostMapping("/upload")
     @ApiOperation(value = "上传接口", httpMethod = "POST")
     @Permission()
-    public Result upload(@RequestParam("file") MultipartFile file)  throws Exception{
+    public Results upload(@RequestParam("file") MultipartFile file)  throws Exception{
         OssFileEntity ossFileEntity = ossService.upload(file);
         if(ossFileEntity == null){
-            return Result.error("上传失败！");
+            return Results.error("上传失败！");
         }
-        return Result.success(ossFileEntity);
+        return Results.success(ossFileEntity);
     }
 
 
     @PostMapping("/getWebUpToken")
     @ApiOperation(value = "获取上传凭证", httpMethod = "POST")
     @Permission()
-    public Result getWebUpToken(){
+    public Results getWebUpToken(){
 
         String token = ossService.getWebUpToken();
-        return Result.success(token);
+        return Results.success(token);
     }
 
     @RequestMapping(value = "/getImage", produces = "image/jpg", method = RequestMethod.GET)

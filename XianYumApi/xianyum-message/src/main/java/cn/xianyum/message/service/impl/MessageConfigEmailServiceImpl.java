@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -31,7 +32,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	private String messageConfigPrefix;
 
 	@Override
-	public IPage<MessageConfigEmailResponse> getPage(MessageConfigEmailRequest request) {
+	public PageResponse<MessageConfigEmailResponse> getPage(MessageConfigEmailRequest request) {
 
 		Page<MessageConfigEmailEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigEmailEntity> queryWrapper = new QueryWrapper<MessageConfigEmailEntity>()
@@ -40,10 +41,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigEmailEntity> pageResult = messageConfigEmailMapper.selectPage(page,queryWrapper);
-		IPage<MessageConfigEmailResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),MessageConfigEmailResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,MessageConfigEmailResponse.class);
 	}
 
 	@Override

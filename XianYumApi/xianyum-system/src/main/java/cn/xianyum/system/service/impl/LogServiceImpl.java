@@ -1,6 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -13,7 +14,6 @@ import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.LogRequest;
 import cn.xianyum.system.entity.response.LogResponse;
 import cn.xianyum.system.service.LogService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class LogServiceImpl implements LogService {
     }
 
     @Override
-    public IPage<LogEntity> queryAll(LogRequest request) {
+    public PageResponse<LogResponse> getPage(LogRequest request) {
         Page<LogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
@@ -96,8 +96,9 @@ public class LogServiceImpl implements LogService {
             }
         }
         List<LogEntity> list = logMapper.queryAll(request, page);
-        page.setRecords(list);
-        return page;
+        return PageResponse.of(page.getTotal(),list,LogResponse.class,(response,item)->{
+            response.setTime(String.valueOf(item.getTime()));
+        });
     }
 
     @Override

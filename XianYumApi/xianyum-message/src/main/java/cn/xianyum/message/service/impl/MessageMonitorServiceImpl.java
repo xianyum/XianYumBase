@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.SecurityUtils;
@@ -33,10 +34,10 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	private MessageTypeConfigService messageTypeConfigService;
 
 	@Override
-	public IPage<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
+	public PageResponse<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
 		Page<MessageMonitorEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			return new Page<>();
+			return PageResponse.EMPTY_PAGE();
 		}
 		QueryWrapper<MessageMonitorEntity> queryWrapper = new QueryWrapper<MessageMonitorEntity>()
 				.eq(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
@@ -48,10 +49,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 				.lt(Objects.nonNull(request.getParams().get("endTime")),"create_time",request.getParams().get("endTime"))
 				.orderByDesc("create_time");;
 		IPage<MessageMonitorEntity> pageResult = messageMonitorMapper.selectPage(page,queryWrapper);
-		IPage<MessageMonitorResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),MessageMonitorResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,MessageMonitorResponse.class);
 	}
 
 	@Override

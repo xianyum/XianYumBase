@@ -1,15 +1,15 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.message.entity.po.MessageSendConfigEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageSendConfigRequest;
 import cn.xianyum.message.entity.response.MessageSendConfigResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.thymeleaf.context.Context;
 
 public interface MessageSendConfigService {
 
-	IPage<MessageSendConfigResponse> getPage(MessageSendConfigRequest request);
+	PageResponse<MessageSendConfigResponse> getPage(MessageSendConfigRequest request);
 
 	MessageSendConfigResponse getById(String id);
 

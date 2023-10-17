@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class CacheController {
 
     @GetMapping("/getInfo")
     @ApiOperation(value = "查询Redis缓存基本信息", httpMethod = "GET")
-    public Result getInfo() {
+    public Results getInfo() {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
         Object dbSize = redisTemplate.execute((RedisCallback<Object>) connection -> connection.dbSize());
@@ -43,6 +43,6 @@ public class CacheController {
             pieList.add(data);
         });
         result.put("commandStats", pieList);
-        return Result.success(result);
+        return Results.success(result);
     }
 }

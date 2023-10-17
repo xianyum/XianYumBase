@@ -1,9 +1,9 @@
 package cn.xianyum.system.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.LogRequest;
 import cn.xianyum.system.entity.response.LogResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ public interface LogService {
      */
     void saveLog(LogEntity logEntity);
 
-    IPage<LogEntity> queryAll(LogRequest request);
+    PageResponse<LogResponse> getPage(LogRequest request);
 
     void deleteById(String[] logIdS);
 

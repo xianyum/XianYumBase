@@ -1,8 +1,9 @@
 package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigWechatRequest;
 import cn.xianyum.message.entity.response.MessageConfigWechatResponse;
@@ -13,7 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * 账户配置wechat接口
@@ -38,10 +38,9 @@ public class MessageConfigWechatController {
 	@ApiOperation(value = "账户配置wechat分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public Result getPage(MessageConfigWechatRequest request) {
-
-		IPage<MessageConfigWechatResponse> response = messageConfigWechatService.getPage(request);
-        return Result.page(response);
+	public Results getPage(MessageConfigWechatRequest request) {
+        PageResponse<MessageConfigWechatResponse> response = messageConfigWechatService.getPage(request);
+        return Results.page(response);
 	}
 
     /**
@@ -51,9 +50,9 @@ public class MessageConfigWechatController {
     @ApiOperation(value = "账户配置wechat根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result getById(@PathVariable String id) {
+    public Results getById(@PathVariable String id) {
         MessageConfigWechatResponse response = messageConfigWechatService.getById(id);
-        return Result.success(response);
+        return Results.success(response);
     }
 
     /**
@@ -63,13 +62,13 @@ public class MessageConfigWechatController {
     @ApiOperation(value = "账户配置wechat保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result save(@RequestBody MessageConfigWechatRequest request) {
+    public Results save(@RequestBody MessageConfigWechatRequest request) {
 
 		Integer count = messageConfigWechatService.save(request);
 		if(count>0){
-			return Result.success();
+			return Results.success();
 		}
-		return Result.error("保存失败");
+		return Results.error("保存失败");
     }
 
     /**
@@ -79,13 +78,13 @@ public class MessageConfigWechatController {
     @ApiOperation(value = "账户配置wechat修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result update(@RequestBody MessageConfigWechatRequest request) {
+    public Results update(@RequestBody MessageConfigWechatRequest request) {
 
 		Integer count = messageConfigWechatService.update(request);
 		if(count>0){
-			return Result.success();
+			return Results.success();
 		}
-		return Result.error("修改失败");
+		return Results.error("修改失败");
     }
 
 	/**
@@ -95,10 +94,10 @@ public class MessageConfigWechatController {
     @ApiOperation(value = "账户配置wechat删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result delete(@RequestBody String[] ids) {
+    public Results delete(@RequestBody String[] ids) {
 
 		messageConfigWechatService.deleteById(ids);
-	    return Result.success();
+	    return Results.success();
     }
 
     /**
@@ -108,13 +107,13 @@ public class MessageConfigWechatController {
     @ApiOperation(value = "企业微信账户测试发送")
     @PutMapping(value = "/sendWechat")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result sendWechat(@RequestBody MessageSenderEntity request) {
+    public Results sendWechat(@RequestBody MessageSenderEntity request) {
         try {
             wechatSender.sendWechat(request);
-            return Result.success();
+            return Results.success();
         }catch (Exception e){
             log.error("企业微信账户测试发送异常. ",e);
-            return Result.error(e.getMessage());
+            return Results.error(e.getMessage());
         }
     }
 }

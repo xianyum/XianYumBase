@@ -1,15 +1,14 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.message.entity.po.MessageTypeConfigEntity;
 import cn.xianyum.message.entity.request.MessageTypeConfigRequest;
 import cn.xianyum.message.entity.response.MessageTypeConfigResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-
 import java.util.List;
 
 public interface MessageTypeConfigService {
 
-	IPage<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request);
+	PageResponse<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request);
 
 	MessageTypeConfigResponse getById(String id);
 

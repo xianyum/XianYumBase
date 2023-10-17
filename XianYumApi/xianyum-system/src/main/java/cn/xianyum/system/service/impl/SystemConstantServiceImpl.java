@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.dao.SystemConstantMapper;
@@ -123,7 +124,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
 
     @Override
-    public IPage<SystemConstantResponse> getPage(SystemConstantRequest request) {
+    public PageResponse<SystemConstantResponse> getPage(SystemConstantRequest request) {
         SecurityUtils.allowAdminAuth();
         Page<SystemConstantEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>()
@@ -131,10 +132,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
                 .like(StringUtil.isNotEmpty(request.getConstantDescribe()),"constant_describe",request.getConstantDescribe())
                 .orderByDesc(Arrays.asList("update_time","create_time"));
         IPage<SystemConstantEntity> pageResult = systemConstantMapper.selectPage(page,queryWrapper);
-        IPage<SystemConstantResponse> responseIPage = new Page<>();
-        responseIPage.setTotal(pageResult.getTotal());
-        responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),SystemConstantResponse.class));
-        return responseIPage;
+        return PageResponse.of(pageResult,SystemConstantResponse.class);
     }
 
     @Override

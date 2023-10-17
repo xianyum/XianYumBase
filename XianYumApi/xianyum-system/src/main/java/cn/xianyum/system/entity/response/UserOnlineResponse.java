@@ -4,28 +4,24 @@ import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
 import java.util.Date;
 
+/**
+ * 在线用户实体
+ * @author zhangwei
+ * @date 2023年10月17日20:43:05
+ */
 @Data
-public class UserResponse extends BaseResponse {
+public class UserOnlineResponse extends BaseResponse {
 
-    private String id;
+    /**
+     * 会话编号
+     */
+    private String token;
 
+
+    /**
+     * 用户名
+     */
     private String username;
-
-    private String password;
-
-    private String mobile;
-
-    private String email;
-
-    private Integer status;
-
-    private Integer delTag;
-
-    private Integer permission;
-
-    private Integer sex;
-
-    private String avatar;
 
     /**
      * 登录时间

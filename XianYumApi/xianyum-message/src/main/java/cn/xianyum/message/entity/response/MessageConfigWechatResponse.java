@@ -1,5 +1,6 @@
 package cn.xianyum.message.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import java.util.Date;
  *
  */
 @Data
-public class MessageConfigWechatResponse{
+public class MessageConfigWechatResponse extends BaseResponse {
 
     /** id */
     private String id;

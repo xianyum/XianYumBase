@@ -1,15 +1,14 @@
 package cn.xianyum.message.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * 发送配置关联表(message_send_relation)
  *
  */
 @Data
-public class MessageSendRelationResponse{
+public class MessageSendRelationResponse extends BaseResponse {
 
     /** id */
     private String id;

@@ -1,5 +1,6 @@
 package cn.xianyum.sheduler.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import java.util.Date;
  *
  */
 @Data
-public class JobResponse{
+public class JobResponse extends BaseResponse {
 
     private Long jobId;
 
@@ -23,12 +24,6 @@ public class JobResponse{
     private String concurrent;
 
     private String status;
-
-    private String createUserId;
-
-    private Date createTime;
-
-    private String createUserName;
 
     private String remark;
 

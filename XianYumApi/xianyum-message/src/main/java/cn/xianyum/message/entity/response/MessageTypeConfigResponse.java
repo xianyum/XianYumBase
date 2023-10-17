@@ -1,14 +1,14 @@
 package cn.xianyum.message.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 消息类型配置表(message_type_config)
  *
  */
 @Data
-public class MessageTypeConfigResponse{
+public class MessageTypeConfigResponse extends BaseResponse {
 
     /** id */
     private String id;
@@ -21,15 +21,6 @@ public class MessageTypeConfigResponse{
 
     /** 发送量 */
     private Integer sendCount;
-
-    /** 创建时间 */
-    private Date createTime;
-
-    /** 创建人ID */
-    private String createUserId;
-
-    /** 创建人名称 */
-    private String createUserName;
 
     /** 删除标志（0：未删除，1：删除） */
     private Integer delTag;

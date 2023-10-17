@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.dao.MessageSendConfigMapper;
@@ -19,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -46,12 +46,11 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 
 
 	@Override
-	public IPage<MessageSendConfigResponse> getPage(MessageSendConfigRequest request) {
+	public PageResponse<MessageSendConfigResponse> getPage(MessageSendConfigRequest request) {
 
 		Page<MessageSendConfigResponse> page = new Page<>(request.getPageNum(),request.getPageSize());
 		List<MessageSendConfigResponse> messageSendConfigResponses =  messageSendConfigMapper.queryList(request,page);
-		page.setRecords(messageSendConfigResponses);
-		return page;
+		return PageResponse.of(page.getTotal(),messageSendConfigResponses);
 	}
 
 	@Override

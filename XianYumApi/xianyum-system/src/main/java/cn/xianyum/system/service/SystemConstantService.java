@@ -1,10 +1,10 @@
 package cn.xianyum.system.service;
 
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.SystemConstantRequest;
 import cn.xianyum.system.entity.response.SystemConstantResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * @author zhangwei
@@ -30,7 +30,7 @@ public interface SystemConstantService {
 
     SystemConstantResponse getById(String id);
 
-    IPage<SystemConstantResponse> getPage(SystemConstantRequest request);
+    PageResponse<SystemConstantResponse> getPage(SystemConstantRequest request);
 
     void deleteByKey(String key);
 

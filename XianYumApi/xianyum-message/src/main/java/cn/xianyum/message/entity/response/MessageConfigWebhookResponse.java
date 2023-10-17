@@ -1,14 +1,14 @@
 package cn.xianyum.message.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 账户配置webhook(message_config_webhook)
  *
  */
 @Data
-public class MessageConfigWebhookResponse{
+public class MessageConfigWebhookResponse extends BaseResponse {
 
     /** id */
     private String id;
@@ -25,17 +25,6 @@ public class MessageConfigWebhookResponse{
     /** 描述 */
     private String description;
 
-    /** 创建时间 */
-    private Date createTime;
-
-    /** 创建人ID */
-    private String createUserId;
-
-    /** 创建人名称 */
-    private String createUserName;
-
     /** 删除标志（0：未删除，1：删除） */
     private Integer delTag;
-
-
 }

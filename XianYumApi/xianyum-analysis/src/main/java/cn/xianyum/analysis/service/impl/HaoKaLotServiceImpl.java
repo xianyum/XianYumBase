@@ -1,9 +1,10 @@
 package cn.xianyum.analysis.service.impl;
 
 import cn.xianyum.analysis.entity.po.HaoKaLotArticleEntity;
-import cn.xianyum.analysis.entity.po.HaoKaLotProductEntity;
 import cn.xianyum.analysis.entity.request.HaoKaLotProductRequest;
+import cn.xianyum.analysis.entity.response.HaoKaLotProductResponse;
 import cn.xianyum.analysis.service.HaoKaLotService;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -14,15 +15,11 @@ import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ejlchina.okhttps.OkHttps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,8 +148,8 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
      * @return
      */
     @Override
-    public IPage<HaoKaLotProductEntity> getPage(HaoKaLotProductRequest request) {
-        IPage<HaoKaLotProductEntity> page = new Page<>();
+    public PageResponse<HaoKaLotProductResponse> getPage(HaoKaLotProductRequest request) {
+
         String token = "bearer "+this.getAccessTokenByLogin();
         String result = HttpUtils.getHttpInstance().sync(PRODUCT_URL)
                 .addHeader("Authorization",token)
@@ -163,9 +160,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
                 .get().getBody().toString();
         JSONObject resultObject = JSONObject.parseObject(result);
         Long count = resultObject.getLong("count");
-        List<HaoKaLotProductEntity> data = JSONObject.parseArray(resultObject.getString("data"), HaoKaLotProductEntity.class);
-        page.setTotal(count);
-        page.setRecords(data);
-        return page;
+        List<HaoKaLotProductResponse> data = JSONObject.parseArray(resultObject.getString("data"), HaoKaLotProductResponse.class);
+        return PageResponse.of(count,data);
     }
 }

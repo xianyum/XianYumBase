@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.security.handler;
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.service.LogService;
@@ -45,6 +45,6 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         }
         logService.saveLog(log);
         userTokenService.logout();
-        HttpContextUtils.renderString(response, JSONObject.toJSONString(Result.success("退出成功")));
+        HttpContextUtils.renderString(response, JSONObject.toJSONString(Results.success("退出成功")));
     }
 }

@@ -1,8 +1,9 @@
 package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigWebhookRequest;
 import cn.xianyum.message.entity.response.MessageConfigWebhookResponse;
@@ -13,7 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * 账户配置webhook接口
@@ -38,10 +38,10 @@ public class MessageConfigWebhookController {
 	@ApiOperation(value = "账户配置webhook分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-	public Result getPage(MessageConfigWebhookRequest request) {
+	public Results getPage(MessageConfigWebhookRequest request) {
 
-		IPage<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
-        return Result.page(response);
+        PageResponse<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
+        return Results.page(response);
 	}
 
     /**
@@ -51,10 +51,10 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result getById(@PathVariable String id) {
+    public Results getById(@PathVariable String id) {
 
         MessageConfigWebhookResponse response = messageConfigWebhookService.getById(id);
-        return Result.success(response);
+        return Results.success(response);
     }
 
     /**
@@ -64,13 +64,13 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook保存数据")
     @PostMapping(value = "/save")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result save(@RequestBody MessageConfigWebhookRequest request) {
+    public Results save(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.save(request);
 		if(count>0){
-			return Result.success();
+			return Results.success();
 		}
-		return Result.error("保存失败");
+		return Results.error("保存失败");
     }
 
     /**
@@ -80,13 +80,13 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook修改数据")
     @PutMapping(value = "/update")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result update(@RequestBody MessageConfigWebhookRequest request) {
+    public Results update(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.update(request);
 		if(count>0){
-			return Result.success();
+			return Results.success();
 		}
-		return Result.error("修改失败");
+		return Results.error("修改失败");
     }
 
 	/**
@@ -96,10 +96,10 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "账户配置webhook删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result delete(@RequestBody String[] ids) {
+    public Results delete(@RequestBody String[] ids) {
 
 		messageConfigWebhookService.deleteById(ids);
-	    return Result.success();
+	    return Results.success();
     }
 
     /**
@@ -109,13 +109,13 @@ public class MessageConfigWebhookController {
     @ApiOperation(value = "webhook账户测试发送")
     @PutMapping(value = "/sendWebhook")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result sendWebhook(@RequestBody MessageSenderEntity request) {
+    public Results sendWebhook(@RequestBody MessageSenderEntity request) {
         try {
             webhookSender.sendWebhook(request);
-            return Result.success();
+            return Results.success();
         }catch (Exception e){
             log.error("webhook账户测试发送异常. ",e);
-            return Result.error(e.getMessage());
+            return Results.error(e.getMessage());
         }
     }
 }

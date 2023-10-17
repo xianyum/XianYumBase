@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
@@ -13,6 +14,7 @@ import cn.xianyum.system.entity.po.GiteeCommitEntity;
 import cn.xianyum.system.entity.po.ProgramEntity;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.ProgramRequest;
+import cn.xianyum.system.entity.response.ProgramResponse;
 import cn.xianyum.system.service.ProgramService;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -42,7 +44,7 @@ public class ProgramServiceImpl implements ProgramService {
 
 
     @Override
-    public IPage<ProgramEntity> queryAll(ProgramRequest request) {
+    public PageResponse<ProgramResponse> getPage(ProgramRequest request) {
 
         Page<ProgramEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<ProgramEntity> queryWrapper = new QueryWrapper<ProgramEntity>()
@@ -54,7 +56,7 @@ public class ProgramServiceImpl implements ProgramService {
                 .le(StringUtil.isNotEmpty(request.getEndTime()),"create_time",request.getEndTime())
                 .orderByDesc("create_time");
         IPage<ProgramEntity> programEntityIPage = programMapper.selectPage(page, queryWrapper);
-        return programEntityIPage;
+        return PageResponse.of(programEntityIPage,ProgramResponse.class);
     }
 
     @Override

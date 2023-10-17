@@ -55,7 +55,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 				item.setReadBytesStr(ByteUtils.byteFormat(item.getReadBytes(),true));
 			}
 		}
-		return PageResponse.of(page,ProxyDetailsResponse.class);
+		return PageResponse.of(page.getTotal(),list);
 	}
 
 	@Override

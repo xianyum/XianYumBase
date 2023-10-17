@@ -1,5 +1,6 @@
 package cn.xianyum.sheduler.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -23,7 +24,7 @@ public class JobLogServiceImpl implements JobLogService {
 	private JobLogMapper jobLogMapper;
 
 	@Override
-	public IPage<JobLogResponse> getPage(JobLogRequest request) {
+	public PageResponse<JobLogResponse> getPage(JobLogRequest request) {
 
 		Page<JobLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<JobLogEntity> queryWrapper = new QueryWrapper<JobLogEntity>()
@@ -33,10 +34,7 @@ public class JobLogServiceImpl implements JobLogService {
 				.like(StringUtil.isNotEmpty(request.getJobHandler()),"job_handler",request.getJobHandler())
 				.orderByDesc("start_time");;
 		IPage<JobLogEntity> pageResult = jobLogMapper.selectPage(page,queryWrapper);
-		IPage<JobLogResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),JobLogResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,JobLogResponse.class);
 	}
 
 	@Override

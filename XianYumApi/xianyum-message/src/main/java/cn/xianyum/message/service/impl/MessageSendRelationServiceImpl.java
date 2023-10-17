@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
@@ -46,15 +47,13 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 
 
 	@Override
-	public IPage<MessageSendRelationResponse> getPage(MessageSendRelationRequest request) {
+	public PageResponse<MessageSendRelationResponse> getPage(MessageSendRelationRequest request) {
 		Page<MessageSendRelationEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageSendRelationEntity> queryWrapper = new QueryWrapper<MessageSendRelationEntity>()
 				.eq("message_send_id",request.getMessageSendId())
 				.eq(StringUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
 				.orderByDesc("create_time");
 		IPage<MessageSendRelationEntity> pageResult = messageSendRelationMapper.selectPage(page,queryWrapper);
-		IPage<MessageSendRelationResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
 		List<MessageSendRelationResponse> messageSendRelationResponses = BeanUtils.copyList(pageResult.getRecords(), MessageSendRelationResponse.class);
 		if(!CollectionUtils.isEmpty(pageResult.getRecords())){
 			for(MessageSendRelationResponse item : messageSendRelationResponses){
@@ -64,8 +63,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 				}
 			}
 		}
-		responseIPage.setRecords(messageSendRelationResponses);
-		return responseIPage;
+		return PageResponse.of(pageResult.getTotal(),messageSendRelationResponses);
 	}
 
 	@Override

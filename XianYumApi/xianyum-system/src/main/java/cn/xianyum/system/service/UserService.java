@@ -2,18 +2,18 @@ package cn.xianyum.system.service;
 
 
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import cn.xianyum.system.entity.response.UserResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Set;
 
 public interface UserService extends IService<UserEntity> {
 
-    IPage<UserEntity> queryAll(UserRequest user);
+    PageResponse<UserResponse> getPage(UserRequest user);
 
     UserEntity queryByUserName(String username);
 

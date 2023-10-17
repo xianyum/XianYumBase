@@ -2,12 +2,12 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.Result;
-import cn.xianyum.system.entity.po.UserOnlineEntity;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
+import cn.xianyum.system.entity.response.UserOnlineResponse;
 import cn.xianyum.system.service.UserOnlineService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +32,9 @@ public class UserOnlineController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取在线用户列表")
-    public Result list(UserOnlineRequest request){
-        IPage<UserOnlineEntity> responsePage = userOnlineService.queryPage(request);
-        return Result.page(responsePage);
+    public Results list(UserOnlineRequest request){
+        PageResponse<UserOnlineResponse> responsePage = userOnlineService.queryPage(request);
+        return Results.page(responsePage);
     }
 
     /**
@@ -46,9 +46,9 @@ public class UserOnlineController {
     @SysLog(value = "踢出用户")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "踢出用户")
-    public Result delete(@RequestBody String[] tokenIds){
+    public Results delete(@RequestBody String[] tokenIds){
         userOnlineService.delete(tokenIds);
-        return Result.success();
+        return Results.success();
     }
 
 }

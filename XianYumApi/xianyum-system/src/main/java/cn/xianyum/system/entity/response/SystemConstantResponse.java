@@ -1,14 +1,14 @@
 package cn.xianyum.system.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 系统常用常量(system_constant)
  *
  */
 @Data
-public class SystemConstantResponse{
+public class SystemConstantResponse extends BaseResponse {
 
     /** id */
     private String id;
@@ -24,12 +24,5 @@ public class SystemConstantResponse{
 
     /** 0:公用 1：私有 */
     private Integer constantVisible;
-
-    /** createTime */
-    private Date createTime;
-
-    /** updateTime */
-    private Date updateTime;
-
 
 }

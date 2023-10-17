@@ -2,14 +2,13 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.Result;
-import cn.xianyum.system.entity.po.LogEntity;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.LogRequest;
 import cn.xianyum.system.entity.response.LogResponse;
 import cn.xianyum.system.service.LogService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +33,9 @@ public class LogController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public Result list(LogRequest request){
-        IPage<LogEntity> list = logService.queryAll(request);
-        return Result.page(list);
+    public Results getPage(LogRequest request){
+        PageResponse<LogResponse> list = logService.getPage(request);
+        return Results.page(list);
     }
 
     /**
@@ -44,20 +43,20 @@ public class LogController {
      */
     @GetMapping("/getVisitCountCharts")
     @ApiOperation(value = "获取用户列表", httpMethod = "POST")
-    public Result getVisitCountCharts(){
+    public Results getVisitCountCharts(){
         List<LogResponse> responses = logService.getVisitCountCharts();
-        return Result.success(responses);
+        return Results.success(responses);
     }
 
     @DeleteMapping("/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除日志记录", httpMethod = "POST")
-    public Result delete(@RequestBody String[] logIdS){
+    public Results delete(@RequestBody String[] logIdS){
         try {
             logService.deleteById(logIdS);
-            return Result.success();
+            return Results.success();
         }catch(SoException exception){
-            return Result.error(exception.getMsg());
+            return Results.error(exception.getMsg());
         }
     }
 
@@ -65,12 +64,12 @@ public class LogController {
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "清空日志", httpMethod = "POST")
     @SysLog(value = "清空用户操作日志")
-    public Result truncateLog(){
+    public Results truncateLog(){
         try {
             logService.truncateLog();
-            return Result.success();
+            return Results.success();
         }catch(SoException exception){
-            return Result.error(exception.getMsg());
+            return Results.error(exception.getMsg());
         }
     }
 
@@ -81,7 +80,7 @@ public class LogController {
      */
     @ApiOperation(value = "获取接口日志数量")
     @GetMapping(value = "/getLogCount")
-    public Result getLogCount() {
-        return Result.success(logService.getLogCount());
+    public Results getLogCount() {
+        return Results.success(logService.getLogCount());
     }
 }

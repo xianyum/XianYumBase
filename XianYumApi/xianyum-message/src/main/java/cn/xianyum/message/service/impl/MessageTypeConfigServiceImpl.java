@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import java.util.List;
 
 @Service
@@ -27,7 +27,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 	private MessageTypeConfigMapper messageTypeConfigMapper;
 
 	@Override
-	public IPage<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request) {
+	public PageResponse<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request) {
 
 		Page<MessageTypeConfigEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
@@ -36,10 +36,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageTypeConfigEntity> pageResult = messageTypeConfigMapper.selectPage(page,queryWrapper);
-		IPage<MessageTypeConfigResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),MessageTypeConfigResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,MessageTypeConfigResponse.class);
 	}
 
 	@Override

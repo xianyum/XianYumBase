@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -32,7 +33,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 
 
 	@Override
-	public IPage<MessageConfigWebhookResponse> getPage(MessageConfigWebhookRequest request) {
+	public PageResponse<MessageConfigWebhookResponse> getPage(MessageConfigWebhookRequest request) {
 
 		Page<MessageConfigWebhookEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigWebhookEntity> queryWrapper = new QueryWrapper<MessageConfigWebhookEntity>()
@@ -41,10 +42,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigWebhookEntity> pageResult = messageConfigWebhookMapper.selectPage(page,queryWrapper);
-		IPage<MessageConfigWebhookResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),MessageConfigWebhookResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,MessageConfigWebhookResponse.class);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuResponse;
@@ -33,9 +33,9 @@ public class MenuController {
      */
     @GetMapping("/nav")
     @ApiOperation(value = "获取导航菜单以及权限", httpMethod = "GET")
-    public Result nav(){
+    public Results nav(){
         List<MenuResponse> menuResponses = menuService.getUserMenuList();
-        return Result.success(menuResponses);
+        return Results.success(menuResponses);
     }
 
     /**
@@ -43,9 +43,9 @@ public class MenuController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "查询菜单列表")
-    public Result selectMenuList(MenuRequest menuRequest){
+    public Results selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
-        return Result.success(menuResponses);
+        return Results.success(menuResponses);
     }
 
 
@@ -54,8 +54,8 @@ public class MenuController {
      */
     @GetMapping(value = "/{menuId}")
     @ApiOperation(value = "根据菜单编号获取详细信息", httpMethod = "GET")
-    public Result getInfo(@PathVariable Long menuId) {
-        return Result.success(menuService.selectMenuById(menuId));
+    public Results getInfo(@PathVariable Long menuId) {
+        return Results.success(menuService.selectMenuById(menuId));
     }
 
 
@@ -65,9 +65,9 @@ public class MenuController {
     @PostMapping(value = "/save")
     @ApiOperation(value = "保存菜单信息", httpMethod = "POST")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result save(@RequestBody MenuEntity menuEntity) {
+    public Results save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
-        return Result.success();
+        return Results.success();
     }
 
     /**
@@ -76,9 +76,9 @@ public class MenuController {
     @PutMapping(value = "/update")
     @ApiOperation(value = "保存菜单信息", httpMethod = "PUT")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result update(@RequestBody MenuEntity menuEntity) {
+    public Results update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
-        return Result.success();
+        return Results.success();
     }
 
 
@@ -88,7 +88,7 @@ public class MenuController {
     @DeleteMapping("/{menuId}")
     @ApiOperation(value = "删除菜单", httpMethod = "DELETE")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result remove(@PathVariable("menuId") Long menuId) {
-        return Result.success(menuService.deleteMenuById(menuId));
+    public Results remove(@PathVariable("menuId") Long menuId) {
+        return Results.success(menuService.deleteMenuById(menuId));
     }
 }

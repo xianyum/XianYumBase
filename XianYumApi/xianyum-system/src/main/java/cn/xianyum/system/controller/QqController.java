@@ -2,7 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
@@ -36,14 +36,14 @@ public class QqController {
     @SysLog(value = "QQ第三方登录")
     @ApiOperation(value = "QQ第三方登录")
     @Permission(publicApi = true)
-    public Result login(@RequestBody String requestInfo) {
+    public Results login(@RequestBody String requestInfo) {
         JSONObject jsonObject = JSON.parseObject(requestInfo);
         String authCode = jsonObject.getString("authCode");
         UserEntity user = userService.getUserByQq(authCode);
         if(user != null){
             return userTokenService.createToken(user);
         }else {
-            return Result.error();
+            return Results.error();
         }
     }
 

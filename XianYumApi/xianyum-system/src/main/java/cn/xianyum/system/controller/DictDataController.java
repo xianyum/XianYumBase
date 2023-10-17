@@ -2,17 +2,17 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
+import cn.xianyum.system.entity.response.DictDataResponse;
 import cn.xianyum.system.service.DictDataService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,26 +34,26 @@ public class DictDataController {
      */
     @GetMapping(value = "/type/{dictType}")
     @ApiOperation(value = "根据字典类型查询字典数据信息")
-    public Result dictType(@PathVariable String dictType) {
+    public Results dictType(@PathVariable String dictType) {
         List<DictDataEntity> data = dictDataService.selectDictDataByType(dictType);
         if (Objects.isNull(data)) {
             data = new ArrayList<>();
         }
-        return Result.success(data);
+        return Results.success(data);
     }
 
     @GetMapping("/getPage")
     @ApiOperation(value = "分页查询字典数据信息")
-    public Result list(DictDataRequest dictData) {
-        IPage<DictDataEntity> list = dictDataService.selectDictDataList(dictData);
-        return Result.page(list);
+    public Results list(DictDataRequest dictData) {
+        PageResponse<DictDataResponse> list = dictDataService.selectDictDataList(dictData);
+        return Results.page(list);
     }
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "查询单条信息")
-    public Result getInfo(@PathVariable Long id) {
-        DictDataEntity dictDataEntity = dictDataService.getInfo(id);
-        return Result.success(dictDataEntity);
+    public Results getInfo(@PathVariable Long id) {
+        DictDataResponse dictDataResponse = dictDataService.getInfo(id);
+        return Results.success(dictDataResponse);
     }
 
     /**
@@ -63,9 +63,9 @@ public class DictDataController {
     @ApiOperation(value = "新增字典数据")
     @SysLog(value = "新增字典数据")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result add(@RequestBody DictDataEntity dict) {
+    public Results add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
-        return Result.success(count);
+        return Results.success(count);
     }
 
     /**
@@ -75,9 +75,9 @@ public class DictDataController {
     @ApiOperation(value = "修改字典数据")
     @SysLog(value = "修改字典数据")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result edit(@RequestBody DictDataEntity dict) {
+    public Results edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
-        return Result.success(count);
+        return Results.success(count);
     }
 
     /**
@@ -87,8 +87,8 @@ public class DictDataController {
     @ApiOperation(value = "删除字典数据")
     @SysLog(value = "删除字典数据")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Result remove(@PathVariable Long[] ids) {
+    public Results remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
-        return Result.success();
+        return Results.success();
     }
 }

@@ -1,13 +1,14 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
 import cn.xianyum.message.entity.request.MessageConfigEmailRequest;
 import cn.xianyum.message.entity.response.MessageConfigEmailResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+
 
 public interface MessageConfigEmailService {
 
-	IPage<MessageConfigEmailResponse> getPage(MessageConfigEmailRequest request);
+	PageResponse<MessageConfigEmailResponse> getPage(MessageConfigEmailRequest request);
 
 	MessageConfigEmailResponse getById(String id);
 

@@ -1,7 +1,9 @@
 package cn.xianyum.system.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
+import cn.xianyum.system.entity.response.UserOnlineResponse;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 
@@ -11,7 +13,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 public interface UserOnlineService {
 
-    IPage<UserOnlineEntity> queryPage(UserOnlineRequest request);
+    PageResponse<UserOnlineResponse> queryPage(UserOnlineRequest request);
 
     void delete(String[] tokenIds);
 }

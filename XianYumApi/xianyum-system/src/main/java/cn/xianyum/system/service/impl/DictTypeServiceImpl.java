@@ -1,22 +1,20 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.dao.DictTypeMapper;
 import cn.xianyum.system.entity.po.DictTypeEntity;
 import cn.xianyum.system.entity.request.DictTypeRequest;
+import cn.xianyum.system.entity.response.DictTypeResponse;
 import cn.xianyum.system.infra.adaptor.DictCacheAdaptor;
 import cn.xianyum.system.service.DictTypeService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,11 +35,11 @@ public class DictTypeServiceImpl implements DictTypeService {
     private DictCacheAdaptor dictCacheAdaptor;
 
     @Override
-    public IPage<DictTypeEntity> selectDictTypeList(DictTypeRequest request) {
+    public PageResponse<DictTypeResponse> selectDictTypeList(DictTypeRequest request) {
         Page<DictTypeEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         List<DictTypeEntity> dictTypeEntityList = dictTypeMapper.selectDictTypeList(request,page);
         page.setRecords(dictTypeEntityList);
-        return page;
+        return PageResponse.of(page,DictTypeResponse.class);
     }
 
     @Override

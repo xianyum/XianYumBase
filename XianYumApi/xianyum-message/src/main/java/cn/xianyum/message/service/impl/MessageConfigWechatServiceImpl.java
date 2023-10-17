@@ -1,5 +1,6 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -31,7 +32,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	private String messageConfigPrefix;
 
 	@Override
-	public IPage<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request) {
+	public PageResponse<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request) {
 
 		Page<MessageConfigWechatEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigWechatEntity> queryWrapper = new QueryWrapper<MessageConfigWechatEntity>()
@@ -39,10 +40,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigWechatEntity> pageResult = messageConfigWechatMapper.selectPage(page,queryWrapper);
-		IPage<MessageConfigWechatResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),MessageConfigWechatResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,MessageConfigWechatResponse.class);
 	}
 
 	@Override

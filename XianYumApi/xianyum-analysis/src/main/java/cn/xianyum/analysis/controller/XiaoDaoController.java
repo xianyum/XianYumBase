@@ -1,10 +1,10 @@
 package cn.xianyum.analysis.controller;
 
-import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
+import cn.xianyum.analysis.entity.response.XiaoDaoResponse;
 import cn.xianyum.analysis.service.XiaoDaoService;
-import cn.xianyum.common.utils.Result;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ public class XiaoDaoController {
 
     @GetMapping("/getPage")
     @ApiOperation(value = "获取小刀数据列表")
-    public Result getPage(XiaoDaoRequest request){
-        IPage<XiaoDaoEntity> list = xiaoDaoService.getPage(request);
-        return Result.page(list);
+    public Results getPage(XiaoDaoRequest request){
+        PageResponse<XiaoDaoResponse> list = xiaoDaoService.getPage(request);
+        return Results.page(list);
     }
 }

@@ -1,10 +1,10 @@
 package cn.xianyum.system.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.ProgramEntity;
 import cn.xianyum.system.entity.request.ProgramRequest;
+import cn.xianyum.system.entity.response.ProgramResponse;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-
 import java.util.List;
 
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2020/11/20 20:29
  */
 public interface ProgramService {
-    IPage<ProgramEntity> queryAll(ProgramRequest request);
+    PageResponse<ProgramResponse> getPage(ProgramRequest request);
 
     ProgramEntity selectOneById(ProgramRequest request);
 

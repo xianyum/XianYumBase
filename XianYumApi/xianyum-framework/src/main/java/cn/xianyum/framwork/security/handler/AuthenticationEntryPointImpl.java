@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.security.handler;
 
 
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.HttpContextUtils;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,6 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint, S
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException {
         int code = HttpStatus.UNAUTHORIZED.value();
-        HttpContextUtils.renderString(response, JSONObject.toJSONString(Result.error(code,"资源未被授权")));
+        HttpContextUtils.renderString(response, JSONObject.toJSONString(Results.error(code,"资源未被授权")));
     }
 }

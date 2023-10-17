@@ -1,5 +1,6 @@
 package cn.xianyum.sheduler.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.service.IJobHandler;
 import cn.xianyum.common.utils.*;
@@ -18,7 +19,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class JobServiceImpl implements JobService {
 	}
 
 	@Override
-	public IPage<JobResponse> getPage(JobRequest request) {
+	public PageResponse<JobResponse> getPage(JobRequest request) {
 
 		Page<JobEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<JobEntity> queryWrapper = new QueryWrapper<JobEntity>()
@@ -61,10 +61,7 @@ public class JobServiceImpl implements JobService {
 				.like(StringUtil.isNotEmpty(request.getJobHandler()),"job_handler",request.getJobHandler())
 				.orderByDesc("create_time");
 		IPage<JobEntity> pageResult = jobMapper.selectPage(page,queryWrapper);
-		IPage<JobResponse> responseIPage = new Page<>();
-		responseIPage.setTotal(pageResult.getTotal());
-		responseIPage.setRecords(BeanUtils.copyList(pageResult.getRecords(),JobResponse.class));
-		return responseIPage;
+		return PageResponse.of(pageResult,JobResponse.class);
 	}
 
 	@Override

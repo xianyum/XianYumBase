@@ -1,14 +1,14 @@
 package cn.xianyum.message.entity.response;
 
+import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 消息监控(message_monitor)
  *
  */
 @Data
-public class MessageMonitorResponse{
+public class MessageMonitorResponse extends BaseResponse {
 
     /** id */
     private String id;
@@ -30,9 +30,5 @@ public class MessageMonitorResponse{
 
     /** 消息类型 */
     private String messageType;
-
-    /** 发送时间 */
-    private Date createTime;
-
 
 }

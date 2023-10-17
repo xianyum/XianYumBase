@@ -2,8 +2,9 @@ package cn.xianyum.sheduler.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
 import cn.xianyum.sheduler.entity.response.JobLogResponse;
 import cn.xianyum.sheduler.service.JobLogService;
@@ -12,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * 定时任务调度日志表接口
@@ -33,10 +33,10 @@ public class JobLogController {
      */
 	@ApiOperation(value = "定时任务调度日志表分页查询数据")
 	@GetMapping(value = "/getPage")
-	public Result getPage(JobLogRequest request) {
+	public Results getPage(JobLogRequest request) {
 
-		IPage<JobLogResponse> response = jobLogService.getPage(request);
-        return Result.page(response);
+        PageResponse<JobLogResponse> response = jobLogService.getPage(request);
+        return Results.page(response);
 	}
 
     /**
@@ -45,10 +45,10 @@ public class JobLogController {
      */
     @ApiOperation(value = "定时任务调度日志表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    public Result getById(@PathVariable Long id) {
+    public Results getById(@PathVariable Long id) {
 
         JobLogResponse response = jobLogService.getById(id);
-        return Result.success(response);
+        return Results.success(response);
     }
 
     /**
@@ -59,9 +59,9 @@ public class JobLogController {
     @DeleteMapping(value = "/truncateLog")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @SysLog(value = "清空调度任务日志")
-    public Result truncateLog() {
+    public Results truncateLog() {
         jobLogService.truncateLog();
-        return Result.success();
+        return Results.success();
     }
 
 	/**
@@ -72,10 +72,10 @@ public class JobLogController {
     @DeleteMapping(value = "/delete")
     @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @SysLog(value = "批量删除调度任务日志")
-    public Result delete(@RequestBody String[] ids) {
+    public Results delete(@RequestBody String[] ids) {
 
 		jobLogService.deleteById(ids);
-	    return Result.success();
+	    return Results.success();
     }
 
 
@@ -85,7 +85,7 @@ public class JobLogController {
      */
     @ApiOperation(value = "获取任务调度数量")
     @GetMapping(value = "/getJobLogCount")
-    public Result getJobLogCount() {
-        return Result.success(jobLogService.getJobLogCount());
+    public Results getJobLogCount() {
+        return Results.success(jobLogService.getJobLogCount());
     }
 }

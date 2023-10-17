@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.utils.Result;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.EncryptionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,16 +24,16 @@ public class EncryptionController {
 
     @GetMapping("/aes/encrypt")
     @ApiOperation(value = "aes加密接口", httpMethod = "GET")
-    public Result aesEncrypt(@RequestParam("content") String content) {
+    public Results aesEncrypt(@RequestParam("content") String content) {
         Object result = encryptionService.aesEncrypt(content);
-        return Result.success(result);
+        return Results.success(result);
     }
 
 
     @GetMapping("/aes/decrypt")
     @ApiOperation(value = "aes解密接口", httpMethod = "GET")
-    public Result aesDecrypt(@RequestParam("content") String content) {
+    public Results aesDecrypt(@RequestParam("content") String content) {
         Object result = encryptionService.aesDecrypt(content);
-        return Result.success(result);
+        return Results.success(result);
     }
 }

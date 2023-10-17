@@ -1,10 +1,10 @@
 package cn.xianyum.analysis.controller;
 
-import cn.xianyum.analysis.entity.po.HaoKaLotProductEntity;
 import cn.xianyum.analysis.entity.request.HaoKaLotProductRequest;
+import cn.xianyum.analysis.entity.response.HaoKaLotProductResponse;
 import cn.xianyum.analysis.service.HaoKaLotService;
-import cn.xianyum.common.utils.Result;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,9 @@ public class HaoKaLotController {
 
     @GetMapping("/getPage")
     @ApiOperation(value = "获取172号卡商品列表")
-    public Result getPage(HaoKaLotProductRequest request){
-        IPage<HaoKaLotProductEntity> list = haoKaLotService.getPage(request);
-        return Result.page(list);
+    public Results getPage(HaoKaLotProductRequest request){
+        PageResponse<HaoKaLotProductResponse> list = haoKaLotService.getPage(request);
+        return Results.page(list);
     }
 
 }

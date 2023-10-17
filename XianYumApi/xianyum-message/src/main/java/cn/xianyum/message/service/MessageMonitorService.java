@@ -1,13 +1,13 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
 import cn.xianyum.message.entity.response.MessageMonitorResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 public interface MessageMonitorService {
 
-	IPage<MessageMonitorResponse> getPage(MessageMonitorRequest request);
+	PageResponse<MessageMonitorResponse> getPage(MessageMonitorRequest request);
 
 	MessageMonitorResponse getById(String id);
 

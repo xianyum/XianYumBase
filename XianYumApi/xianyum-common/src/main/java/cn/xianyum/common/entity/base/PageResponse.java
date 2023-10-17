@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
+ * 通用返回分页数据
  * @Description
  * @Author ZhangWei
  * @Date 2023/10/17 17:13
@@ -19,7 +20,7 @@ public class PageResponse<R extends BaseResponse> {
 
     private List<R> dataList;
 
-    public PageResponse() {
+    private PageResponse() {
     }
 
     private PageResponse(long total, List<R> dataList) {
@@ -27,20 +28,76 @@ public class PageResponse<R extends BaseResponse> {
         this.dataList = dataList;
     }
 
-    public static <R extends BaseResponse> PageResponse<R> of(Long total,List<R> dataList) {
-        return new PageResponse(total,dataList);
+    /**
+     *
+     * @param total 总条数
+     * @param responseList response实体list
+     * @return
+     * @param <R>
+     */
+    public static <R extends BaseResponse> PageResponse<R> of(long total,List<R> responseList) {
+        return new PageResponse(total,responseList);
     }
 
+    /**
+     *
+     * @param total 总条数
+     * @param entityList entity实体list
+     * @param rClass 转换为response实体
+     * @return
+     * @param <R>
+     */
+    public static <R extends BaseResponse> PageResponse<R> of(long total, List<?> entityList,Class<R> rClass) {
+        List<R> rs = BeanUtils.copyList(entityList,rClass);
+        return new PageResponse(total, rs);
+    }
+
+    /**
+     *
+     * @param total 总条数
+     * @param entityList entity实体list
+     * @param rClass 转换为response实体
+     * @param biConsumer （response,entity）-> {}
+     * @return
+     * @param <T>
+     * @param <R>
+     */
+    public static <T,R extends BaseResponse> PageResponse<R> of(long total, List<T> entityList,Class<R> rClass, BiConsumer<R, T> biConsumer) {
+        List<R> rs = BeanUtils.copyList(entityList,rClass,biConsumer);
+        return new PageResponse(total, rs);
+    }
+
+    /**
+     *
+     * @param pageResult mybatisPlus分页查询的数据（未经过处理的）
+     * @param rClass 转换为response实体
+     * @return
+     * @param <R>
+     */
     public static <R extends BaseResponse> PageResponse<R> of(IPage<?> pageResult, Class<R> rClass) {
         List<R> rs = BeanUtils.copyList(pageResult.getRecords(),rClass);
         return new PageResponse(pageResult.getTotal(), rs);
     }
 
-    public static <T, R extends BaseResponse> PageResponse<R> of(IPage<T>  pageResult, Class<R> rClass, BiConsumer<R, T> biConsumer) {
+    /**
+     *
+     * @param pageResult mybatisPlus分页查询的数据（未经过处理的）
+     * @param rClass 转换为response实体
+     * @param biConsumer （response,entity）-> {}
+     * @return
+     * @param <T>
+     * @param <R>
+     */
+    public static <T, R extends BaseResponse> PageResponse<R> of(IPage<T> pageResult, Class<R> rClass, BiConsumer<R, T> biConsumer) {
         List<R> rs = BeanUtils.copyList(pageResult.getRecords(),rClass,biConsumer);
         return new PageResponse(pageResult.getTotal(), rs);
     }
 
+    /**
+     * 返回空页数据
+     * @return
+     * @param <R>
+     */
     public static <R extends BaseResponse> PageResponse<R> EMPTY_PAGE() {
         return new PageResponse(0L, new ArrayList<>());
     }

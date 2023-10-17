@@ -1,12 +1,12 @@
 package cn.xianyum.sheduler.service;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
 import cn.xianyum.sheduler.entity.response.JobLogResponse;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 public interface JobLogService {
 
-	IPage<JobLogResponse> getPage(JobLogRequest request);
+	PageResponse<JobLogResponse> getPage(JobLogRequest request);
 
 	JobLogResponse getById(Long id);
 

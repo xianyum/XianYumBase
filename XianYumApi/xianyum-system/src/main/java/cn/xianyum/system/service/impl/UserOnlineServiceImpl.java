@@ -1,14 +1,14 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
+import cn.xianyum.system.entity.response.UserOnlineResponse;
 import cn.xianyum.system.service.UserOnlineService;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserOnlineServiceImpl implements UserOnlineService {
     private String prefix;
 
     @Override
-    public IPage<UserOnlineEntity> queryPage(UserOnlineRequest request) {
+    public PageResponse<UserOnlineResponse> queryPage(UserOnlineRequest request) {
 
         Collection<String> keys = redisUtils.keys(prefix + "*");
         List<UserOnlineEntity> userOnlineList = new ArrayList<>();
@@ -54,10 +54,7 @@ public class UserOnlineServiceImpl implements UserOnlineService {
         long total = userOnlineList.size();
         userOnlineList = userOnlineList.stream().sorted(Comparator.comparing(UserOnlineEntity::getLoginTime).reversed())
                 .skip((request.getPageNum()-1)*request.getPageSize()).limit(request.getPageSize()).collect(Collectors.toList());
-        IPage<UserOnlineEntity> responsePage = new Page<>();
-        responsePage.setRecords(userOnlineList);
-        responsePage.setTotal(total);
-        return responsePage;
+        return PageResponse.of(total,userOnlineList,UserOnlineResponse.class);
     }
 
     @Override
