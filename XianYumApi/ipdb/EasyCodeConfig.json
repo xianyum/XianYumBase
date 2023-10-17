@@ -1,0 +1,140 @@
+{
+  "author" : "zhangwei",
+  "version" : "1.2.8",
+  "userSecure" : "",
+  "currTypeMapperGroupName" : "Default",
+  "currTemplateGroupName" : "xianyum",
+  "currColumnConfigGroupName" : "Default",
+  "currGlobalConfigGroupName" : "Default",
+  "typeMapper" : {
+    "Default" : {
+      "name" : "Default",
+      "elementList" : [ {
+        "matchType" : "REGEX",
+        "columnType" : "varchar(\\(\\d+\\))?",
+        "javaType" : "java.lang.String"
+      }, {
+        "matchType" : "REGEX",
+        "columnType" : "char(\\(\\d+\\))?",
+        "javaType" : "java.lang.String"
+      }, {
+        "matchType" : "REGEX",
+        "columnType" : "(tiny|medium|long)*text",
+        "javaType" : "java.lang.String"
+      }, {
+        "matchType" : "REGEX",
+        "columnType" : "decimal(\\(\\d+,\\d+\\))?",
+        "javaType" : "java.lang.Double"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "integer",
+        "javaType" : "java.lang.Integer"
+      }, {
+        "matchType" : "REGEX",
+        "columnType" : "(tiny|small|medium)*int(\\(\\d+\\))?",
+        "javaType" : "java.lang.Integer"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "int4",
+        "javaType" : "java.lang.Integer"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "int8",
+        "javaType" : "java.lang.Long"
+      }, {
+        "matchType" : "REGEX",
+        "columnType" : "bigint(\\(\\d+\\))?",
+        "javaType" : "java.lang.Long"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "date",
+        "javaType" : "java.util.Date"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "datetime",
+        "javaType" : "java.util.Date"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "timestamp",
+        "javaType" : "java.util.Date"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "time",
+        "javaType" : "java.time.LocalTime"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "boolean",
+        "javaType" : "java.lang.Boolean"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "double(5,2)",
+        "javaType" : "java.lang.Double"
+      } ]
+    }
+  },
+  "template" : {
+    "xianyum" : {
+      "name" : "xianyum",
+      "elementList" : [ {
+        "name" : "controller.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n##设置表后缀（宏定义）\n#setTableSuffix(\"Controller\")\n##保存文件（宏定义）\n#save(\"/controller\", \"Controller.java\")\n##包路径（宏定义）\n#setPackageSuffix(\"controller\")\n\n##定义服务名\n#set($serviceName = $!tool.append($!tool.firstLowerCase($!tableInfo.name), \"Service\"))\n##定义实体对象名\n#set($entityName = $!tool.firstLowerCase($!tableInfo.name))\nimport cn.xianyum.common.utils.Result;\nimport io.swagger.annotations.ApiOperation;\nimport io.swagger.annotations.Api;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.web.bind.annotation.*;\nimport com.baomidou.mybatisplus.core.metadata.IPage;\nimport $!{tableInfo.savePackageName}.entity.request.$!{tableInfo.name}Request;\nimport $!{tableInfo.savePackageName}.entity.response.$!{tableInfo.name}Response;\nimport $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;\n\n##表注释（宏定义）\n#tableComment(\"Controller\")\n@RestController\n@RequestMapping(\"xianyum-/v1/$!tool.firstLowerCase($!tableInfo.name)\")\n@Api(tags = \"$!{tableInfo.comment}接口\")\npublic class $!{tableName}{\n\n    @Autowired\n    private $!{tableInfo.name}Service $!{serviceName};\n\n    /**\n     * 分页查询$!{tableInfo.comment}\n\t *\n     * @param request 查询实体\n     * @return 分页数据\n     */\n\t@ApiOperation(value = \"分页查询$!{tableInfo.comment}\")\n    @GetMapping(value = \"/getPage\")\n    public Result getPage($!{tableInfo.name}Request request) {\n\t\tIPage<$!{tableInfo.name}Response> responsePage = $!{serviceName}.getPage(request);\n        return Result.page(responsePage);\n    }\n\n    /**\n     * 根据ID查询$!{tableInfo.comment}\n     *\n     * @param id 主键\n     * @return 单条数据\n     */\n\t@ApiOperation(value = \"根据ID查询$!{tableInfo.comment}\")\n    @GetMapping(\"getById/{id}\")\n    public Result selectOne(@PathVariable Long id) {\n        return Result.success($!{serviceName}.getById(id));\n    }\n\n    /**\n     * $!{tableInfo.comment}保存数据\n     *\n     * @param request\n     * @return 新增结果\n     */\n\t@ApiOperation(value = \"$!{tableInfo.comment}保存数据\")\n    @PostMapping(value = \"/save\")\n    public Result insert(@RequestBody $!{tableInfo.name}Request request) {\n        return Result.success(this.$!{serviceName}.save(request));\n    }\n\n    /**\n     * $!{tableInfo.comment}更新数据\n     *\n     * @param request\n     * @return 修改结果\n     */\n\t@ApiOperation(value = \"$!{tableInfo.comment}更新数据\")\n    @PutMapping(value = \"/update\")\n    public Result update(@RequestBody $!{tableInfo.name}Request request) {\n        return Result.success(this.$!{serviceName}.update(request));\n    }\n\n    /**\n     * $!{tableInfo.comment}批量删除数据\n     *\n     * @param ids 主键结合\n     * @return 删除结果\n     */\n\t@ApiOperation(value = \"$!{tableInfo.comment}批量删除数据\")\n    @DeleteMapping(value = \"/delete\")\n    public Result delete(@RequestBody Long[] ids) {\n        return Result.success(this.$!{serviceName}.deleteById(ids));\n    }\n}"
+      }, {
+        "name" : "entity.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n$!{ignoreUselessCol.vm}\n\n##保存文件（宏定义）\n#save(\"/entity/po\", \"Entity.java\")\n\n##包路径（宏定义）\n#setPackageSuffix(\"entity.po\")\n\n$!{autoImport.vm}\nimport com.baomidou.mybatisplus.annotation.IdType;\nimport com.baomidou.mybatisplus.annotation.TableId;\nimport com.baomidou.mybatisplus.annotation.TableName;\nimport cn.xianyum.common.entity.base.BaseEntity;\nimport lombok.Data;\n\n##表注释（宏定义）\n#tableComment(\"表实体类\")\n@Data\n@TableName(\"$!{tableInfo.obj.name}\")\npublic class $!{tableInfo.name}Entity extends BaseEntity {\n#foreach($column in $tableInfo.fullColumn)\n   #if(${column.comment})\n    /**\n     * ${column.comment}\n     */\n   #end\n##拿到主键\n#if(!$tableInfo.pkColumn.isEmpty())\n#if($tableInfo.pkColumn.get(0).name == $!{column.name})\n    @TableId(type = IdType.AUTO)\n#end\n#end\n    private $!{tool.getClsNameByFullName($column.type)} $!{column.name};\n    \n#end\n}"
+      }, {
+        "name" : "service.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n\n##设置表后缀（宏定义）\n#setTableSuffix(\"Service\")\n\n##保存文件（宏定义）\n#save(\"/service\", \"Service.java\")\n\n##包路径（宏定义）\n#setPackageSuffix(\"service\")\n\nimport $!{tableInfo.savePackageName}.entity.request.$!{tableInfo.name}Request;\nimport $!{tableInfo.savePackageName}.entity.response.$!{tableInfo.name}Response;\nimport com.baomidou.mybatisplus.core.metadata.IPage;\n\n##表注释（宏定义）\n#tableComment(\"service层\")\npublic interface $!{tableName}{\n\n\tIPage<$!{tableInfo.name}Response> getPage($!{tableInfo.name}Request request);\n\n\t$!{tableInfo.name}Response getById(Long id);\n\n\tInteger save($!{tableInfo.name}Request request);\n\n\tInteger update($!{tableInfo.name}Request request);\n\n\tInteger deleteById(Long[] ids);\n}"
+      }, {
+        "name" : "serviceimpl.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n\n##设置表后缀（宏定义）\n#setTableSuffix(\"ServiceImpl\")\n\n##保存文件（宏定义）\n#save(\"/service/impl\", \"ServiceImpl.java\")\n\n##包路径（宏定义）\n#setPackageSuffix(\"service.impl\")\n\nimport cn.xianyum.common.exception.SoException;\nimport cn.xianyum.common.utils.BeanUtils;\nimport com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;\nimport com.baomidou.mybatisplus.core.toolkit.Wrappers;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport lombok.extern.slf4j.Slf4j;\nimport com.baomidou.mybatisplus.core.metadata.IPage;\nimport com.baomidou.mybatisplus.extension.plugins.pagination.Page;\nimport $!{tableInfo.savePackageName}.entity.po.$!{tableInfo.name}Entity;\nimport $!{tableInfo.savePackageName}.entity.request.$!{tableInfo.name}Request;\nimport $!{tableInfo.savePackageName}.entity.response.$!{tableInfo.name}Response;\nimport $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;\nimport $!{tableInfo.savePackageName}.dao.$!{tableInfo.name}Mapper;\nimport org.springframework.stereotype.Service;\nimport java.util.List;\nimport java.util.Objects;\n\n##表注释（宏定义）\n#tableComment(\"service层实现\")\n@Service\n@Slf4j\npublic class $!{tableName} implements $!{tableInfo.name}Service {\n\n\t@Autowired\n\tprivate $!{tableInfo.name}Mapper $!tool.firstLowerCase($!tableInfo.name)Mapper;\n\t\n\t@Override\n\tpublic IPage<$!{tableInfo.name}Response> getPage($!{tableInfo.name}Request request) {\n\t\tIPage<$!{tableInfo.name}Response> responseIPage = new Page<>();\n\t\tLambdaQueryWrapper<$!{tableInfo.name}Entity> queryWrapper = Wrappers.<$!{tableInfo.name}Entity>lambdaQuery();\n\t\tPage<$!{tableInfo.name}Entity> page = new Page<>(request.getPageNum(),request.getPageSize());\n\t\tIPage<$!{tableInfo.name}Entity> pageResult = $!tool.firstLowerCase($!tableInfo.name)Mapper.selectPage(page,queryWrapper);\n\t\tList<$!{tableInfo.name}Response> responseList = BeanUtils.copyList(pageResult.getRecords(), $!{tableInfo.name}Response.class);\n\t\tresponseIPage.setRecords(responseList);\n\t\treturn responseIPage;\n\n\t}\n\t\n\t\n\t@Override\n\tpublic $!{tableInfo.name}Response getById(Long id) {\n\t\t$!{tableInfo.name}Entity result = $!tool.firstLowerCase($!tableInfo.name)Mapper.selectById(id);\n\t\t$!{tableInfo.name}Response response = BeanUtils.copy(result, $!{tableInfo.name}Response.class);\n\t\treturn response;\n\t}\n\t\n\t\n\t@Override\n\tpublic Integer save($!{tableInfo.name}Request request) {\n\t\t$!{tableInfo.name}Entity bean = BeanUtils.copy(request,$!{tableInfo.name}Entity.class);\n\t\treturn $!tool.firstLowerCase($!tableInfo.name)Mapper.insert(bean);\n\t}\n\t\n\t\n\t@Override\n\tpublic Integer update($!{tableInfo.name}Request request) {\n\t\tif(Objects.isNull(request.getId())){\n\t\t\tthrow new SoException(\"id不能为空\");\n\t\t}\n\t\t$!{tableInfo.name}Entity bean = BeanUtils.copy(request,$!{tableInfo.name}Entity.class);\n\t\treturn $!tool.firstLowerCase($!tableInfo.name)Mapper.updateById(bean);\n\t}\n\t\n\t\n\t@Override\n\tpublic Integer deleteById(Long[] ids) {\n\t    int resultCount = 0;\n\t\tfor (Long id : ids){\n\t\t\tresultCount = $!tool.firstLowerCase($!tableInfo.name)Mapper.deleteById(id)+resultCount;\n\t\t}\n\t\treturn resultCount;\n\t}\n}\n"
+      }, {
+        "name" : "request.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n$!{ignoreUselessCol.vm}\n\n##保存文件（宏定义）\n#save(\"/entity/request\", \"Request.java\")\n\n##包路径（宏定义）\n#setPackageSuffix(\"entity.request\")\n\n$!{autoImport.vm}\nimport cn.xianyum.common.entity.base.BaseRequest;\nimport lombok.Data;\n\n##表注释（宏定义）\n#tableComment(\"request请求实体\")\n@Data\npublic class $!{tableInfo.name}Request extends BaseRequest {\n#foreach($column in $tableInfo.fullColumn)\n   #if(${column.comment})\n    /**\n     * ${column.comment}\n     */\n   #end\n    private $!{tool.getClsNameByFullName($column.type)} $!{column.name};\n    \n#end\n}"
+      }, {
+        "name" : "response.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n$!{ignoreUselessCol.vm}\n\n##保存文件（宏定义）\n#save(\"/entity/response\", \"Response.java\")\n\n##包路径（宏定义）\n#setPackageSuffix(\"entity.response\")\n\n$!{autoImport.vm}\nimport cn.xianyum.common.entity.base.BaseResponse;\nimport lombok.Data;\n\n##表注释（宏定义）\n#tableComment(\"response返回实体\")\n@Data\npublic class $!{tableInfo.name}Response extends BaseResponse {\n#foreach($column in $tableInfo.fullColumn)\n   #if(${column.comment})\n    /**\n     * ${column.comment}\n     */\n   #end\n    private $!{tool.getClsNameByFullName($column.type)} $!{column.name};\n    \n#end\n}"
+      }, {
+        "name" : "dao.java.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n\n##设置表后缀（宏定义）\n#setTableSuffix(\"Mapper\")\n\n##保存文件（宏定义）\n#save(\"/dao\", \"Mapper.java\")\n\n##包路径（宏定义）\n#setPackageSuffix(\"dao\")\n\nimport com.baomidou.mybatisplus.core.mapper.BaseMapper;\nimport $!{tableInfo.savePackageName}.entity.po.$!{tableInfo.name}Entity;\n\n##表注释（宏定义）\n#tableComment(\"表数据库访问层\")\npublic interface $!{tableName} extends BaseMapper<$!{tableInfo.name}Entity> {\n\n}\n"
+      } ]
+    }
+  },
+  "columnConfig" : {
+    "Default" : {
+      "name" : "Default",
+      "elementList" : [ {
+        "title" : "disable",
+        "type" : "BOOLEAN",
+        "selectValue" : ""
+      }, {
+        "title" : "support",
+        "type" : "SELECT",
+        "selectValue" : "add,edit,query,del,ui"
+      } ]
+    }
+  },
+  "globalConfig" : {
+    "Default" : {
+      "name" : "Default",
+      "elementList" : [ {
+        "name" : "autoImport.vm",
+        "value" : "##自动导入包（仅导入实体属性需要的包，通常用于实体类）\n#foreach($import in $importList)\nimport $!import;\n#end"
+      }, {
+        "name" : "define.vm",
+        "value" : "##（Velocity宏定义）\n\n##定义设置表名后缀的宏定义，调用方式：#setTableSuffix(\"Test\")\n#macro(setTableSuffix $suffix)\n    #set($tableName = $!tool.append($tableInfo.name, $suffix))\n#end\n\n##定义设置包名后缀的宏定义，调用方式：#setPackageSuffix(\"Test\")\n#macro(setPackageSuffix $suffix)\n#if($suffix!=\"\")package #end#if($tableInfo.savePackageName!=\"\")$!{tableInfo.savePackageName}.#{end}$!suffix;\n#end\n\n##定义直接保存路径与文件名简化的宏定义，调用方式：#save(\"/entity\", \".java\")\n#macro(save $path $fileName)\n    $!callback.setSavePath($tool.append($tableInfo.savePath, $path))\n    $!callback.setFileName($tool.append($tableInfo.name, $fileName))\n#end\n\n##定义表注释的宏定义，调用方式：#tableComment(\"注释信息\")\n#macro(tableComment $desc)\n/**\n * $!{tableInfo.comment}($!{tableInfo.name})$desc\n *\n * @author $!author\n * @since $!time.currTime()\n */\n#end\n\n##定义GET，SET方法的宏定义，调用方式：#getSetMethod($column)\n#macro(getSetMethod $column)\n\n    public $!{tool.getClsNameByFullName($column.type)} get$!{tool.firstUpperCase($column.name)}() {\n        return $!{column.name};\n    }\n\n    public void set$!{tool.firstUpperCase($column.name)}($!{tool.getClsNameByFullName($column.type)} $!{column.name}) {\n        this.$!{column.name} = $!{column.name};\n    }\n#end"
+      }, {
+        "name" : "init.vm",
+        "value" : "##初始化区域\n\n##去掉表的t_前缀\n$!tableInfo.setName($tool.getClassName($tableInfo.obj.name.replaceFirst(\"book_\",\"\")))\n\n##参考阿里巴巴开发手册，POJO 类中布尔类型的变量，都不要加 is 前缀，否则部分框架解析会引起序列化错误\n#foreach($column in $tableInfo.fullColumn)\n#if($column.name.startsWith(\"is\") && $column.type.equals(\"java.lang.Boolean\"))\n    $!column.setName($tool.firstLowerCase($column.name.substring(2)))\n#end\n#end\n\n##实现动态排除列\n#set($temp = $tool.newHashSet(\"testCreateTime\", \"otherColumn\"))\n#foreach($item in $temp)\n    #set($newList = $tool.newArrayList())\n    #foreach($column in $tableInfo.fullColumn)\n        #if($column.name!=$item)\n            ##带有反回值的方法调用时使用$tool.call来消除返回值\n            $tool.call($newList.add($column))\n        #end\n    #end\n    ##重新保存\n    $tableInfo.setFullColumn($newList)\n#end\n\n##对importList进行篡改\n#set($temp = $tool.newHashSet())\n#foreach($column in $tableInfo.fullColumn)\n    #if(!$column.type.startsWith(\"java.lang.\"))\n        ##带有反回值的方法调用时使用$tool.call来消除返回值\n        $tool.call($temp.add($column.type))\n    #end\n#end\n##覆盖\n#set($importList = $temp)"
+      }, {
+        "name" : "mybatisSupport.vm",
+        "value" : "##针对Mybatis 进行支持，主要用于生成xml文件\n#foreach($column in $tableInfo.fullColumn)\n    ##储存列类型\n    $tool.call($column.ext.put(\"sqlType\", $tool.getField($column.obj.dataType, \"typeName\")))\n    #if($tool.newHashSet(\"java.lang.String\").contains($column.type))\n        #set($jdbcType=\"VARCHAR\")\n    #elseif($tool.newHashSet(\"java.lang.Boolean\", \"boolean\").contains($column.type))\n        #set($jdbcType=\"BOOLEAN\")\n    #elseif($tool.newHashSet(\"java.lang.Byte\", \"byte\").contains($column.type))\n        #set($jdbcType=\"BYTE\")\n    #elseif($tool.newHashSet(\"java.lang.Integer\", \"int\", \"java.lang.Short\", \"short\").contains($column.type))\n        #set($jdbcType=\"INTEGER\")\n    #elseif($tool.newHashSet(\"java.lang.Long\", \"long\").contains($column.type))\n        #set($jdbcType=\"INTEGER\")\n    #elseif($tool.newHashSet(\"java.lang.Float\", \"float\", \"java.lang.Double\", \"double\").contains($column.type))\n        #set($jdbcType=\"NUMERIC\")\n    #elseif($tool.newHashSet(\"java.util.Date\", \"java.sql.Timestamp\", \"java.time.Instant\", \"java.time.LocalDateTime\", \"java.time.OffsetDateTime\", \"\tjava.time.ZonedDateTime\").contains($column.type))\n        #set($jdbcType=\"TIMESTAMP\")\n    #elseif($tool.newHashSet(\"java.sql.Date\", \"java.time.LocalDate\").contains($column.type))\n        #set($jdbcType=\"TIMESTAMP\")\n    #else\n        ##其他类型\n        #set($jdbcType=\"VARCHAR\")\n    #end\n    $tool.call($column.ext.put(\"jdbcType\", $jdbcType))\n#end\n\n##定义宏，查询所有列\n#macro(allSqlColumn)#foreach($column in $tableInfo.fullColumn)$column.obj.name#if($velocityHasNext), #end#end#end\n"
+      }, {
+        "name" : "ignoreUselessCol.vm",
+        "value" : "##实现动态排除列\n#set($temp = $tool.newHashSet(\"createBy\", \"createTime\", \"updateBy\", \"updateTime\", \"createByName\", \"updateByName\"))\n#foreach($item in $temp)\n    #set($newList = $tool.newArrayList())\n    #foreach($column in $tableInfo.fullColumn)\n        #if($column.name!=$item)\n            ##带有反回值的方法调用时使用$tool.call来消除返回值\n            $tool.call($newList.add($column))\n        #end\n    #end\n    ##重新保存\n    $tableInfo.setFullColumn($newList)\n#end"
+      }, {
+        "name" : "initializedVar.vm",
+        "value" : "##定义设置表名前缀名称\n#set($businessTypeName = \"\")\n\n#if($tableInfo.obj.name.split(\"_\").size() > 1)\n    #set($businessTypeName = $tableInfo.obj.name.split(\"_\").get(0))\n    #set($packageName = $tool.append(\".\", $businessTypeName))\n#end"
+      } ]
+    }
+  }
+}
