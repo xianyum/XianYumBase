@@ -13,6 +13,8 @@ import cn.xianyum.sheduler.entity.request.JobRequest;
 import cn.xianyum.sheduler.entity.response.JobResponse;
 import cn.xianyum.sheduler.service.JobService;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -54,12 +56,12 @@ public class JobServiceImpl implements JobService {
 
 	@Override
 	public PageResponse<JobResponse> getPage(JobRequest request) {
-
 		Page<JobEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-		QueryWrapper<JobEntity> queryWrapper = new QueryWrapper<JobEntity>()
-				.like(StringUtil.isNotEmpty(request.getJobName()),"job_name",request.getJobName())
-				.like(StringUtil.isNotEmpty(request.getJobHandler()),"job_handler",request.getJobHandler())
-				.orderByDesc("create_time");
+		LambdaQueryWrapper<JobEntity> queryWrapper = Wrappers.<JobEntity>lambdaQuery()
+				.like(StringUtil.isNotEmpty(request.getJobName()),JobEntity::getJobName,request.getJobName())
+				.like(StringUtil.isNotEmpty(request.getJobHandler()),JobEntity::getJobHandler,request.getJobHandler())
+				.eq(!SecurityUtils.isAdminAuth(),JobEntity::getCreateBy,SecurityUtils.getLoginUser().getId())
+				.orderByDesc(JobEntity::getCreateTime);
 		IPage<JobEntity> pageResult = jobMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,JobResponse.class);
 	}

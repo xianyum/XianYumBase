@@ -47,6 +47,7 @@ public class ProxyController {
      */
 	@ApiOperation(value = "客户端管理分页查询数据")
 	@GetMapping(value = "/getPage")
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass=PageResponse.class)
 	public Results getPage(ProxyRequest request) {
 		PageResponse<ProxyResponse> response = proxyService.getPage(request);
         return Results.page(response);

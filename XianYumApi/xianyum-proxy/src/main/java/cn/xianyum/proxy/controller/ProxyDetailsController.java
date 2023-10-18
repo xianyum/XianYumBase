@@ -33,6 +33,7 @@ public class ProxyDetailsController {
      */
 	@ApiOperation(value = "客户端配置详细分页查询数据")
 	@GetMapping(value = "/getPage")
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass=PageResponse.class)
 	public Results getPage(ProxyDetailsRequest request) {
 		PageResponse<ProxyDetailsResponse> response = proxyDetailsService.getPage(request);
         return Results.page(response);

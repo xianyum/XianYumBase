@@ -33,9 +33,8 @@ public class MessageSendRelationController {
      */
 	@ApiOperation(value = "发送配置关联表分页查询数据")
 	@GetMapping(value = "/getPage")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
 	public Results getPage(MessageSendRelationRequest request) {
-
 		PageResponse<MessageSendRelationResponse> response = messageSendRelationService.getPage(request);
         return Results.page(response);
 	}

@@ -33,7 +33,7 @@ public class MessageSendConfigController {
      */
 	@ApiOperation(value = "消息发送配置分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
 	public Results getPage(MessageSendConfigRequest request) {
 
         PageResponse<MessageSendConfigResponse> response = messageSendConfigService.getPage(request);

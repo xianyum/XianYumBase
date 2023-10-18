@@ -37,9 +37,8 @@ public class MessageConfigWebhookController {
      */
 	@ApiOperation(value = "账户配置webhook分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
 	public Results getPage(MessageConfigWebhookRequest request) {
-
         PageResponse<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
         return Results.page(response);
 	}

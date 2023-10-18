@@ -3,6 +3,7 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
@@ -57,6 +58,7 @@ public class SystemConstantController {
      */
     @ApiOperation(value = "系统常量分页查询数据")
     @GetMapping(value = "/getPage")
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
     public Results getPage(SystemConstantRequest request) {
         PageResponse<SystemConstantResponse> response = systemConstantService.getPage(request);
         return Results.page(response);

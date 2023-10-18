@@ -33,7 +33,7 @@ public class MessageTypeConfigController {
      */
 	@ApiOperation(value = "消息类型配置表分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
 	public Results getPage(MessageTypeConfigRequest request) {
 
         PageResponse<MessageTypeConfigResponse> response = messageTypeConfigService.getPage(request);

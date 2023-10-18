@@ -3,16 +3,18 @@ package cn.xianyum.sheduler.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.sheduler.dao.JobLogMapper;
 import cn.xianyum.sheduler.entity.po.JobLogEntity;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
 import cn.xianyum.sheduler.entity.response.JobLogResponse;
 import cn.xianyum.sheduler.service.JobLogService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -25,14 +27,14 @@ public class JobLogServiceImpl implements JobLogService {
 
 	@Override
 	public PageResponse<JobLogResponse> getPage(JobLogRequest request) {
-
 		Page<JobLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-		QueryWrapper<JobLogEntity> queryWrapper = new QueryWrapper<JobLogEntity>()
-				.eq(null != request.getStatus(),"status",request.getStatus())
-				.eq(null != request.getJobId(),"job_id",request.getJobId())
-				.like(StringUtil.isNotEmpty(request.getJobName()),"job_name",request.getJobName())
-				.like(StringUtil.isNotEmpty(request.getJobHandler()),"job_handler",request.getJobHandler())
-				.orderByDesc("start_time");;
+		LambdaQueryWrapper<JobLogEntity> queryWrapper = Wrappers.<JobLogEntity>lambdaQuery()
+				.eq(!SecurityUtils.isAdminAuth(), JobLogEntity::getCreateBy,SecurityUtils.getLoginUser().getId())
+				.eq(null != request.getStatus(),JobLogEntity::getStatus,request.getStatus())
+				.eq(null != request.getJobId(),JobLogEntity::getJobId,request.getJobId())
+				.like(StringUtil.isNotEmpty(request.getJobName()),JobLogEntity::getJobName,request.getJobName())
+				.like(StringUtil.isNotEmpty(request.getJobHandler()),JobLogEntity::getJobHandler,request.getJobHandler())
+				.orderByDesc(JobLogEntity::getStartTime);
 		IPage<JobLogEntity> pageResult = jobLogMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,JobLogResponse.class);
 	}

@@ -34,7 +34,6 @@ public class JobLogController {
 	@ApiOperation(value = "定时任务调度日志表分页查询数据")
 	@GetMapping(value = "/getPage")
 	public Results getPage(JobLogRequest request) {
-
         PageResponse<JobLogResponse> response = jobLogService.getPage(request);
         return Results.page(response);
 	}

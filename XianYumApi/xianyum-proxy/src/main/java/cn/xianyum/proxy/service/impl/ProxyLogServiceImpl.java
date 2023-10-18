@@ -41,9 +41,6 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Override
 	public PageResponse<ProxyLogResponse> getPage(ProxyLogRequest request) {
-		if(!SecurityUtils.isAdminAuth()){
-			return PageResponse.EMPTY_PAGE();
-		}
 		Page<ProxyLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		IPage<ProxyLogEntity> pageResult = proxyLogMapper.getPage(request,page);
 		return PageResponse.of(pageResult,ProxyLogResponse.class);

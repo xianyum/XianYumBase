@@ -125,7 +125,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public PageResponse<SystemConstantResponse> getPage(SystemConstantRequest request) {
-        SecurityUtils.allowAdminAuth();
         Page<SystemConstantEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>()
                 .like(StringUtil.isNotEmpty(request.getConstantKey()),"constant_key",request.getConstantKey())

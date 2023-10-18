@@ -37,7 +37,7 @@ public class MessageConfigWechatController {
      */
 	@ApiOperation(value = "账户配置wechat分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
 	public Results getPage(MessageConfigWechatRequest request) {
         PageResponse<MessageConfigWechatResponse> response = messageConfigWechatService.getPage(request);
         return Results.page(response);

@@ -37,9 +37,8 @@ public class MessageConfigEmailController {
      */
 	@ApiOperation(value = "账户配置email分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
 	public Results getPage(MessageConfigEmailRequest request) {
-
         PageResponse<MessageConfigEmailResponse> response = messageConfigEmailService.getPage(request);
         return Results.page(response);
 	}

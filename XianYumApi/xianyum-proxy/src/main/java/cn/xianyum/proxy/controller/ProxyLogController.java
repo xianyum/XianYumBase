@@ -33,6 +33,7 @@ public class ProxyLogController {
      */
 	@ApiOperation(value = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass=PageResponse.class)
 	public Results getPage(ProxyLogRequest request) {
         PageResponse<ProxyLogResponse> response = proxyLogService.getPage(request);
         return Results.page(response);
