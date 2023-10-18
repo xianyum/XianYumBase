@@ -38,15 +38,15 @@ public class PermissionAspect {
     public void verify(){
     }
 
-    @Around("@annotation(adminPermission)")
-    public Object doAround(ProceedingJoinPoint pjp, Permission adminPermission) throws Throwable {
+    @Around("@annotation(userPermission)")
+    public Object doAround(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
 
-        return process(pjp,adminPermission);
+        return process(pjp,userPermission);
     }
 
-    public Object process(ProceedingJoinPoint pjp, Permission adminPermission) throws Throwable {
+    public Object process(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
 
-        PermissionStrategy strategy = adminPermission.strategy();
+        PermissionStrategy strategy = userPermission.strategy();
         switch (strategy) {
             // 放行所有权限，不做任何拦截
             case ALLOW_ALL:
