@@ -1,14 +1,15 @@
 package cn.xianyum.common.utils;
 
-
-import cn.xianyum.common.entity.IpInfoEntity;
-import cn.xianyum.common.service.IpService;
+import cn.xianyum.common.utils.ip.IpSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author zhangwei
@@ -206,7 +207,7 @@ public class IPUtils {
      * write a int to a byte array
      *
      * @param b
-     * @param offet
+     * @param offset
      * @param v
      */
     public static void writeIntLong(byte[] b, int offset, long v) {
@@ -286,13 +287,10 @@ public class IPUtils {
      */
     public static String long2ip(long ip) {
         StringBuilder sb = new StringBuilder();
-
-        sb
-                .append((ip >> 24) & 0xFF).append('.')
+        sb.append((ip >> 24) & 0xFF).append('.')
                 .append((ip >> 16) & 0xFF).append('.')
                 .append((ip >> 8) & 0xFF).append('.')
                 .append((ip >> 0) & 0xFF);
-
         return sb.toString();
     }
 
@@ -303,7 +301,27 @@ public class IPUtils {
      * @return
      */
     public static String getIpInfo(String ip) {
-        IpInfoEntity ipInfo = SpringUtils.getBean(IpService.class).getIpInfo(ip);
-        return ipInfo.getProv() + ipInfo.getCity() + " " + ipInfo.getIsp();
+        Map<String, String> ipInfoMap = getIpInfoMap(ip);
+        return ipInfoMap.get("prov") + ipInfoMap.get("city") + " " + ipInfoMap.get("isp");
+    }
+
+    public static Map<String, String> getIpInfoMap(String ip) {
+        IpSearcher ipSearcherConfig = SpringUtils.getBean("ipSearcherConfig");
+        String[] data = new String[6];
+        try {
+            data = ipSearcherConfig.search(ip).split("\\|");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String country = "0".equals(data[0]) || Objects.isNull(data[0]) ? "" : data[0];
+        String prov = "0".equals(data[2]) || Objects.isNull(data[2]) ? "" : data[2];
+        String city = "0".equals(data[3]) || Objects.isNull(data[3]) ? "" : data[3];
+        String isp = "0".equals(data[4]) || Objects.isNull(data[4]) ? "" : data[4];
+        Map<String, String> ipInfoMap = new HashMap<>(4);
+        ipInfoMap.put("country", country);
+        ipInfoMap.put("prov", prov);
+        ipInfoMap.put("city", city);
+        ipInfoMap.put("isp", isp);
+        return ipInfoMap;
     }
 }

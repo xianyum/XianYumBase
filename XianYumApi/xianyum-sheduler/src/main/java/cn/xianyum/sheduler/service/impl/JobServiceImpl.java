@@ -2,7 +2,7 @@ package cn.xianyum.sheduler.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.service.IJobHandler;
+import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.sheduler.common.constant.ScheduleConstants;
 import cn.xianyum.sheduler.common.utils.CronUtils;

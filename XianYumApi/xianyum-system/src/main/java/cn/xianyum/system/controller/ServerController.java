@@ -1,7 +1,7 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.server.Server;
+import cn.xianyum.system.infra.server.Server;
 import cn.xianyum.common.utils.Results;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

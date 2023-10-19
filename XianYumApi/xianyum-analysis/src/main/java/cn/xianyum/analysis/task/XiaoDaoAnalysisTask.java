@@ -2,7 +2,7 @@ package cn.xianyum.analysis.task;
 
 import cn.xianyum.common.annotation.JobHandler;
 import cn.xianyum.common.enums.ReturnT;
-import cn.xianyum.common.service.IJobHandler;
+import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.SchedulerTool;
 import com.geccocrawler.gecco.GeccoEngine;
 import com.geccocrawler.gecco.pipeline.PipelineFactory;

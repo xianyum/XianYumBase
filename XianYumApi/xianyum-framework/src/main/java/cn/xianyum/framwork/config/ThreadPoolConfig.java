@@ -1,4 +1,4 @@
-package cn.xianyum.common.config;
+package cn.xianyum.framwork.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

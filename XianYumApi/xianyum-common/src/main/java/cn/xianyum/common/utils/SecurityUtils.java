@@ -1,13 +1,12 @@
 package cn.xianyum.common.utils;
 
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.entity.XianYumConstant;
 import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.util.Objects;
 
 /**
@@ -44,7 +43,7 @@ public class SecurityUtils {
         LoginUser userEntity = getLoginUser();
         if(userEntity == null ||
                 (!admin.equals(userEntity.getUsername())  || !Objects.equals(userEntity.getPermission(),PermissionEnum.ADMIN.getStatus()))){
-            throw new SoException(HttpStatus.FORBIDDEN.value(), XianYumConstant.Message.NO_PERMISSION_MESSAGE);
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }
     }
 

@@ -1,4 +1,4 @@
-package cn.xianyum.common.validator.group;
+package cn.xianyum.common.utils.validator.group;
 
 /**
  * 更新数据 Group

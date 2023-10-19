@@ -1,6 +1,7 @@
-package cn.xianyum.common.service;
+package cn.xianyum.system.service;
 
-import cn.xianyum.common.entity.IpInfoEntity;
+
+import cn.xianyum.system.entity.po.IpInfoEntity;
 
 /**
  * @author zhangwei

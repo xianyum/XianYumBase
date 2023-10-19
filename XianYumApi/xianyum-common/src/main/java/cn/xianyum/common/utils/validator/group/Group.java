@@ -1,4 +1,4 @@
-package cn.xianyum.common.validator.group;
+package cn.xianyum.common.utils.validator.group;
 
 /**
  * 定义校验顺序，如果AddGroup组失败，则UpdateGroup组不会再校验

@@ -1,7 +1,7 @@
 package cn.xianyum.sheduler.common.utils;
 
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.service.IJobHandler;
+import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.common.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;

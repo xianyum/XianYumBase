@@ -1,4 +1,4 @@
-package cn.xianyum.common.validator;
+package cn.xianyum.common.utils.validator;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.StringUtil;

@@ -1,4 +1,4 @@
-package cn.xianyum.common.entity;
+package cn.xianyum.system.entity.po;
 
 import lombok.Data;
 

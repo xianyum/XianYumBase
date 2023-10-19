@@ -4,7 +4,7 @@ package cn.xianyum.common.constant;
 /**
  * 通用常量信息
  *
- * @author ruoyi
+ * @author zhangwei
  */
 public class Constants {
 
@@ -50,4 +50,6 @@ public class Constants {
     /** 是否菜单外链（是） */
     public static final String YES_FRAME = "0";
 
+    /** 没有权限提示语 */
+    public final static String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
 }
