@@ -309,7 +309,10 @@ public class IPUtils {
         IpSearcher ipSearcherConfig = SpringUtils.getBean("ipSearcherConfig");
         String[] data = new String[6];
         try {
-            data = ipSearcherConfig.search(ip).split("\\|");
+            String search = ipSearcherConfig.search(ip);
+            if(StringUtil.isNotEmpty(search)){
+                data = search.split("\\|");
+            }            
         } catch (Exception e) {
             logger.error("获取ip信息异常，ip：{}",ip,e);
         }
