@@ -311,7 +311,7 @@ public class IPUtils {
         try {
             data = ipSearcherConfig.search(ip).split("\\|");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.error("获取ip信息异常，ip：{}",ip,e);
         }
         String country = "0".equals(data[0]) || Objects.isNull(data[0]) ? "" : data[0];
         String prov = "0".equals(data[2]) || Objects.isNull(data[2]) ? "" : data[2];
