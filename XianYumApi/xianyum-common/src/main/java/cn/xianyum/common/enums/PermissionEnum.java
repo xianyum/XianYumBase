@@ -11,7 +11,7 @@ public enum PermissionEnum {
 
     /** 超级管理员 */
     ADMIN(0,"admin"),
-    /** 管理员 */
+    /** 普通用户 */
     COMMON(2,"common"),
     /** 游客 */
     VISITOR(1,"visitor");

@@ -159,7 +159,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 userEntity.setId(qqUserEntity.getUserId());
                 userEntity.setUsername(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
-                userEntity.setPermission(PermissionEnum.COMMON.getStatus());
+                userEntity.setPermission(PermissionEnum.VISITOR.getStatus());
                 if("女".equals(qqUserEntity.getGender())){
                     userEntity.setSex(1);
                 }else{
@@ -246,7 +246,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 userEntity.setUsername(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
                 userEntity.setStatus(UserStatusEnum.ALLOW.getStatus());
                 userEntity.setAvatar(aLiUserInfo.getAvatar());
-                userEntity.setPermission(PermissionEnum.COMMON.getStatus());
+                userEntity.setPermission(PermissionEnum.VISITOR.getStatus());
             }else{
                 userEntity= userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
