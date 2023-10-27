@@ -176,7 +176,6 @@ export default {
     submitForm() {
     },
     formatMemoryInfo(row){
-      console.log(row.memoryInfo)
       if(!row.memoryInfo || row.memoryInfo === 'null'){
         return null;
       }
