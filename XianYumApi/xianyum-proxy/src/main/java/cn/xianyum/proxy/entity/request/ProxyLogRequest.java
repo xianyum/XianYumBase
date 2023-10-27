@@ -31,4 +31,9 @@ public class ProxyLogRequest extends BaseRequest {
 
     private String computerUserName;
 
+    private String memoryInfo;
+
+    private Double cpuUseAge;
+
+    private String cpuModel;
 }

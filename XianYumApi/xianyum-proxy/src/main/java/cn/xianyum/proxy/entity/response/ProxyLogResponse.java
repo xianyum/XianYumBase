@@ -35,4 +35,9 @@ public class ProxyLogResponse extends BaseResponse {
 
     private String onlineTime;
 
+    private String memoryInfo;
+
+    private Double cpuUseAge;
+
+    private String cpuModel;
 }
