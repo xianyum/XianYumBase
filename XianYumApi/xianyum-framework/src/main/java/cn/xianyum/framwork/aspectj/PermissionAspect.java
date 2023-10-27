@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.aspectj;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.entity.XianYumConstant;
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
@@ -119,7 +119,7 @@ public class PermissionAspect {
         }else if(rClass == PageResponse.class){
             return Results.page(PageResponse.EMPTY_PAGE());
         }else if(rClass == SoException.class){
-            throw new SoException(HttpStatus.FORBIDDEN.value(),XianYumConstant.Message.NO_PERMISSION_MESSAGE);
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }else{
             return Results.success(rClass.getDeclaredConstructor().newInstance());
         }

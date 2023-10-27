@@ -2,9 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
-import cn.xianyum.common.entity.IpInfoEntity;
-import cn.xianyum.common.service.IpService;
 import cn.xianyum.common.utils.Results;
+import cn.xianyum.system.entity.po.IpInfoEntity;
+import cn.xianyum.system.service.IpService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

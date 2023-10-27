@@ -4,7 +4,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.common.validator.ValidatorUtils;
+import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.proxy.entity.request.ProxyDetailsRequest;
 import cn.xianyum.proxy.entity.response.ProxyDetailsResponse;
 import cn.xianyum.proxy.service.ProxyDetailsService;

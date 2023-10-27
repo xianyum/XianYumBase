@@ -1,4 +1,4 @@
-package cn.xianyum.common.server;
+package cn.xianyum.system.infra.server;
 
 /**
  * 系统相关

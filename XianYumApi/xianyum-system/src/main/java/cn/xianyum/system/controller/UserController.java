@@ -7,7 +7,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.common.validator.ValidatorUtils;
+import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;

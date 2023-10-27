@@ -3,7 +3,7 @@ package cn.xianyum.analysis.task;
 import cn.xianyum.analysis.service.XiaoDaoService;
 import cn.xianyum.common.annotation.JobHandler;
 import cn.xianyum.common.enums.ReturnT;
-import cn.xianyum.common.service.IJobHandler;
+import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.SchedulerTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
