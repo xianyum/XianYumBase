@@ -109,7 +109,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Override
 	public void setIgnoreSaveFlag() {
-		redisUtils.setMin(ignoreSaveFlagRedisKey,"1",8);
+		redisUtils.setMin(ignoreSaveFlagRedisKey,"1",10);
 	}
 
 }

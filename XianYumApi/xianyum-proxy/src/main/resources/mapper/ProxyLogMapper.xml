@@ -7,7 +7,7 @@
     <sql id="allColumns">
         pl.id, pl.proxy_id, pl.mac_address, pl.host_ip, pl.host_name, pl.os_name, pl.client_version, pl.user_dir,
         pl.computer_name, pl.computer_user_name, pl.online_time, pl.create_by, pl.create_by_name, pl.create_time, pl.update_by, pl.update_by_name,
-        pl.update_time
+        pl.update_time,pl.memory_info,pl.cpu_use_age,pl.cpu_model
     </sql>
 
     <select id="getPage" parameterType="cn.xianyum.proxy.entity.request.ProxyLogRequest" resultType="cn.xianyum.proxy.entity.response.ProxyLogResponse">
