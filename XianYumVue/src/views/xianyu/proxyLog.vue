@@ -34,16 +34,16 @@
     <el-table v-loading="loading" :data="detailsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" align="center" width="50"/>
-      <el-table-column label="客户端名称" align="center" prop="proxyName" />
+      <el-table-column label="客户端" align="center" prop="proxyName" width="100"/>
       <el-table-column label="主机ip" align="center" prop="hostIp" width="130"/>
       <el-table-column label="操作系统" align="center" prop="osName" width="140"/>
-      <el-table-column label="当前版本号" align="center" prop="clientVersion" >
+      <el-table-column label="当前版本" align="center" prop="clientVersion" width="80">
         <template v-slot="scope">
           <span v-if="scope.row.clientVersion">V {{ scope.row.clientVersion }}</span>
         </template>
       </el-table-column>
       <el-table-column label="内存信息" align="center" prop="memoryInfo" :show-overflow-tooltip="true" :formatter='formatMemoryInfo'/>
-      <el-table-column label="cpu使用率" align="center" prop="cpuUseAge" >
+      <el-table-column label="cpu" align="center" prop="cpuUseAge" width="80">
         <template v-slot="scope">
           <span v-if="scope.row.cpuUseAge">{{ scope.row.cpuUseAge }}%</span>
         </template>
@@ -52,9 +52,9 @@
 <!--      <el-table-column label="计算机名称" align="center" prop="computerName" />-->
       <el-table-column label="计算机用户" align="center" prop="computerUserName" />
       <el-table-column label="mac地址" align="center" prop="macAddress" :show-overflow-tooltip="true"/>
-      <el-table-column label="使用时长" align="center" prop="onlineTime" />
+      <el-table-column label="使用时长" align="center" prop="onlineTime" :show-overflow-tooltip="true"/>
       <el-table-column label="cpu信息" align="center" prop="cpuModel" :show-overflow-tooltip="true"/>
-      <el-table-column label="使用时间" align="center" prop="createTime" width="160">
+      <el-table-column label="登录时间" align="center" prop="createTime" width="150">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
