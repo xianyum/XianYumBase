@@ -13,8 +13,9 @@ import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import com.ejlchina.okhttps.OkHttps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +161,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
                 .get().getBody().toString();
         JSONObject resultObject = JSONObject.parseObject(result);
         Long count = resultObject.getLong("count");
-        List<HaoKaLotProductResponse> data = JSONObject.parseArray(resultObject.getString("data"), HaoKaLotProductResponse.class);
+        List<HaoKaLotProductResponse> data = JSONArray.parseArray(resultObject.getString("data"), HaoKaLotProductResponse.class);
         return PageResponse.of(count,data);
     }
 }

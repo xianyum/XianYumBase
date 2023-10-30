@@ -5,7 +5,7 @@ import cn.xianyum.common.utils.EncryptionUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.service.EncryptionService;
 import cn.xianyum.system.service.SystemConstantService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

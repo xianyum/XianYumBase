@@ -16,7 +16,7 @@ import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.ProgramRequest;
 import cn.xianyum.system.entity.response.ProgramResponse;
 import cn.xianyum.system.service.ProgramService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

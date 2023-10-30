@@ -13,7 +13,7 @@ import cn.xianyum.message.entity.request.MessageMonitorRequest;
 import cn.xianyum.message.entity.response.MessageMonitorResponse;
 import cn.xianyum.message.service.MessageMonitorService;
 import cn.xianyum.message.service.MessageTypeConfigService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;

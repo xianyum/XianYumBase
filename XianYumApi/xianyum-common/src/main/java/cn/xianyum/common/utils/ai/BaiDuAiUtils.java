@@ -5,13 +5,12 @@ import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.net.URLEncoder;
 import java.util.Objects;
 
@@ -84,7 +83,7 @@ public class BaiDuAiUtils {
                     .addUrlPara("image", URLEncoder.encode(imageData, "UTF-8"))
                     .post().getBody().toString();
             String wordsResult = JSONObject.parseObject(result).getString("words_result");
-            JSONArray wordsResultArray = JSONObject.parseArray(wordsResult);
+            JSONArray wordsResultArray = JSONArray.parseArray(wordsResult);
             if(Objects.isNull(wordsResultArray)){
                 return null;
             }

@@ -7,7 +7,7 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
 import cn.xianyum.message.service.MessageSendRelationService;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

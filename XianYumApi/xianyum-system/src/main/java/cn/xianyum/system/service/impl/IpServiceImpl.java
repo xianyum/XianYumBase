@@ -3,7 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.IpInfoEntity;
 import cn.xianyum.system.service.IpService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

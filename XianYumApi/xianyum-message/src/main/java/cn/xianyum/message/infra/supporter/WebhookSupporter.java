@@ -8,7 +8,7 @@ import cn.xianyum.message.entity.po.MessageConfigWebhookEntity;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.infra.utils.MessageUtils;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.ejlchina.okhttps.HttpResult;
 import com.ejlchina.okhttps.OkHttps;
 import lombok.extern.slf4j.Slf4j;

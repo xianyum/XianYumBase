@@ -8,7 +8,7 @@ import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.service.LogService;
 import cn.xianyum.system.service.UserTokenService;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import io.swagger.annotations.Api;

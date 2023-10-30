@@ -2,7 +2,7 @@ package cn.xianyum.common.config;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.SystemConstantUtils;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Data;
 
 import java.util.Objects;

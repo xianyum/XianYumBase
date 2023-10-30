@@ -18,8 +18,8 @@ import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
 import cn.xianyum.message.service.MessageSendRelationService;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -136,7 +136,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 				objJson = JSONObject.toJSONString(messageConfigWebhookEntities);
 				break;
 		}
-		return JSONObject.parseArray(objJson);
+		return JSONArray.parseArray(objJson);
 	}
 
 }

@@ -3,7 +3,7 @@ package cn.xianyum.framwork.security.handler;
 
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.HttpContextUtils;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

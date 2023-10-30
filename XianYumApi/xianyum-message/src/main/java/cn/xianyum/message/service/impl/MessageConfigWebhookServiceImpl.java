@@ -9,7 +9,7 @@ import cn.xianyum.message.entity.po.MessageConfigWebhookEntity;
 import cn.xianyum.message.entity.request.MessageConfigWebhookRequest;
 import cn.xianyum.message.entity.response.MessageConfigWebhookResponse;
 import cn.xianyum.message.service.MessageConfigWebhookService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

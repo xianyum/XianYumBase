@@ -5,7 +5,7 @@ import cn.xianyum.common.enums.UserStatusEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.service.UserService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

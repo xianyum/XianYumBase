@@ -4,7 +4,7 @@ package cn.xianyum.message.service;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 public interface MessageSendRelationService {

@@ -12,7 +12,7 @@ import cn.xianyum.sheduler.common.constant.ScheduleConstants;
 import cn.xianyum.sheduler.dao.JobLogMapper;
 import cn.xianyum.sheduler.entity.po.JobEntity;
 import cn.xianyum.sheduler.entity.po.JobLogEntity;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

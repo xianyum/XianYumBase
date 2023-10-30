@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.system.entity.po.ProgramEntity;
 import cn.xianyum.system.entity.request.ProgramRequest;
 import cn.xianyum.system.entity.response.ProgramResponse;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import java.util.List;
 
 

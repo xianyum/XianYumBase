@@ -9,7 +9,7 @@ import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.request.MessageConfigWechatRequest;
 import cn.xianyum.message.entity.response.MessageConfigWechatResponse;
 import cn.xianyum.message.service.MessageConfigWechatService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

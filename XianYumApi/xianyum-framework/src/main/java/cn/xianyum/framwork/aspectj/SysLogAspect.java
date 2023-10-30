@@ -5,7 +5,7 @@ import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.service.LogService;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

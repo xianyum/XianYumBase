@@ -8,7 +8,7 @@ import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.po.WxTextCardMessage;
 import cn.xianyum.message.infra.utils.MessageUtils;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.ejlchina.okhttps.HttpResult;
 import com.ejlchina.okhttps.OkHttps;
 import org.springframework.beans.factory.annotation.Autowired;

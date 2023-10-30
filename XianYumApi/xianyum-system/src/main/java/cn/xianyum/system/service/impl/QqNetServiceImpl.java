@@ -4,7 +4,7 @@ import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.entity.po.QqUserEntity;
 import cn.xianyum.system.service.QqNetService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.ejlchina.okhttps.HttpResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
