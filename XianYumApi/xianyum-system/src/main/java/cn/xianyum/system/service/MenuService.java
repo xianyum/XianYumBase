@@ -3,6 +3,7 @@ package cn.xianyum.system.service;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuResponse;
+import cn.xianyum.system.entity.response.MenuTreeSelect;
 
 import java.util.List;
 
@@ -47,4 +48,8 @@ public interface MenuService{
      * @return 结果 true 存在 false 不存在
      */
     boolean hasChildByMenuId(Long menuId);
+
+    List<MenuTreeSelect> buildMenuTreeSelect(List<MenuEntity> menus);
+
+    List<MenuEntity> buildMenuTree(List<MenuEntity> menus);
 }

@@ -52,6 +52,11 @@ public class MenuResponse {
     private MenuMetaResponse meta;
 
     /**
+     * 权限标识
+     */
+    private String perms;
+
+    /**
      * 子路由
      */
     private List<MenuResponse> children;

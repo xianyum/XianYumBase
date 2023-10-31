@@ -9,12 +9,14 @@ import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuMetaResponse;
 import cn.xianyum.system.entity.response.MenuResponse;
+import cn.xianyum.system.entity.response.MenuTreeSelect;
 import cn.xianyum.system.service.MenuService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangwei
@@ -194,6 +196,30 @@ public class MenuServiceImpl implements MenuService {
     public boolean hasChildByMenuId(Long menuId) {
         int result = menuMapper.hasChildByMenuId(menuId);
         return result > 0;
+    }
+
+    @Override
+    public List<MenuTreeSelect> buildMenuTreeSelect(List<MenuEntity> menus) {
+        List<MenuEntity> menuTrees = this.buildMenuTree(menus);
+        return menuTrees.stream().map(MenuTreeSelect::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MenuEntity> buildMenuTree(List<MenuEntity> menus) {
+        List<MenuEntity> returnList = new ArrayList<>();
+        List<Long> tempList = menus.stream().map(MenuEntity::getMenuId).collect(Collectors.toList());
+        for (Iterator<MenuEntity> iterator = menus.iterator(); iterator.hasNext();) {
+            MenuEntity menu = iterator.next();
+            // 如果是顶级节点, 遍历该父节点的所有子节点
+            if (!tempList.contains(menu.getParentId())) {
+                recursionFn(menus, menu);
+                returnList.add(menu);
+            }
+        }
+        if (returnList.isEmpty()) {
+            returnList = menus;
+        }
+        return returnList;
     }
 
 

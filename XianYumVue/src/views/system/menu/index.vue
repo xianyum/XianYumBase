@@ -68,7 +68,8 @@
           <div v-else-if="scope.row.menuType === 'F'" size="small">按钮</div>
         </template>
       </el-table-column>
-      <el-table-column prop="orderNum" label="排序" ></el-table-column>
+      <el-table-column prop="orderNum" label="排序" width="60"></el-table-column>
+      <el-table-column prop="perms" label="权限标识" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="status" label="状态">
         <template v-slot="scope">
@@ -124,7 +125,7 @@
               <el-radio-group v-model="form.menuType">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
-<!--                <el-radio label="F">按钮</el-radio>-->
+                <el-radio label="F">按钮</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -195,12 +196,11 @@
               <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
-<!--          <el-col :span="12" v-if="form.menuType != 'M'">-->
-          <el-col :span="12" v-if=false>
+          <el-col :span="12" v-if="form.menuType != 'M'">
             <el-form-item prop="perms">
               <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
               <span slot="label">
-                <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
+                <el-tooltip content="控制器中定义的权限字符" placement="top">
                 <i class="el-icon-question"></i>
                 </el-tooltip>
                 权限字符

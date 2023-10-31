@@ -91,4 +91,14 @@ public class MenuController {
     public Results remove(@PathVariable("menuId") Long menuId) {
         return Results.success(menuService.deleteMenuById(menuId));
     }
+
+
+    /**
+     * 获取菜单下拉树列表
+     */
+    @GetMapping("/treeSelect")
+    public Results treeSelect(MenuRequest request) {
+        List<MenuEntity> menus = menuService.selectMenuList(request);
+        return Results.success(menuService.buildMenuTreeSelect(menus));
+    }
 }
