@@ -24,6 +24,12 @@
             <artifactId>plumelog-lite-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- 添加 Undertow依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-message</artifactId>

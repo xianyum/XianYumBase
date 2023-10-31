@@ -312,7 +312,7 @@ public class IPUtils {
             String search = ipSearcherConfig.search(ip);
             if(StringUtil.isNotEmpty(search)){
                 data = search.split("\\|");
-            }            
+            }
         } catch (Exception e) {
             logger.error("获取ip信息异常，ip：{}",ip,e);
         }
