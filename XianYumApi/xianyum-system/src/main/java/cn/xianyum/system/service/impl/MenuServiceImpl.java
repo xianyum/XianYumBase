@@ -222,6 +222,19 @@ public class MenuServiceImpl implements MenuService {
         return returnList;
     }
 
+    @Override
+    public Map<String, Object> treeSelectByRoleId(Long roleId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("checkedKeys",this.selectMenuListByRoleId(roleId));
+        resultMap.put("menus",this.buildMenuTreeSelect(this.selectMenuList(null)));
+        return resultMap;
+    }
+
+    @Override
+    public List<Long> selectMenuListByRoleId(Long roleId) {
+        return menuMapper.selectMenuListByRoleId(roleId);
+    }
+
 
     public boolean isMenuFrame(MenuEntity menu) {
         return menu.getParentId().intValue() == 0 && Constants.TYPE_MENU.equals(menu.getMenuType())

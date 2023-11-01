@@ -13,7 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangwei
@@ -100,5 +102,14 @@ public class MenuController {
     public Results treeSelect(MenuRequest request) {
         List<MenuEntity> menus = menuService.selectMenuList(request);
         return Results.success(menuService.buildMenuTreeSelect(menus));
+    }
+
+    /**
+     * 获取菜单下拉树列表
+     */
+    @GetMapping("/treeSelect/role")
+    public Results treeSelectByRoleId(@RequestParam Long roleId) {
+        Map<String,Object> resultMap = menuService.treeSelectByRoleId(roleId);
+        return Results.success(resultMap);
     }
 }

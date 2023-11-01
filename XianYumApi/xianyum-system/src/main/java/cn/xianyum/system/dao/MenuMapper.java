@@ -30,4 +30,6 @@ public interface MenuMapper extends BaseMapper<MenuEntity> {
     MenuEntity checkMenuNameUnique(@Param("menuName") String menuName, @Param("parentId") Long parentId);
 
     int hasChildByMenuId(Long menuId);
+
+    List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId);
 }
