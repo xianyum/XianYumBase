@@ -13,6 +13,9 @@ import java.util.Date;
 @Data
 public abstract class BaseEntity {
 
+    public static final String CREATE_BY_COLUMN ="create_by";
+
+
     @TableField(fill = FieldFill.INSERT)
     private String createBy;
 

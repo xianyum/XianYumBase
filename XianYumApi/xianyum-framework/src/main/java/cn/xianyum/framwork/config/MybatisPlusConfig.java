@@ -1,5 +1,8 @@
 package cn.xianyum.framwork.config;
 
+
+import cn.xianyum.framwork.mybatis.handler.RoleDataPermissionHandler;
+import cn.xianyum.framwork.mybatis.interceptor.MybatisPlusPermissionInterceptor;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -17,6 +20,8 @@ public class MybatisPlusConfig {
 	@Bean
 	public MybatisPlusInterceptor mybatisPlusInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+		MybatisPlusPermissionInterceptor dataPermissionInterceptor = new MybatisPlusPermissionInterceptor(new RoleDataPermissionHandler());
+		interceptor.addInnerInterceptor(dataPermissionInterceptor);
 		interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
 		return interceptor;
 	}

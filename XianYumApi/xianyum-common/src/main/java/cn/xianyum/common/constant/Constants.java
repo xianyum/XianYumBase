@@ -52,4 +52,7 @@ public class Constants {
 
     /** 没有权限提示语 */
     public final static String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
+
+
+    public final static String SQL_EQUALS_DEFAULT = " 1 = 1 ";
 }
