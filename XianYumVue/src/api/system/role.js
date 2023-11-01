@@ -66,3 +66,20 @@ export function changeRoleStatus(id, status) {
     data: data
   })
 }
+
+// 角色权限范围修改
+export function changeDataScope(data) {
+  return request({
+    url: '/xianyum-system/v1/role/changeDataScope',
+    method: 'put',
+    data: data
+  })
+}
+
+export function authorizationMenu(data) {
+  return request({
+    url: '/xianyum-system/v1/role/authorizationMenu',
+    method: 'put',
+    data: data
+  })
+}

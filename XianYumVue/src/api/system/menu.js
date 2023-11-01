@@ -20,7 +20,7 @@ export function getMenu(menuId) {
 // 查询菜单下拉树结构
 export function treeselect() {
   return request({
-    url: '/xianyum-system/v1/menu/treeselect',
+    url: '/xianyum-system/v1/menu/treeSelect',
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function treeselect() {
 // 根据角色ID查询菜单下拉树结构
 export function roleMenuTreeselect(roleId) {
   return request({
-    url: '/xianyum-system/v1/menu/roleMenuTreeselect/' + roleId,
+    url: '/xianyum-system/v1/menu/treeSelect/role?roleId=' + roleId,
     method: 'get'
   })
 }

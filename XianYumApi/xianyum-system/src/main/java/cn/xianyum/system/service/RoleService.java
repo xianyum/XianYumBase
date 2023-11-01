@@ -4,6 +4,8 @@ import cn.xianyum.system.entity.request.RoleRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.common.entity.base.PageResponse;
 
+import java.util.List;
+
 /**
  * 角色管理(Role)service层
  *
@@ -23,4 +25,10 @@ public interface RoleService{
 	Integer deleteById(Long[] ids);
 
 	Integer changeStatus(RoleRequest request);
+
+	Integer changeDataScope(RoleRequest request);
+
+	Integer authorizationMenu(RoleRequest request);
+
+	List<RoleResponse> getList(RoleRequest request);
 }

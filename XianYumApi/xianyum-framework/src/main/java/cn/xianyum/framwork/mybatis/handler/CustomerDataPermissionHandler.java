@@ -12,10 +12,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
  */
 public interface CustomerDataPermissionHandler extends DataPermissionHandler {
 
-    @Deprecated
-    default Expression getSqlSegment(Expression where, String whereStatement) {
-        throw new UnsupportedOperationException();
-    }
 
     Expression getSqlSegmentWithPermission(PlainSelect plainSelect, String whereStatement);
 }

@@ -17,7 +17,7 @@
         a.avatar
     </sql>
 
-    <select id="queryAll" parameterType="cn.xianyum.system.entity.request.LogRequest" resultType="cn.xianyum.system.entity.po.UserEntity">
+    <select id="queryAll" parameterType="cn.xianyum.system.entity.request.LogRequest" resultType="cn.xianyum.system.entity.response.UserResponse">
         SELECT
         <include refid="userColumns"/>
         from  user a

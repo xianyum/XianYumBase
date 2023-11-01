@@ -19,7 +19,7 @@ public interface UserService extends IService<UserEntity> {
 
     void deleteById(String[] userIds);
 
-    UserEntity selectOneById(String id);
+    UserResponse selectOneById(String id);
 
     int save(UserRequest user);
 

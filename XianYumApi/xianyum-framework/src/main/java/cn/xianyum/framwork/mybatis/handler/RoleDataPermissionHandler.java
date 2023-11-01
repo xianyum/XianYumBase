@@ -58,4 +58,9 @@ public class RoleDataPermissionHandler implements CustomerDataPermissionHandler{
             PermissionThreadLocal.remove();
         }
     }
+
+    @Override
+    public Expression getSqlSegment(Expression where, String mappedStatementId) {
+        return null;
+    }
 }

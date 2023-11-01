@@ -10,6 +10,7 @@ import cn.xianyum.common.enums.UserStatusEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.common.utils.SecretUtils;
+import cn.xianyum.system.dao.RoleMapper;
 import cn.xianyum.system.dao.ThirdUserMapper;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.QqUserEntity;
@@ -18,6 +19,7 @@ import cn.xianyum.system.entity.po.ThirdUserEntity;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
+import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.system.entity.response.UserResponse;
 import cn.xianyum.system.service.*;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,19 +59,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Autowired
     private UserTokenService userTokenService;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
     @Override
     public PageResponse<UserResponse> getPage(UserRequest user) {
         Page<UserEntity> page = new Page<>(user.getPageNum(),user.getPageSize());
         //查询总记录数
-        page.setSearchCount(true);
-        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
+        if(!SecurityUtils.isAdminAuth()){
             user.setId(SecurityUtils.getLoginUser().getId());
         }else{
             user.setId(null);
         }
-        List<UserEntity> list = userMapper.queryAll(user, page);
-        page.setRecords(list);
-        return PageResponse.of(page,UserResponse.class);
+        List<UserResponse> userResponseList = userMapper.queryAll(user, page);
+        return PageResponse.of(page.getTotal(),userResponseList,UserResponse.class,(response,item)->{
+            response.setGroupRoleName(roleMapper.getRoleByUserId(item.getId()).stream().map(RoleResponse::getRoleName).collect(Collectors.joining(",")));
+        });
     }
 
     @Override
@@ -93,8 +99,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 
     @Override
-    public UserEntity selectOneById(String id) {
-        return userMapper.selectById(id);
+    public UserResponse selectOneById(String id) {
+        UserEntity userEntity = userMapper.selectById(id);
+        UserResponse userResponse = BeanUtils.copy(userEntity, UserResponse.class);
+        if(Objects.nonNull(userResponse)){
+            List<RoleResponse> roleByUserId = roleMapper.getRoleByUserId(userEntity.getId());
+            userResponse.setRoleIds(roleByUserId.stream().map(RoleResponse::getId).collect(Collectors.toList()));
+        }
+        return userResponse;
     }
 
     @Override

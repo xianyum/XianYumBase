@@ -3,9 +3,14 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.system.dao.RoleMenuMapper;
+import cn.xianyum.system.entity.po.RoleMenuEntity;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -18,6 +23,8 @@ import cn.xianyum.system.dao.RoleMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,6 +39,9 @@ public class RoleServiceImpl implements RoleService {
 
 	@Autowired
 	private RoleMapper roleMapper;
+
+	@Autowired
+	private RoleMenuMapper roleMenuMapper;
 
 	@Override
 	public PageResponse<RoleResponse> getPage(RoleRequest request) {
@@ -100,6 +110,51 @@ public class RoleServiceImpl implements RoleService {
 		bean.setId(request.getId());
 		bean.setStatus(request.getStatus());
 		return roleMapper.updateById(bean);
+	}
+
+	@Override
+	public Integer changeDataScope(RoleRequest request) {
+		if(Objects.isNull(request.getId()) || Objects.isNull(request.getDataScope())){
+			throw new SoException("更新角色状态失败！");
+		}
+		if(request.getId().equals(1L)){
+			throw new SoException("不能更新admin权限！");
+		}
+		RoleEntity bean = new RoleEntity();
+		bean.setId(request.getId());
+		bean.setDataScope(request.getDataScope());
+		return roleMapper.updateById(bean);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public Integer authorizationMenu(RoleRequest request) {
+		if(Objects.isNull(request.getId()) || Objects.isNull(request.getMenuIds())){
+			throw new SoException("授权菜单权限失败！");
+		}
+		if(request.getId().equals(1L)){
+			throw new SoException("不能更新admin权限！");
+		}
+		LambdaQueryWrapper<RoleMenuEntity> queryWrapper = Wrappers.<RoleMenuEntity>lambdaQuery()
+				.eq(RoleMenuEntity::getRoleId,request.getId());
+		roleMenuMapper.delete(queryWrapper);
+		int resultCount = 0;
+		for(Long menuId : request.getMenuIds()){
+			RoleMenuEntity roleMenuEntity = new RoleMenuEntity();
+			roleMenuEntity.setRoleId(request.getId());
+			roleMenuEntity.setMenuId(menuId);
+			resultCount = roleMenuMapper.insert(roleMenuEntity)+resultCount;
+		}
+		return resultCount;
+	}
+
+	@Override
+	public List<RoleResponse> getList(RoleRequest request) {
+		LambdaQueryWrapper<RoleEntity> queryWrapper = Wrappers.<RoleEntity>lambdaQuery()
+				.eq(RoleEntity::getStatus,0)
+				.orderByAsc(RoleEntity::getRoleSort);
+		List<RoleEntity> roleEntities = roleMapper.selectList(queryWrapper);
+		return BeanUtils.copyList(roleEntities,RoleResponse.class);
 	}
 
 }

@@ -35,4 +35,11 @@ public class RoleRequest extends BaseRequest {
 
     private String remark;
 
+    /**
+     * 数据范围（1：全部数据权限 2：仅本人数据权限 3：游客数据权限）
+     */
+    private String dataScope;
+
+    /** 菜单ID */
+    private Long[] menuIds;
 }

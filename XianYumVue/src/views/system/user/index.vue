@@ -71,12 +71,7 @@
           <el-tag v-else size="small">正常</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="用户权限" align="center" prop="permission" v-if="columns[5].visible">
-        <template v-slot="scope">
-          <div v-if="scope.row.permission === 0">超级管理员</div>
-          <div v-else-if="scope.row.permission === 2">管理员</div>
-          <div v-else>游客</div>
-        </template>
+      <el-table-column label="用户权限" align="center" prop="groupRoleName" v-if="columns[5].visible">
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
         <template v-slot="scope">

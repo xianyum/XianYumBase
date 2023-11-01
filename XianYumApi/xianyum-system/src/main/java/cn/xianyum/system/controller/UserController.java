@@ -74,8 +74,8 @@ public class UserController {
     @GetMapping("/getById/{id}")
     @ApiOperation(value = "根据Id查询用户")
     public Results selectOneById(@PathVariable String id){
-        UserEntity info = userService.selectOneById(id);
-        return Results.success(info);
+        UserResponse userResponse = userService.selectOneById(id);
+        return Results.success(userResponse);
     }
 
     /**

@@ -3,6 +3,7 @@ package cn.xianyum.system.entity.response;
 import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserResponse extends BaseResponse {
@@ -61,4 +62,11 @@ public class UserResponse extends BaseResponse {
      * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
      */
     private int loginType;
+
+    private String groupRoleName;
+
+    /**
+     * 用户权限
+     */
+    private List<Long> roleIds;
 }

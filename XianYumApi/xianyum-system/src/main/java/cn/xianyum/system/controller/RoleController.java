@@ -10,6 +10,8 @@ import cn.xianyum.system.entity.request.RoleRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.system.service.RoleService;
 
+import java.util.List;
+
 /**
  * 角色管理(Role)Controller
  *
@@ -35,6 +37,13 @@ public class RoleController{
     public Results getPage(RoleRequest request) {
 		PageResponse<RoleResponse> responsePage = roleService.getPage(request);
         return Results.page(responsePage);
+    }
+
+    @ApiOperation(value = "查询角色数据")
+    @GetMapping(value = "/getList")
+    public Results getList(RoleRequest request) {
+        List<RoleResponse> responsePage = roleService.getList(request);
+        return Results.success(responsePage);
     }
 
     /**
@@ -79,10 +88,23 @@ public class RoleController{
         return Results.success(this.roleService.changeStatus(request));
     }
 
+
+    @ApiOperation(value = "更新角色权限范围")
+    @PutMapping(value = "/changeDataScope")
+    public Results changeDataScope(@RequestBody RoleRequest request) {
+        return Results.success(this.roleService.changeDataScope(request));
+    }
+
+    @ApiOperation(value = "菜单授权")
+    @PutMapping(value = "/authorizationMenu")
+    public Results authorizationMenu(@RequestBody RoleRequest request) {
+        return Results.success(this.roleService.authorizationMenu(request));
+    }
+
     /**
      * 角色管理批量删除数据
      *
-     * @param ids 主键结合
+     * @param ids 主键集合
      * @return 删除结果
      */
 	@ApiOperation(value = "角色管理批量删除数据")

@@ -1,7 +1,11 @@
 package cn.xianyum.system.dao;
 
+import cn.xianyum.system.entity.response.RoleResponse;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cn.xianyum.system.entity.po.RoleEntity;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 角色管理(Role)表数据库访问层
@@ -11,5 +15,6 @@ import cn.xianyum.system.entity.po.RoleEntity;
  */
 public interface RoleMapper extends BaseMapper<RoleEntity> {
 
+    List<RoleResponse> getRoleByUserId(@Param("userId") String userId);
 }
 
