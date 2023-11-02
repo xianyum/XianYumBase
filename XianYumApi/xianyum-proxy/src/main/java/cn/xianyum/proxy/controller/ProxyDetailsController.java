@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "客户端配置详细接口")
 @RestController
-@RequestMapping(value = "/xianyum-proxy/v1/proxyDetails")
+@RequestMapping(value = "xianyum-proxy/v1/proxyDetails")
 @Slf4j
 public class ProxyDetailsController {
 

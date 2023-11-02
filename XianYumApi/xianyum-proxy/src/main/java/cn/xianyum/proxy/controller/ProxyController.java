@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @Api(tags = "客户端管理接口")
 @RestController
-@RequestMapping(value = "/xianyum-proxy/v1/proxy")
+@RequestMapping(value = "xianyum-proxy/v1/proxy")
 @Slf4j
 public class ProxyController {
 

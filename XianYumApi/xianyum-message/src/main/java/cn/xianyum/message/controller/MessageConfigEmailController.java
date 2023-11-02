@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "账户配置email接口")
 @RestController
-@RequestMapping(value = "/xianyum-message/v1/messageConfigEmail")
+@RequestMapping(value = "xianyum-message/v1/messageConfigEmail")
 @Slf4j
 public class MessageConfigEmailController {
 

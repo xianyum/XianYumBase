@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/4/1 13:45
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/ip")
+@RequestMapping("xianyum-system/v1/ip")
 @Api(tags = "ip地理位置接口")
 public class IpController {
 

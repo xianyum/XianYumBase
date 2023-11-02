@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @email 80616059@qq.com
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/server")
+@RequestMapping("xianyum-system/v1/server")
 @Api(tags = "服务器信息接口")
 public class ServerController {
 

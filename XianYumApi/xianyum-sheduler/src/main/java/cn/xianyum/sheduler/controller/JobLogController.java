@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "定时任务调度日志表接口")
 @RestController
-@RequestMapping(value = "/xianyum-sheduler/v1/jobLog")
+@RequestMapping(value = "xianyum-sheduler/v1/jobLog")
 @Slf4j
 public class JobLogController {
 

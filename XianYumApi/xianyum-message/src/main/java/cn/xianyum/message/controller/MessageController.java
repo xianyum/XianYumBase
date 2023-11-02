@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "消息接口")
 @RestController
-@RequestMapping("/xianyum-message/v1/message")
+@RequestMapping("xianyum-message/v1/message")
 @Slf4j
 public class MessageController {
 

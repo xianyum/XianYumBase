@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -259,6 +258,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             userRoleEntity.setUserId(id);
             userRoleMapper.insert(userRoleEntity);
         }
+    }
+
+    /**
+     * 个人中心
+     *
+     * @return
+     */
+    @Override
+    public UserResponse getUserProfile() {
+        String userId = SecurityUtils.getLoginUser().getId();
+        UserEntity userEntity = userMapper.selectById(userId);
+        UserResponse useResponse = BeanUtils.copy(userEntity, UserResponse.class);
+        if(null != useResponse){
+            if(StringUtil.isEmpty(useResponse.getAvatar())){
+                SystemConstantEntity systemConstantEntity = systemConstantService.getByKey("avatar_url");
+                if(systemConstantEntity != null){
+                    useResponse.setAvatar(systemConstantEntity.getConstantValue());
+                }
+            }
+            String groupRoleName = roleMapper.getRoleByUserId(userId).stream().map(RoleResponse::getRoleName).collect(Collectors.joining(","));
+            useResponse.setGroupRoleName(groupRoleName);
+        }
+        return useResponse;
+    }
+
+    @Override
+    public int changeStatus(UserRequest request) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(request.getId());
+        userEntity.setStatus(request.getStatus());
+        return userMapper.updateById(userEntity);
     }
 
     @Override

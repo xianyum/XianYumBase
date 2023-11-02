@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "远程代理日志接口")
 @RestController
-@RequestMapping(value = "/xianyum-proxy/v1/proxyLog")
+@RequestMapping(value = "xianyum-proxy/v1/proxyLog")
 @Slf4j
 public class ProxyLogController {
 

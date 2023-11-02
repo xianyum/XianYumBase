@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/ali")
+@RequestMapping("xianyum-system/v1/ali")
 @Api(tags = "阿里相关接口")
 public class AliController {
 

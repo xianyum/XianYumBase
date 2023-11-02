@@ -8,7 +8,6 @@ import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
-import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
@@ -27,7 +26,7 @@ import java.util.Set;
  * 用户相关
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/user")
+@RequestMapping("xianyum-system/v1/user")
 @Api(tags = "用户接口")
 public class UserController {
 
@@ -137,7 +136,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    @ApiOperation(value = "修改密码", httpMethod = "POST", notes = "修改密码")
+    @ApiOperation(value = "修改密码")
     public Results updatePassword(@RequestBody UpdatePasswordRequest info){
         ValidatorUtils.validateEntity(info);
         boolean flag = userService.updatePassword(info);
@@ -147,12 +146,21 @@ public class UserController {
         return Results.success();
     }
 
+
+    @PutMapping("/changeStatus")
+    @ApiOperation(value = "修改用户状态")
+    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    public Results updatePassword(@RequestBody UserRequest request){
+        int count = userService.changeStatus(request);
+        return Results.success(count);
+    }
+
     /**
      * 更新当前用户信息
      */
     @PutMapping ("/updateCurrentUser")
     @SysLog(value = "更新当前用户信息")
-    @ApiOperation(value = "更新当前用户信息", httpMethod = "POST")
+    @ApiOperation(value = "更新当前用户信息")
     public Results updateCurrentUser(@RequestBody UserRequest user){
         int count = userService.updateCurrentUser(user);
         if(count>0){
@@ -169,4 +177,14 @@ public class UserController {
         String imageUrl = userService.upload(file);
         return Results.success(imageUrl);
     }
+
+    /**
+     * 个人中心
+     */
+    @GetMapping("/profile")
+    public Results userProfile(){
+        UserResponse userResponse = userService.getUserProfile();
+        return Results.success(userResponse);
+    }
+
 }

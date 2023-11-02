@@ -22,7 +22,7 @@ import java.util.Objects;
  * @date 2023/9/19 17:23
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/dict/data")
+@RequestMapping("xianyum-system/v1/dict/data")
 @Api(tags = "字典类型接口")
 public class DictDataController {
 

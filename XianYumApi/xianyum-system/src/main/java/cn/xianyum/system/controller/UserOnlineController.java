@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2021/1/28 21:58
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/online")
+@RequestMapping("xianyum-system/v1/online")
 @Api(tags = "在线用户接口")
 @Slf4j
 public class UserOnlineController {

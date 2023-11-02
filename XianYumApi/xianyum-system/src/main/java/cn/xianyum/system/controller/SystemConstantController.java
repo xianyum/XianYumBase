@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2020/11/3 19:25
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/systemConstant")
+@RequestMapping("xianyum-system/v1/systemConstant")
 @Api(tags = "系统常用参数")
 public class SystemConstantController {
 

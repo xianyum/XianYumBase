@@ -21,7 +21,7 @@ import java.util.List;
  * @date 2019/6/20 14:16
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/log")
+@RequestMapping("xianyum-system/v1/log")
 @Api(tags = "系统日志接口")
 public class LogController {
 

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @desc
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/qq")
+@RequestMapping("xianyum-system/v1/qq")
 @Api(tags = "qq接口")
 public class QqController {
 

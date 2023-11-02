@@ -17,7 +17,7 @@ import java.util.*;
  * @date 2023/9/20 12:37
  */
 @RestController
-@RequestMapping("/xianyum-system/v1/cache")
+@RequestMapping("xianyum-system/v1/cache")
 public class CacheController {
 
     @Autowired

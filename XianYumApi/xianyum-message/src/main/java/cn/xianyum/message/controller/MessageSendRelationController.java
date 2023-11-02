@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "发送配置关联表接口")
 @RestController
-@RequestMapping(value = "/xianyum-message/v1/messageSendRelation")
+@RequestMapping(value = "xianyum-message/v1/messageSendRelation")
 @Slf4j
 public class MessageSendRelationController {
 

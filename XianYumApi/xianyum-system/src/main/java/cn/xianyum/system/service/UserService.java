@@ -7,13 +7,10 @@ import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
-import java.util.Set;
 
-public interface UserService extends IService<UserEntity> {
+public interface UserService{
 
     PageResponse<UserResponse> getPage(UserRequest user);
 
@@ -54,4 +51,12 @@ public interface UserService extends IService<UserEntity> {
      * @param roleIds
      */
     void changeUserRole(String id, List<Long> roleIds);
+
+    /**
+     * 个人中心
+     * @return
+     */
+    UserResponse getUserProfile();
+
+    int changeStatus(UserRequest request);
 }
