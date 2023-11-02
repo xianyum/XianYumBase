@@ -12,7 +12,6 @@
         a.status,
         a.create_time AS "createTime",
         a.del_tag AS "delTag",
-        a.permission,
         a.sex,
         a.avatar
     </sql>
