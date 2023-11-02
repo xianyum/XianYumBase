@@ -83,3 +83,11 @@ export function authorizationMenu(data) {
     data: data
   })
 }
+
+
+export function getRoleList() {
+  return request({
+    url: '/xianyum-system/v1/role/getList',
+    method: 'get'
+  })
+}

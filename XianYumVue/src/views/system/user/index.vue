@@ -67,11 +67,15 @@
       <el-table-column label="邮箱" align="center" prop="email" v-if="columns[3].visible"/>
       <el-table-column label="状态" align="center" prop="status" v-if="columns[4].visible">
         <template v-slot="scope">
-          <el-tag v-if="scope.row.status === 1" size="small" type="danger">禁用</el-tag>
-          <el-tag v-else size="small">正常</el-tag>
+          <el-switch
+            v-model="scope.row.status"
+            :active-value=0
+            :inactive-value=1
+            @change="handleStatusChange(scope.row)"
+          ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="用户权限" align="center" prop="groupRoleName" v-if="columns[5].visible">
+      <el-table-column label="用户角色" align="center" prop="groupRoleName" v-if="columns[5].visible">
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
         <template v-slot="scope">
@@ -124,6 +128,16 @@
         <el-form-item label="手机号" prop="mobile">
           <el-input v-model="form.mobile" placeholder="手机号"></el-input>
         </el-form-item>
+        <el-form-item label="用户角色" prop="roleIds">
+          <el-select v-model="form.roleIds" multiple placeholder="请选择用户角色" clearable>
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName+'('+item.roleCode+')'"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -134,7 +148,8 @@
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser } from '@/api/system/user'
+import {listUser, getUser, delUser, addUser, updateUser, changeUserStatus} from '@/api/system/user'
+import {getRoleList} from "@/api/system/role";
 
 export default {
   name: 'User',
@@ -174,6 +189,7 @@ export default {
       title: '',
       // 是否显示弹出层
       open: false,
+      roleList: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -197,6 +213,9 @@ export default {
       rules: {
         username: [
           { required: true, message: '用户名不能为空', trigger: 'blur' }
+        ],
+        roleIds: [
+          { required: true, message: '请选择用户角色', trigger: 'blur' }
         ],
         password: [
           { validator: validatePassword, trigger: 'blur' }
@@ -225,8 +244,23 @@ export default {
     this.getList()
   },
   methods: {
+    handleStatusChange(row){
+      let text = row.status === "0" ? "启用" : "停用";
+      this.$modal.confirm('确认要' + text + '【' + row.username + '】用户吗？').then(function() {
+        return changeUserStatus(row.id, row.status);
+      }).then(() => {
+        this.$modal.msgSuccess("账户"+text + "成功");
+      }).catch(function() {
+        row.status = row.status === 0 ? 1 : 0;
+      });
+    },
     changeInput(){
       this.$forceUpdate();
+    },
+    getRoleList(){
+      getRoleList().then(response => {
+        this.roleList = response.data
+      });
     },
     /** 查询列表 */
     getList() {
@@ -255,7 +289,8 @@ export default {
         delTag: null,
         permission: null,
         sex: null,
-        avatar: null
+        avatar: null,
+        roleIds: []
       }
       this.resetForm('form')
     },
@@ -278,16 +313,18 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
+      this.getRoleList()
       this.open = true
       this.title = '添加用户'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
+      this.getRoleList()
       const id = row.id || this.ids[0]
       getUser(id).then(response => {
         this.form = response.data
-        this.form.password = null
+        this.form.password = undefined
         this.open = true
         this.title = '修改用户'
       })
@@ -315,7 +352,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = [row.id] || this.ids
-      this.$modal.confirm('是否确认删除【用户】编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除数据吗？').then(function() {
         return delUser(ids)
       }).then(() => {
         this.getList()

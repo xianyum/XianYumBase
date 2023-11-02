@@ -18,8 +18,8 @@
               </li>
               <li class="list-group-item">
                 <icon-svg name="people"></icon-svg>
-                用户权限
-                <div class="pull-right">{{ this.selectDictLabel(this.dict.type.sys_user_permission, user.permission) }}</div>
+                用户角色
+                <div class="pull-right">{{ user.groupRoleName }}</div>
               </li>
               <li class="list-group-item">
                 <icon-svg name="phone"></icon-svg>
@@ -67,7 +67,6 @@ import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Profile",
-  dicts: ['sys_user_permission'],
   components: { userAvatar, userInfo, resetPwd },
   data() {
     return {
@@ -81,7 +80,7 @@ export default {
   methods: {
     getUser() {
       getUserProfile().then(response => {
-        this.user = response.user;
+        this.user = response.data;
       });
     }
   }

@@ -59,9 +59,9 @@ export function resetUserPwd(userId, password) {
 }
 
 // 用户状态修改
-export function changeUserStatus(userId, status) {
+export function changeUserStatus(id, status) {
   const data = {
-    userId,
+    id,
     status
   }
   return request({
@@ -74,7 +74,7 @@ export function changeUserStatus(userId, status) {
 // 查询用户个人信息
 export function getUserProfile() {
   return request({
-    url: '/xianyum-system/v1/user/info',
+    url: '/xianyum-system/v1/user/profile',
     method: 'get'
   })
 }
