@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -49,7 +48,7 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public void setExtraUserInfo(LoginUser loginUser) {
-        /** 增加浏览器标识以及登录ip等 */
+        // 增加浏览器标识以及登录ip等
         HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
         UserAgent userAgent = UserAgent.parseUserAgentString(httpServletRequest.getHeader("User-Agent"));
         String ip = IPUtils.getIpAddr(httpServletRequest);
@@ -58,6 +57,13 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setBrowser(userAgent.getBrowser().getName());
         loginUser.setOs(userAgent.getOperatingSystem().getName());
         loginUser.setLoginTime(new Date());
+
+
+        // 设置角色权限
+        Set<String> roles = roleService.getRolePermission(loginUser.getId());
+        loginUser.setRoles(roles);
+        // 设置菜单权限
+        loginUser.setPermissions(menuService.getMenuPermission(loginUser.getId()));
     }
 
     /**
@@ -70,14 +76,6 @@ public class UserTokenServiceImpl implements UserTokenService {
         String token = HttpContextUtils.getRequestToken();
         String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
         LoginUser loginUser = JSONObject.parseObject(userEntityJson, LoginUser.class);
-        if(Objects.nonNull(loginUser)){
-            // 设置角色权限
-            Set<String> roles = roleService.getRolePermission(loginUser.getId());
-            // 设置菜单权限
-            Set<String> permissions = menuService.getMenuPermission(loginUser.getId());
-            loginUser.setRoles(roles);
-            loginUser.setPermissions(permissions);
-        }
         return loginUser;
     }
 
@@ -91,6 +89,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         Date expireTime = new Date(now.getTime() + expire * 1000);
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
+
         redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
         Results result = Results.success().put("token", token).put("expire", expireTime);
         return result;

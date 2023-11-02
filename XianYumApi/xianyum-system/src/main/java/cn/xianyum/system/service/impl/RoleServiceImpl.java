@@ -161,9 +161,14 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Set<String> getRolePermission(String userId) {
-		List<RoleResponse> roleByUserIdList = roleMapper.getRoleByUserId(userId);
+		List<RoleResponse> roleByUserIdList = this.getRoleByUserId(userId);
 		Set<String> collect = roleByUserIdList.stream().map(RoleResponse::getRoleCode).collect(Collectors.toSet());
 		return collect;
+	}
+
+	@Override
+	public List<RoleResponse> getRoleByUserId(String userId) {
+		return roleMapper.getRoleByUserId(userId);
 	}
 
 }

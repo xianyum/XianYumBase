@@ -34,4 +34,6 @@ public interface RoleService{
 	List<RoleResponse> getList(RoleRequest request);
 
 	Set<String> getRolePermission(String userId);
+
+	List<RoleResponse> getRoleByUserId(String userId);
 }
