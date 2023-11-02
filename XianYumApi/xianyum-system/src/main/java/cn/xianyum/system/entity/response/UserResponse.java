@@ -22,8 +22,6 @@ public class UserResponse extends BaseResponse {
 
     private Integer delTag;
 
-    private Integer permission;
-
     private Integer sex;
 
     private String avatar;

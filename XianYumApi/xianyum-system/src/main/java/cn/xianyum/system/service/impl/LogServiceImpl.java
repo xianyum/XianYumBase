@@ -2,7 +2,6 @@ package cn.xianyum.system.service.impl;
 
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -88,7 +87,7 @@ public class LogServiceImpl implements LogService {
         Page<LogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
-        if(!Objects.equals(SecurityUtils.getLoginUser().getPermission(),PermissionEnum.ADMIN.getStatus())){
+        if(!SecurityUtils.isSupperAdminAuth()){
             request.setUsername(SecurityUtils.getLoginUser().getUsername());
         }else{
             if(StringUtil.isEmpty(request.getUsername())){
@@ -147,12 +146,7 @@ public class LogServiceImpl implements LogService {
     @Override
     public List<LogResponse> getVisitCountCharts() {
 
-//        if(SecurityUtils.getLoginUser().getPermission() != PermissionEnum.ADMIN.getStatus()){
-//            return null;
-//        }
-
         Date date = new Date();
-
         List<String> dateStrings = DateUtils.minusDate(date, DateUtils.DATE_PATTERN, 15);
         List<LogResponse> responses = new ArrayList<>();
         dateStrings.forEach(p -> {
@@ -161,9 +155,6 @@ public class LogServiceImpl implements LogService {
             logResponse.setVisitCount(this.getLogCountWithCache(p));
             responses.add(logResponse);
         });
-//        String queryTimeStr = new DateTime(DateUtils.stringToDate(request.getEndTime())).minusDays(15).toString(DateUtils.START_DATE_PATTERN);
-//        request.setQueryTime(queryTimeStr);
-//        List<LogResponse> responses = logMapper.getVisitCountCharts(request);
         Collections.reverse(responses);
         return responses;
     }

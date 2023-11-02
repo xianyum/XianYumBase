@@ -30,7 +30,6 @@ public class UserRequest extends BaseRequest {
     private String userSource;//用户来源
     private Integer delTag;//删除标记
     private String captchaVerification;
-    private Integer permission;
     private Integer sex;
 
     /**

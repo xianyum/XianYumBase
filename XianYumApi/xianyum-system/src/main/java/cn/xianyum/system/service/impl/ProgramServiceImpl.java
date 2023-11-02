@@ -1,7 +1,6 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.SecurityUtils;
@@ -48,7 +47,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         Page<ProgramEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<ProgramEntity> queryWrapper = new QueryWrapper<ProgramEntity>()
-                .eq(PermissionEnum.ADMIN.getStatus() != SecurityUtils.getLoginUser().getPermission(),"create_by",SecurityUtils.getLoginUser().getId())
+                .eq(!SecurityUtils.isSupperAdminAuth(),"create_by",SecurityUtils.getLoginUser().getId())
                 .like(StringUtil.isNotEmpty(request.getContactName()),"contact_name",request.getContactName())
                 .like(StringUtil.isNotEmpty(request.getProgramTitle()),"program_title",request.getProgramTitle())
                 .eq(null != request.getStatus(),"status",request.getStatus())

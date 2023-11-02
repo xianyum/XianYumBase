@@ -52,11 +52,6 @@ public class LoginUser implements UserDetails {
     private Integer delTag;
 
     /**
-     * 权限标识符
-     */
-    private Integer permission;
-
-    /**
      * 性别
      */
     private Integer sex;

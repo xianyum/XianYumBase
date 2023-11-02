@@ -42,8 +42,6 @@ public interface UserService extends IService<UserEntity> {
      */
     LoginUser getUserByQq(String authCode);
 
-    Set<String> getPermissions();
-
     int updateCurrentUser(UserRequest user);
 
     LoginUser getUserSelf();

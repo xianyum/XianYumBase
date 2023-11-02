@@ -5,7 +5,6 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.enums.LoginTypeEnum;
-import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.enums.UserStatusEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -31,10 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -186,7 +183,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 loginUser.setId(qqUserEntity.getUserId());
                 loginUser.setUsername(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
                 loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
-                loginUser.setPermission(PermissionEnum.VISITOR.getStatus());
                 if("女".equals(qqUserEntity.getGender())){
                     loginUser.setSex(1);
                 }else{
@@ -208,18 +204,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
             return loginUser;
         }
         return null;
-    }
-
-    @Override
-    public Set<String> getPermissions() {
-        Set<String> permissions = new HashSet<>();
-        if(SecurityUtils.getLoginUser().getPermission() == PermissionEnum.ADMIN.getStatus()){
-            for(PermissionEnum item : PermissionEnum.values()){
-                permissions.add(item.getName());
-            }
-        }
-        permissions.add(PermissionEnum.getNameByStatus(SecurityUtils.getLoginUser().getPermission()));
-        return permissions;
     }
 
     @Override
@@ -293,7 +277,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
                 loginUser.setUsername(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
                 loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
                 loginUser.setAvatar(aLiUserInfo.getAvatar());
-                loginUser.setPermission(PermissionEnum.VISITOR.getStatus());
             }else{
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())

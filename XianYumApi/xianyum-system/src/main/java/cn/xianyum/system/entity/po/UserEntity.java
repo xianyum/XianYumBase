@@ -28,8 +28,6 @@ public class UserEntity extends BaseEntity {
 
     private Integer delTag;
 
-    private Integer permission;
-
     private Integer sex;
 
     private String avatar;
