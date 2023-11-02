@@ -5,6 +5,9 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 
 /***
  * 获取登录提交的参数
@@ -29,4 +32,10 @@ public class UserRequest extends BaseRequest {
     private String captchaVerification;
     private Integer permission;
     private Integer sex;
+
+    /**
+     * 用户权限
+     */
+    @NotNull(message="用户权限不能为空")
+    private List<Long> roleIds;
 }

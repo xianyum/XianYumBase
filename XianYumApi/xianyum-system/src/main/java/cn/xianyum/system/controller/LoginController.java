@@ -4,7 +4,6 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.LogEntity;
-import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.service.LogService;
 import cn.xianyum.system.service.UserTokenService;
@@ -93,8 +92,7 @@ public class LoginController {
 
         //生成token，并保存到数据库
         LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
-        UserEntity userEntity = BeanUtils.copy(loginUserEntity, UserEntity.class);
-        Results result = userTokenService.createToken(userEntity);
+        Results result = userTokenService.createToken(loginUserEntity);
         return result;
     }
 

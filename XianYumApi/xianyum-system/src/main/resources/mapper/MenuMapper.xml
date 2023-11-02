@@ -27,9 +27,19 @@
 		         m.order_num,
 		         m.create_time
 		from menu m
+		<if test="userId != null and userId != ''">
+			left join role_menu rm on m.menu_id = rm.menu_id
+			left join user_role ur on rm.role_id = ur.role_id
+			left join role ro on ur.role_id = ro.id
+			left join user u on ur.user_id = u.id
+		</if>
 		where
 		    m.menu_type in ('M', 'C')
-		  and m.status = 0
+		  	and m.status = 0
+		<if test="userId != null and userId != ''">
+			and u.id = #{userId}
+			and ro.status = 0
+		</if>
 		order by m.parent_id, m.order_num
 
 	</select>
@@ -65,5 +75,14 @@
 		left join role_menu rm on m.menu_id = rm.menu_id
 		where rm.role_id = #{roleId}
 		order by m.parent_id, m.order_num
+	</select>
+
+	<select id="selectMenuPermsByUserId" resultType="java.lang.String">
+		select distinct m.perms
+		from menu m
+				 left join role_menu rm on m.menu_id = rm.menu_id
+				 left join user_role ur on rm.role_id = ur.role_id
+				 left join role r on r.id = ur.role_id
+		where m.status = '0' and r.status = 0 and m.perms is not null  and ur.user_id = #{userId}
 	</select>
 </mapper>

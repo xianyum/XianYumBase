@@ -2,9 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
@@ -44,9 +44,9 @@ public class AliController {
     public Results login(@RequestBody String requestInfo) {
         JSONObject jsonObject = JSON.parseObject(requestInfo);
         String authCode = jsonObject.getString("authCode");
-        UserEntity user = userService.getUserByAli(authCode);
-        if(user != null){
-            return userTokenService.createToken(user);
+        LoginUser loginUser = userService.getUserByAli(authCode);
+        if(loginUser != null){
+            return userTokenService.createToken(loginUser);
         }else {
             return Results.error();
         }

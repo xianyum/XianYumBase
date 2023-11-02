@@ -4,6 +4,8 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
+import cn.xianyum.system.service.MenuService;
+import cn.xianyum.system.service.RoleService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson2.JSONObject;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class UserTokenServiceImpl implements UserTokenService {
@@ -27,6 +31,12 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private MenuService menuService;
 
     /**
      * 获取当前登录user
@@ -53,25 +63,32 @@ public class UserTokenServiceImpl implements UserTokenService {
     /**
      * 通过httpRequest获取当前登录用户
      *
-     * @param request
      * @return
      */
     @Override
     public LoginUser getLoginUserByHttpRequest() {
         String token = HttpContextUtils.getRequestToken();
         String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
-        return JSONObject.parseObject(userEntityJson, LoginUser.class);
+        LoginUser loginUser = JSONObject.parseObject(userEntityJson, LoginUser.class);
+        if(Objects.nonNull(loginUser)){
+            // 设置角色权限
+            Set<String> roles = roleService.getRolePermission(loginUser.getId());
+            // 设置菜单权限
+            Set<String> permissions = menuService.getMenuPermission(loginUser.getId());
+            loginUser.setRoles(roles);
+            loginUser.setPermissions(permissions);
+        }
+        return loginUser;
     }
 
 
     @Override
-    public Results createToken(UserEntity user) {
+    public Results createToken(LoginUser loginUser) {
         //生成token
         String token = UUIDUtils.UUIDReplace();
         Date now = new Date();
         //过期时间
         Date expireTime = new Date(now.getTime() + expire * 1000);
-        LoginUser loginUser = BeanUtils.copy(user,LoginUser.class);
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
         redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);

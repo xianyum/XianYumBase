@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /***
  * 用户信息
@@ -94,6 +95,16 @@ public class LoginUser implements UserDetails {
      * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
      */
     private int loginType;
+
+    /**
+     * 角色编码
+     */
+    private Set<String> roles;
+
+    /**
+     * 权限标识符
+     */
+    private Set<String> permissions;
 
 
     @Override

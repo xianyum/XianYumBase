@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 角色管理(Role)service层实现
@@ -155,6 +157,13 @@ public class RoleServiceImpl implements RoleService {
 				.orderByAsc(RoleEntity::getRoleSort);
 		List<RoleEntity> roleEntities = roleMapper.selectList(queryWrapper);
 		return BeanUtils.copyList(roleEntities,RoleResponse.class);
+	}
+
+	@Override
+	public Set<String> getRolePermission(String userId) {
+		List<RoleResponse> roleByUserIdList = roleMapper.getRoleByUserId(userId);
+		Set<String> collect = roleByUserIdList.stream().map(RoleResponse::getRoleCode).collect(Collectors.toSet());
+		return collect;
 	}
 
 }

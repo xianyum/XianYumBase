@@ -2,7 +2,6 @@ package cn.xianyum.common.utils;
 
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.enums.PermissionEnum;
 import cn.xianyum.common.exception.SoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -16,7 +15,6 @@ import java.util.Objects;
  */
 public class SecurityUtils {
 
-    private static final String admin = "admin";
 
     /**
      * 获取当前登录用户信息
@@ -37,24 +35,22 @@ public class SecurityUtils {
 
 
     /**
-     * 只能允许admin操作
+     * 只能允许超级管理员操作
      */
     public static void allowAdminAuth(){
-        LoginUser userEntity = getLoginUser();
-        if(userEntity == null ||
-                (!admin.equals(userEntity.getUsername())  || !Objects.equals(userEntity.getPermission(),PermissionEnum.ADMIN.getStatus()))){
+        if(!isSupperAdminAuth()){
             throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }
     }
 
     /**
-     * 判断是不是系统管理员
+     * 判断是不是超级管理员
      * @return
      */
-    public static boolean isAdminAuth(){
+    public static boolean isSupperAdminAuth(){
         LoginUser userEntity = getLoginUser();
-        return (Objects.nonNull(userEntity) && (admin.equals(userEntity.getUsername())
-                || Objects.equals(PermissionEnum.ADMIN.getStatus(),userEntity.getPermission())));
+        return (Objects.nonNull(userEntity) && (Constants.USER_ADMIN_ACCOUNT.equals(userEntity.getUsername())
+                || userEntity.getRoles().stream().anyMatch(item -> Constants.USER_ADMIN_ACCOUNT.equals(item))));
     }
 
 

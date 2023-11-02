@@ -2,8 +2,8 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson2.JSON;
@@ -39,9 +39,9 @@ public class QqController {
     public Results login(@RequestBody String requestInfo) {
         JSONObject jsonObject = JSON.parseObject(requestInfo);
         String authCode = jsonObject.getString("authCode");
-        UserEntity user = userService.getUserByQq(authCode);
-        if(user != null){
-            return userTokenService.createToken(user);
+        LoginUser loginUser = userService.getUserByQq(authCode);
+        if(loginUser != null){
+            return userTokenService.createToken(loginUser);
         }else {
             return Results.error();
         }

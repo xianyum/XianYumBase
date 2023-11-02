@@ -97,7 +97,7 @@ public class PermissionAspect {
      * @param userPermission
      */
     private Object processAllowAdminPermission(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
-        if(SecurityUtils.isAdminAuth()){
+        if(SecurityUtils.isSupperAdminAuth()){
             return pjp.proceed();
         }
         return parseResponseClass(userPermission);

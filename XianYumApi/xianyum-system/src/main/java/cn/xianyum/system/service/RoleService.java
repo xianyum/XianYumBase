@@ -5,6 +5,7 @@ import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.common.entity.base.PageResponse;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 角色管理(Role)service层
@@ -31,4 +32,6 @@ public interface RoleService{
 	Integer authorizationMenu(RoleRequest request);
 
 	List<RoleResponse> getList(RoleRequest request);
+
+	Set<String> getRolePermission(String userId);
 }

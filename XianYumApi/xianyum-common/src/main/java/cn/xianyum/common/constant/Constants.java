@@ -54,5 +54,10 @@ public class Constants {
     public final static String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
 
 
+    /** admin账号 */
+    public static final String USER_ADMIN_ACCOUNT = "admin";
+
+
+    /** SQL WHERE 1=1  */
     public final static String SQL_EQUALS_DEFAULT = " 1 = 1 ";
 }

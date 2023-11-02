@@ -35,11 +35,12 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuResponse> getUserMenuList() {
         String userId = SecurityUtils.getLoginUser().getId();
-
+        if(SecurityUtils.isSupperAdminAuth()){
+            userId = null;
+        }
         //用户菜单列表
         List<MenuEntity> menus = menuMapper.selectMenuTreeByUserId(userId);
         List<MenuEntity> menuChildList = this.getChildPerms(menus, 0);
-
         return this.buildMenus(menuChildList);
     }
 
@@ -233,6 +234,17 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<Long> selectMenuListByRoleId(Long roleId) {
         return menuMapper.selectMenuListByRoleId(roleId);
+    }
+
+    @Override
+    public Set<String> getMenuPermission(String userId) {
+        Set<String> resultPermissions = new HashSet<>();
+        if(SecurityUtils.isSupperAdminAuth()){
+            resultPermissions.add("*:*:*");
+        }else{
+            resultPermissions = this.menuMapper.selectMenuPermsByUserId(userId);
+        }
+        return resultPermissions;
     }
 
 

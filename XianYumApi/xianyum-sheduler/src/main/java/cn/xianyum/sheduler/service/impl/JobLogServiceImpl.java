@@ -29,7 +29,7 @@ public class JobLogServiceImpl implements JobLogService {
 	public PageResponse<JobLogResponse> getPage(JobLogRequest request) {
 		Page<JobLogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		LambdaQueryWrapper<JobLogEntity> queryWrapper = Wrappers.<JobLogEntity>lambdaQuery()
-				.eq(!SecurityUtils.isAdminAuth(), JobLogEntity::getCreateBy,SecurityUtils.getLoginUser().getId())
+				.eq(!SecurityUtils.isSupperAdminAuth(), JobLogEntity::getCreateBy,SecurityUtils.getLoginUser().getId())
 				.eq(null != request.getStatus(),JobLogEntity::getStatus,request.getStatus())
 				.eq(null != request.getJobId(),JobLogEntity::getJobId,request.getJobId())
 				.like(StringUtil.isNotEmpty(request.getJobName()),JobLogEntity::getJobName,request.getJobName())

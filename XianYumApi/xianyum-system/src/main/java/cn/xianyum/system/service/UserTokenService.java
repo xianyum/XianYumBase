@@ -12,7 +12,7 @@ public interface UserTokenService {
      * @param user
      * @return
      */
-    Results createToken(UserEntity user);
+    Results createToken(LoginUser user);
 
     /**
      * 退出，修改token值

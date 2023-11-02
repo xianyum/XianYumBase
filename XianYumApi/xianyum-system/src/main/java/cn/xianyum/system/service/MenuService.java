@@ -7,6 +7,7 @@ import cn.xianyum.system.entity.response.MenuTreeSelect;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhangwei
@@ -57,4 +58,6 @@ public interface MenuService{
     Map<String, Object> treeSelectByRoleId(Long roleId);
 
     List<Long>  selectMenuListByRoleId(Long roleId);
+
+    Set<String> getMenuPermission(String userId);
 }

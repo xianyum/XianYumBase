@@ -9,6 +9,8 @@ import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 import java.util.Set;
 
 public interface UserService extends IService<UserEntity> {
@@ -32,13 +34,13 @@ public interface UserService extends IService<UserEntity> {
      * @param authCode
      * @return
      */
-    UserEntity getUserByAli(String authCode);
+    LoginUser getUserByAli(String authCode);
     /**
      * 通过QQ authCode获取系统用户信息
      * @param authCode
      * @return
      */
-    UserEntity getUserByQq(String authCode);
+    LoginUser getUserByQq(String authCode);
 
     Set<String> getPermissions();
 
@@ -47,4 +49,11 @@ public interface UserService extends IService<UserEntity> {
     LoginUser getUserSelf();
 
     String upload(MultipartFile file);
+
+    /**
+     * 更新用户权限
+     * @param id
+     * @param roleIds
+     */
+    void changeUserRole(String id, List<Long> roleIds);
 }

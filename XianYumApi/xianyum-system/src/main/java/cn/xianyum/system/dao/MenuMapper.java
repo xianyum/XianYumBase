@@ -5,8 +5,10 @@ import cn.xianyum.system.entity.request.MenuRequest;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author zhangwei
@@ -16,7 +18,7 @@ import java.util.List;
 @Mapper
 public interface MenuMapper extends BaseMapper<MenuEntity> {
 
-    List<MenuEntity> selectMenuTreeByUserId(String userId);
+    List<MenuEntity> selectMenuTreeByUserId(@RequestParam("userId") String userId);
 
     List<MenuEntity> selectMenuList(MenuRequest menuRequest);
 
@@ -32,4 +34,6 @@ public interface MenuMapper extends BaseMapper<MenuEntity> {
     int hasChildByMenuId(Long menuId);
 
     List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId);
+
+    Set<String> selectMenuPermsByUserId(@Param("userId") String userId);
 }
