@@ -11,8 +11,6 @@ import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
-import cn.xianyum.system.service.MenuService;
-import cn.xianyum.system.service.RoleService;
 import cn.xianyum.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Set;
 
 /***
  * 用户相关
@@ -32,12 +29,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private MenuService menuService;
 
     /**
      * 所有用户列表
@@ -56,13 +47,10 @@ public class UserController {
     @ApiOperation(value = "获取登录的用户信息", httpMethod = "GET")
     public Results info(){
         LoginUser userEntity = userService.getUserSelf();
-        // 角色集合
-        Set<String> roles = roleService.getRolePermission(userEntity.getId());
-        Set<String> permissions = menuService.getMenuPermission(userEntity.getId());
         return Results.success()
                 .put("user", userEntity)
-                .put("roles", roles)
-                .put("permissions", permissions);
+                .put("roles", userEntity.getRoles())
+                .put("permissions", userEntity.getPermissions());
     }
 
     /**
