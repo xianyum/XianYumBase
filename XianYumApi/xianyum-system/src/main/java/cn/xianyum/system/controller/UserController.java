@@ -48,9 +48,7 @@ public class UserController {
     public Results info(){
         LoginUser userEntity = userService.getUserSelf();
         return Results.success()
-                .put("user", userEntity)
-                .put("roles", userEntity.getRoles())
-                .put("permissions", userEntity.getPermissions());
+                .put("user", userEntity);
     }
 
     /**
