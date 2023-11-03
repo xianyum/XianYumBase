@@ -1,10 +1,8 @@
 package cn.xianyum.framwork.config;
 
-import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.framwork.security.filter.AuthenticationTokenFilter;
 import cn.xianyum.framwork.security.handler.AuthenticationEntryPointImpl;
 import cn.xianyum.framwork.security.handler.LogoutSuccessHandlerImpl;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -12,21 +10,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author zhangwei
@@ -59,8 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationTokenFilter authenticationTokenFilter;
 
 
+    /**
+     * 允许匿名访问的地址
+     */
     @Autowired
-    private RequestMappingHandlerMapping requestMappingHandlerMapping;
+    private PermitAllUrlProperties permitAllUrlConfig;
+
 
     /**
      * 跨域过滤器
@@ -76,8 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception
-    {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
@@ -97,8 +91,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * authenticated       |   用户登录后可访问
      */
     @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception
-    {
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+
+        // 注解标记允许匿名访问的url
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = httpSecurity.authorizeRequests();
+        permitAllUrlConfig.getUrls().forEach(url -> registry.antMatchers(url).permitAll());
+
         httpSecurity
                 // CSRF禁用，因为不使用session
                 .csrf().disable()
@@ -108,37 +106,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // 过滤请求
                 .authorizeRequests()
-                // 对于登录login 验证码captchaImage 允许匿名访问
-                // 使用 permitAll() 方法所有人都能访问，包括带上 token 访问
-//                .antMatchers("/login",
-//                        "/captcha/*",
-//                        "/systemConstant/getPublicConstant/*",
-//                        "/v1/messageMonitor/getById",
-//                        "/p1/**").permitAll()
-//                .antMatchers(
-//                        HttpMethod.GET,
-//                        "/",
-//                        "/*.html",
-//                        "/**/*.html",
-//                        "/**/*.css",
-//                        "/**/*.js",
-//                        "/profile/**"
-//                ).permitAll()
-//                // 使用 anonymous() 匿名访问，带上token访问失败
-//                .antMatchers("/swagger-ui.html").anonymous()
-//                .antMatchers("/swagger-resources/**").anonymous()
-//                .antMatchers("/webjars/**").anonymous()
-//                .antMatchers("/*/api-docs").anonymous()
-//                .antMatchers("/druid/**").anonymous()
-//                .antMatchers("/plumelog/**").anonymous()
-//                .antMatchers("/getIpInfo").anonymous()
-//                .antMatchers("/oss/getImage").anonymous()
-//                .antMatchers("/ali/login").anonymous()
-//                .antMatchers("/qq/login").anonymous()
-//                .antMatchers("/getPhoneCode").anonymous()
-//                .antMatchers("/gitee/push").anonymous()
-//                .antMatchers("/actuator/**").anonymous()
-                // 除上面外的所有请求全部需要鉴权认证
+                .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**","/oss/getImage").permitAll()
+                .antMatchers(
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/*/api-docs",
+                        "/actuator/**",
+                        "/druid/**",
+                        "/plumelog/**",
+                        "/login",
+                        "/captcha/*"
+                ).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .headers().frameOptions().disable();
@@ -150,57 +128,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.addFilterBefore(corsFilter, LogoutFilter.class);
     }
 
-
-    @Override
-    public void configure(WebSecurity web){
-        WebSecurity.IgnoredRequestConfigurer ignoring = web.ignoring();
-        ignoring.antMatchers(
-                "/",
-                "/*.html",
-                "/**/*.html",
-                "/**/*.css",
-                "/**/*.js",
-                "/swagger-resources/**",
-                "/webjars/**",
-                "/*/api-docs",
-                "/actuator/**",
-                "/druid/**",
-                "/plumelog/**",
-                "/login",
-                "/captcha/*",
-                "/oss/getImage"
-        );
-        this.ignorePermissionByAnnotation(ignoring, this.requestMappingHandlerMapping);
-    }
-
-    /**
-     * 从注解上忽略权限
-     * @param ignoring
-     * @param requestMappingHandlerMapping
-     */
-    private void ignorePermissionByAnnotation(WebSecurity.IgnoredRequestConfigurer ignoring, RequestMappingHandlerMapping requestMappingHandlerMapping) {
-        Map<RequestMappingInfo, HandlerMethod> handlerMethods = requestMappingHandlerMapping.getHandlerMethods();
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
-            HandlerMethod handlerMethod = entry.getValue();
-            if (handlerMethod.hasMethodAnnotation(Permission.class)) {
-                Permission permissionAnnotation = handlerMethod.getMethodAnnotation(Permission.class);
-                if(permissionAnnotation.publicApi()){
-                    Set<String> patternValues = entry.getKey().getPatternValues();
-                    Set<RequestMethod> methods = entry.getKey().getMethodsCondition().getMethods();
-                    if (CollectionUtils.isEmpty(methods)) {
-                        // RequestMapping没有指定method
-                        ignoring.antMatchers(patternValues.toArray(new String[0]));
-                    } else {
-                        for (RequestMethod method : methods) {
-                            // RequestMapping指定了method
-                            ignoring.antMatchers(HttpMethod.resolve(method.name()), patternValues.toArray(new String[0]));
-                        }
-                    }
-                }
-            }
-        }
-
-    }
 
 
     /**
@@ -216,8 +143,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * 身份认证接口
      */
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception
-    {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 }

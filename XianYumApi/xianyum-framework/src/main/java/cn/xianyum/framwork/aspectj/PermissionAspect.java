@@ -6,12 +6,17 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.xianyum.framwork.security.context.PermissionStandardEvaluationContext;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +33,8 @@ import java.util.List;
 @Component
 public class PermissionAspect {
 
-
+    @Autowired
+    private PermissionStandardEvaluationContext permissionStandardEvaluationContext;
 
     /** 定义切点Pointcut */
     @Pointcut("@annotation(cn.xianyum.common.annotation.Permission)")
@@ -45,6 +51,10 @@ public class PermissionAspect {
         if(userPermission.publicApi()){
             return pjp.proceed();
         }
+//        ExpressionParser parser = new SpelExpressionParser();
+//        Expression expression = parser.parseExpression(userPermission.authorize());
+//        Boolean value = expression.getValue(permissionStandardEvaluationContext,Boolean.class);
+//        log.info("获取的授权信息：{},value={}",userPermission.authorize(),value);
         PermissionStrategy strategy = userPermission.strategy();
         switch (strategy) {
             // 放行所有权限，不做任何拦截

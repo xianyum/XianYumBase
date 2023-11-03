@@ -10,8 +10,9 @@ import java.lang.annotation.*;
  * @author zhangwei
  * @date 2020/11/5 21:14
  */
-@Target( ElementType.METHOD )
-@Retention( RetentionPolicy.RUNTIME )
+@Target({ ElementType.METHOD, ElementType.TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
 @Documented
 public @interface Permission {
 
@@ -29,5 +30,7 @@ public @interface Permission {
 
     /** 是否公开接口 */
     boolean publicApi() default false;
+
+    String authorize() default "false";
 
 }
