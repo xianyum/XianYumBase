@@ -57,7 +57,6 @@ public class LoginController {
      */
     @PostMapping("/login")
     @ApiOperation(value = "登录系统")
-    @Permission(publicApi = true)
     public Results login(@RequestBody UserRequest userRequest) {
         long beginTime = System.currentTimeMillis();
 
