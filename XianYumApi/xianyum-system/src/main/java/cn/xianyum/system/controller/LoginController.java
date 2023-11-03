@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,7 +74,7 @@ public class LoginController {
         try {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
-
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
             long time = System.currentTimeMillis() - beginTime;
             if (e instanceof BadCredentialsException) {

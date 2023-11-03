@@ -1,7 +1,10 @@
 package cn.xianyum.system.service.impl;
 
+import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.RoleMenuMapper;
 import cn.xianyum.system.entity.po.RoleMenuEntity;
@@ -169,6 +172,17 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public List<RoleResponse> getRoleByUserId(String userId) {
 		return roleMapper.getRoleByUserId(userId);
+	}
+
+	@Override
+	public void setLoginUserRoleService(LoginUser loginUser) {
+		List<RoleResponse> roleByUserIdList = this.getRoleByUserId(loginUser.getId());
+		if(CollectionUtils.isNotEmpty(roleByUserIdList)){
+			Set<String> roles = roleByUserIdList.stream().map(RoleResponse::getRoleCode).collect(Collectors.toSet());
+			loginUser.setRoles(roles);
+			// todo 默认取第一条，后面在考虑多角色多数据权限情况
+			loginUser.setDataScopeEnum(DataScopeEnum.getDataScope(roleByUserIdList.get(0).getDataScope()));
+		}
 	}
 
 }

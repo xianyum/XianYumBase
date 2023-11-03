@@ -22,15 +22,12 @@ public @interface Permission {
     /** 权限校验返回response */
     Class<?> responseClass() default SoException.class;
 
-    /**
-     * 主表别名，用于筛选主表.create_by 数据
-     * @return
-     */
-    String userAlias() default "";
+
 
     /** 是否公开接口 */
     boolean publicApi() default false;
 
+    /** 权限授权 */
     String authorize() default "false";
 
 }

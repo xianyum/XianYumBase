@@ -57,11 +57,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setBrowser(userAgent.getBrowser().getName());
         loginUser.setOs(userAgent.getOperatingSystem().getName());
         loginUser.setLoginTime(new Date());
-
-
-        // 设置角色权限
-        Set<String> roles = roleService.getRolePermission(loginUser.getId());
-        loginUser.setRoles(roles);
+        this.roleService.setLoginUserRoleService(loginUser);
         // 设置菜单权限
         loginUser.setPermissions(menuService.getMenuPermission(loginUser.getId()));
     }

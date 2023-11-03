@@ -1,5 +1,6 @@
 package cn.xianyum.common.entity;
 
+import cn.xianyum.common.enums.DataScopeEnum;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -101,6 +102,10 @@ public class LoginUser implements UserDetails {
      */
     private Set<String> permissions;
 
+    /**
+     * 角色对应的数据权限标识符
+     */
+    private DataScopeEnum dataScopeEnum;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

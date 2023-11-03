@@ -1,5 +1,6 @@
 package cn.xianyum.system.service;
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.system.entity.request.RoleRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -36,4 +37,6 @@ public interface RoleService{
 	Set<String> getRolePermission(String userId);
 
 	List<RoleResponse> getRoleByUserId(String userId);
+
+    void setLoginUserRoleService(LoginUser loginUser);
 }
