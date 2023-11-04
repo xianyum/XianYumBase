@@ -2,7 +2,6 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
@@ -33,7 +32,7 @@ public class MessageSendRelationController {
      */
 	@ApiOperation(value = "发送配置关联表分页查询数据")
 	@GetMapping(value = "/getPage")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
+	@Permission("@ps.hasPerm('message:send-config:page')")
 	public Results getPage(MessageSendRelationRequest request) {
 		PageResponse<MessageSendRelationResponse> response = messageSendRelationService.getPage(request);
         return Results.page(response);
@@ -45,7 +44,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表删除数据")
 	@DeleteMapping(value = "/delete/{id}")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission("@ps.hasPerm('message:send-config:query')")
 	public Results delete(@PathVariable String id) {
 		messageSendRelationService.deleteById(id);
 		return Results.success();
@@ -57,7 +56,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表保存数据")
 	@PostMapping(value = "/save")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission("@ps.hasPerm('message:send-config:save')")
 	public Results save(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.save(request);
@@ -73,7 +72,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表修改数据")
 	@PutMapping(value = "/update")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission("@ps.hasPerm('message:send-config:update')")
 	public Results update(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.update(request);
@@ -90,7 +89,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "发送配置关联表根据ID查询数据")
 	@GetMapping(value = "/getById/{id}")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission("@ps.hasPerm('message:send-config:query')")
 	public Results getById(@PathVariable String id) {
 		MessageSendRelationResponse response = messageSendRelationService.getById(id);
 		return Results.success(response);
@@ -102,7 +101,7 @@ public class MessageSendRelationController {
 	 */
 	@ApiOperation(value = "根据账户类型查询账户配置")
 	@PostMapping(value = "/getMessageConfigByAccountType")
-	@Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+	@Permission("@ps.hasPerm('message:send-config:query')")
 	public Results getMessageConfigByAccountType(@RequestBody MessageSendRelationRequest request) {
 
 		JSONArray response = messageSendRelationService.getMessageConfigByAccountType(request.getMessageConfigId(),request.getMessageAccountType());

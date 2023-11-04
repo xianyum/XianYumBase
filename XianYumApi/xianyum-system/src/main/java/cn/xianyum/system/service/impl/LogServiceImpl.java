@@ -87,13 +87,6 @@ public class LogServiceImpl implements LogService {
         Page<LogEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         //查询总记录数
         page.setSearchCount(true);
-        if(!SecurityUtils.isSupperAdminAuth()){
-            request.setUsername(SecurityUtils.getLoginUser().getUsername());
-        }else{
-            if(StringUtil.isEmpty(request.getUsername())){
-                request.setUsername(null);
-            }
-        }
         List<LogEntity> list = logMapper.queryAll(request, page);
         return PageResponse.of(page.getTotal(),list,LogResponse.class,(response,item)->{
             response.setTime(String.valueOf(item.getTime()));

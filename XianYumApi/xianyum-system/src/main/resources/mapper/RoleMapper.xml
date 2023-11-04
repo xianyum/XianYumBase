@@ -8,7 +8,8 @@
         SELECT
             r.id,
             r.role_name,
-            r.role_code
+            r.role_code,
+            r.data_scope
         FROM
             user_role ur
             INNER JOIN role r on r.id = ur.role_id

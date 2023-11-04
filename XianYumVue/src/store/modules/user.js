@@ -61,10 +61,11 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
           const user = res.user
+          console.log("获取的数据"+user)
           const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/avatar.png") : user.avatar;
-          if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', res.roles)
-            commit('SET_PERMISSIONS', res.permissions)
+          if (user.roles && user.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+            commit('SET_ROLES', user.roles)
+            commit('SET_PERMISSIONS', user.permissions)
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }

@@ -2,7 +2,6 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigWechatRequest;
@@ -37,7 +36,7 @@ public class MessageConfigWechatController {
      */
 	@ApiOperation(value = "账户配置wechat分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
+    @Permission("@ps.hasPerm('message:wechat:page')")
 	public Results getPage(MessageConfigWechatRequest request) {
         PageResponse<MessageConfigWechatResponse> response = messageConfigWechatService.getPage(request);
         return Results.page(response);
@@ -49,7 +48,7 @@ public class MessageConfigWechatController {
      */
     @ApiOperation(value = "账户配置wechat根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:wechat:query')")
     public Results getById(@PathVariable String id) {
         MessageConfigWechatResponse response = messageConfigWechatService.getById(id);
         return Results.success(response);
@@ -61,7 +60,7 @@ public class MessageConfigWechatController {
      */
     @ApiOperation(value = "账户配置wechat保存数据")
     @PostMapping(value = "/save")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:wechat:save')")
     public Results save(@RequestBody MessageConfigWechatRequest request) {
 
 		Integer count = messageConfigWechatService.save(request);
@@ -77,7 +76,7 @@ public class MessageConfigWechatController {
      */
     @ApiOperation(value = "账户配置wechat修改数据")
     @PutMapping(value = "/update")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:wechat:update')")
     public Results update(@RequestBody MessageConfigWechatRequest request) {
 
 		Integer count = messageConfigWechatService.update(request);
@@ -93,7 +92,7 @@ public class MessageConfigWechatController {
      */
     @ApiOperation(value = "账户配置wechat删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:wechat:delete')")
     public Results delete(@RequestBody String[] ids) {
 
 		messageConfigWechatService.deleteById(ids);
@@ -106,7 +105,7 @@ public class MessageConfigWechatController {
      */
     @ApiOperation(value = "企业微信账户测试发送")
     @PutMapping(value = "/sendWechat")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:wechat:test-send')")
     public Results sendWechat(@RequestBody MessageSenderEntity request) {
         try {
             wechatSender.sendWechat(request);

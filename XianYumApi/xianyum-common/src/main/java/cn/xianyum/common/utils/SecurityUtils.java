@@ -2,8 +2,6 @@ package cn.xianyum.common.utils;
 
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.exception.SoException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Objects;
@@ -31,16 +29,6 @@ public class SecurityUtils {
             return (LoginUser)principal;
         }
         return null;
-    }
-
-
-    /**
-     * 只能允许超级管理员操作
-     */
-    public static void allowAdminAuth(){
-        if(!isSupperAdminAuth()){
-            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
-        }
     }
 
     /**

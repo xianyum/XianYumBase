@@ -2,9 +2,9 @@ package cn.xianyum.framwork.aspectj;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.Constants;
-import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
+import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.handler.PermissionThreadLocal;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.framwork.security.context.PermissionStandardEvaluationContext;
 import com.alibaba.fastjson2.JSONObject;
@@ -20,9 +20,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Objects;
 
 /**
  * @author zhangwei
@@ -51,26 +49,61 @@ public class PermissionAspect {
         if(userPermission.publicApi()){
             return pjp.proceed();
         }
-//        ExpressionParser parser = new SpelExpressionParser();
-//        Expression expression = parser.parseExpression(userPermission.authorize());
-//        Boolean value = expression.getValue(permissionStandardEvaluationContext,Boolean.class);
-//        log.info("获取的授权信息：{},value={}",userPermission.authorize(),value);
-        PermissionStrategy strategy = userPermission.strategy();
-        switch (strategy) {
-            // 放行所有权限，不做任何拦截
-            case ALLOW_ALL:
+        // 权限拦截
+        this.checkPermission(userPermission);
+        // 数据范围筛选
+        this.filterDataScope(userPermission);
+
+        try {
+            Object result = pjp.proceed();
+            return result;
+        }finally {
+            PermissionThreadLocal.remove();
+        }
+    }
+
+    private void filterDataScope(Permission userPermission) {
+        DataScopeEnum dataScopeEnum = SecurityUtils.getLoginUser().getDataScopeEnum();
+        if(Objects.isNull(dataScopeEnum)){
+            return;
+        }
+        switch (dataScopeEnum){
+            case SELF:
+                PermissionThreadLocal.set();
                 break;
-            // 仅允许管理员身份访问
-            case ALLOW_ADMIN:
-                return this.processAllowAdminPermission(pjp,userPermission);
-                // 仅允许客户端模式进行访问
-            case ALLOW_CLIENT:
-                return this.processAllowClientPermission(pjp,userPermission);
+            case VISITOR:
+                this.processVisitorDataScope(userPermission);
+                break;
             default:
+                break;
         }
 
-        Object result = pjp.proceed();
-        return result;
+    }
+
+    /**
+     * 处理游客数据权限
+     */
+    private void processVisitorDataScope(Permission userPermission) {
+        //拦截post，put，delete请求不得操作
+        String lowerCase = HttpContextUtils.getHttpServletRequest().getMethod().toLowerCase();
+        if (Constants.HTTP_POST_METHOD.equals(lowerCase) || Constants.HTTP_PUT_METHOD.equals(lowerCase)
+                || Constants.HTTP_DELETE_METHOD.equals(lowerCase)) {
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
+        }
+        if(!userPermission.ignoreDataScope()){
+            PermissionThreadLocal.set();
+        }
+    }
+
+    private void checkPermission(Permission userPermission) {
+        // 权限校验
+        ExpressionParser parser = new SpelExpressionParser();
+        Expression expression = parser.parseExpression(userPermission.value());
+        Boolean value = expression.getValue(permissionStandardEvaluationContext,Boolean.class);
+        log.info("校验用户的授权信息：{},value={}",userPermission.value(),value);
+        if(Boolean.FALSE.equals(value)){
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
+        }
     }
 
     /**
@@ -83,55 +116,19 @@ public class PermissionAspect {
         String clientId = httpServletRequest.getParameter(clientIdField);
         String clientSecret = httpServletRequest.getParameter(clientSecretField);
         if(StringUtil.isBlank(clientId) || StringUtil.isBlank(clientSecret)){
-            return parseResponseClass(userPermission);
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }
         String permissionClientInfo = SystemConstantUtils.getValueByKey("permission_client");
         if(StringUtil.isBlank(permissionClientInfo)){
-            return parseResponseClass(userPermission);
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }
         JSONObject permissionClientObj = JSONObject.parseObject(permissionClientInfo);
 
         String permissionClientId = permissionClientObj.getString(clientIdField);
         String permissionClientSecret = permissionClientObj.getString(clientSecretField);
         if(!(clientId.equals(permissionClientId) && clientSecret.equals(permissionClientSecret))){
-            return parseResponseClass(userPermission);
+            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }
         return pjp.proceed();
-    }
-
-
-    /**
-     * 只允许admin/管理员权限访问策略
-     *
-     * @param pjp
-     * @param userPermission
-     */
-    private Object processAllowAdminPermission(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
-        if(SecurityUtils.isSupperAdminAuth()){
-            return pjp.proceed();
-        }
-        return parseResponseClass(userPermission);
-    }
-
-
-    /**
-     * 解析注解上responseClass，按照类型进行拦截返回
-     * @param userPermission
-     * @return
-     * @throws Exception
-     */
-    private Object parseResponseClass(Permission userPermission) throws Exception {
-        Class<?> rClass = userPermission.responseClass();
-        if(rClass == List.class){
-            return Results.success(new ArrayList<>());
-        }else if(rClass == String.class){
-            return Results.success();
-        }else if(rClass == PageResponse.class){
-            return Results.page(PageResponse.EMPTY_PAGE());
-        }else if(rClass == SoException.class){
-            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
-        }else{
-            return Results.success(rClass.getDeclaredConstructor().newInstance());
-        }
     }
 }

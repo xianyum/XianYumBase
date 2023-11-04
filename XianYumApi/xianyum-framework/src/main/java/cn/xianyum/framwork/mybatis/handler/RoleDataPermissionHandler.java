@@ -4,7 +4,9 @@ import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.base.BaseEntity;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.PermissionThreadLocal;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.system.common.utils.SecretUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Alias;
@@ -30,7 +32,7 @@ public class RoleDataPermissionHandler implements CustomerDataPermissionHandler{
 
     @Override
     public Expression getSqlSegmentWithPermission(PlainSelect plainSelect, String whereStatement) {
-        if(!PermissionThreadLocal.get()){
+        if(!PermissionThreadLocal.get() || Objects.isNull(SecurityUtils.getLoginUser())){
             return null;
         }
         try {
@@ -49,7 +51,7 @@ public class RoleDataPermissionHandler implements CustomerDataPermissionHandler{
             }
             leftColumn.append(BaseEntity.CREATE_BY_COLUMN);
             selfEqualsTo.setLeftExpression(new Column(leftColumn.toString()));
-            selfEqualsTo.setRightExpression(new StringValue("1"));
+            selfEqualsTo.setRightExpression(new StringValue(SecurityUtils.getLoginUser().getId()));
             return new AndExpression(where, selfEqualsTo);
         } catch (Exception e) {
             log.error("数据权限插件解析异常. ",e);

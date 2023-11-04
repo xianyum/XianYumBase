@@ -3,7 +3,6 @@ package cn.xianyum.proxy.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
@@ -47,7 +46,7 @@ public class ProxyController {
      */
 	@ApiOperation(value = "客户端管理分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass=PageResponse.class)
+    @Permission("@ps.hasPerm('xianyu:proxy:page')")
 	public Results getPage(ProxyRequest request) {
 		PageResponse<ProxyResponse> response = proxyService.getPage(request);
         return Results.page(response);
@@ -59,8 +58,8 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
+    @Permission("@ps.hasPerm('xianyu:proxy:query')")
     public Results getById(@PathVariable String id) {
-
         ProxyResponse response = proxyService.getById(id);
         return Results.success(response);
     }
@@ -71,6 +70,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理保存数据")
     @PostMapping(value = "/save")
+    @Permission("@ps.hasPerm('xianyu:proxy:save')")
     public Results save(@RequestBody ProxyRequest request) {
 
 		Integer count = proxyService.save(request);
@@ -86,6 +86,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理修改数据")
     @PutMapping(value = "/update")
+    @Permission("@ps.hasPerm('xianyu:proxy:update')")
     public Results update(@RequestBody ProxyRequest request) {
 
 		Integer count = proxyService.update(request);
@@ -101,6 +102,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理删除数据")
     @DeleteMapping(value = "/delete")
+    @Permission("@ps.hasPerm('xianyu:proxy:delete')")
     public Results delete(@RequestBody String[] ids) {
 		proxyService.deleteById(ids);
 	    return Results.success();
@@ -124,7 +126,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "刷入系统")
     @PutMapping(value = "/flushProxy")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('xianyu:proxy:flush')")
     public Results flushProxy() {
         proxyService.flushProxy();
         return Results.success();
@@ -162,6 +164,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "生成客户端配置信息")
     @PostMapping(value = "/downloadConfig")
+    @Permission("@ps.hasPerm('xianyu:proxy:download')")
     public void downloadConfig(@RequestParam String id, HttpServletResponse response) {
         PrintWriter writer = null;
         try {
@@ -182,7 +185,7 @@ public class ProxyController {
 
     @ApiOperation(value = "重启java应用刷入写入量和读取量")
     @GetMapping(value = "/flushWriteAndReadBytes")
-    @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)
+    @Permission(publicApi = true)
     @SysLog(value = "重启java应用刷入写入量和读取量")
     public Results flushWriteAndReadBytes() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>(2);

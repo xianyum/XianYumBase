@@ -2,7 +2,6 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageTypeConfigRequest;
 import cn.xianyum.message.entity.response.MessageTypeConfigResponse;
@@ -33,7 +32,7 @@ public class MessageTypeConfigController {
      */
 	@ApiOperation(value = "消息类型配置表分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
+    @Permission("@ps.hasPerm('message:type-config:page')")
 	public Results getPage(MessageTypeConfigRequest request) {
 
         PageResponse<MessageTypeConfigResponse> response = messageTypeConfigService.getPage(request);
@@ -46,7 +45,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:type-config:query')")
     public Results getById(@PathVariable String id) {
 
         MessageTypeConfigResponse response = messageTypeConfigService.getById(id);
@@ -59,7 +58,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表保存数据")
     @PostMapping(value = "/save")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:type-config:save')")
     public Results save(@RequestBody MessageTypeConfigRequest request) {
 
 		Integer count = messageTypeConfigService.save(request);
@@ -75,7 +74,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表修改数据")
     @PutMapping(value = "/update")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:type-config:update')")
     public Results update(@RequestBody MessageTypeConfigRequest request) {
 
 		Integer count = messageTypeConfigService.update(request);
@@ -91,7 +90,7 @@ public class MessageTypeConfigController {
      */
     @ApiOperation(value = "消息类型配置表删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:type-config:delete')")
     public Results delete(@RequestBody String[] ids) {
 
 		messageTypeConfigService.deleteById(ids);

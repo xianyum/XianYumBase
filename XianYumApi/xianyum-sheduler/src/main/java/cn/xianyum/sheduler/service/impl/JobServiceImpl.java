@@ -60,7 +60,6 @@ public class JobServiceImpl implements JobService {
 		LambdaQueryWrapper<JobEntity> queryWrapper = Wrappers.<JobEntity>lambdaQuery()
 				.like(StringUtil.isNotEmpty(request.getJobName()),JobEntity::getJobName,request.getJobName())
 				.like(StringUtil.isNotEmpty(request.getJobHandler()),JobEntity::getJobHandler,request.getJobHandler())
-				.eq(!SecurityUtils.isSupperAdminAuth(),JobEntity::getCreateBy,SecurityUtils.getLoginUser().getId())
 				.orderByDesc(JobEntity::getCreateTime);
 		IPage<JobEntity> pageResult = jobMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,JobResponse.class);

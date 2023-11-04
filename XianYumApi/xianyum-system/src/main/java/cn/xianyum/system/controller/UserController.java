@@ -4,7 +4,6 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
@@ -31,10 +30,11 @@ public class UserController {
     private UserService userService;
 
     /**
-     * 所有用户列表
+     * 分页获取用户列表
      */
     @GetMapping("/getPage")
-    @ApiOperation(value = "获取用户列表")
+    @ApiOperation(value = "分页获取用户列表")
+    @Permission("@ps.hasPerm('system:user:page')")
     public Results getPage(UserRequest user){
         PageResponse<UserResponse> list = userService.getPage(user);
         return Results.page(list);
@@ -47,8 +47,7 @@ public class UserController {
     @ApiOperation(value = "获取登录的用户信息", httpMethod = "GET")
     public Results info(){
         LoginUser userEntity = userService.getUserSelf();
-        return Results.success()
-                .put("user", userEntity);
+        return Results.success().put("user", userEntity);
     }
 
     /**
@@ -58,8 +57,8 @@ public class UserController {
      */
     @DeleteMapping("/delete")
     @SysLog(value = "删除用户")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
     @ApiOperation(value = "删除用户")
+    @Permission("@ps.hasPerm('system:user:delete')")
     public Results delete(@RequestBody String[] userIds){
         try {
             userService.deleteById(userIds);
@@ -74,6 +73,7 @@ public class UserController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation(value = "根据Id查询用户")
+    @Permission("@ps.hasPerm('sys:user:query')")
     public Results selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
         return Results.success(userResponse);
@@ -84,8 +84,8 @@ public class UserController {
      */
     @PostMapping("/save")
     @SysLog(value = "新增用户")
-    @ApiOperation(value = "保存用户", httpMethod = "POST")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @ApiOperation(value = "保存用户")
+    @Permission("@ps.hasPerm('system:user:save')")
     public Results save(@RequestBody UserRequest user){
         try {
             ValidatorUtils.validateEntity(user);
@@ -106,7 +106,7 @@ public class UserController {
     @PutMapping("/update")
     @SysLog(value = "修改用户")
     @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('system:user:update')")
     public Results update(@RequestBody UserRequest user){
         try {
             ValidatorUtils.validateEntity(user);
@@ -135,7 +135,7 @@ public class UserController {
 
     @PutMapping("/changeStatus")
     @ApiOperation(value = "修改用户状态")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('system:user:update')")
     public Results updatePassword(@RequestBody UserRequest request){
         int count = userService.changeStatus(request);
         return Results.success(count);

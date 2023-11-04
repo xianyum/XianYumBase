@@ -2,7 +2,6 @@ package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
 import cn.xianyum.proxy.entity.response.ProxyLogResponse;
@@ -33,7 +32,7 @@ public class ProxyLogController {
      */
 	@ApiOperation(value = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass=PageResponse.class)
+    @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
 	public Results getPage(ProxyLogRequest request) {
         PageResponse<ProxyLogResponse> response = proxyLogService.getPage(request);
         return Results.page(response);
@@ -45,6 +44,7 @@ public class ProxyLogController {
      */
     @ApiOperation(value = "远程代理日志根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
+    @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
     public Results getById(@PathVariable Long id) {
         ProxyLogResponse response = proxyLogService.getById(id);
         return Results.success(response);
@@ -74,7 +74,7 @@ public class ProxyLogController {
      */
     @ApiOperation(value = "远程代理日志删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('xianyu:proxy-log:delete')")
     public Results delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
 	    return Results.success();

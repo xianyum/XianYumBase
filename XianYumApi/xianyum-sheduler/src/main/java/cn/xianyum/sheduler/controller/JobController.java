@@ -2,7 +2,6 @@ package cn.xianyum.sheduler.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.sheduler.entity.request.JobRequest;
 import cn.xianyum.sheduler.entity.response.JobResponse;
@@ -33,6 +32,7 @@ public class JobController {
      */
 	@ApiOperation(value = "定时任务调度表分页查询数据")
 	@GetMapping(value = "/getPage")
+    @Permission("@ps.hasPerm('job:mange:page')")
 	public Results getPage(JobRequest request) {
         PageResponse<JobResponse> response = jobService.getPage(request);
         return Results.page(response);
@@ -44,7 +44,7 @@ public class JobController {
      */
     @ApiOperation(value = "定时任务调度表根据ID查询数据")
     @GetMapping(value = "/getById/{jobId}")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('job:mange:query')")
     public Results getById(@PathVariable Long jobId){
         JobResponse response = jobService.getById(jobId);
         return Results.success(response);
@@ -56,7 +56,7 @@ public class JobController {
      */
     @ApiOperation(value = "定时任务调度表保存数据")
     @PostMapping(value = "/save")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('job:mange:save')")
     public Results save(@RequestBody JobRequest request) {
 
         try {
@@ -76,7 +76,7 @@ public class JobController {
      */
     @ApiOperation(value = "定时任务调度表修改数据")
     @PutMapping(value = "/update")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('job:mange:update')")
     public Results update(@RequestBody JobRequest request) {
 
         try {
@@ -96,7 +96,7 @@ public class JobController {
      */
     @ApiOperation(value = "定时任务调度表删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('job:mange:delete')")
     public Results delete(@RequestBody Long[] ids) {
         try {
             jobService.deleteById(ids);
@@ -113,7 +113,7 @@ public class JobController {
      */
     @ApiOperation(value = "更新任务状态")
     @PutMapping(value = "/changeStatus")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('job:mange:update')")
     public Results changeStatus(@RequestBody JobRequest request) {
         try {
             jobService.changeStatus(request);
@@ -130,7 +130,7 @@ public class JobController {
      */
     @ApiOperation(value = "立即执行一次")
     @PutMapping(value = "/runOnce")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('job:mange:once')")
     public Results runOnce(@RequestBody JobRequest request) {
         try {
             jobService.runOnce(request);

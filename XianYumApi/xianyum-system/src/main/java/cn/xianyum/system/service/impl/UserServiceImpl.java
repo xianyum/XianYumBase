@@ -87,9 +87,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(String[] userIds) {
-
-        SecurityUtils.allowAdminAuth();
-
         UserEntity userEntity = new UserEntity();
         userEntity.setDelTag(UserStatusEnum.BAN.getStatus());
         for(String id : userIds){

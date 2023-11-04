@@ -57,7 +57,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public int update(SystemConstantRequest request) {
-        SecurityUtils.allowAdminAuth();
         SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
         bean.setConstantKey(null);
         int count = systemConstantMapper.updateById(bean);
@@ -136,7 +135,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public void deleteByKey(String key) {
-        SecurityUtils.allowAdminAuth();
         if(StringUtil.isEmpty(key)){
             throw new SoException("系统常量键不能为空");
         }
@@ -164,7 +162,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public SystemConstantResponse getById(String id) {
-        SecurityUtils.allowAdminAuth();
         SystemConstantEntity result = systemConstantMapper.selectById(id);
         SystemConstantResponse response = BeanUtils.copy(result, SystemConstantResponse.class);
         return response;
@@ -173,7 +170,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public Integer save(SystemConstantRequest request) {
-        SecurityUtils.allowAdminAuth();
         if(StringUtil.isBlank(request.getConstantValue())){
             throw new SoException("系统常量值不能为空");
         }

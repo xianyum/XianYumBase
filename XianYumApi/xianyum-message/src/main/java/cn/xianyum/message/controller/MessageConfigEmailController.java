@@ -2,7 +2,6 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigEmailRequest;
@@ -37,7 +36,7 @@ public class MessageConfigEmailController {
      */
 	@ApiOperation(value = "账户配置email分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN,responseClass = PageResponse.class)
+    @Permission("@ps.hasPerm('message:email:page')")
 	public Results getPage(MessageConfigEmailRequest request) {
         PageResponse<MessageConfigEmailResponse> response = messageConfigEmailService.getPage(request);
         return Results.page(response);
@@ -49,7 +48,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:email:query')")
     public Results getById(@PathVariable String id) {
 
         MessageConfigEmailResponse response = messageConfigEmailService.getById(id);
@@ -62,7 +61,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email保存数据")
     @PostMapping(value = "/save")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:email:save')")
     public Results save(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.save(request);
@@ -78,7 +77,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email修改数据")
     @PutMapping(value = "/update")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:email:update')")
     public Results update(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.update(request);
@@ -94,7 +93,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "账户配置email删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:email:delete')")
     public Results delete(@RequestBody String[] ids) {
 
 		messageConfigEmailService.deleteById(ids);
@@ -107,7 +106,7 @@ public class MessageConfigEmailController {
      */
     @ApiOperation(value = "邮箱账户测试发送")
     @PutMapping(value = "/sendEmail")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:email:test-send')")
     public Results sendEmail(@RequestBody MessageSenderEntity request) {
         try {
             emailSender.sendEmail(request);

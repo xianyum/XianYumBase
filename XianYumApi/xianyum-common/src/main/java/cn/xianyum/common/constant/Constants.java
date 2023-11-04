@@ -60,4 +60,10 @@ public class Constants {
 
     /** SQL WHERE 1=1  */
     public final static String SQL_EQUALS_DEFAULT = " 1 = 1 ";
+
+    /** http请求方法 */
+    public final static String HTTP_GET_METHOD = "get";
+    public final static String HTTP_POST_METHOD = "post";
+    public final static String HTTP_PUT_METHOD = "put";
+    public final static String HTTP_DELETE_METHOD = "delete";
 }

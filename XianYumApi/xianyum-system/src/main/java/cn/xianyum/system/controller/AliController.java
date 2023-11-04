@@ -3,7 +3,6 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
@@ -55,7 +54,7 @@ public class AliController {
     @PostMapping("/yunXiao/flowCallBack")
     @SysLog(value = "阿里云-云效-流水线执行结果回调")
     @ApiOperation(value = "阿里云-云效-流水线执行结果回调")
-    @Permission(strategy = PermissionStrategy.ALLOW_CLIENT,publicApi = true)
+    @Permission(publicApi = true)
     public Results flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
         return Results.success();

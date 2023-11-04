@@ -50,10 +50,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
-
-		if(!SecurityUtils.isSupperAdminAuth()){
-			return PageResponse.EMPTY_PAGE();
-		}
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>()
 				.like(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
@@ -92,8 +88,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public ProxyResponse getById(String id) {
-		SecurityUtils.allowAdminAuth();
-
 		if(StringUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
@@ -105,9 +99,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public Integer save(ProxyRequest request) {
-
-		SecurityUtils.allowAdminAuth();
-
 		ProxyEntity bean = BeanUtils.copy(request,ProxyEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		bean.setLoginCount(0);
@@ -117,9 +108,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public Integer update(ProxyRequest request) {
-
-		SecurityUtils.allowAdminAuth();
-
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
@@ -134,9 +122,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public void deleteById(String[] ids) {
-
-		SecurityUtils.allowAdminAuth();
-
 		if(null == ids || ids.length == 0){
 			throw new SoException("id不能为空");
 		}
@@ -329,9 +314,6 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public String downloadConfig(String id) {
-
-		SecurityUtils.allowAdminAuth();
-
 		ProxyEntity proxyEntity = proxyMapper.selectById(id);
 		if(proxyEntity == null){
 			throw new SoException("客户端授权信息不存在！");

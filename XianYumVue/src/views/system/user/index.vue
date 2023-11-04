@@ -31,6 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['system:user:save']"
         >新增
         </el-button>
       </el-col>
@@ -42,6 +43,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
+          v-hasPermi="['system:user:update']"
         >修改
         </el-button>
       </el-col>
@@ -53,6 +55,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
+          v-hasPermi="['system:user:delete']"
         >删除
         </el-button>
       </el-col>
@@ -89,6 +92,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:user:update']"
           >修改
           </el-button>
           <el-button
@@ -96,6 +100,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['system:user:delete']"
           >删除
           </el-button>
         </template>

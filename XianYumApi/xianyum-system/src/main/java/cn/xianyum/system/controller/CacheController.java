@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,8 @@ public class CacheController {
     private RedisTemplate<String, String> redisTemplate;
 
     @GetMapping("/getInfo")
-    @ApiOperation(value = "查询Redis缓存基本信息", httpMethod = "GET")
+    @ApiOperation(value = "查询Redis缓存基本信息")
+    @Permission("@ps.hasPerm('monitor:cache:list')")
     public Results getInfo() {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));

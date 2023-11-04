@@ -2,7 +2,6 @@ package cn.xianyum.message.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.PermissionStrategy;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
 import cn.xianyum.message.entity.response.MessageMonitorResponse;
@@ -32,6 +31,7 @@ public class MessageMonitorController {
      */
 	@ApiOperation(value = "消息监控分页查询数据")
 	@GetMapping(value = "/getPage")
+    @Permission("@ps.hasPerm('message:monitor:page')")
 	public Results getPage(MessageMonitorRequest request) {
 
         PageResponse<MessageMonitorResponse> response = messageMonitorService.getPage(request);
@@ -50,37 +50,6 @@ public class MessageMonitorController {
         return Results.success(response);
     }
 
-    /**
-     * 消息监控保存数据
-	 *
-     */
-    @ApiOperation(value = "消息监控保存数据")
-    @PostMapping(value = "/save")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Results save(@RequestBody MessageMonitorRequest request) {
-
-		Integer count = messageMonitorService.save(request);
-		if(count>0){
-			return Results.success();
-		}
-		return Results.error("保存失败");
-    }
-
-    /**
-     * 消息监控修改数据
-	 *
-     */
-    @ApiOperation(value = "消息监控修改数据")
-    @PutMapping(value = "/update")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
-    public Results update(@RequestBody MessageMonitorRequest request) {
-
-		Integer count = messageMonitorService.update(request);
-		if(count>0){
-			return Results.success();
-		}
-		return Results.error("修改失败");
-    }
 
 	/**
      * 消息监控删除数据
@@ -88,7 +57,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "消息监控删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:monitor:delete')")
     public Results delete(@RequestBody String[] ids) {
 		messageMonitorService.deleteById(ids);
 	    return Results.success();
@@ -101,7 +70,7 @@ public class MessageMonitorController {
      */
     @ApiOperation(value = "清空监控删除数据")
     @DeleteMapping(value = "/truncate")
-    @Permission(strategy = PermissionStrategy.ALLOW_ADMIN)
+    @Permission("@ps.hasPerm('message:monitor:delete')")
     public Results truncate() {
         messageMonitorService.truncate();
         return Results.success();
