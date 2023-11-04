@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 /***
  * 用户相关
@@ -73,9 +75,21 @@ public class UserController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation(value = "根据Id查询用户")
-    @Permission(value = "@ps.hasPerm('sys:user:query')",ignoreDataScope = true)
+    @Permission(value = "@ps.hasPerm('system:user:query')",ignoreDataScope = true)
     public Results selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
+        return Results.success(userResponse);
+    }
+
+
+    /**
+     * 根据Id查询用户
+     */
+    @GetMapping("/getByRoleId/{roleId}")
+    @ApiOperation(value = "根据角色ID查询用户")
+    @Permission(value = "@ps.hasPerm('system:role:user')")
+    public Results getByRoleId(@PathVariable String roleId){
+        List<UserResponse> userResponse = userService.getByRoleId(roleId);
         return Results.success(userResponse);
     }
 

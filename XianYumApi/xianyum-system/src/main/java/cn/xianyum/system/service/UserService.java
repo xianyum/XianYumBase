@@ -59,4 +59,17 @@ public interface UserService{
     UserResponse getUserProfile();
 
     int changeStatus(UserRequest request);
+
+    /**
+     * 根据角色Id获取用户
+     * @param roleId
+     * @return
+     */
+    List<UserResponse> getByRoleId(String roleId);
+
+    /**
+     * 初始化默认用户
+     * @param loginUser
+     */
+    void initDefaultUser(LoginUser loginUser);
 }

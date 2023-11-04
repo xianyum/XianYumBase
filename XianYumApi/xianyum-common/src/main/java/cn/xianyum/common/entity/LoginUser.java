@@ -23,6 +23,11 @@ public class LoginUser implements UserDetails {
     private String username;
 
     /**
+     * 用户名称
+     */
+    private String nickName;
+
+    /**
      * 密码
      */
     private String password;

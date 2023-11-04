@@ -65,4 +65,9 @@ public class UserResponse extends BaseResponse {
      * 用户权限
      */
     private List<Long> roleIds;
+
+    /**
+     * 用户名称
+     */
+    private String nickName;
 }

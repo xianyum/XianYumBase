@@ -1,5 +1,8 @@
 package cn.xianyum.common.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
  * @author zhangwei
@@ -20,7 +23,10 @@ public enum LoginTypeEnum {
         return loginType;
     }
 
-    public void setLoginType(Integer loginType) {
-        this.loginType = loginType;
+    public static LoginTypeEnum getLoginType(Integer loginType) {
+        Optional<LoginTypeEnum> first = Arrays.stream(LoginTypeEnum.values())
+                .filter(e -> e.getLoginType().equals(loginType))
+                .findFirst();
+        return first.isPresent()?first.get():null;
     }
 }

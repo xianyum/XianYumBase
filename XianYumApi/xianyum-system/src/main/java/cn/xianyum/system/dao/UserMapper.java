@@ -17,4 +17,6 @@ public interface UserMapper extends BaseMapper<UserEntity> {
     List<UserEntity> getList(UserRequest request);
 
     int updateUser(UserRequest user);
+
+    List<UserResponse> getByRoleId(@Param("roleId") String roleId);
 }

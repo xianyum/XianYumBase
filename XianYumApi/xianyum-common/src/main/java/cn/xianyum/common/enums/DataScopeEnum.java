@@ -25,11 +25,14 @@ public enum DataScopeEnum {
         return dataScope;
     }
 
+    public String getDesc() {
+        return desc;
+    }
+
     public static DataScopeEnum getDataScope(String dataScope) {
         Optional<DataScopeEnum> first = Arrays.stream(DataScopeEnum.values())
                 .filter(e -> e.getDataScope().equals(dataScope))
                 .findFirst();
         return first.isPresent()?first.get():null;
-
     }
 }

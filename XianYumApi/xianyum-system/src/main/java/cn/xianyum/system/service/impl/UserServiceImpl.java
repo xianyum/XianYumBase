@@ -3,6 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.config.XianYumConfig;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.enums.DeleteTagEnum;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.UserStatusEnum;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private ThirdUserMapper aliUserMapper;
+    private ThirdUserMapper thirdUserMapper;
 
     @Autowired
     private AliNetService aliNetService;
@@ -51,13 +53,16 @@ public class UserServiceImpl implements UserService {
     private QqNetService qqNetService;
 
     @Autowired
-    private SystemConstantService systemConstantService;
+    private MenuService menuService;
 
     @Autowired
     private UserTokenService userTokenService;
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private UserRoleMapper userRoleMapper;
@@ -170,42 +175,6 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    @Override
-    public LoginUser getUserByQq(String authCode) {
-        if(StringUtil.isBlank(authCode)){
-            return null;
-        }
-        String accessToken = qqNetService.getAccessToken(authCode);
-        QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
-        if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
-            LoginUser loginUser = new LoginUser();
-            ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
-            if(aliUserEntity == null ){
-                loginUser.setId(qqUserEntity.getUserId());
-                loginUser.setUsername(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
-                loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
-                if("女".equals(qqUserEntity.getGender())){
-                    loginUser.setSex(1);
-                }else{
-                    loginUser.setSex(0);
-                }
-                // 现在qq返回的是http连接，实际https也是支持的，这里替换下
-                if(StringUtil.isNotEmpty(qqUserEntity.getFigureurl_qq_2())){
-                    loginUser.setAvatar(qqUserEntity.getFigureurl_qq_2().replace("http","https"));
-                }else{
-                    loginUser.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
-                }
-            }else{
-                UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
-                        .eq("id",aliUserEntity.getUserId())
-                        .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
-                loginUser = BeanUtils.copy(userEntity,LoginUser.class);
-            }
-            loginUser.setLoginType(LoginTypeEnum.QQ.getLoginType());
-            return loginUser;
-        }
-        return null;
-    }
 
     @Override
     public int updateCurrentUser(UserRequest user) {
@@ -218,12 +187,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginUser getUserSelf() {
         LoginUser u = userTokenService.getUserSelf();
-        if(null != u && StringUtil.isEmpty(u.getAvatar())){
-            SystemConstantEntity systemConstantEntity = systemConstantService.getByKey("avatar_url");
-            if(systemConstantEntity != null){
-                u.setAvatar(systemConstantEntity.getConstantValue());
-            }
+        if(Objects.nonNull(u)){
+            u.setPermissions(this.menuService.getMenuPermission(u.getId()));
+            this.roleService.setLoginUserRoleService(u);
         }
+        userTokenService.refreshUser();
         return u;
     }
 
@@ -273,12 +241,6 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userMapper.selectById(userId);
         UserResponse useResponse = BeanUtils.copy(userEntity, UserResponse.class);
         if(null != useResponse){
-            if(StringUtil.isEmpty(useResponse.getAvatar())){
-                SystemConstantEntity systemConstantEntity = systemConstantService.getByKey("avatar_url");
-                if(systemConstantEntity != null){
-                    useResponse.setAvatar(systemConstantEntity.getConstantValue());
-                }
-            }
             String groupRoleName = roleMapper.getRoleByUserId(userId).stream().map(RoleResponse::getRoleName).collect(Collectors.joining(","));
             useResponse.setGroupRoleName(groupRoleName);
         }
@@ -293,6 +255,64 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateById(userEntity);
     }
 
+    /**
+     * 根据角色Id获取用户
+     *
+     * @param roleId
+     * @return
+     */
+    @Override
+    public List<UserResponse> getByRoleId(String roleId) {
+        List<UserResponse> userResponseList = userMapper.getByRoleId(roleId);
+        return userResponseList;
+    }
+
+    /**
+     * 初始化默认用户
+     *
+     * @param loginUser
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void initDefaultUser(LoginUser loginUser) {
+        String thirdUserId = loginUser.getId();
+        String userId = UUIDUtils.UUIDReplace();
+        UserEntity userEntity = BeanUtils.copy(loginUser, UserEntity.class);
+        userEntity.setId(userId);
+        userEntity.setDelTag(DeleteTagEnum.Delete.getDeleteTag());
+        int count = userMapper.insert(userEntity);
+        if(count > 0){
+            // 关联用户角色（默认游客角色）
+            LambdaQueryWrapper<RoleEntity> queryWrapper = Wrappers.<RoleEntity>lambdaQuery()
+                    .eq(RoleEntity::getDataScope, DataScopeEnum.VISITOR.getDataScope());
+            Optional<RoleEntity> first = roleMapper.selectList(queryWrapper).stream().findFirst();
+            if(!first.isPresent()){
+                throw new SoException("设置默认用户没有此角色对应的数据权限："+DataScopeEnum.VISITOR.getDesc());
+            }
+            RoleEntity roleEntity = first.get();
+            UserRoleEntity userRoleEntity = new UserRoleEntity();
+            userRoleEntity.setUserId(userId);
+            userRoleEntity.setRoleId(roleEntity.getId());
+            userRoleMapper.insert(userRoleEntity);
+
+            // 关联三方
+            ThirdUserEntity thirdUserEntity = new ThirdUserEntity();
+            thirdUserEntity.setUserId(userId);
+            LoginTypeEnum loginTypeEnum = LoginTypeEnum.getLoginType(loginUser.getLoginType());
+            switch (loginTypeEnum){
+                case QQ:
+                    thirdUserEntity.setQqUserId(thirdUserId);
+                    break;
+                case ZHI_FU_BAO:
+                    thirdUserEntity.setAliUserId(thirdUserId);
+                    break;
+                default:
+                    break;
+            }
+            thirdUserMapper.insert(thirdUserEntity);
+        }
+    }
+
     @Override
     public LoginUser getUserByAli(String authCode) {
         if(StringUtil.isBlank(authCode)){
@@ -302,20 +322,65 @@ public class UserServiceImpl implements UserService {
         AlipayUserInfoShareResponse aLiUserInfo = aliNetService.getALiUserInfo(accessToken);
         if(aLiUserInfo.isSuccess()){
             LoginUser loginUser = new LoginUser();
-            ThirdUserEntity aliUserEntity = aliUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
+            ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
                 loginUser.setId(aLiUserInfo.getUserId());
-                loginUser.setUsername(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
+                loginUser.setUsername(UUIDUtils.getCodeChar(5));
+                loginUser.setNickName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
                 loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
                 loginUser.setAvatar(aLiUserInfo.getAvatar());
+                loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
+                loginUser.setSex(0);
+                this.initDefaultUser(loginUser);
             }else{
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
                         .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+                loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
             }
-            loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
+            return loginUser;
+        }
+        return null;
+    }
+
+
+    @Override
+    public LoginUser getUserByQq(String authCode) {
+        if(StringUtil.isBlank(authCode)){
+            return null;
+        }
+        String accessToken = qqNetService.getAccessToken(authCode);
+        QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
+        if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
+            LoginUser loginUser = new LoginUser();
+            ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
+            if(aliUserEntity == null ){
+                loginUser.setId(qqUserEntity.getUserId());
+                loginUser.setUsername(UUIDUtils.getCodeChar(5));
+                loginUser.setNickName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
+                loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
+                if("女".equals(qqUserEntity.getGender())){
+                    loginUser.setSex(1);
+                }else{
+                    loginUser.setSex(0);
+                }
+                // 现在qq返回的是http连接，实际https也是支持的，这里替换下
+                if(StringUtil.isNotEmpty(qqUserEntity.getFigureurl_qq_2())){
+                    loginUser.setAvatar(qqUserEntity.getFigureurl_qq_2().replace("http","https"));
+                }else{
+                    loginUser.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
+                }
+                loginUser.setLoginType(LoginTypeEnum.QQ.getLoginType());
+                this.initDefaultUser(loginUser);
+            }else{
+                UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
+                        .eq("id",aliUserEntity.getUserId())
+                        .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
+                loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+                loginUser.setLoginType(LoginTypeEnum.QQ.getLoginType());
+            }
             return loginUser;
         }
         return null;

@@ -6,6 +6,7 @@
     <sql id="userColumns">
         a.id,
         a.username,
+        a.nick_name,
         a.email,
         a.mobile,
         a.status,
@@ -54,10 +55,31 @@
             <if test="mobile != null and mobile != ''">
                 mobile = #{mobile},
             </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name = #{nickName},
+            </if>
             <if test="sex != null">
                 sex = #{sex}
             </if>
         </trim>
         WHERE id = #{id}
     </update>
+
+
+    <select id="getByRoleId" resultType="cn.xianyum.system.entity.response.UserResponse">
+        SELECT
+            u.username,
+            u.nick_name
+        FROM
+            `user` u
+        WHERE
+            u.id IN (
+                SELECT
+                    user_id
+                FROM
+                    user_role
+                WHERE
+                    role_id = #{roleId}
+            )
+    </select>
 </mapper>

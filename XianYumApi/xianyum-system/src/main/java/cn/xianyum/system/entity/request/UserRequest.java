@@ -37,4 +37,10 @@ public class UserRequest extends BaseRequest {
      */
     @NotNull(message="用户权限不能为空")
     private List<Long> roleIds;
+
+    /**
+     * 用户名称
+     */
+    @NotBlank(message="用户名称不能为空")
+    private String nickName;
 }
