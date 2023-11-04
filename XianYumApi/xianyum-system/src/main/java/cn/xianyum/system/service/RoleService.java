@@ -39,4 +39,6 @@ public interface RoleService{
 	List<RoleResponse> getRoleByUserId(String userId);
 
     void setLoginUserRoleService(LoginUser loginUser);
+
+	void checkRoleIsDelete(Long id);
 }

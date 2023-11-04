@@ -32,7 +32,7 @@ public class DictTypeController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取字典类型列表")
-    @Permission("@ps.hasPerm('system:dict:page')")
+    @Permission(value = "@ps.hasPerm('system:dict:page')",ignoreDataScope = true)
     public Results list(DictTypeRequest request){
         PageResponse<DictTypeResponse> list = dictTypeService.selectDictTypeList(request);
         return Results.page(list);
@@ -44,7 +44,7 @@ public class DictTypeController {
      */
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "查询字典类型详细")
-    @Permission("@ps.hasPerm('system:dict:query')")
+    @Permission(value = "@ps.hasPerm('system:dict:query')",ignoreDataScope = true)
     public Results getInfo(@PathVariable Long id) {
         return Results.success(dictTypeService.selectDictTypeById(id));
     }

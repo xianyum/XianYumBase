@@ -32,7 +32,7 @@ public class LogController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "获取用户列表")
-    @Permission("@ps.hasPerm('monitor:operlog:page')")
+    @Permission(value = "@ps.hasPerm('monitor:operlog:page')",ignoreDataScope = true)
     public Results getPage(LogRequest request){
         PageResponse<LogResponse> list = logService.getPage(request);
         return Results.page(list);

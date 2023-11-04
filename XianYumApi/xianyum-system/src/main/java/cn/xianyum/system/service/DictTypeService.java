@@ -15,7 +15,7 @@ import java.util.List;
 public interface DictTypeService {
     PageResponse<DictTypeResponse> selectDictTypeList(DictTypeRequest request);
 
-    DictTypeEntity selectDictTypeById(Long id);
+    DictTypeResponse selectDictTypeById(Long id);
 
     int save(DictTypeEntity dictTypeEntity);
 

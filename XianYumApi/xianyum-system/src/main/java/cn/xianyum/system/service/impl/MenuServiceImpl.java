@@ -141,7 +141,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public MenuEntity selectMenuById(Long menuId) {
-        return menuMapper.selectById(menuId);
+        MenuEntity menuEntity = menuMapper.selectById(menuId);
+        return menuEntity;
     }
 
     @Override

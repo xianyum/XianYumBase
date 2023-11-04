@@ -52,7 +52,7 @@ public class Constants {
 
     /** 没有权限提示语 */
     public final static String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
-
+    public final static String CHECK_SIGN_MESSAGE = "check sign error.";
 
     /** admin账号 */
     public static final String USER_ADMIN_ACCOUNT = "admin";
@@ -66,4 +66,6 @@ public class Constants {
     public final static String HTTP_POST_METHOD = "post";
     public final static String HTTP_PUT_METHOD = "put";
     public final static String HTTP_DELETE_METHOD = "delete";
+
+    public final static String MD5_DEFAULT_SECRET = "EcBK0BUARh";
 }

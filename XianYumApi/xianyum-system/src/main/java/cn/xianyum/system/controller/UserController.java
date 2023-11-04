@@ -34,7 +34,7 @@ public class UserController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "分页获取用户列表")
-    @Permission("@ps.hasPerm('system:user:page')")
+    @Permission(value = "@ps.hasPerm('system:user:page')",ignoreDataScope = true)
     public Results getPage(UserRequest user){
         PageResponse<UserResponse> list = userService.getPage(user);
         return Results.page(list);
@@ -73,7 +73,7 @@ public class UserController {
      */
     @GetMapping("/getById/{id}")
     @ApiOperation(value = "根据Id查询用户")
-    @Permission("@ps.hasPerm('sys:user:query')")
+    @Permission(value = "@ps.hasPerm('sys:user:query')",ignoreDataScope = true)
     public Results selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
         return Results.success(userResponse);

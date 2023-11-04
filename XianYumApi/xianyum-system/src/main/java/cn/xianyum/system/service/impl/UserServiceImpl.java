@@ -86,12 +86,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(String[] userIds) {
         UserEntity userEntity = new UserEntity();
         userEntity.setDelTag(UserStatusEnum.BAN.getStatus());
         for(String id : userIds){
             userEntity.setId(id);
             userMapper.updateById(userEntity);
+            // 删除用户的同时，解绑角色
+            LambdaQueryWrapper<UserRoleEntity> queryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
+                    .eq(UserRoleEntity::getUserId,id);
+            userRoleMapper.delete(queryWrapper);
         }
     }
 
@@ -103,7 +108,7 @@ public class UserServiceImpl implements UserService {
             List<RoleResponse> roleByUserId = roleMapper.getRoleByUserId(userEntity.getId());
             userResponse.setRoleIds(roleByUserId.stream().map(RoleResponse::getId).collect(Collectors.toList()));
         }
-        return userResponse;
+        return Objects.isNull(userResponse)?new UserResponse():userResponse;
     }
 
     @Override

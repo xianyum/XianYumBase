@@ -43,7 +43,7 @@ public class DictDataController {
 
     @GetMapping("/getPage")
     @ApiOperation(value = "分页查询字典数据信息")
-    @Permission("@ps.hasPerm('system:dict:page')")
+    @Permission(value = "@ps.hasPerm('system:dict:page')",ignoreDataScope = true)
     public Results list(DictDataRequest dictData) {
         PageResponse<DictDataResponse> list = dictDataService.selectDictDataList(dictData);
         return Results.page(list);
@@ -51,7 +51,7 @@ public class DictDataController {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "查询单条信息")
-    @Permission("@ps.hasPerm('system:dict:query')")
+    @Permission(value = "@ps.hasPerm('system:dict:query')",ignoreDataScope = true)
     public Results getInfo(@PathVariable Long id) {
         DictDataResponse dictDataResponse = dictDataService.getInfo(id);
         return Results.success(dictDataResponse);

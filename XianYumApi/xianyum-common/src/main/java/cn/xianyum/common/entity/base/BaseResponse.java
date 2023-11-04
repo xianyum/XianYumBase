@@ -22,4 +22,8 @@ public class BaseResponse {
     private String updateByName;
 
     private Date updateTime;
+
+    /** 参数签名：防止篡改数据 */
+    public String signature;
+
 }

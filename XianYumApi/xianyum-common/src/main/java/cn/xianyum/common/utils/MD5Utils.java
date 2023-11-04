@@ -1,6 +1,9 @@
 package cn.xianyum.common.utils;
 
+import cn.xianyum.common.exception.SoException;
+
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,27 +12,12 @@ import java.security.NoSuchAlgorithmException;
  * @date 2019/4/8 17:22
  */
 public class MD5Utils {
-    public static String stringToMD5(String plainText) {
-        byte[] secretBytes = null;
-        try {
-            secretBytes = MessageDigest.getInstance("md5").digest(
-                    plainText.getBytes());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("没有这个md5算法！");
-        }
-        String md5code = new BigInteger(1, secretBytes).toString(16);
-        for (int i = 0; i < 32 - md5code.length(); i++) {
-            md5code = "0" + md5code;
-        }
-        String str= md5code.substring(0,md5code.length()-5);
-        return str;
-    }
 
-    public static String getMd5(String plainText) {
-        byte[] secretBytes = null;
+    public static String getMd5(String content) {
+        byte[] secretBytes;
         try {
             secretBytes = MessageDigest.getInstance("md5").digest(
-                    plainText.getBytes());
+                    content.getBytes());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("没有这个md5算法！");
         }
@@ -37,22 +25,23 @@ public class MD5Utils {
         for (int i = 0; i < 32 - md5code.length(); i++) {
             md5code = "0" + md5code;
         }
-        md5code = md5code.substring(8,24).toUpperCase();
+        md5code = md5code.substring(8, 24).toUpperCase();
         return md5code;
     }
 
-    public static String getPassword(String code,int count){
-        String md5 =code;
-        for(int i=0;i<count;i++){
-            md5 = getMd5(md5);
+
+    public static String getMd5(String content,String secret) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] md5 = md.digest(content.concat(secret).getBytes(StandardCharsets.UTF_8));
+            // 将处理后的字节转成 16 进制，得到最终 32 个字符
+            StringBuilder sb = new StringBuilder();
+            for (byte b : md5) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        }catch (Exception e){
+            throw new SoException("sign md5 error.");
         }
-        return md5;
-    }
-    /**
-     * 生成密码
-     * @param args
-     */
-    public static void main(String[] args) {
-        System.out.println(stringToMD5("admin"));
     }
 }

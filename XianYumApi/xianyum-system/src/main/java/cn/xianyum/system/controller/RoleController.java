@@ -35,7 +35,7 @@ public class RoleController{
      */
 	@ApiOperation(value = "分页查询角色管理")
     @GetMapping(value = "/getPage")
-    @Permission("@ps.hasPerm('system:role:page')")
+    @Permission(value = "@ps.hasPerm('system:role:page')",ignoreDataScope = true)
     public Results getPage(RoleRequest request) {
 		PageResponse<RoleResponse> responsePage = roleService.getPage(request);
         return Results.page(responsePage);
@@ -56,7 +56,7 @@ public class RoleController{
      */
 	@ApiOperation(value = "根据ID查询角色管理")
     @GetMapping("getById/{id}")
-    @Permission("@ps.hasPerm('system:role:query')")
+    @Permission(value = "@ps.hasPerm('system:role:query')",ignoreDataScope = true)
     public Results selectOne(@PathVariable Long id) {
         return Results.success(roleService.getById(id));
     }

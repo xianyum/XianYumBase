@@ -520,7 +520,7 @@ export default {
       // const roleMenu = this.getRoleMenuTreeselect(roleId);
       getRole(roleId).then(response => {
         this.form = response.data;
-        if (this.form) {
+        if (this.form && this.form.status) {
           this.form.status = this.form.status.toString()
         }
         this.open = true;

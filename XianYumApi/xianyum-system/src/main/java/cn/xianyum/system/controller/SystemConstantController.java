@@ -38,7 +38,7 @@ public class SystemConstantController {
 
     @GetMapping("/getPrivateConstant/{key}")
     @ApiOperation(value = "获取私有系统内部参数")
-    @Permission("@ps.hasPerm('system:config:query')")
+    @Permission("@ps.hasPerm('system:config:private')")
     public Results getPrivateConstant(@PathVariable String key) {
         SystemConstantEntity response = systemConstantService.getPrivateConstant(key);
         return Results.success(response);

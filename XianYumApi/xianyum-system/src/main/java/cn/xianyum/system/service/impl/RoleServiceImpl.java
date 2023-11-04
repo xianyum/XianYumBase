@@ -7,7 +7,9 @@ import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.RoleMenuMapper;
+import cn.xianyum.system.dao.UserRoleMapper;
 import cn.xianyum.system.entity.po.RoleMenuEntity;
+import cn.xianyum.system.entity.po.UserRoleEntity;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,6 +50,9 @@ public class RoleServiceImpl implements RoleService {
 	@Autowired
 	private RoleMenuMapper roleMenuMapper;
 
+	@Autowired
+	private UserRoleMapper userRoleMapper;
+
 	@Override
 	public PageResponse<RoleResponse> getPage(RoleRequest request) {
 		LambdaQueryWrapper<RoleEntity> queryWrapper = Wrappers.<RoleEntity>lambdaQuery()
@@ -66,7 +71,7 @@ public class RoleServiceImpl implements RoleService {
 	public RoleResponse getById(Long id) {
 		RoleEntity result = roleMapper.selectById(id);
 		RoleResponse response = BeanUtils.copy(result, RoleResponse.class);
-		return response;
+		return Objects.isNull(response)?new RoleResponse():response;
 	}
 
 
@@ -98,7 +103,11 @@ public class RoleServiceImpl implements RoleService {
 			if(id.equals(1L)){
 				throw new SoException("不能删除admin权限！");
 			}
+			this.checkRoleIsDelete(id);
 			resultCount = roleMapper.deleteById(id)+resultCount;
+			LambdaQueryWrapper<RoleMenuEntity> roleMenuEntityLambdaQueryWrapper = Wrappers.<RoleMenuEntity>lambdaQuery()
+							.eq(RoleMenuEntity::getRoleId,id);
+			roleMenuMapper.delete(roleMenuEntityLambdaQueryWrapper);
 		}
 		return resultCount;
 	}
@@ -182,6 +191,20 @@ public class RoleServiceImpl implements RoleService {
 			loginUser.setRoles(roles);
 			// todo 默认取第一条，后面在考虑多角色多数据权限情况
 			loginUser.setDataScopeEnum(DataScopeEnum.getDataScope(roleByUserIdList.get(0).getDataScope()));
+		}
+	}
+
+	/**
+	 * 校验角色是否可以删除
+	 * @param id
+	 */
+	@Override
+	public void checkRoleIsDelete(Long id) {
+		LambdaQueryWrapper<UserRoleEntity> queryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
+				.eq(UserRoleEntity::getRoleId,id);
+		Long userCount = userRoleMapper.selectCount(queryWrapper);
+		if(userCount>0){
+			throw new SoException(String.format("当前有%s名用户绑定此角色，请解绑后在删除！",userCount));
 		}
 	}
 

@@ -42,7 +42,7 @@ public class MenuController {
      */
     @GetMapping("/getPage")
     @ApiOperation(value = "分页查询菜单列表")
-    @Permission("@ps.hasPerm('system:menu:page')")
+    @Permission(value = "@ps.hasPerm('system:menu:page')",ignoreDataScope = true)
     public Results selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
         return Results.success(menuResponses);
@@ -54,7 +54,7 @@ public class MenuController {
      */
     @GetMapping(value = "/{menuId}")
     @ApiOperation(value = "根据菜单编号获取详细信息")
-    @Permission("@ps.hasPerm('system:menu:query')")
+    @Permission(value = "@ps.hasPerm('system:menu:query')",ignoreDataScope = true)
     public Results getInfo(@PathVariable Long menuId) {
         return Results.success(menuService.selectMenuById(menuId));
     }

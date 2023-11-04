@@ -54,7 +54,8 @@ public class DictDataServiceImpl implements DictDataService {
     @Override
     public DictDataResponse getInfo(Long id) {
         DictDataEntity dictDataEntity = dictDataMapper.selectById(id);
-        return BeanUtils.copy(dictDataEntity,DictDataResponse.class);
+        DictDataResponse dictDataResponse = BeanUtils.copy(dictDataEntity, DictDataResponse.class);
+        return Objects.isNull(dictDataResponse)?new DictDataResponse():dictDataResponse;
     }
 
     @Override

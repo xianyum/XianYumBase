@@ -16,6 +16,9 @@ public abstract class BaseRequest {
     public Integer pageNum;
     public Integer pageSize;
 
+    /** 参数签名：防止篡改数据 */
+    public String signature;
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params = new HashMap<>();
 }
