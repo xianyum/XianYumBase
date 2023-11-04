@@ -66,17 +66,14 @@ public class PermissionAspect {
      * @param result
      */
     private void setCheckSignField(Object result,ProceedingJoinPoint pjp) {
-        MethodSignature signature = (MethodSignature) pjp.getSignature();
         String className = pjp.getTarget().getClass().getName();
-        String methodName = signature.getName();
-        String methodFullName = className.concat(methodName);
         if(Objects.nonNull(result) && result instanceof Results){
             Results results = (Results)result;
             Object data = results.get("data");
             if(data instanceof BaseResponse){
                 Object id = ReflectUtils.getFieldValue(data, "id");
                 if(Objects.nonNull(id)){
-                    ReflectUtils.setFieldValue(data,"signature",MD5Utils.getMd5(methodFullName.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
+                    ReflectUtils.setFieldValue(data,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
                 }
             }
         }
@@ -88,17 +85,14 @@ public class PermissionAspect {
      * @param pjp
      */
     private void checkSign(ProceedingJoinPoint pjp) {
-        MethodSignature signature = (MethodSignature) pjp.getSignature();
         String className = pjp.getTarget().getClass().getName();
-        String methodName = signature.getName();
-        String methodFullName = className.concat(methodName);
         Object[] args = pjp.getArgs();
         if(args != null && args.length>0){
             if(args[0] instanceof BaseRequest){
                 String checkSign = ReflectUtils.getFieldValue(args[0], "signature");
                 Object id = ReflectUtils.getFieldValue(args[0], "id");
                 if(StringUtil.isNotEmpty(checkSign) && Objects.nonNull(id)){
-                    String md5 = MD5Utils.getMd5(methodFullName.concat(id.toString()),Constants.MD5_DEFAULT_SECRET);
+                    String md5 = MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET);
                     if(!checkSign.equals(md5)){
                         throw new SoException(Constants.CHECK_SIGN_MESSAGE);
                     }

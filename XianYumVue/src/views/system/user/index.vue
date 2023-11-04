@@ -67,8 +67,15 @@
       <el-table-column label="序号" type="index" width="50" v-if="columns[0].visible"/>
       <el-table-column label="登录账号" align="center" prop="username" v-if="columns[1].visible"/>
       <el-table-column label="用户名称" align="center" prop="nickName" v-if="columns[7].visible"/>
+      <el-table-column label="用户角色" align="center" prop="groupRoleName" v-if="columns[5].visible">
+      </el-table-column>
       <el-table-column label="手机号" align="center" prop="mobile" v-if="columns[2].visible"/>
       <el-table-column label="邮箱" align="center" prop="email" v-if="columns[3].visible"/>
+      <el-table-column label="账号类型" align="center" prop="accountType" v-if="columns[8].visible">
+        <template v-slot="scope">
+          <dict-tag :options="dict.type.sys_user_account_type" :value="scope.row.accountType"/>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" align="center" prop="status" v-if="columns[4].visible">
         <template v-slot="scope">
           <el-switch
@@ -79,8 +86,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="用户角色" align="center" prop="groupRoleName" v-if="columns[5].visible">
-      </el-table-column>
+
       <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -119,8 +125,11 @@
     <!-- 添加或修改【请填写功能名称】对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户名" prop="username">
+        <el-form-item label="登录账号" prop="username">
           <el-input v-model="form.username" placeholder="登录帐号"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名称" prop="nickName">
+          <el-input v-model="form.nickName" placeholder="用户名称"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password" :class="{ 'is-required': !form.id }">
           <el-input v-model="form.password" type="password" placeholder="密码"></el-input>
@@ -159,6 +168,7 @@ import {getRoleList} from "@/api/system/role";
 
 export default {
   name: 'User',
+  dicts: ['sys_user_account_type'],
   data() {
     const validatePassword = (rule, value, callback) => {
       if (!this.form.id && !/\S/.test(value)) {
@@ -211,7 +221,8 @@ export default {
         { key: 3, label: `邮箱`, visible: true },
         { key: 4, label: `状态`, visible: true },
         { key: 5, label: `用户权限`, visible: true },
-        { key: 6, label: `创建时间`, visible: true }
+        { key: 6, label: `创建时间`, visible: true },
+        { key: 8, label: `账号类型`, visible: true }
       ],
       // 表单参数
       form: {

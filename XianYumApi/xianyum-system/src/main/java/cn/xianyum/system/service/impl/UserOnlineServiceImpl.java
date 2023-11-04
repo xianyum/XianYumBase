@@ -47,9 +47,7 @@ public class UserOnlineServiceImpl implements UserOnlineService {
             userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
         }
 
-        if(StringUtil.isNotEmpty(request.getLoginSystem())){
-            userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getLoginSystem(), request.getLoginSystem())).collect(Collectors.toList());
-        }
+
         Collections.reverse(userOnlineList);
         long total = userOnlineList.size();
         userOnlineList = userOnlineList.stream().sorted(Comparator.comparing(UserOnlineEntity::getLoginTime).reversed())

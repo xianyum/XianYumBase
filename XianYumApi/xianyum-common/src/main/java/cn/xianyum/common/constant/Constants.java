@@ -52,7 +52,7 @@ public class Constants {
 
     /** 没有权限提示语 */
     public final static String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
-    public final static String CHECK_SIGN_MESSAGE = "check sign error.";
+    public final static String CHECK_SIGN_MESSAGE = "Check Sign Error.";
 
     /** admin账号 */
     public static final String USER_ADMIN_ACCOUNT = "admin";

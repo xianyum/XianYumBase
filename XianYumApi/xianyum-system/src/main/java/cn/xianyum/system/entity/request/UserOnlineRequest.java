@@ -21,8 +21,4 @@ public class UserOnlineRequest extends BaseRequest {
      */
     private String username;
 
-    /**
-     * 登录系统（用来区分外部系统）
-     */
-    private String loginSystem;
 }

@@ -13,7 +13,8 @@
         a.create_time AS "createTime",
         a.del_tag AS "delTag",
         a.sex,
-        a.avatar
+        a.avatar,
+        a.account_type
     </sql>
 
     <select id="queryAll" parameterType="cn.xianyum.system.entity.request.LogRequest" resultType="cn.xianyum.system.entity.response.UserResponse">

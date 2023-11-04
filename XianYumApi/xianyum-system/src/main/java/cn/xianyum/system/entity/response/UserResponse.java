@@ -54,10 +54,6 @@ public class UserResponse extends BaseResponse {
      */
     private String loginSystem;
 
-    /**
-     * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
-     */
-    private int loginType;
 
     private String groupRoleName;
 
@@ -70,4 +66,9 @@ public class UserResponse extends BaseResponse {
      * 用户名称
      */
     private String nickName;
+
+    /**
+     * 账号类型（用于区分支付宝，QQ，系统用户）
+     */
+    private String accountType;
 }

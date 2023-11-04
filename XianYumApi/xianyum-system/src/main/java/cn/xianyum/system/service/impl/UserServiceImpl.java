@@ -5,7 +5,7 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.enums.DeleteTagEnum;
-import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.common.enums.AccountTypeEnum;
 import cn.xianyum.common.enums.UserStatusEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -131,6 +131,7 @@ public class UserServiceImpl implements UserService {
         }
         String userId = UUIDUtils.UUIDReplace();
         userEntity.setId(userId);
+        userEntity.setAccountType(AccountTypeEnum.SYSTEM.getAccountType());
         int count = userMapper.insert(userEntity);
         if(count > 0){
             this.changeUserRole(userId,user.getRoleIds());
@@ -275,12 +276,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void initDefaultUser(LoginUser loginUser) {
-        String thirdUserId = loginUser.getId();
-        String userId = UUIDUtils.UUIDReplace();
+        String thirdUserId = loginUser.getThirdUserId();
+        String userId = loginUser.getId();
         UserEntity userEntity = BeanUtils.copy(loginUser, UserEntity.class);
         userEntity.setId(userId);
         userEntity.setDelTag(DeleteTagEnum.Delete.getDeleteTag());
-
         // 设置登录密码
         String secretPassword = SecretUtils.encryptPassword("123456");
         userEntity.setPassword(secretPassword);
@@ -302,8 +302,8 @@ public class UserServiceImpl implements UserService {
             // 关联三方
             ThirdUserEntity thirdUserEntity = new ThirdUserEntity();
             thirdUserEntity.setUserId(userId);
-            LoginTypeEnum loginTypeEnum = LoginTypeEnum.getLoginType(loginUser.getLoginType());
-            switch (loginTypeEnum){
+            AccountTypeEnum accountTypeEnum = AccountTypeEnum.getAccountType(loginUser.getAccountType());
+            switch (accountTypeEnum){
                 case QQ:
                     thirdUserEntity.setQqUserId(thirdUserId);
                     break;
@@ -329,12 +329,13 @@ public class UserServiceImpl implements UserService {
             ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
-                loginUser.setId(aLiUserInfo.getUserId());
+                loginUser.setId(UUIDUtils.UUIDReplace());
+                loginUser.setThirdUserId(aLiUserInfo.getUserId());
                 loginUser.setUsername(UUIDUtils.getCodeChar(5));
                 loginUser.setNickName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
                 loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
                 loginUser.setAvatar(aLiUserInfo.getAvatar());
-                loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
+                loginUser.setAccountType(AccountTypeEnum.ZHI_FU_BAO.getAccountType());
                 loginUser.setSex(0);
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
@@ -342,7 +343,6 @@ public class UserServiceImpl implements UserService {
                         .eq("id",aliUserEntity.getUserId())
                         .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
-                loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
             }
             return loginUser;
         }
@@ -361,7 +361,8 @@ public class UserServiceImpl implements UserService {
             LoginUser loginUser = new LoginUser();
             ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
             if(aliUserEntity == null ){
-                loginUser.setId(qqUserEntity.getUserId());
+                loginUser.setId(UUIDUtils.UUIDReplace());
+                loginUser.setThirdUserId(qqUserEntity.getUserId());
                 loginUser.setUsername(UUIDUtils.getCodeChar(5));
                 loginUser.setNickName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
                 loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
@@ -376,14 +377,13 @@ public class UserServiceImpl implements UserService {
                 }else{
                     loginUser.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
                 }
-                loginUser.setLoginType(LoginTypeEnum.QQ.getLoginType());
+                loginUser.setAccountType(AccountTypeEnum.QQ.getAccountType());
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
                         .eq("del_tag",UserStatusEnum.ALLOW.getStatus()));
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
-                loginUser.setLoginType(LoginTypeEnum.QQ.getLoginType());
             }
             return loginUser;
         }

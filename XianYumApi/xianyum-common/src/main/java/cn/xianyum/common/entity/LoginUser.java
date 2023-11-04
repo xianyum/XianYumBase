@@ -18,6 +18,17 @@ public class LoginUser implements UserDetails {
     private String id;
 
     /**
+     * 三方用户ID
+     */
+    private String thirdUserId;
+
+    /**
+     * 账号类型（用于区分支付宝，QQ，系统用户）
+     */
+    private String accountType;
+
+
+    /**
      * 登录名
      */
     private String username;
@@ -91,11 +102,6 @@ public class LoginUser implements UserDetails {
      * 操作系统
      */
     private String os;
-
-    /**
-     * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
-     */
-    private int loginType;
 
     /**
      * 角色编码
