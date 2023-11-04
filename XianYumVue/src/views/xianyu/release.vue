@@ -55,6 +55,11 @@
             <el-input v-model="form.versionNo"  maxlength="100" type="number" placeholder="输入最新版本号客户端自动更新"></el-input>
           </el-form-item>
         </el-col>
+        <el-col :span="10">
+          <el-form-item label="跳转详情地址" prop="redirectDetailUrl">
+            <el-input v-model="form.redirectDetailUrl" placeholder="输入跳转详情地址"></el-input>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="10">
@@ -119,7 +124,7 @@ export default {
   methods: {
     // 初始化數據
     getData(){
-      this.getPrivateSystemConstant('xianyu_client').then(response => {
+      this.getPublicSystemConstant('xianyu_client').then(response => {
         this.form = JSON.parse(response.data.constantValue)
         this.form.updateTime = this.parseTime(response.data.updateTime)
         this.form.constantKey = response.data.constantKey
@@ -138,7 +143,8 @@ export default {
         'labelTitle': this.form.labelTitle,
         'apiUrl': this.form.apiUrl,
         'serverAddress': this.form.serverAddress,
-        'serverPort': this.form.serverPort
+        'serverPort': this.form.serverPort,
+        'redirectDetailUrl': this.form.redirectDetailUrl
       }
       this.form.constantValue = JSON.stringify(params)
       this.$refs["form"].validate(valid => {
