@@ -31,7 +31,7 @@ public class MessageMonitorController {
      */
 	@ApiOperation(value = "消息监控分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission("@ps.hasPerm('message:monitor:page')")
+    @Permission(value = "@ps.hasPerm('message:monitor:page')",ignoreDataScope = true)
 	public Results getPage(MessageMonitorRequest request) {
 
         PageResponse<MessageMonitorResponse> response = messageMonitorService.getPage(request);

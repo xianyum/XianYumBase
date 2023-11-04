@@ -18,8 +18,8 @@ import java.util.Date;
 @TableName(value = "user_third")
 public class ThirdUserEntity extends BaseEntity {
 
-    @TableId(type = IdType.INPUT)
-    private String id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     private String userId;
 

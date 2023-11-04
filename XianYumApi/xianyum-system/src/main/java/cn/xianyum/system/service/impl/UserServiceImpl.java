@@ -280,6 +280,10 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = BeanUtils.copy(loginUser, UserEntity.class);
         userEntity.setId(userId);
         userEntity.setDelTag(DeleteTagEnum.Delete.getDeleteTag());
+
+        // 设置登录密码
+        String secretPassword = SecretUtils.encryptPassword("123456");
+        userEntity.setPassword(secretPassword);
         int count = userMapper.insert(userEntity);
         if(count > 0){
             // 关联用户角色（默认游客角色）
@@ -332,7 +336,7 @@ public class UserServiceImpl implements UserService {
                 loginUser.setAvatar(aLiUserInfo.getAvatar());
                 loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getLoginType());
                 loginUser.setSex(0);
-                this.initDefaultUser(loginUser);
+                SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
@@ -373,7 +377,7 @@ public class UserServiceImpl implements UserService {
                     loginUser.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
                 }
                 loginUser.setLoginType(LoginTypeEnum.QQ.getLoginType());
-                this.initDefaultUser(loginUser);
+                SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()
                         .eq("id",aliUserEntity.getUserId())
