@@ -106,22 +106,35 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope" v-if="scope.row.id !== 1">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="250px">
+        <template v-slot="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-circle-plus-outline"
             @click="authorizeRole(scope.row)"
+            v-if="scope.row.roleCode !== 'admin'"
             v-hasPermi="['system:role:authorize']"
           >授权
           </el-button>
+          <el-popover
+            placement="left"
+            trigger="click">
+            <el-table :data="userData">
+              <el-table-column width="100" property="username" label="账号"></el-table-column>
+              <el-table-column width="170" property="nickName" label="用户名称"></el-table-column>
+            </el-table>
+            <el-button style="margin-left: 6px" v-hasPermi="['system:role:user']" slot="reference" size="mini"
+                       type="text" icon="el-icon-user" @click="getUser(scope.row)">已分配用户</el-button>
+          </el-popover>
           <el-button
+            style="margin-left: 6px"
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:role:update']"
+            v-if="scope.row.roleCode !== 'admin'"
           >修改
           </el-button>
           <el-button
@@ -130,6 +143,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:role:delete']"
+            v-if="scope.row.roleCode !== 'admin'"
           >删除
           </el-button>
         </template>
@@ -246,7 +260,7 @@
 </template>
 
 <script>
-import {listRole, getRole, delRole, addRole, updateRole, changeRoleStatus ,changeDataScope,authorizationMenu} from "@/api/system/role";
+import {listRole, getRole, delRole, addRole, updateRole, changeRoleStatus ,changeDataScope,authorizationMenu,getUserByRoleId} from "@/api/system/role";
 import {treeselect as menuTreeselect, roleMenuTreeselect} from "@/api/system/menu";
 
 export default {
@@ -287,6 +301,8 @@ export default {
       menuOptions: [],
       // 部门列表
       deptOptions: [],
+      // 已分配用户数据
+      userData: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -327,6 +343,11 @@ export default {
     this.getList();
   },
   methods: {
+    getUser(row){
+      getUserByRoleId(row.id).then(response => {
+        this.userData = response.data
+      });
+    },
     // 树权限（父子联动）
     handleCheckedTreeConnect(value, type) {
       if (type == 'menu') {

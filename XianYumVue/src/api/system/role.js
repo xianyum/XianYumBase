@@ -91,3 +91,11 @@ export function getRoleList() {
     method: 'get'
   })
 }
+
+
+export function getUserByRoleId(roleId) {
+  return request({
+    url: '/xianyum-system/v1/user/getByRoleId/'+roleId,
+    method: 'get'
+  })
+}

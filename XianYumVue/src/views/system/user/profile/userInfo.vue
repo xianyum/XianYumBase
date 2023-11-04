@@ -3,6 +3,9 @@
     <el-form-item label="用户账号" prop="username">
       <el-input v-model="user.username" maxlength="11" :disabled="true"/>
     </el-form-item>
+    <el-form-item label="用户名称" prop="nickName">
+      <el-input v-model="user.nickName" maxlength="11" />
+    </el-form-item>
     <el-form-item label="手机号码" prop="mobile">
       <el-input v-model="user.mobile" maxlength="11" />
     </el-form-item>

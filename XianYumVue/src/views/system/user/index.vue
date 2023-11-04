@@ -65,7 +65,8 @@
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" type="index" width="50" v-if="columns[0].visible"/>
-      <el-table-column label="用户名" align="center" prop="username" v-if="columns[1].visible"/>
+      <el-table-column label="登录账号" align="center" prop="username" v-if="columns[1].visible"/>
+      <el-table-column label="用户名称" align="center" prop="nickName" v-if="columns[7].visible"/>
       <el-table-column label="手机号" align="center" prop="mobile" v-if="columns[2].visible"/>
       <el-table-column label="邮箱" align="center" prop="email" v-if="columns[3].visible"/>
       <el-table-column label="状态" align="center" prop="status" v-if="columns[4].visible">
@@ -204,7 +205,8 @@ export default {
       // 列信息
       columns: [
         { key: 0, label: `序号`, visible: true },
-        { key: 1, label: `用户名称`, visible: true },
+        { key: 1, label: `登录账号`, visible: true },
+        { key: 7, label: `用户名称`, visible: true },
         { key: 2, label: `手机号`, visible: true },
         { key: 3, label: `邮箱`, visible: true },
         { key: 4, label: `状态`, visible: true },

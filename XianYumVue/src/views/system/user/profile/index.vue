@@ -12,27 +12,32 @@
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
-                <icon-svg name="user"></icon-svg>
+                <svg-icon icon-class="user" />
                 用户账号
                 <div class="pull-right">{{ user.username }}</div>
               </li>
               <li class="list-group-item">
-                <icon-svg name="people"></icon-svg>
+                <svg-icon icon-class="people" />
+                用户名称
+                <div class="pull-right">{{ user.nickName }}</div>
+              </li>
+              <li class="list-group-item">
+                <svg-icon icon-class="peoples" />
                 用户角色
                 <div class="pull-right">{{ user.groupRoleName }}</div>
               </li>
               <li class="list-group-item">
-                <icon-svg name="phone"></icon-svg>
+                <svg-icon icon-class="phone" />
                 手机号码
                 <div class="pull-right">{{ user.mobile }}</div>
               </li>
               <li class="list-group-item">
-                <icon-svg name="email"></icon-svg>
+                <svg-icon icon-class="email" />
                 用户邮箱
                 <div class="pull-right">{{ user.email }}</div>
               </li>
               <li class="list-group-item">
-                <icon-svg name="date"></icon-svg>
+                <svg-icon icon-class="date" />
                 创建日期
                 <div class="pull-right">{{ parseTime(user.createTime) }}</div>
               </li>
