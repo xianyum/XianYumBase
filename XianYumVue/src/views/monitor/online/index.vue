@@ -24,6 +24,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleForceLogout"
+          v-hasPermi="['monitor:online:exit']"
         >批量强退</el-button>
       </el-col>
     </el-row>
@@ -53,6 +54,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleForceLogout(scope.row)"
+            v-hasPermi="['monitor:online:exit']"
           >强退</el-button>
         </template>
       </el-table-column>

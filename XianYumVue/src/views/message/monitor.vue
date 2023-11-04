@@ -71,6 +71,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
+          v-hasPermi="['message:monitor:delete']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -80,6 +81,7 @@
           icon="el-icon-delete"
           size="mini"
           @click="handleClean"
+          v-hasPermi="['message:monitor:delete']"
         >清空</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -113,6 +115,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['message:monitor:delete']"
           >删除</el-button>
         </template>
       </el-table-column>

@@ -48,6 +48,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['system:role:save']"
         >新增
         </el-button>
       </el-col>
@@ -59,6 +60,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
+          v-hasPermi="['system:role:update']"
         >修改
         </el-button>
       </el-col>
@@ -70,6 +72,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
+          v-hasPermi="['system:role:delete']"
         >删除
         </el-button>
       </el-col>
@@ -110,6 +113,7 @@
             type="text"
             icon="el-icon-circle-plus-outline"
             @click="authorizeRole(scope.row)"
+            v-hasPermi="['system:role:authorize']"
           >授权
           </el-button>
           <el-button
@@ -117,6 +121,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:role:update']"
           >修改
           </el-button>
           <el-button
@@ -124,6 +129,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['system:role:delete']"
           >删除
           </el-button>
         </template>
@@ -199,10 +205,13 @@
               </el-checkbox>
               <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选
               </el-checkbox>
+              <el-checkbox v-model="menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动
+              </el-checkbox>
               <el-tree
                 class="tree-border"
                 :data="menuOptions"
                 show-checkbox
+                :check-strictly="!menuCheckStrictly"
                 ref="menu"
                 node-key="id"
                 empty-text="加载中，请稍候"
@@ -269,6 +278,7 @@ export default {
       openDataScope: false,
       menuExpand: false,
       menuNodeAll: false,
+      menuCheckStrictly: true,
       deptExpand: true,
       deptNodeAll: false,
       // 日期范围
@@ -317,6 +327,12 @@ export default {
     this.getList();
   },
   methods: {
+    // 树权限（父子联动）
+    handleCheckedTreeConnect(value, type) {
+      if (type == 'menu') {
+        this.menuCheckStrictly = value ? true: false;
+      }
+    },
     saveMenuOrDataPermission(){
       if(this.activeName === 'menuPermissionTab'){
         // 提交菜单权限
@@ -333,6 +349,7 @@ export default {
       authorizationMenu(this.menuPermissionForm).then(response => {
         this.$modal.msgSuccess("授权菜单权限成功");
         this.authorizeRoleTag = false;
+        this.menuCheckStrictly = true
         this.getList();
       });
     },
@@ -340,10 +357,12 @@ export default {
       changeDataScope(this.dataPermissionForm).then(response => {
         this.$modal.msgSuccess("授权数据权限成功");
         this.authorizeRoleTag = false;
+        this.menuCheckStrictly = true
         this.getList();
       });
     },
     cancelAuthorizeRoleTag(){
+      this.menuCheckStrictly = true
       this.authorizeRoleTag = false
       this.resetMenuPermissionForm()
       this.resetDataPermissionForm()

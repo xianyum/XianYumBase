@@ -40,6 +40,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['xianyu:proxy-details:save']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -50,6 +51,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
+          v-hasPermi="['xianyu:proxy-details:update']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -60,11 +62,12 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
+          v-hasPermi="['xianyu:proxy-details:delete']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-tooltip class="item" effect="light" content="当您对远程配置有做更改的时候，需要把数据刷入系统，保证客户端生效！" placement="top-start">
-          <el-button plain  size="mini" icon="el-icon-position" type="info" @click="flushProxy">刷入系统</el-button>
+          <el-button plain v-hasPermi="['xianyu:proxy:flush']" size="mini" icon="el-icon-position" type="info" @click="flushProxy">刷入系统</el-button>
         </el-tooltip>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -92,12 +95,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            v-hasPermi="['xianyu:proxy-details:update']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['xianyu:proxy-details:delete']"
           >删除</el-button>
         </template>
       </el-table-column>

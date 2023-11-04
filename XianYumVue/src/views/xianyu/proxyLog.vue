@@ -25,6 +25,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
+          v-hasPermi="['xianyu:proxy-log:delete']"
         >删除</el-button>
       </el-col>
 
@@ -36,7 +37,7 @@
       <el-table-column label="序号" type="index" align="center" width="50"/>
       <el-table-column label="客户端" align="center" prop="proxyName" width="100"/>
       <el-table-column label="主机ip" align="center" prop="hostIp" width="130"/>
-      <el-table-column label="操作系统" align="center" prop="osName" width="140"/>
+      <el-table-column label="操作系统" align="center" prop="osName" width="145"/>
       <el-table-column label="当前版本" align="center" prop="clientVersion" width="80">
         <template v-slot="scope">
           <span v-if="scope.row.clientVersion">V {{ scope.row.clientVersion }}</span>
@@ -66,6 +67,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['xianyu:proxy-log:delete']"
           >删除</el-button>
         </template>
       </el-table-column>

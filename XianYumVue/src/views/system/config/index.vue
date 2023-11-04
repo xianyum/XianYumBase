@@ -33,6 +33,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['system:config:save']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -43,6 +44,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
+          v-hasPermi="['system:config:update']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -52,6 +54,7 @@
           icon="el-icon-refresh"
           size="mini"
           @click="handleRefreshCache"
+          v-hasPermi="['system:config:cache']"
         >刷新缓存</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -80,20 +83,22 @@
             type="text"
             icon="el-icon-search"
             @click="getValueByKey(scope.row.constantKey)"
+            v-hasPermi="['system:config:cache']"
           >查看缓存</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:config:update']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['system:config:save']"
           >删除</el-button>
-
         </template>
       </el-table-column>
     </el-table>

@@ -64,8 +64,8 @@
         </el-col>
       </el-row>
       <el-form-item>
-        <el-button type="primary" @click="sendInfo">发布</el-button>
-        <el-button type="success" @click="refresh">刷新</el-button>
+        <el-button v-hasPermi="['xianyu:release:pub']" type="primary" @click="sendInfo">发布</el-button>
+        <el-button v-hasPermi="['xianyu:release:pub']" type="success" @click="refresh">刷新</el-button>
       </el-form-item>
     </el-form>
   </div>
