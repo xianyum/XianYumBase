@@ -5,11 +5,12 @@ package cn.xianyum.common.enums;
  * 0：允许
  * 1：禁止
  */
-public enum UserStatusEnum {
-    ALLOW(0),
-    BAN(1);
+public enum YesOrNoEnum {
+    // 代表正常，允许，未被删除等
+    YES(0),
+    NO(1);
 
-    UserStatusEnum(Integer status) {
+    YesOrNoEnum(Integer status) {
         this.status = status;
     }
 

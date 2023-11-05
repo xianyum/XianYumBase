@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.security.service;
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.enums.UserStatusEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.service.UserService;
@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if(user == null) {
             throw new SoException("用户不存在");
         }
-        if(user.getStatus() == UserStatusEnum.BAN.getStatus()){
+        if(user.getStatus() == YesOrNoEnum.NO.getStatus()){
             throw new SoException("账号已被锁定,请联系管理员");
         }
 

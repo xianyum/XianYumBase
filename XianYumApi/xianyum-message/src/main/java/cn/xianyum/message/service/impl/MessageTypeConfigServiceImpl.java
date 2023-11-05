@@ -1,7 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.DeleteTagEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -31,7 +31,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 
 		Page<MessageTypeConfigEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag())
+				.eq("del_tag", YesOrNoEnum.YES.getStatus())
 				.like(StringUtil.isNotEmpty(request.getMessageCode()),"message_code",request.getMessageCode())
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
@@ -58,7 +58,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 
 		// 判断是否重复
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
-				.eq("message_code",bean.getMessageCode()).eq("del_tag",DeleteTagEnum.Delete.getDeleteTag());
+				.eq("message_code",bean.getMessageCode()).eq("del_tag",YesOrNoEnum.YES.getStatus());
 		Long repeatCount = messageTypeConfigMapper.selectCount(queryWrapper);
 		if(repeatCount > 0){
 			throw new SoException("消息编码重复");
@@ -92,7 +92,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 		for (String id : ids){
 			MessageTypeConfigEntity updateBean = new MessageTypeConfigEntity();
 			updateBean.setId(id);
-			updateBean.setDelTag(DeleteTagEnum.deleted.getDeleteTag());
+			updateBean.setDelTag(YesOrNoEnum.NO.getStatus());
 			messageTypeConfigMapper.updateById(updateBean);
 		}
 	}
@@ -100,7 +100,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 	@Override
 	public List<MessageTypeConfigResponse> getList() {
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag());
+				.eq("del_tag",YesOrNoEnum.YES.getStatus());
 		List<MessageTypeConfigEntity> messageTypeConfigEntities = messageTypeConfigMapper.selectList(queryWrapper);
 		List<MessageTypeConfigResponse> responseList = BeanUtils.copyList(messageTypeConfigEntities, MessageTypeConfigResponse.class);
 		return responseList;
@@ -112,7 +112,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 			throw new SoException("消息编码参数未找到");
 		}
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
-				.eq("message_code",messageCode).eq("del_tag",DeleteTagEnum.Delete.getDeleteTag());
+				.eq("message_code",messageCode).eq("del_tag",YesOrNoEnum.YES.getStatus());
 		MessageTypeConfigEntity messageTypeConfigEntity = messageTypeConfigMapper.selectOne(queryWrapper);
 		if(messageTypeConfigEntity == null){
 			throw new SoException("未找到此消息编码："+messageCode);

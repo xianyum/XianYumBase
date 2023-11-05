@@ -1,7 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.DeleteTagEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.dao.MessageConfigWebhookMapper;
@@ -37,7 +37,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 
 		Page<MessageConfigWebhookEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigWebhookEntity> queryWrapper = new QueryWrapper<MessageConfigWebhookEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag())
+				.eq("del_tag", YesOrNoEnum.YES.getStatus())
 				.eq(StringUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
@@ -87,7 +87,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 		for (String id : ids){
 			MessageConfigWebhookEntity updateBean = new MessageConfigWebhookEntity();
 			updateBean.setId(id);
-			updateBean.setDelTag(DeleteTagEnum.deleted.getDeleteTag());
+			updateBean.setDelTag(YesOrNoEnum.NO.getStatus());
 			messageConfigWebhookMapper.updateById(updateBean);
 			redisUtils.del(this.getMessageConfigKey(id));
 		}
@@ -96,7 +96,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 	@Override
 	public MessageConfigWebhookEntity getMessageConfigWithCache(String messageConfigId) {
 		QueryWrapper<MessageConfigWebhookEntity> queryWrapper = new QueryWrapper<MessageConfigWebhookEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag()).eq("id",messageConfigId);
+				.eq("del_tag",YesOrNoEnum.YES.getStatus()).eq("id",messageConfigId);
 		String redisKey = this.getMessageConfigKey(messageConfigId);
 		if(redisUtils.hasKey(redisKey)){
 			String redisContent = redisUtils.getString(redisKey);

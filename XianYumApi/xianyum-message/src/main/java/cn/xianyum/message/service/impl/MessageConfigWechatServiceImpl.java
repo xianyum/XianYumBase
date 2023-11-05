@@ -1,7 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.DeleteTagEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.dao.MessageConfigWechatMapper;
@@ -36,7 +36,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 
 		Page<MessageConfigWechatEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigWechatEntity> queryWrapper = new QueryWrapper<MessageConfigWechatEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag())
+				.eq("del_tag", YesOrNoEnum.YES.getStatus())
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigWechatEntity> pageResult = messageConfigWechatMapper.selectPage(page,queryWrapper);
@@ -86,7 +86,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 		for (String id : ids){
 			MessageConfigWechatEntity updateBean = new MessageConfigWechatEntity();
 			updateBean.setId(id);
-			updateBean.setDelTag(DeleteTagEnum.deleted.getDeleteTag());
+			updateBean.setDelTag(YesOrNoEnum.NO.getStatus());
 			messageConfigWechatMapper.updateById(updateBean);
 			redisUtils.del(this.getMessageConfigKey(id));
 		}
@@ -95,7 +95,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	@Override
 	public MessageConfigWechatEntity getMessageConfigWithCache(String messageConfigId) {
 		QueryWrapper<MessageConfigWechatEntity> queryWrapper = new QueryWrapper<MessageConfigWechatEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag()).eq("id",messageConfigId);
+				.eq("del_tag",YesOrNoEnum.YES.getStatus()).eq("id",messageConfigId);
 		String redisKey = this.getMessageConfigKey(messageConfigId);
 		if(redisUtils.hasKey(redisKey)){
 			String redisContent = redisUtils.getString(redisKey);

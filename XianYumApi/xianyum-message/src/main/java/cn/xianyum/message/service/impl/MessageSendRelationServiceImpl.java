@@ -1,7 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.DeleteTagEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -113,14 +113,14 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 		switch (MessageAccountTypeEnums.getByCode(messageAccountType)){
 			case WECHAT:
 				QueryWrapper<MessageConfigWechatEntity> messageConfigWechatEntityQueryWrapper = new QueryWrapper<MessageConfigWechatEntity>()
-						.eq("del_tag", DeleteTagEnum.Delete.getDeleteTag())
+						.eq("del_tag", YesOrNoEnum.YES.getStatus())
 						.eq(idNotEmpty,"id",messageConfigId);
 				List<MessageConfigWechatEntity> messageConfigWechatEntities = messageConfigWechatMapper.selectList(messageConfigWechatEntityQueryWrapper);
 				objJson = JSONObject.toJSONString(messageConfigWechatEntities);
 				break;
 			case EMAIL:
 				QueryWrapper<MessageConfigEmailEntity> messageConfigEmailEntityQueryWrapper = new QueryWrapper<MessageConfigEmailEntity>()
-						.eq("del_tag", DeleteTagEnum.Delete.getDeleteTag())
+						.eq("del_tag", YesOrNoEnum.YES.getStatus())
 						.eq(idNotEmpty,"id",messageConfigId);
 				List<MessageConfigEmailEntity> messageConfigEmailEntities = MessageConfigEmailMapper.selectList(messageConfigEmailEntityQueryWrapper);
 				objJson = JSONObject.toJSONString(messageConfigEmailEntities);
@@ -129,7 +129,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 			case FS_WEBHOOK:
 			case CUSTOM_WEBHOOK:
 				QueryWrapper<MessageConfigWebhookEntity> messageConfigWebhookEntityQueryWrapper = new QueryWrapper<MessageConfigWebhookEntity>()
-						.eq("del_tag", DeleteTagEnum.Delete.getDeleteTag())
+						.eq("del_tag", YesOrNoEnum.YES.getStatus())
 						.eq(idNotEmpty,"id",messageConfigId)
 						.eq("message_account_type",messageAccountType);
 				List<MessageConfigWebhookEntity> messageConfigWebhookEntities = MessageConfigWebhookMapper.selectList(messageConfigWebhookEntityQueryWrapper);

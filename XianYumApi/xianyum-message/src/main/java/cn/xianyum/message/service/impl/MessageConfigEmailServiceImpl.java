@@ -1,7 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.DeleteTagEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.dao.MessageConfigEmailMapper;
@@ -36,7 +36,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 
 		Page<MessageConfigEmailEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigEmailEntity> queryWrapper = new QueryWrapper<MessageConfigEmailEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag())
+				.eq("del_tag", YesOrNoEnum.YES.getStatus())
 				.like(StringUtil.isNotEmpty(request.getEmailUserName()),"email_user_name",request.getEmailUserName())
 				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
@@ -86,7 +86,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 		for (String id : ids){
 			MessageConfigEmailEntity updateBean = new MessageConfigEmailEntity();
 			updateBean.setId(id);
-			updateBean.setDelTag(DeleteTagEnum.deleted.getDeleteTag());
+			updateBean.setDelTag(YesOrNoEnum.NO.getStatus());
 			messageConfigEmailMapper.updateById(updateBean);
 			redisUtils.del(this.getMessageConfigKey(id));
 		}
@@ -95,7 +95,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	@Override
 	public MessageConfigEmailEntity getMessageConfigWithCache(String messageConfigId) {
 		QueryWrapper<MessageConfigEmailEntity> queryWrapper = new QueryWrapper<MessageConfigEmailEntity>()
-				.eq("del_tag",DeleteTagEnum.Delete.getDeleteTag())
+				.eq("del_tag",YesOrNoEnum.YES.getStatus())
 				.eq("id",messageConfigId);
 
 		String redisKey = this.getMessageConfigKey(messageConfigId);
