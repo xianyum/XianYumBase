@@ -98,9 +98,14 @@ public class UserServiceImpl implements UserService {
             userEntity.setId(id);
             userMapper.updateById(userEntity);
             // 删除用户的同时，解绑角色
-            LambdaQueryWrapper<UserRoleEntity> queryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
+            LambdaQueryWrapper<UserRoleEntity> userRoleEntityLambdaQueryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
                     .eq(UserRoleEntity::getUserId,id);
-            userRoleMapper.delete(queryWrapper);
+            userRoleMapper.delete(userRoleEntityLambdaQueryWrapper);
+
+            // 删除三方绑定
+            LambdaQueryWrapper<ThirdUserEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<ThirdUserEntity>lambdaQuery()
+                    .eq(ThirdUserEntity::getUserId,id);
+            thirdUserMapper.delete(thirdUserEntityLambdaQueryWrapper);
         }
     }
 
