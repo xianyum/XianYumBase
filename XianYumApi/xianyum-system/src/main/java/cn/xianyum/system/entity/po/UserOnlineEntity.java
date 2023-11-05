@@ -49,7 +49,7 @@ public class UserOnlineEntity {
     private String os;
 
     /**
-     * 登录方式 0：账号登录 1：QQ登录 2：支付宝登录
+     * 登录来源
      */
-    private String accountType;
+    private String loginType;
 }

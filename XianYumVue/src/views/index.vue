@@ -83,7 +83,7 @@ export default {
       if(type === 'operLog'){
         this.$router.push({ path: "/monitor/operlog" });
       }else if(type === 'messages'){
-        this.$router.push({ path: "/message/monitor" });
+        this.$router.push({ path: "/message/message_monitor" });
       }else if(type === 'job'){
         this.$router.push({ path: "/job/log" });
       }else if(type === 'proxy'){

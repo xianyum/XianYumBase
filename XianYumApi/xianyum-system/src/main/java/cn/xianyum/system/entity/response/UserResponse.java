@@ -66,9 +66,4 @@ public class UserResponse extends BaseResponse {
      * 用户名称
      */
     private String nickName;
-
-    /**
-     * 账号类型（用于区分支付宝，QQ，系统用户）
-     */
-    private String accountType;
 }

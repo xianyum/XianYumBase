@@ -8,33 +8,33 @@ import java.util.Optional;
  * @author zhangwei
  * @date 2021/1/28 23:25
  */
-public enum AccountTypeEnum {
+public enum LoginTypeEnum {
 
     SYSTEM("0","系统用户"),
     ZHI_FU_BAO("1","支付宝"),
     QQ("2","QQ");
 
-    private String accountType;
+    private String loginType;
 
     private String desc;
 
 
-    AccountTypeEnum(String accountType, String desc) {
-        this.accountType = accountType;
+    LoginTypeEnum(String loginType, String desc) {
+        this.loginType = loginType;
         this.desc = desc;
     }
 
     public String getAccountType() {
-        return accountType;
+        return loginType;
     }
 
     public String getDesc() {
         return desc;
     }
 
-    public static AccountTypeEnum getAccountType(String accountType) {
-        Optional<AccountTypeEnum> first = Arrays.stream(AccountTypeEnum.values())
-                .filter(e -> e.getAccountType().equals(accountType))
+    public static LoginTypeEnum getLoginTypeEnum(String loginType) {
+        Optional<LoginTypeEnum> first = Arrays.stream(LoginTypeEnum.values())
+                .filter(e -> e.getAccountType().equals(loginType))
                 .findFirst();
         return first.isPresent()?first.get():null;
     }

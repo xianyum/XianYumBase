@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -57,6 +58,8 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setBrowser(userAgent.getBrowser().getName());
         loginUser.setOs(userAgent.getOperatingSystem().getName());
         loginUser.setLoginTime(new Date());
+
+        // =======设置权限===========
         this.roleService.setLoginUserRoleService(loginUser);
         // 设置菜单权限
         loginUser.setPermissions(menuService.getMenuPermission(loginUser.getId()));
@@ -103,6 +106,9 @@ public class UserTokenServiceImpl implements UserTokenService {
         UserEntity userEntity = userMapper.selectById(SecurityUtils.getLoginUser().getId());
 
         LoginUser loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+        // 保留本来登录的字段，不能被覆盖。
+        loginUser.setLoginType(SecurityUtils.getLoginUser().getLoginType());
+
         this.setExtraUserInfo(loginUser);
         redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
     }

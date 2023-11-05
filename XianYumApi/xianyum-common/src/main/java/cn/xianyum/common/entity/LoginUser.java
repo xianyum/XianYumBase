@@ -22,11 +22,6 @@ public class LoginUser implements UserDetails {
      */
     private String thirdUserId;
 
-    /**
-     * 账号类型（用于区分支付宝，QQ，系统用户）
-     */
-    private String accountType;
-
 
     /**
      * 登录名
@@ -117,6 +112,11 @@ public class LoginUser implements UserDetails {
      * 角色对应的数据权限标识符
      */
     private DataScopeEnum dataScopeEnum;
+
+    /**
+     * 登录来源
+     */
+    private String loginType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

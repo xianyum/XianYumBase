@@ -71,11 +71,11 @@
       </el-table-column>
       <el-table-column label="手机号" align="center" prop="mobile" v-if="columns[2].visible"/>
       <el-table-column label="邮箱" align="center" prop="email" v-if="columns[3].visible"/>
-      <el-table-column label="账号类型" align="center" prop="accountType" v-if="columns[8].visible">
-        <template v-slot="scope">
-          <dict-tag :options="dict.type.sys_user_account_type" :value="scope.row.accountType"/>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="账号类型" align="center" prop="accountType" v-if="columns[8].visible">-->
+<!--        <template v-slot="scope">-->
+<!--          <dict-tag :options="dict.type.sys_user_account_type" :value="scope.row.accountType"/>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="状态" align="center" prop="status" v-if="columns[4].visible">
         <template v-slot="scope">
           <el-switch
@@ -168,7 +168,6 @@ import {getRoleList} from "@/api/system/role";
 
 export default {
   name: 'User',
-  dicts: ['sys_user_account_type'],
   data() {
     const validatePassword = (rule, value, callback) => {
       if (!this.form.id && !/\S/.test(value)) {
@@ -221,8 +220,7 @@ export default {
         { key: 3, label: `邮箱`, visible: true },
         { key: 4, label: `状态`, visible: true },
         { key: 5, label: `用户权限`, visible: true },
-        { key: 6, label: `创建时间`, visible: true },
-        { key: 8, label: `账号类型`, visible: true }
+        { key: 6, label: `创建时间`, visible: true }
       ],
       // 表单参数
       form: {

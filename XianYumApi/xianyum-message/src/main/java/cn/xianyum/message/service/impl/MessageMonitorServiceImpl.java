@@ -36,9 +36,6 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	@Override
 	public PageResponse<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
 		Page<MessageMonitorEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
-			return PageResponse.EMPTY_PAGE();
-		}
 		QueryWrapper<MessageMonitorEntity> queryWrapper = new QueryWrapper<MessageMonitorEntity>()
 				.eq(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
 				.eq(StringUtil.isNotEmpty(request.getMessageType()),"message_type",request.getMessageType())

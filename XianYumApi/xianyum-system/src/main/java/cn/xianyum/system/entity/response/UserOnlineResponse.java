@@ -49,7 +49,7 @@ public class UserOnlineResponse extends BaseResponse {
     private String os;
 
     /**
-     * 账号类型
+     * 登录来源
      */
-    private String accountType;
+    private String loginType;
 }

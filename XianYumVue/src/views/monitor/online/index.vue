@@ -35,9 +35,9 @@
       <el-table-column label="登录账号" align="center" prop="username" :show-overflow-tooltip="true" />
       <el-table-column label="登录ip" align="center" prop="ipaddr" :show-overflow-tooltip="true" />
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
-      <el-table-column label="账号类型" align="center" prop="accountType" >
+      <el-table-column label="登录来源" align="center" prop="loginType" >
         <template v-slot="scope">
-          <dict-tag :options="dict.type.sys_user_account_type" :value="scope.row.accountType"/>
+          <dict-tag :options="dict.type.sys_user_login_type" :value="scope.row.loginType"/>
         </template>
       </el-table-column>
       <el-table-column label="浏览器" align="center" prop="browser" />
@@ -69,7 +69,7 @@ import { list, forceLogout } from "@/api/monitor/online";
 
 export default {
   name: "Online",
-  dicts: ['sys_user_account_type'],
+  dicts: ['sys_user_login_type'],
   data() {
     return {
       // 非多个禁用

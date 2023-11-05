@@ -5,7 +5,7 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.enums.DeleteTagEnum;
-import cn.xianyum.common.enums.AccountTypeEnum;
+import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.UserStatusEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -131,7 +131,6 @@ public class UserServiceImpl implements UserService {
         }
         String userId = UUIDUtils.UUIDReplace();
         userEntity.setId(userId);
-        userEntity.setAccountType(AccountTypeEnum.SYSTEM.getAccountType());
         int count = userMapper.insert(userEntity);
         if(count > 0){
             this.changeUserRole(userId,user.getRoleIds());
@@ -302,7 +301,7 @@ public class UserServiceImpl implements UserService {
             // 关联三方
             ThirdUserEntity thirdUserEntity = new ThirdUserEntity();
             thirdUserEntity.setUserId(userId);
-            AccountTypeEnum accountTypeEnum = AccountTypeEnum.getAccountType(loginUser.getAccountType());
+            LoginTypeEnum accountTypeEnum = LoginTypeEnum.getLoginTypeEnum(loginUser.getLoginType());
             switch (accountTypeEnum){
                 case QQ:
                     thirdUserEntity.setQqUserId(thirdUserId);
@@ -335,7 +334,7 @@ public class UserServiceImpl implements UserService {
                 loginUser.setNickName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
                 loginUser.setStatus(UserStatusEnum.ALLOW.getStatus());
                 loginUser.setAvatar(aLiUserInfo.getAvatar());
-                loginUser.setAccountType(AccountTypeEnum.ZHI_FU_BAO.getAccountType());
+                loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getAccountType());
                 loginUser.setSex(0);
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
@@ -377,7 +376,7 @@ public class UserServiceImpl implements UserService {
                 }else{
                     loginUser.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
                 }
-                loginUser.setAccountType(AccountTypeEnum.QQ.getAccountType());
+                loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 UserEntity userEntity = userMapper.selectOne(new QueryWrapper<UserEntity>()

@@ -2,6 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.UserRequest;
@@ -92,6 +93,7 @@ public class LoginController {
 
         //生成token，并保存到数据库
         LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
+        loginUserEntity.setLoginType(LoginTypeEnum.SYSTEM.getAccountType());
         Results result = userTokenService.createToken(loginUserEntity);
         return result;
     }
