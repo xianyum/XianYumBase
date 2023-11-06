@@ -21,8 +21,10 @@ import cn.xianyum.proxy.infra.handlers.ProxyChangedListener;
 import cn.xianyum.proxy.service.ProxyLogService;
 import cn.xianyum.proxy.service.ProxyService;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -55,11 +57,11 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>()
-				.like(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
-				.like(StringUtil.isNotEmpty(request.getName()),"name",request.getName())
-				.orderByDesc("create_time")
-				.orderByDesc("login_count");
+		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
+				.like(StringUtil.isNotEmpty(request.getId()),ProxyEntity::getId,request.getId())
+				.like(StringUtil.isNotEmpty(request.getName()),ProxyEntity::getName,request.getName())
+				.eq(!SecurityUtils.isSupperAdminAuth(),ProxyEntity::getBindUserId,SecurityUtils.getLoginUser().getId())
+				.orderByDesc(ProxyEntity::getCreateTime,ProxyEntity::getLoginCount);
 		IPage<ProxyEntity> pageResult = proxyMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,ProxyResponse.class,(response,item)->{
 			Channel channel = ProxyChannelManager.getCmdChannel(item.getId());

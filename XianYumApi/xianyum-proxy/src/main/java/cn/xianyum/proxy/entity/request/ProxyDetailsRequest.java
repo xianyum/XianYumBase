@@ -33,4 +33,6 @@ public class ProxyDetailsRequest extends BaseRequest {
     @NotBlank(message="代理名称不能为空")
     private String name;
 
+    /** 绑定用户ID */
+    private String bindUserId;
 }

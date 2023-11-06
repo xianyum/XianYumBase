@@ -29,6 +29,9 @@
             <if test="request.inetPort != null and request.inetPort != ''">
                 AND pd.inet_port = #{request.inetPort}
             </if>
+            <if test="request.bindUserId != null and request.bindUserId != ''">
+                AND p.bind_user_id = #{request.bindUserId}
+            </if>
         </where>
         ORDER BY pd.create_time desc,pd.id desc
     </select>

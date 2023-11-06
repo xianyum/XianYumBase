@@ -46,7 +46,7 @@ public class ProxyController {
      */
 	@ApiOperation(value = "客户端管理分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission("@ps.hasPerm('xianyu:proxy:page')")
+    @Permission(value = "@ps.hasPerm('xianyu:proxy:page')",ignoreDataScope = true)
 	public Results getPage(ProxyRequest request) {
 		PageResponse<ProxyResponse> response = proxyService.getPage(request);
         return Results.page(response);
@@ -58,7 +58,7 @@ public class ProxyController {
      */
     @ApiOperation(value = "客户端管理根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission("@ps.hasPerm('xianyu:proxy:query')")
+    @Permission(value = "@ps.hasPerm('xianyu:proxy:query')",ignoreDataScope = true)
     public Results getById(@PathVariable String id) {
         ProxyResponse response = proxyService.getById(id);
         return Results.success(response);

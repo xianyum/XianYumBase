@@ -37,6 +37,9 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
 		Page<ProxyDetailsEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
+		if(!SecurityUtils.isSupperAdminAuth()){
+			request.setBindUserId(SecurityUtils.getLoginUser().getId());
+		}
 		List<ProxyDetailsResponse> list = proxyDetailsMapper.getPage(request,page);
 		for(ProxyDetailsResponse item:list){
 			MetricsCollector collector = MetricsCollector.getCollector(item.getInetPort());
