@@ -73,6 +73,7 @@
         </template>
       </el-table-column>
       <el-table-column label="客户端秘钥" align="center" prop="id"  width="280"/>
+      <el-table-column label="绑定账号" align="center" prop="bindUserName"/>
       <el-table-column label="连接状态" align="center" prop="status" width="180">
         <template v-slot="scope">
           <el-tag v-if="scope.row.status === 0" size="small" type="danger">离线</el-tag>
@@ -80,12 +81,7 @@
         </template>
       </el-table-column>
       <el-table-column label="登录次数" align="center" prop="loginCount"/>
-      <el-table-column label="通知邮箱" align="center" prop="notifyEmail" :show-overflow-tooltip="true"/>
-      <el-table-column label="最近登录时间" align="center" prop="loginTime" width="180">
-        <template v-slot="scope">
-          <span>{{ parseTime(scope.row.loginTime) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="通知邮箱" align="center" prop="bindEmail" :show-overflow-tooltip="true"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="250px">
         <template v-slot="scope">
           <el-button
@@ -134,14 +130,11 @@
         <el-form-item label="客户端名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入客户端名称" />
         </el-form-item>
-        <el-form-item label="通知开关" prop="notify">
+        <el-form-item label="上线通知" prop="notify">
           <el-radio-group v-model="form.notify">
             <el-radio :label=1>通知</el-radio>
             <el-radio :label=0>不通知</el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="通知邮箱" prop="notifyEmail">
-          <el-input v-model="form.notifyEmail" placeholder="请输入通知邮箱" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -193,9 +186,6 @@ export default {
         ],
         notify: [
           {required: true, message: '上线通知不能为空', trigger: 'blur'}
-        ],
-        notifyEmail: [
-          {required: true, message: '通知邮箱不能为空', trigger: 'blur'}
         ]
       }
     };
@@ -247,7 +237,6 @@ export default {
       this.form = {
         id: null,
         name: null,
-        notifyEmail: null,
         notify: 1
       };
       this.resetForm("form");
