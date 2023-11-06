@@ -1,4 +1,4 @@
-package cn.xianyum.proxy.container;
+package cn.xianyum.proxy.infra.container;
 
 import cn.xianyum.common.utils.PropertiesUtil;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package cn.xianyum.proxy.metrics;
+package cn.xianyum.proxy.infra.metrics;
 
 import java.io.Serializable;
 

@@ -1,4 +1,4 @@
-package cn.xianyum.proxy.handlers;
+package cn.xianyum.proxy.infra.handlers;
 
 /**
  * 监控配置是否发生变化

@@ -1,4 +1,4 @@
-package cn.xianyum.proxy.container;
+package cn.xianyum.proxy.infra.container;
 
 public interface Container {
 

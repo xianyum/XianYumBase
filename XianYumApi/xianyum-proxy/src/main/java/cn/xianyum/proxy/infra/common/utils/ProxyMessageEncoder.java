@@ -1,4 +1,4 @@
-package cn.xianyum.proxy.common.utils;
+package cn.xianyum.proxy.infra.common.utils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

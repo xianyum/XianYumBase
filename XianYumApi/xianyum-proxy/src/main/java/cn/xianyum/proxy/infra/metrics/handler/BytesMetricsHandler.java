@@ -1,6 +1,6 @@
-package cn.xianyum.proxy.metrics.handler;
+package cn.xianyum.proxy.infra.metrics.handler;
 
-import cn.xianyum.proxy.metrics.MetricsCollector;
+import cn.xianyum.proxy.infra.metrics.MetricsCollector;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

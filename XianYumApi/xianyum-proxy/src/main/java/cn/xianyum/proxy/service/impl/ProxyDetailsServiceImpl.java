@@ -7,7 +7,7 @@ import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.entity.po.ProxyDetailsEntity;
 import cn.xianyum.proxy.entity.request.ProxyDetailsRequest;
 import cn.xianyum.proxy.entity.response.ProxyDetailsResponse;
-import cn.xianyum.proxy.metrics.MetricsCollector;
+import cn.xianyum.proxy.infra.metrics.MetricsCollector;
 import cn.xianyum.proxy.service.ProxyDetailsService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

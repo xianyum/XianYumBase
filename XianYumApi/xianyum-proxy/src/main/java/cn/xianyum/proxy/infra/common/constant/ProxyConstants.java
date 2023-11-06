@@ -1,4 +1,4 @@
-package cn.xianyum.proxy.common.constant;
+package cn.xianyum.proxy.infra.common.constant;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;

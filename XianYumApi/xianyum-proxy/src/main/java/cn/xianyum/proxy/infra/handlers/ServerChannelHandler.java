@@ -1,9 +1,9 @@
-package cn.xianyum.proxy.handlers;
+package cn.xianyum.proxy.infra.handlers;
 
 import cn.xianyum.common.utils.SpringUtils;
-import cn.xianyum.proxy.common.constant.ProxyConstants;
-import cn.xianyum.proxy.common.utils.ProxyMessage;
-import cn.xianyum.proxy.container.ProxyChannelManager;
+import cn.xianyum.proxy.infra.common.constant.ProxyConstants;
+import cn.xianyum.proxy.infra.common.utils.ProxyMessage;
+import cn.xianyum.proxy.infra.container.ProxyChannelManager;
 import cn.xianyum.proxy.service.ProxyDetailsService;
 import cn.xianyum.proxy.service.ProxyService;
 import io.netty.buffer.ByteBuf;

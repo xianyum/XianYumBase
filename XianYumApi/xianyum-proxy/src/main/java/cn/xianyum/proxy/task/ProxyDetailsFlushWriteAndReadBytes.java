@@ -6,7 +6,7 @@ import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.SchedulerTool;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.entity.po.ProxyDetailsEntity;
-import cn.xianyum.proxy.metrics.MetricsCollector;
+import cn.xianyum.proxy.infra.metrics.MetricsCollector;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

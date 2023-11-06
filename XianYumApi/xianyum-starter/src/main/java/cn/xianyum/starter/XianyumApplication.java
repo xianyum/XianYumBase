@@ -1,7 +1,7 @@
 package cn.xianyum.starter;
 
 
-import cn.xianyum.proxy.container.ProxyServerContainer;
+import cn.xianyum.proxy.infra.container.ProxyServerContainer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
