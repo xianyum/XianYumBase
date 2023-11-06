@@ -227,6 +227,11 @@ public class RedisUtils {
         return redisTemplate.opsForHash().get(key, item);
     }
 
+    public <HK, HV> Object hGetAll(String key) {
+        Map<HK, HV> entries = redisTemplate.opsForHash().entries(key);
+        return entries;
+    }
+
     /**
      * 获取hashKey对应的所有键值
      *

@@ -19,6 +19,7 @@ import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.system.entity.response.UserResponse;
 import cn.xianyum.system.service.*;
+import com.alibaba.fastjson2.JSONObject;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -26,6 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,6 +67,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Value("${redis.user.data}")
+    private String redisUserDataPrefix;
+
 
     @Override
     public PageResponse<UserResponse> getPage(UserRequest user) {
@@ -106,6 +115,9 @@ public class UserServiceImpl implements UserService {
             LambdaQueryWrapper<ThirdUserEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<ThirdUserEntity>lambdaQuery()
                     .eq(ThirdUserEntity::getUserId,id);
             thirdUserMapper.delete(thirdUserEntityLambdaQueryWrapper);
+
+            // 重新把用户刷入redis中
+            this.userToRedis(true);
         }
     }
 
@@ -138,6 +150,7 @@ public class UserServiceImpl implements UserService {
         int count = userMapper.insert(userEntity);
         if(count > 0){
             this.changeUserRole(userId,user.getRoleIds());
+            this.userToRedis(true);
         }
         return count;
     }
@@ -157,6 +170,7 @@ public class UserServiceImpl implements UserService {
         int count = userMapper.updateById(userEntity);
         if(count > 0){
             this.changeUserRole(userEntity.getId(),user.getRoleIds());
+            this.userToRedis(true);
         }
         return count;
     }
@@ -318,6 +332,25 @@ public class UserServiceImpl implements UserService {
             }
             thirdUserMapper.insert(thirdUserEntity);
         }
+    }
+
+    /**
+     * 系统用户转存到redis中
+     * @param isAsync
+     * @return
+     */
+    @Override
+    public int userToRedis(boolean isAsync) {
+        // todo 异步保存系统日志，后面在考虑
+        redisUtils.del(redisUserDataPrefix);
+        LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
+                .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
+                .eq(UserEntity::getStatus, YesOrNoEnum.YES.getStatus());
+        List<UserEntity> userEntities = userMapper.selectList(queryWrapper);
+        for(UserEntity item : userEntities){
+            redisUtils.hSet(redisUserDataPrefix,item.getId(), JSONObject.toJSONString(item));
+        }
+        return userEntities.size();
     }
 
     @Override

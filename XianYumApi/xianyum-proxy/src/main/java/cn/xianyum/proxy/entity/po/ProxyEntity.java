@@ -24,10 +24,10 @@ public class ProxyEntity extends BaseEntity {
     /** 登录次数 */
     private Integer loginCount;
 
-    /** 客户端通知email */
-    private String notifyEmail;
-
     /** 是否通知，0：不通知 1：通知 */
     private Integer notify;
+
+    /** 绑定用户ID */
+    private String bindUserId;
 
 }

@@ -1,5 +1,6 @@
 package cn.xianyum.proxy.service.impl;
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -48,6 +49,9 @@ public class ProxyServiceImpl implements ProxyService {
 	@Autowired
 	private ProxyLogService proxyLogService;
 
+	@Autowired
+	private UserCacheHelper userCacheHelper;
+
 	@Override
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
@@ -63,6 +67,14 @@ public class ProxyServiceImpl implements ProxyService {
 				response.setStatus(1);// online
 			} else {
 				response.setStatus(0);// offline
+			}
+			if(StringUtil.isNotEmpty(item.getBindUserId())){
+				LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(item.getBindUserId());
+				if(Objects.nonNull(userByIdFromRedis)){
+					response.setBindEmail(userByIdFromRedis.getEmail());
+					response.setBindUserName(userByIdFromRedis.getUsername());
+					response.setBindUserNickName(userByIdFromRedis.getNickName());
+				}
 			}
 		});
 	}
@@ -114,7 +126,6 @@ public class ProxyServiceImpl implements ProxyService {
 		ProxyEntity bean = new ProxyEntity();
 		bean.setId(request.getId());
 		bean.setName(request.getName());
-		bean.setNotifyEmail(request.getNotifyEmail());
 		bean.setNotify(request.getNotify());
 		return proxyMapper.updateById(bean);
 
@@ -177,9 +188,10 @@ public class ProxyServiceImpl implements ProxyService {
 			messageSender.sendAsyncMessage(MessageCodeEnums.XIANYU_ONLINE_OFFLINE_NOTIFY.getMessageCode(),messageSenderEntity);
 
 			// 发送邮件通知客户端
+			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyEntity.getBindUserId());
 			if(null != proxyEntity.getNotify() && 1 == proxyEntity.getNotify()
-					&& StringUtil.isNotEmpty(proxyEntity.getNotifyEmail())){
-				this.sendProxyEmail(proxyEntity);
+					&& Objects.nonNull(userByIdFromRedis) && StringUtil.isNotEmpty(userByIdFromRedis.getEmail())){
+				this.sendProxyEmail(proxyEntity,userByIdFromRedis.getEmail());
 			}
 
 		}
@@ -232,7 +244,7 @@ public class ProxyServiceImpl implements ProxyService {
 	}
 
 	@Override
-	public void sendProxyEmail(ProxyEntity proxyEntity) {
+	public void sendProxyEmail(ProxyEntity proxyEntity, String email) {
 
 		Context context = new Context();
 		context.setVariable("name", proxyEntity.getName());
@@ -289,26 +301,28 @@ public class ProxyServiceImpl implements ProxyService {
 		MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
 		messageSenderEntity.setTitle("xianyu客户端代理配置详情");
 		messageSenderEntity.setEmailHtmlPath("clientHtml");
-		messageSenderEntity.setEmailToUser(proxyEntity.getNotifyEmail());
+		messageSenderEntity.setEmailToUser(email);
 		messageSender.sendAsyncEmailTemplateMessage(MessageCodeEnums.XIANYU_CONFIG_DETAIL_NOTIFY.getMessageCode(),messageSenderEntity,context);
 	}
 
 	@Override
 	public String sendEmail(String id) {
 
-
 		ProxyEntity proxyEntity = proxyMapper.selectById(id);
 		if(proxyEntity == null){
 			throw new SoException("客户端授权信息不存在！");
 		}
 
-		if(StringUtil.isEmpty(proxyEntity.getNotifyEmail())){
-			throw new SoException("客户端尚未配置邮箱账号，请联系管理员配置！");
+		LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyEntity.getBindUserId());
+		if(Objects.isNull(userByIdFromRedis)){
+			throw new SoException("客户端暂未绑定账户，请联系管理员配置！");
 		}
 
-		this.sendProxyEmail(proxyEntity);
-
-		String result = "远程配置已经发到您的邮箱："+proxyEntity.getNotifyEmail()+"，请注意查收！";
+		if(StringUtil.isEmpty(userByIdFromRedis.getEmail())){
+			throw new SoException("客户端绑定的账号尚未配置邮箱，请联系管理员配置！");
+		}
+		this.sendProxyEmail(proxyEntity, userByIdFromRedis.getEmail());
+		String result = "远程配置已经发到您的邮箱："+userByIdFromRedis.getEmail()+"，请注意查收！";
 		return result;
 	}
 

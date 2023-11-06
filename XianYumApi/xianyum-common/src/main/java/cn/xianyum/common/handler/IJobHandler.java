@@ -10,5 +10,5 @@ import java.util.Map;
  */
 public interface IJobHandler {
 
-    ReturnT execute(Map<String, String> jobMapParams, SchedulerTool tool) throws Exception;
+    ReturnT execute(Map<String, String> jobParamsMap, SchedulerTool tool) throws Exception;
 }

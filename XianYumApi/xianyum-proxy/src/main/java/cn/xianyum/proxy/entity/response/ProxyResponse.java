@@ -26,10 +26,18 @@ public class ProxyResponse extends BaseResponse {
     /** 当前登录状态  0:不在线 1：在线*/
     private Integer status;
 
-    /** 客户端通知email */
-    private String notifyEmail;
-
     /** 是否通知，0：不通知 1：通知 */
     private Integer notify;
 
+    /** 绑定用户ID */
+    private String bindUserId;
+
+    /** 绑定用户账号 */
+    private String bindUserName;
+
+    /** 绑定用户昵称 */
+    private String bindUserNickName;
+
+    /** 绑定用户邮箱 */
+    private String bindEmail;
 }

@@ -49,7 +49,7 @@ public interface ProxyService {
 
     void flushProxy();
 
-    void sendProxyEmail(ProxyEntity proxyEntity);
+    void sendProxyEmail(ProxyEntity proxyEntity, String email);
 
     String sendEmail(String id);
 

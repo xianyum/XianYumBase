@@ -3,12 +3,14 @@ package cn.xianyum.system.service;
 
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService{
 
@@ -72,4 +74,12 @@ public interface UserService{
      * @param loginUser
      */
     void initDefaultUser(LoginUser loginUser);
+
+
+    /**
+     * 系统用户存储到redis中
+     * @param isAsync true：异步执行  false: 同步执行
+     * @return
+     */
+    int userToRedis(boolean isAsync);
 }

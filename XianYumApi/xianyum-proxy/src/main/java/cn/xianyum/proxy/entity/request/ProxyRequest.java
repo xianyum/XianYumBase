@@ -17,9 +17,6 @@ public class ProxyRequest extends BaseRequest {
     /** 客户端名称 */
     private String name;
 
-    /** 客户端通知email */
-    private String notifyEmail;
-
     /** 是否通知，0：不通知 1：通知 */
     private Integer notify;
 
@@ -28,4 +25,7 @@ public class ProxyRequest extends BaseRequest {
 
     /** 当前读取量 */
     private Long writeBytes;
+
+    /** 绑定用户ID */
+    private String bindUserId;
 }
