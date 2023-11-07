@@ -350,4 +350,13 @@ public class ProxyServiceImpl implements ProxyService {
 		return DesUtils.getEncryptString(configInfo);
 	}
 
+	@Override
+	public List<LoginUser> getProxyBindUser(String id) {
+		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
+				.ne(StringUtil.isNotEmpty(id),ProxyEntity::getId,id)
+				.isNotNull(ProxyEntity::getBindUserId);
+		List<ProxyEntity> proxyEntities = proxyMapper.selectList(queryWrapper);
+		return null;
+	}
+
 }

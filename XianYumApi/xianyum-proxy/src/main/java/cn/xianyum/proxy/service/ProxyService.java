@@ -2,6 +2,7 @@ package cn.xianyum.proxy.service;
 
 
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.proxy.entity.po.ProxyEntity;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
@@ -55,4 +56,5 @@ public interface ProxyService {
 
     String downloadConfig(String id);
 
+	List<LoginUser> getProxyBindUser(String id);
 }

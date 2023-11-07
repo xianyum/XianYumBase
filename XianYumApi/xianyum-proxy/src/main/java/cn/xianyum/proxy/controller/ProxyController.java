@@ -157,6 +157,17 @@ public class ProxyController {
         return Results.success(proxyService.getOnlineProxyCount());
     }
 
+
+    /**
+     * 获取可绑定的用户列表
+     *
+     */
+    @ApiOperation(value = "获取在线online数量")
+    @GetMapping(value = "/getProxyBindUser")
+    public Results getProxyBindUser(@RequestParam(required = false) String id) {
+        return Results.success(proxyService.getProxyBindUser(id));
+    }
+
     /**
      * 下载配置
      * @param id
