@@ -111,6 +111,37 @@ public class LoginController {
     }
 
 
+    @PostMapping("/xianYuLogin")
+    @ApiOperation(value = "咸鱼客户端登录系统")
+    @Permission(publicApi = true)
+    public Results xianYuLogin(@RequestBody UserRequest userRequest) {
+        long beginTime = System.currentTimeMillis();
+        // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }catch (Exception e){
+            long time = System.currentTimeMillis() - beginTime;
+            if (e instanceof BadCredentialsException) {
+                saveLoginLog(userRequest,"用户不存在或密码错误",time);
+                return Results.error("用户不存在或密码错误");
+            }
+            else {
+                saveLoginLog(userRequest,e.getMessage(),time);
+                return Results.error(e.getMessage());
+            }
+        }
+        long time = System.currentTimeMillis() - beginTime;
+        saveLoginLog(userRequest,"咸鱼客户端登录成功",time);
+        //生成token，并保存到数据库
+        LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
+        loginUserEntity.setLoginType(LoginTypeEnum.XIAN_YU.getAccountType());
+        Results result = userTokenService.createToken(loginUserEntity);
+        return result;
+    }
+
     /**
      * 获取登录/注册信息
      */

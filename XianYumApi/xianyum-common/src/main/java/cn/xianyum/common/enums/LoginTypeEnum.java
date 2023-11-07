@@ -12,7 +12,8 @@ public enum LoginTypeEnum {
 
     SYSTEM("0","系统用户"),
     ZHI_FU_BAO("1","支付宝"),
-    QQ("2","QQ");
+    QQ("2","QQ"),
+    XIAN_YU("3","咸鱼客户端");
 
     private String loginType;
 

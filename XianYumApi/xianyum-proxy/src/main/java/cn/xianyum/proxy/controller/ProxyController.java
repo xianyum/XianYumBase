@@ -162,10 +162,22 @@ public class ProxyController {
      * 获取可绑定的用户列表
      *
      */
-    @ApiOperation(value = "获取在线online数量")
+    @ApiOperation(value = "获取可绑定的用户列表")
     @GetMapping(value = "/getProxyBindUser")
+    @Permission("@ps.hasPerm('xianyu:proxy:save')")
     public Results getProxyBindUser(@RequestParam(required = false) String id) {
         return Results.success(proxyService.getProxyBindUser(id));
+    }
+
+
+    /**
+     * 获取当前用户绑定的客户端配置
+     *
+     */
+    @ApiOperation(value = "获取当前用户绑定的客户端配置")
+    @GetMapping(value = "/getCurrentProxy")
+    public Results getCurrentProxy() {
+        return Results.success(proxyService.getCurrentProxy());
     }
 
     /**

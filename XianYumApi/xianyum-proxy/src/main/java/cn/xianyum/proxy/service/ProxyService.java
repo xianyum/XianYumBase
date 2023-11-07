@@ -57,4 +57,6 @@ public interface ProxyService {
     String downloadConfig(String id);
 
 	List<LoginUser> getProxyBindUser(String id);
+
+	ProxyResponse getCurrentProxy();
 }

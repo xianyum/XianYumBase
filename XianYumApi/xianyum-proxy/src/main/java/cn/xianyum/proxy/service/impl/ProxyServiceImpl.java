@@ -129,6 +129,7 @@ public class ProxyServiceImpl implements ProxyService {
 		bean.setId(request.getId());
 		bean.setName(request.getName());
 		bean.setNotify(request.getNotify());
+		bean.setBindUserId(request.getBindUserId());
 		return proxyMapper.updateById(bean);
 
 	}
@@ -352,11 +353,37 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public List<LoginUser> getProxyBindUser(String id) {
+		List<LoginUser> loginUserList = new ArrayList<>();
 		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
 				.ne(StringUtil.isNotEmpty(id),ProxyEntity::getId,id)
 				.isNotNull(ProxyEntity::getBindUserId);
 		List<ProxyEntity> proxyEntities = proxyMapper.selectList(queryWrapper);
-		return null;
+		if(Objects.nonNull(proxyEntities)){
+			List<LoginUser> userListFromRedis = userCacheHelper.getUserListFromRedis();
+			List<String> bindUserList = proxyEntities.stream().map(ProxyEntity::getBindUserId).collect(Collectors.toList());
+			for(LoginUser item : userListFromRedis){
+				if(!bindUserList.contains(item.getId())){
+					LoginUser loginUser = new LoginUser();
+					loginUser.setId(item.getId());
+					loginUser.setNickName(item.getNickName());
+					loginUser.setUsername(item.getUsername());
+					loginUserList.add(loginUser);
+				}
+			}
+		}
+		return loginUserList;
+	}
+
+	@Override
+	public ProxyResponse getCurrentProxy() {
+		String userId = SecurityUtils.getLoginUser().getId();
+		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
+				.eq(ProxyEntity::getBindUserId,userId);
+		ProxyEntity proxy = proxyMapper.selectOne(queryWrapper);
+		if(Objects.isNull(proxy)){
+			throw new SoException("该用户未绑定远程客户端！");
+		}
+		return BeanUtils.copy(proxy,ProxyResponse.class);
 	}
 
 }
