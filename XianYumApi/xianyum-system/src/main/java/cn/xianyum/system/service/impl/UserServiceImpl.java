@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,6 +71,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
+
 
     @Value("${redis.user.data}")
     private String redisUserDataPrefix;
@@ -341,7 +346,20 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public int userToRedis(boolean isAsync) {
-        // todo 异步保存系统日志，后面在考虑
+        if(isAsync){
+            xianYumTaskExecutor.execute(()->this.userToRedis());
+            return 1;
+        }else{
+            return this.userToRedis();
+        }
+    }
+
+    /**
+     * 执行系统用户刷入redis中
+     * @return
+     */
+    @Override
+    public int userToRedis() {
         redisUtils.del(redisUserDataPrefix);
         LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
                 .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
@@ -352,6 +370,7 @@ public class UserServiceImpl implements UserService {
         }
         return userEntities.size();
     }
+
 
     @Override
     public LoginUser getUserByAli(String authCode) {

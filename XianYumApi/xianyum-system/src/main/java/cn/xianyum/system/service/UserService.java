@@ -82,4 +82,6 @@ public interface UserService{
      * @return
      */
     int userToRedis(boolean isAsync);
+
+    int userToRedis();
 }
