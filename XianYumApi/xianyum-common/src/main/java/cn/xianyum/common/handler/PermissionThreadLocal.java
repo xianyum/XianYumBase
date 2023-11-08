@@ -7,7 +7,8 @@ package cn.xianyum.common.handler;
  */
 public class PermissionThreadLocal {
 
-    private static final InheritableThreadLocal<Boolean> inheritableThreadLocal = new InheritableThreadLocal() {
+    private static final ThreadLocal<Boolean> permissionThreadLocal = new ThreadLocal(){
+        @Override
         protected Boolean initialValue() {
             return false;
         }
@@ -17,14 +18,14 @@ public class PermissionThreadLocal {
     }
 
     public static boolean get() {
-        return inheritableThreadLocal.get();
+        return permissionThreadLocal.get();
     }
 
     public static void set() {
-        inheritableThreadLocal.set(true);
+        permissionThreadLocal.set(true);
     }
 
     public static void remove() {
-        inheritableThreadLocal.remove();
+        permissionThreadLocal.remove();
     }
 }

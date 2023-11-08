@@ -69,6 +69,14 @@ export function getAllProxyList() {
 }
 
 
+export function getProxyBindUser(id) {
+  return request({
+    url: '/xianyum-proxy/v1/proxy/getProxyBindUser?id='+id,
+    method: 'get'
+  })
+}
+
+
 export function getOnlineProxyCount() {
   return request({
     url: '/xianyum-proxy/v1/proxy/getOnlineProxyCount',

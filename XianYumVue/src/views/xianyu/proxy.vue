@@ -136,6 +136,17 @@
             <el-radio :label=0>不通知</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="绑定用户" prop="bindUserId">
+        <el-select v-model="form.bindUserId" placeholder="请绑定用户" filterable clearable>
+          <el-option
+            v-for="item in proxyUserData"
+            :key="item.id"
+            :label="`${item.username}`"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -146,7 +157,7 @@
 </template>
 
 <script>
-import { listProxy, getProxy, delProxy, addProxy, updateProxy ,sendConfigByEmail ,flushProxy} from "@/api/xianyu/proxy";
+import { listProxy, getProxy, delProxy, addProxy, updateProxy ,sendConfigByEmail ,flushProxy ,getProxyBindUser} from "@/api/xianyu/proxy";
 
 export default {
   name: "Proxy",
@@ -166,6 +177,7 @@ export default {
       total: 0,
       // 客户端管理表格数据
       proxyList: [],
+      proxyUserData: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -186,6 +198,9 @@ export default {
         ],
         notify: [
           {required: true, message: '上线通知不能为空', trigger: 'blur'}
+        ],
+        bindUserId: [
+          {required: true, message: '请绑定用户', trigger: 'blur'}
         ]
       }
     };
@@ -194,6 +209,11 @@ export default {
     this.getList();
   },
   methods: {
+    getBindUserData(id){
+      getProxyBindUser(id).then(response => {
+          this.proxyUserData = response.data
+      });
+    },
     flushProxy(){
       this.$modal.confirm('确定要把远程配置刷入系统吗？').then(function() {
         return flushProxy();
@@ -260,6 +280,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.getBindUserData(null)
       this.open = true;
       this.title = "添加客户端配置";
     },
@@ -267,6 +288,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
+      this.getBindUserData(id)
       getProxy(id).then(response => {
         this.form = response.data;
         this.open = true;
