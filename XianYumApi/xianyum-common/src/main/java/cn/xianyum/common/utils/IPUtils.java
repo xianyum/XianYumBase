@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.ip.IpSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -313,9 +314,6 @@ public class IPUtils {
             if(StringUtil.isNotEmpty(search)){
                 data = search.split("\\|");
             }
-        } catch (Exception e) {
-            logger.error("获取ip信息异常，ip：{}",ip,e);
-        }
         String country = "0".equals(data[0]) || Objects.isNull(data[0]) ? "" : data[0];
         String prov = "0".equals(data[2]) || Objects.isNull(data[2]) ? "" : data[2];
         String city = "0".equals(data[3]) || Objects.isNull(data[3]) ? "" : data[3];
@@ -326,5 +324,9 @@ public class IPUtils {
         ipInfoMap.put("city", city);
         ipInfoMap.put("isp", isp);
         return ipInfoMap;
+        } catch (Exception e) {
+            logger.error("获取ip信息异常，ip：{}",ip,e);
+            throw new SoException("获取ip信息异常");
+        }
     }
 }
