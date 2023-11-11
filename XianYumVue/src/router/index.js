@@ -5,7 +5,6 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import { setToken } from '@/utils/auth'
 
 /**
  * Note: 路由配置项
@@ -161,15 +160,6 @@ const  router = new Router({
   mode: 'history', // 去掉url中的#
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
-})
-
-router.beforeEach((to, from, next) => {
-  const access_token = to.query.access_token;
-  if(access_token){
-    setToken(access_token)
-    delete to.query.access_token;
-  }
-  next();
 })
 
 export default router;

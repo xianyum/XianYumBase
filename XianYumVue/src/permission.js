@@ -3,7 +3,7 @@ import store from './store'
 import { Message } from 'element-ui'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { getToken } from '@/utils/auth'
+import {getToken, setToken} from '@/utils/auth'
 import { isRelogin } from '@/utils/request'
 
 NProgress.configure({ showSpinner: false })
@@ -12,6 +12,13 @@ const whiteList = ['/login', '/register','/thirdLogin','/messageDetail']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
+  // 从url中获取参数
+  const access_token = to.query.access_token;
+  if(access_token){
+    setToken(access_token)
+    delete to.query.access_token;
+  }
+
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
     /* has token*/
