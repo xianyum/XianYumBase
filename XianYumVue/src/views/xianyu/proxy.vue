@@ -89,7 +89,7 @@
             type="text"
             icon="el-icon-arrow-up"
             @click="sendEmail(scope.row.id)"
-            v-hasPermi="['xianyu:proxy:download']"
+            v-hasPermi="['xianyu:proxy:send-email']"
           >发送配置</el-button>
           <el-button
             size="mini"
@@ -225,7 +225,7 @@ export default {
       let requestParams = {
           "id": id
       }
-      this.download('/proxy/downloadConfig', requestParams, `config.ini`)
+      this.download('xianyum-proxy/v1/proxy/downloadConfig', requestParams, `config.ini`)
     },
     sendEmail(id){
       sendConfigByEmail(id).then(response => {
