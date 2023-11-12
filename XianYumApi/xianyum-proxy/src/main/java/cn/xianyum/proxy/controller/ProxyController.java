@@ -140,7 +140,7 @@ public class ProxyController {
     @SysLog("发送客户端配置信息")
     @ApiOperation(value = "发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
-    @Permission(publicApi = true)
+    @Permission("@ps.hasPerm('xianyu:proxy:send-email')")
     public Results sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
         return Results.success(result);

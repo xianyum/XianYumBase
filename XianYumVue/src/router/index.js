@@ -58,6 +58,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/xianyu',
+    component: () => import('@/views/xianyu/index'),
+    hidden: true
+  },
+  {
     path: '/register',
     component: () => import('@/views/register'),
     hidden: true

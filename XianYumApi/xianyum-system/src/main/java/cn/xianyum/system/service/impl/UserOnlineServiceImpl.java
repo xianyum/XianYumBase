@@ -3,6 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.RedisUtils;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
@@ -45,6 +46,10 @@ public class UserOnlineServiceImpl implements UserOnlineService {
 
         if(StringUtil.isNotEmpty(request.getUsername())){
             userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
+        }
+
+        if(!SecurityUtils.isSupperAdminAuth()){
+            userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getUsername(),SecurityUtils.getLoginUser().getUsername())).collect(Collectors.toList());
         }
 
 
