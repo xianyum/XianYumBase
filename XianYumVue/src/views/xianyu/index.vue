@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    你好啊
+    功能正在设计中。。。
   </div>
 </template>
 
