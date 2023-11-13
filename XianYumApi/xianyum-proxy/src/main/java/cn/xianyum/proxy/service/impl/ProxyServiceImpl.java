@@ -383,7 +383,21 @@ public class ProxyServiceImpl implements ProxyService {
 		if(Objects.isNull(proxy)){
 			throw new SoException("该用户未绑定远程客户端！");
 		}
-		return BeanUtils.copy(proxy,ProxyResponse.class);
+		ProxyResponse proxyResponse = BeanUtils.copy(proxy, ProxyResponse.class);
+		if(StringUtil.isNotEmpty(proxyResponse.getBindUserId())){
+			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyResponse.getBindUserId());
+			if(Objects.nonNull(userByIdFromRedis)){
+				proxyResponse.setBindEmail(userByIdFromRedis.getEmail());
+				proxyResponse.setBindUserName(userByIdFromRedis.getUsername());
+			}
+		}
+		Channel channel = ProxyChannelManager.getCmdChannel(proxy.getId());
+		if (channel != null) {
+			proxyResponse.setStatus(1);// online
+		} else {
+			proxyResponse.setStatus(0);// offline
+		}
+		return proxyResponse;
 	}
 
 }

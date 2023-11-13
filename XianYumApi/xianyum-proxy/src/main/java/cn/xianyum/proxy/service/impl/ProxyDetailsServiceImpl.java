@@ -4,12 +4,16 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
+import cn.xianyum.proxy.dao.ProxyMapper;
 import cn.xianyum.proxy.entity.po.ProxyDetailsEntity;
+import cn.xianyum.proxy.entity.po.ProxyEntity;
 import cn.xianyum.proxy.entity.request.ProxyDetailsRequest;
 import cn.xianyum.proxy.entity.response.ProxyDetailsResponse;
 import cn.xianyum.proxy.infra.metrics.MetricsCollector;
 import cn.xianyum.proxy.service.ProxyDetailsService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +34,11 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Autowired
 	private RedisUtils redisUtils;
 
+	@Autowired
+	private ProxyMapper proxyMapper;
+
 	@Value("${redis.proxy.proxy_details.lan_info}")
 	private String proxyDetailsLanInfoRedisKey;
-
 
 	@Override
 	public PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
@@ -187,6 +193,34 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		String lanInfo = proxyDetailsEntity.getLan();
 		redisUtils.setDay(redisKey,lanInfo,1);
 		return lanInfo;
+	}
+
+	@Override
+	public List<ProxyDetailsResponse> getCurrentProxyDetails() {
+		LambdaQueryWrapper<ProxyEntity> proxyEntityLambdaQueryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
+				.eq(ProxyEntity::getBindUserId,SecurityUtils.getLoginUser().getId());
+		ProxyEntity proxy = proxyMapper.selectOne(proxyEntityLambdaQueryWrapper);
+		if(Objects.isNull(proxy)){
+			return null;
+		}
+		LambdaQueryWrapper<ProxyDetailsEntity> proxyDetailsEntityLambdaQueryWrapper = Wrappers.<ProxyDetailsEntity>lambdaQuery()
+				.eq(ProxyDetailsEntity::getProxyId,proxy.getId())
+				.orderByDesc(ProxyDetailsEntity::getCreateTime);
+		List<ProxyDetailsEntity> proxyDetailsLists = proxyDetailsMapper.selectList(proxyDetailsEntityLambdaQueryWrapper);
+		List<ProxyDetailsResponse> proxyDetailsResponses = BeanUtils.copyList(proxyDetailsLists,ProxyDetailsResponse.class);
+		for(ProxyDetailsResponse item : proxyDetailsResponses){
+			MetricsCollector collector = MetricsCollector.getCollector(item.getInetPort());
+			long nowWroteBytes = collector.getWroteBytes().get();
+			long nowReadBytes = collector.getReadBytes().get();
+			item.setWriteBytes(nowWroteBytes+item.getWriteBytes());
+			item.setReadBytes(nowReadBytes+item.getReadBytes());
+			if(collector != null){
+				item.setConnectCount(collector.getChannels().get());
+				item.setWriteBytesStr(ByteUtils.byteFormat(item.getWriteBytes(),true));
+				item.setReadBytesStr(ByteUtils.byteFormat(item.getReadBytes(),true));
+			}
+		}
+		return proxyDetailsResponses;
 	}
 
 }

@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 客户端配置详细接口
  *
@@ -37,6 +39,14 @@ public class ProxyDetailsController {
 		PageResponse<ProxyDetailsResponse> response = proxyDetailsService.getPage(request);
         return Results.page(response);
 	}
+
+
+    @ApiOperation(value = "获取当前用户客户端配置详情")
+    @GetMapping(value = "/getCurrentProxyDetails")
+    public Results getCurrentProxyDetails() {
+        List<ProxyDetailsResponse> response = proxyDetailsService.getCurrentProxyDetails();
+        return Results.success(response);
+    }
 
     /**
      * 客户端配置详细根据ID查询数据

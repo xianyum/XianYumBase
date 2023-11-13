@@ -8,6 +8,8 @@ import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.proxy.dao.ProxyLogMapper;
+import cn.xianyum.proxy.dao.ProxyMapper;
+import cn.xianyum.proxy.entity.po.ProxyEntity;
 import cn.xianyum.proxy.entity.po.ProxyLogEntity;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
 import cn.xianyum.proxy.entity.response.ProxyLogResponse;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -38,6 +42,9 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Autowired
 	private RedisUtils redisUtils;
+
+	@Autowired
+	private ProxyMapper proxyMapper;
 
 	@Override
 	public PageResponse<ProxyLogResponse> getPage(ProxyLogRequest request) {
@@ -110,6 +117,24 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 	@Override
 	public void setIgnoreSaveFlag() {
 		redisUtils.setMin(ignoreSaveFlagRedisKey,"1",10);
+	}
+
+	@Override
+	public List<ProxyLogResponse> getLastProxyLog(ProxyLogRequest request) {
+		String userId = SecurityUtils.getLoginUser().getId();
+
+		LambdaQueryWrapper<ProxyEntity> proxyEntityLambdaQueryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
+				.eq(ProxyEntity::getBindUserId,userId);
+		ProxyEntity proxy = proxyMapper.selectOne(proxyEntityLambdaQueryWrapper);
+		if(Objects.isNull(proxy)){
+			return null;
+		}
+		LambdaQueryWrapper<ProxyLogEntity> queryWrapper= Wrappers.<ProxyLogEntity>lambdaQuery()
+				.eq(ProxyLogEntity::getProxyId,proxy.getId())
+				.orderByDesc(ProxyLogEntity::getCreateTime)
+				.last("limit 5");
+		List<ProxyLogEntity> proxyLogEntities = proxyLogMapper.selectList(queryWrapper);
+		return BeanUtils.copyList(proxyLogEntities,ProxyLogResponse.class);
 	}
 
 }

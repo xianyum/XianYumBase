@@ -38,4 +38,6 @@ public interface ProxyDetailsService {
 	 * @return
 	 */
 	String getLanInfo(Integer port);
+
+	List<ProxyDetailsResponse> getCurrentProxyDetails();
 }

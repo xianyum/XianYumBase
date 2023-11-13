@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 远程代理日志接口
  *
@@ -78,6 +80,14 @@ public class ProxyLogController {
     public Results delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
 	    return Results.success();
+    }
+
+
+    @ApiOperation(value = "查询最近十条数据")
+    @GetMapping(value = "/getLastProxyLog")
+    public Results getLastProxyLog(ProxyLogRequest request) {
+        List<ProxyLogResponse> response = proxyLogService.getLastProxyLog(request);
+        return Results.success(response);
     }
 
 }
