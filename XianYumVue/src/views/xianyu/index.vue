@@ -142,7 +142,14 @@ export default {
             duration: 0
           });
       })
-    }
+    },
+    formatMemoryInfo(row){
+      if(!row.memoryInfo || row.memoryInfo === 'null'){
+        return null;
+      }
+      let info = row.memoryInfo.replace("Available: ","")
+      return info;
+    },
   }
 }
 </script>
