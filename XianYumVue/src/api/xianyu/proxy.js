@@ -83,3 +83,10 @@ export function getOnlineProxyCount() {
     method: 'get'
   })
 }
+
+export function getCurrentProxy() {
+  return request({
+    url: '/xianyum-proxy/v1/proxy/getCurrentProxy',
+    method: 'get'
+  })
+}

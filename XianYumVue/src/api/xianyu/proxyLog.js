@@ -18,3 +18,11 @@ export function delProxyLog(data) {
     data: data
   })
 }
+
+
+export function getLastProxyLog() {
+  return request({
+    url: '/xianyum-proxy/v1/proxyLog/getLastProxyLog',
+    method: 'get'
+  })
+}

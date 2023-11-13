@@ -44,3 +44,10 @@ export function delDetails(data) {
     data: data
   })
 }
+
+export function getCurrentProxyDetails() {
+  return request({
+    url: '/xianyum-proxy/v1/proxyDetails/getCurrentProxyDetails',
+    method: 'get'
+  })
+}
