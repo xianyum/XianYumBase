@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -105,7 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = Exception.class)
     public void deleteById(String[] userIds) {
         UserEntity userEntity = new UserEntity();
         userEntity.setDelTag(YesOrNoEnum.NO.getStatus());
@@ -139,7 +140,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = Exception.class)
     public int save(UserRequest user) {
         List<UserEntity> repeatList = userMapper.getList(user);
         if(repeatList != null && repeatList.size() >0){
@@ -162,7 +163,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = Exception.class)
     public int update(UserRequest user) {
 
         UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
@@ -346,7 +347,6 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int userToRedis(boolean isAsync) {
         if(isAsync){
             xianYumTaskExecutor.execute(()->this.userToRedis());
