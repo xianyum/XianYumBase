@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -345,6 +346,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int userToRedis(boolean isAsync) {
         if(isAsync){
             xianYumTaskExecutor.execute(()->this.userToRedis());
