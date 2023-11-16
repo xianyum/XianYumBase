@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,7 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(String[] userIds) {
         UserEntity userEntity = new UserEntity();
         userEntity.setDelTag(YesOrNoEnum.NO.getStatus());
@@ -140,7 +141,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public int save(UserRequest user) {
         List<UserEntity> repeatList = userMapper.getList(user);
         if(repeatList != null && repeatList.size() >0){
@@ -163,7 +164,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public int update(UserRequest user) {
 
         UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
@@ -349,7 +350,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public int userToRedis(boolean isAsync) {
         if(isAsync){
-            xianYumTaskExecutor.execute(()->this.userToRedis());
+            xianYumTaskExecutor.execute(()->{
+                try {
+                    Thread.sleep(2000L);
+                }catch (Exception e){
+
+                }
+                this.userToRedis();
+            });
             return 1;
         }else{
             return this.userToRedis();
@@ -367,7 +375,6 @@ public class UserServiceImpl implements UserService {
                 .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
                 .eq(UserEntity::getStatus, YesOrNoEnum.YES.getStatus());
         List<UserEntity> userEntities = userMapper.selectList(queryWrapper);
-        log.info("线程数据：{}，刷入redis的用户数据为：{}",Thread.currentThread().getName(),JSONObject.toJSONString(userEntities));
         for(UserEntity item : userEntities){
             redisUtils.hSet(redisUserDataPrefix,item.getId(), JSONObject.toJSONString(item));
         }
