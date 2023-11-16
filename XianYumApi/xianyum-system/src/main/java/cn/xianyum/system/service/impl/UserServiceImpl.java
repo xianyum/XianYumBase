@@ -367,6 +367,7 @@ public class UserServiceImpl implements UserService {
                 .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
                 .eq(UserEntity::getStatus, YesOrNoEnum.YES.getStatus());
         List<UserEntity> userEntities = userMapper.selectList(queryWrapper);
+        log.info("刷入redis的用户数据为：{}",JSONObject.toJSONString(userEntities));
         for(UserEntity item : userEntities){
             redisUtils.hSet(redisUserDataPrefix,item.getId(), JSONObject.toJSONString(item));
         }
