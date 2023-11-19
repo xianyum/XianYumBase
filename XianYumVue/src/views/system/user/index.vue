@@ -298,6 +298,7 @@ export default {
         id: null,
         username: null,
         password: null,
+        confirmPassword: null,
         email: null,
         mobile: null,
         status: null,
@@ -340,7 +341,6 @@ export default {
       const id = row.id || this.ids[0]
       getUser(id).then(response => {
         this.form = response.data
-        this.form.password = undefined
         this.open = true
         this.title = '修改用户'
       })
