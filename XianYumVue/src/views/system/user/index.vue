@@ -227,8 +227,11 @@ export default {
       },
       // 表单校验
       rules: {
+        nickName:[
+          { required: true, message: '用户名称不能为空', trigger: 'blur' }
+        ],
         username: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' }
+          { required: true, message: '登录账号不能为空', trigger: 'blur' }
         ],
         roleIds: [
           { required: true, message: '请选择用户角色', trigger: 'blur' }
@@ -298,6 +301,7 @@ export default {
         id: null,
         username: null,
         password: null,
+        nickName: null,
         confirmPassword: null,
         email: null,
         mobile: null,
