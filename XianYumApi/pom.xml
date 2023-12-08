@@ -51,11 +51,25 @@
         <quartz.version>2.3.2</quartz.version>
         <commons.codec.version>1.9</commons.codec.version>
         <plumelog.version>3.5.3</plumelog.version>
+        <prometheus.version>1.7.0</prometheus.version>
+        <actuator.version>2.6.1</actuator.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${actuator.version}</version>
+            </dependency>
 
             <!-- 引入日志平台-->
             <dependency>

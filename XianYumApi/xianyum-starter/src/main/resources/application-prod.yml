@@ -198,3 +198,35 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 50MB
+
+# 开启健康检查
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        # 开启端点，*表示开启所有
+        include:
+          - '*'
+        # 某些端点除外，不做开启
+        exclude:
+          - env
+          - beans
+      # 跨域配置
+      cors:
+        # 开放所有域访问
+        allowed-origins:
+          - '*'
+  metrics:
+    # 指标采集标签名
+    tags:
+      application: ${spring.application.name}
+  # 启用对接prometheus服务采集指标数据
+  prometheus:
+    metrics:
+      export:
+        enabled: true
