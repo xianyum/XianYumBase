@@ -64,7 +64,7 @@ public class SwaggerConfig {
      */
     private List<SecurityScheme> securitySchemes() {
         List<SecurityScheme> apiKeyList = new ArrayList<SecurityScheme>();
-        apiKeyList.add(new ApiKey("token", "token", In.HEADER.toString()));
+        apiKeyList.add(new ApiKey("Authorization", "Authorization", In.HEADER.toString()));
         return apiKeyList;
     }
 

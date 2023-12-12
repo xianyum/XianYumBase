@@ -56,6 +56,7 @@ public class RequestFilter implements Filter {
                 try {
                     chain.doFilter(httpRequest, httpResponse);
                 } finally {
+                    log.info("access url [{}], cost time [{}] ms )", path, watch.getTime());
                     watch.stop();
                     MDC.clear();
                 }
