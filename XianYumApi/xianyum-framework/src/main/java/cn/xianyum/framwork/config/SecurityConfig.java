@@ -113,7 +113,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/*/api-docs",
                         "/actuator/**",
                         "/druid/**",
-                        "/plumelog/**",
                         "/login",
                         "/captcha/*"
                 ).permitAll()
