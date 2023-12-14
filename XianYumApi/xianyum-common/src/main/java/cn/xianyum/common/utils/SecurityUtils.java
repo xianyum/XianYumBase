@@ -2,8 +2,11 @@ package cn.xianyum.common.utils;
 
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+
 import java.util.Objects;
 
 /**
@@ -29,6 +32,17 @@ public class SecurityUtils {
             return (LoginUser)principal;
         }
         return null;
+    }
+
+    /**
+     * 设置登录用户信息
+     * @return
+     */
+    public static void setLoginUser(LoginUser loginUser){
+        if(Objects.nonNull(loginUser)){
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
     }
 
     /**

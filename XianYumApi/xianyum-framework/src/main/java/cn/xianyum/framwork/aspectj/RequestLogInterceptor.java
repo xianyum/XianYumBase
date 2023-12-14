@@ -1,5 +1,6 @@
 package cn.xianyum.framwork.aspectj;
 
+import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.common.utils.SecurityUtils;
@@ -88,7 +89,8 @@ public class RequestLogInterceptor {
             String ipInfo =IPUtils.getIpInfo(ip);
             logEntity.setIpInfo(ipInfo);
             //用户名
-            if(null != SecurityUtils.getLoginUser()){
+            LoginUser loginUser = SecurityUtils.getLoginUser();
+            if(null != loginUser){
                 logEntity.setUsername(SecurityUtils.getLoginUser().getUsername());
             }else{
                 logEntity.setUsername("system");
@@ -96,7 +98,9 @@ public class RequestLogInterceptor {
 
             logEntity.setTime(time);
             //异步保存系统日志
+
             xianYumTaskExecutor.execute(()->{
+                SecurityUtils.setLoginUser(loginUser);
                 SpringUtils.getBean(LogService.class).saveLog(logEntity);
             });
         }
