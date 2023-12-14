@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
@@ -61,8 +60,7 @@ public class LogController {
     }
 
     @DeleteMapping("/truncateLog")
-    @ApiOperation(value = "清空日志", httpMethod = "POST")
-    @SysLog(value = "清空用户操作日志")
+    @ApiOperation(value = "清空用户操作日志", httpMethod = "POST")
     @Permission("@ps.hasPerm('monitor:operlog:delete')")
     public Results truncateLog(){
         try {

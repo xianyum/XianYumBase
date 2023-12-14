@@ -1,7 +1,6 @@
 package cn.xianyum.proxy.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.Results;
@@ -137,7 +136,6 @@ public class ProxyController {
      * 发送客户端配置信息
      *
      */
-    @SysLog("发送客户端配置信息")
     @ApiOperation(value = "发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
     @Permission(value = "@ps.hasPerm('xianyu:proxy:send-email')",ignoreDataScope = true)
@@ -209,7 +207,6 @@ public class ProxyController {
     @ApiOperation(value = "重启java应用刷入写入量和读取量")
     @GetMapping(value = "/flushWriteAndReadBytes")
     @Permission(publicApi = true)
-    @SysLog(value = "重启java应用刷入写入量和读取量")
     public Results flushWriteAndReadBytes() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>(2);
         jobMapParams.put("resetZeroFlag","Y");

@@ -1,10 +1,8 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.SystemConstantRequest;
 import cn.xianyum.system.entity.response.SystemConstantResponse;
@@ -27,7 +25,6 @@ public class SystemConstantController {
     private SystemConstantService systemConstantService;
 
     @GetMapping("/getPublicConstant/{key}")
-    @SysLog(value = "获取公开系统可见参数")
     @ApiOperation(value = "获取系统可见参数")
     @Permission(publicApi = true)
     public Results getPublicConstant(@PathVariable String key) {

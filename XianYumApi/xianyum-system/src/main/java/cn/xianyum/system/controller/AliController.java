@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.AliNetService;
@@ -37,7 +36,6 @@ public class AliController {
     private AliNetService aliNetService;
 
     @PostMapping("/login")
-    @SysLog(value = "支付宝第三方登录")
     @ApiOperation(value = "支付宝第三方登录")
     @Permission(publicApi = true)
     public Results login(@RequestBody String requestInfo) {
@@ -52,7 +50,6 @@ public class AliController {
     }
 
     @PostMapping("/yunXiao/flowCallBack")
-    @SysLog(value = "阿里云-云效-流水线执行结果回调")
     @ApiOperation(value = "阿里云-云效-流水线执行结果回调")
     @Permission(publicApi = true)
     public Results flowCallBack(@RequestBody String requestInfo) {

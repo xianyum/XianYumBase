@@ -1,6 +1,5 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
@@ -61,7 +60,6 @@ public class ProgramController {
     }
 
     @PostMapping("/save")
-    @SysLog(value = "保存程序记录操作")
     @ApiOperation(value = "保存程序记录操作", httpMethod = "POST")
     public Results save(@RequestBody ProgramRequest request){
         int count = programService.save(request);
@@ -74,7 +72,6 @@ public class ProgramController {
 
 
     @PostMapping("/update")
-    @SysLog(value = "更新程序记录操作")
     @ApiOperation(value = "更新程序记录操作", httpMethod = "POST")
     public Results update(@RequestBody ProgramRequest request){
         int count = programService.update(request);
@@ -86,7 +83,6 @@ public class ProgramController {
     }
 
     @PostMapping("/delete")
-    @SysLog(value = "删除程序记录操作")
     @ApiOperation(value = "删除程序操作", httpMethod = "POST")
     public Results delete(@RequestBody String[] ids){
         try {
@@ -99,7 +95,6 @@ public class ProgramController {
 
 
     @PostMapping("/complete")
-    @SysLog(value = "完成程序订单操作")
     @ApiOperation(value = "完成程序订单操作", httpMethod = "POST")
     public Results complete(@RequestBody ProgramRequest request){
         try {

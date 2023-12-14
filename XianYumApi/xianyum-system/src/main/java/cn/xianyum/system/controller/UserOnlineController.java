@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
@@ -43,7 +42,6 @@ public class UserOnlineController {
      * @return
      */
     @DeleteMapping("/delete")
-    @SysLog(value = "踢出用户")
     @ApiOperation(value = "踢出用户")
     @Permission("@ps.hasPerm('monitor:online:exit')")
     public Results delete(@RequestBody String[] tokenIds){

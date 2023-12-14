@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
@@ -58,7 +57,6 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/delete")
-    @SysLog(value = "删除用户")
     @ApiOperation(value = "删除用户")
     @Permission("@ps.hasPerm('system:user:delete')")
     public Results delete(@RequestBody String[] userIds){
@@ -97,7 +95,6 @@ public class UserController {
      * 保存用户
      */
     @PostMapping("/save")
-    @SysLog(value = "新增用户")
     @ApiOperation(value = "保存用户")
     @Permission("@ps.hasPerm('system:user:save')")
     public Results save(@RequestBody UserRequest user){
@@ -118,7 +115,6 @@ public class UserController {
      * 修改用户
      */
     @PutMapping("/update")
-    @SysLog(value = "修改用户")
     @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
     @Permission("@ps.hasPerm('system:user:update')")
     public Results update(@RequestBody UserRequest user){
@@ -159,7 +155,6 @@ public class UserController {
      * 更新当前用户信息
      */
     @PutMapping ("/updateCurrentUser")
-    @SysLog(value = "更新当前用户信息")
     @ApiOperation(value = "更新当前用户信息")
     public Results updateCurrentUser(@RequestBody UserRequest user){
         int count = userService.updateCurrentUser(user);

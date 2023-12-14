@@ -1,7 +1,6 @@
 package cn.xianyum.sheduler.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
@@ -54,10 +53,9 @@ public class JobLogController {
      * 清空日志
      *
      */
-    @ApiOperation(value = "清空日志")
+    @ApiOperation(value = "清空调度任务日志")
     @DeleteMapping(value = "/truncateLog")
     @Permission("@ps.hasPerm('job:log:delete')")
-    @SysLog(value = "清空调度任务日志")
     public Results truncateLog() {
         jobLogService.truncateLog();
         return Results.success();
@@ -69,7 +67,6 @@ public class JobLogController {
      */
     @ApiOperation(value = "定时任务调度日志表删除数据")
     @DeleteMapping(value = "/delete")
-    @SysLog(value = "批量删除调度任务日志")
     @Permission("@ps.hasPerm('job:log:delete')")
     public Results delete(@RequestBody String[] ids) {
 

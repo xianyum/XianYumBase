@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.UserService;
@@ -33,7 +32,6 @@ public class QqController {
     private UserService userService;
 
     @PostMapping("/login")
-    @SysLog(value = "QQ第三方登录")
     @ApiOperation(value = "QQ第三方登录")
     @Permission(publicApi = true)
     public Results login(@RequestBody String requestInfo) {

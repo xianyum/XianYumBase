@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.annotation.SysLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.DictTypeEntity;
@@ -54,7 +53,6 @@ public class DictTypeController {
      */
     @PostMapping(value = "/save")
     @ApiOperation(value = "新增字典类型")
-    @SysLog(value = "新增字典类型")
     @Permission("@ps.hasPerm('system:dict:save')")
     public Results save(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.save(dictTypeEntity));
@@ -66,7 +64,6 @@ public class DictTypeController {
      */
     @PutMapping(value = "/update")
     @ApiOperation(value = "更新字典类型详细")
-    @SysLog(value = "更新字典类型详细")
     @Permission("@ps.hasPerm('system:dict:update')")
     public Results update(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.update(dictTypeEntity));
@@ -74,7 +71,6 @@ public class DictTypeController {
 
     @ApiOperation(value = "刷新字典缓存")
     @DeleteMapping("/refreshCache")
-    @SysLog(value = "刷新字典缓存")
     public Results refreshCache() {
         dictTypeService.resetDictCache();
         return Results.success();
@@ -82,7 +78,6 @@ public class DictTypeController {
 
     @DeleteMapping("/{ids}")
     @ApiOperation(value = "批量删除字典类型")
-    @SysLog(value = "批量删除字典类型")
     @Permission("@ps.hasPerm('system:dict:delete')")
     public Results remove(@PathVariable Long[] ids) {
         dictTypeService.deleteDictTypeByIds(ids);
