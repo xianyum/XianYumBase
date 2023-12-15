@@ -4,18 +4,14 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.*;
-import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.UserRequest;
-import cn.xianyum.system.service.LogService;
 import cn.xianyum.system.service.UserTokenService;
-import com.alibaba.fastjson2.JSON;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 登录相关
@@ -37,10 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = "登录接口")
 @Slf4j
 public class LoginController {
-
-
-    @Autowired
-    private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     @Autowired
     private UserTokenService userTokenService;
@@ -60,37 +51,26 @@ public class LoginController {
     @PostMapping("/login")
     @ApiOperation(value = "登录系统")
     public Results login(@RequestBody UserRequest userRequest) {
-        long beginTime = System.currentTimeMillis();
-
         CaptchaVO captchaVO = new CaptchaVO();
         captchaVO.setCaptchaVerification(userRequest.getCaptchaVerification());
         ResponseModel response = captchaService.verification(captchaVO);
         if(response.isSuccess() == false){
-            long time = System.currentTimeMillis() - beginTime;
-            saveLoginLog(userRequest,"验证码不正确",time);
             return Results.error("验证码不正确");
         }
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
-        Authentication authentication = null;
+        Authentication authentication;
         try {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
-            long time = System.currentTimeMillis() - beginTime;
             if (e instanceof BadCredentialsException) {
-                saveLoginLog(userRequest,"用户不存在或密码错误",time);
                 return Results.error("用户不存在或密码错误");
             }
             else {
-                saveLoginLog(userRequest,e.getMessage(),time);
                 return Results.error(e.getMessage());
             }
         }
-
-        long time = System.currentTimeMillis() - beginTime;
-        saveLoginLog(userRequest,"登录成功",time);
-
         //生成token，并保存到数据库
         LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
         loginUserEntity.setLoginType(LoginTypeEnum.SYSTEM.getAccountType());
@@ -115,48 +95,24 @@ public class LoginController {
     @ApiOperation(value = "咸鱼客户端登录系统")
     @Permission(publicApi = true)
     public Results xianYuLogin(@RequestBody UserRequest userRequest) {
-        long beginTime = System.currentTimeMillis();
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
-        Authentication authentication = null;
+        Authentication authentication;
         try {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
-            long time = System.currentTimeMillis() - beginTime;
             if (e instanceof BadCredentialsException) {
-                saveLoginLog(userRequest,"用户不存在或密码错误",time);
                 return Results.error("用户不存在或密码错误");
             }
             else {
-                saveLoginLog(userRequest,e.getMessage(),time);
                 return Results.error(e.getMessage());
             }
         }
-        long time = System.currentTimeMillis() - beginTime;
-        saveLoginLog(userRequest,"咸鱼客户端登录成功",time);
         //生成token，并保存到数据库
         LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
         loginUserEntity.setLoginType(LoginTypeEnum.XIAN_YU.getAccountType());
         Results result = userTokenService.createToken(loginUserEntity);
         return result;
-    }
-
-    /**
-     * 获取登录/注册信息
-     */
-    public void saveLoginLog(UserRequest userRequest,String desc,Long time){
-        LogEntity log = new LogEntity();
-        log.setMethod("login");
-        userRequest.setPassword("");
-        log.setParams(JSON.toJSONString(userRequest));
-        log.setUsername(userRequest.getUsername());
-        log.setOperation(desc);
-        log.setTime(time);
-        HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
-        String ip = IPUtils.getIpAddr(httpServletRequest);
-        log.setIp(ip);
-        log.setIpInfo(IPUtils.getIpInfo(ip));
-        xianYumTaskExecutor.execute(()-> SpringUtils.getBean(LogService.class).saveLog(log));
     }
 }
