@@ -33,16 +33,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dynamic.datasource.boot.version>3.5.0</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.5.3.2</mybatisplus.boot.version>
-        <fastjson.version>2.0.41</fastjson.version>
+        <fastjson.version>2.0.43</fastjson.version>
         <okhttps.fastjson.version>3.5.3</okhttps.fastjson.version>
         <joda.time.version>2.10.13</joda.time.version>
         <lombok.version>1.18.26</lombok.version>
-        <druid.version>1.1.10</druid.version>
+        <druid.version>1.2.20</druid.version>
         <captcha.version>1.3.0</captcha.version>
         <easy.excel.version>3.0.5</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
         <bitwalker.version>1.21</bitwalker.version>
-        <oshi.version>6.4.6</oshi.version>
+        <oshi.version>6.4.8</oshi.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <hibernate.version>7.0.2.Final</hibernate.version>
