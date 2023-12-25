@@ -8,7 +8,7 @@ export default {
   components: { iFrame },
   data() {
     return {
-      url: 'https://base.xianyum.cn/grafana'
+      url: '/grafana'
     };
   },
 };
