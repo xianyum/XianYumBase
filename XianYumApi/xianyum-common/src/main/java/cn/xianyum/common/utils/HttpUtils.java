@@ -1,7 +1,7 @@
 package cn.xianyum.common.utils;
 
-import com.ejlchina.okhttps.HTTP;
-import com.ejlchina.okhttps.fastjson.FastjsonMsgConvertor;
+import cn.zhxu.okhttps.HTTP;
+import cn.zhxu.okhttps.fastjson2.Fastjson2MsgConvertor;
 import okhttp3.OkHttpClient;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +27,7 @@ public class HttpUtils {
         if(null == http){
             synchronized (HTTP.class){
                 if(null == http){
-                    http = HTTP.builder().addMsgConvertor(new FastjsonMsgConvertor())
+                    http = HTTP.builder().addMsgConvertor(new Fastjson2MsgConvertor())
                             .config((OkHttpClient.Builder builder) -> {
                                 // 连接超时时间（默认10秒）
                                 builder.connectTimeout(1, TimeUnit.SECONDS);

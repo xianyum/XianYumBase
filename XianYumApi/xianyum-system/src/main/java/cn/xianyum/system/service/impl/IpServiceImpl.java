@@ -25,7 +25,6 @@ public class IpServiceImpl implements IpService {
         IpInfoEntity ipInfoEntity = JSONObject.parseObject(JSONObject.toJSONString(IPUtils.getIpInfoMap(ip)),IpInfoEntity.class);
         ipInfoEntity.setSupport("https://xiaoyaxiaokeai.gitee.io/base/20201224/thanks.jpg");
         ipInfoEntity.setEmail("80616059@qq.com");
-        ipInfoEntity.setRemark("2023年国庆节快乐~");
         ipInfoEntity.setIp(ip);
         return ipInfoEntity;
     }

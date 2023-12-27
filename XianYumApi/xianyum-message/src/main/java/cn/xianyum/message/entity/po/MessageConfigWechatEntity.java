@@ -1,11 +1,8 @@
 package cn.xianyum.message.entity.po;
 
 import cn.xianyum.common.entity.base.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 账户配置wechat(message_config_wechat)

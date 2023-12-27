@@ -159,8 +159,16 @@ spring:
   datasource:
     druid:
       stat-view-servlet:
-        loginUsername: admin
-        loginPassword: mpw:UByz+M4cr4n8EkCiGLQjZw==
+        #默认为false，表示不使用StatViewServlet配置，就是属性名去短线
+        enabled: true
+        #配置DruidStatViewServlet的访问地址。后台监控页面的访问地址
+        url-pattern: /druid/*
+        #禁用HTML页面上的“重置”功能，会把所有监控的数据全部清空，一般不使用
+        reset-enable: false
+        #监控页面登录的用户名
+        login-username: admin
+        #监控页面登录的密码
+        login-password: mpw:UByz+M4cr4n8EkCiGLQjZw==
     dynamic:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
       datasource:
