@@ -83,16 +83,22 @@
             <table cellspacing="0" style="width: 100%;">
               <tbody>
                 <tr>
+                  <td class="el-table__cell is-leaf"><div class="cell">服务器版本</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.version }}</div></td>
+
                   <td class="el-table__cell is-leaf"><div class="cell">服务器名称</div></td>
                   <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.computerName }}</div></td>
+                </tr>
+                <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">操作系统</div></td>
                   <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osName }}</div></td>
+
+                  <td class="el-table__cell is-leaf"><div class="cell">系统架构</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osArch }}</div></td>
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">服务器IP</div></td>
                   <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.computerIp }}</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell">系统架构</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.osArch }}</div></td>
                 </tr>
               </tbody>
             </table>
