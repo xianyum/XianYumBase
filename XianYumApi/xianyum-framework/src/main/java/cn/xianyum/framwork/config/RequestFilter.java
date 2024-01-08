@@ -106,6 +106,7 @@ public class RequestFilter implements Filter {
     }
 
     public void init(FilterConfig config){
+
         String exclusions = config.getInitParameter("exclusions");
         if (exclusions != null && exclusions.trim().length() != 0) {
             this.excludesPattern = new HashSet(Arrays.asList(exclusions.split("\\s*,\\s*")));

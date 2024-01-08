@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpUtils {
 
-    private volatile static HTTP http;
+    private static volatile HTTP http;
 
     private HttpUtils() {
 

@@ -1,4 +1,5 @@
 spring-boot.version:   ${spring-boot.version}
+xianyum-api.version:   ${xian_yum.version}
 
        .__
 ___  __|__|____    ____ ___.__.__ __  _____

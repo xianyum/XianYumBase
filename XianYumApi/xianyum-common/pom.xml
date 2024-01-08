@@ -21,6 +21,11 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+        </dependency>
+
         <!-- 添加 Undertow依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

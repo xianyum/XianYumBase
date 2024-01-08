@@ -31,6 +31,8 @@ public class Sys {
      */
     private String osArch;
 
+    private String version;
+
     public String getComputerName()
     {
         return computerName;
@@ -79,5 +81,13 @@ public class Sys {
     public void setOsArch(String osArch)
     {
         this.osArch = osArch;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

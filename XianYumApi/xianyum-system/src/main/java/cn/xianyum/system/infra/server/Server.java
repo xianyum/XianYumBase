@@ -3,6 +3,7 @@ package cn.xianyum.system.infra.server;
 
 import cn.xianyum.common.utils.ArithUtils;
 import cn.xianyum.common.utils.IPUtils;
+import cn.xianyum.common.utils.PropertiesUtil;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
@@ -163,6 +164,7 @@ public class Server {
         sys.setOsName(props.getProperty("os.name"));
         sys.setOsArch(props.getProperty("os.arch"));
         sys.setUserDir(props.getProperty("user.dir"));
+        sys.setVersion(PropertiesUtil.getString("xian_yum.version","1.0.0"));
     }
 
     /**

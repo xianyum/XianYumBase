@@ -3,3 +3,5 @@ spring:
     active: prod
   application:
     name: XianYumApi
+xian_yum:
+  version: 1.0.0

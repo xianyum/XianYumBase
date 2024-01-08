@@ -142,6 +142,9 @@ mybatis-plus:
 
 # 数据源配置
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   redis:
     #    database: 0 #Redis数据库索引（默认为0）
     host: mpw:2E9HoOOXusIU22BFOQ8Jkg== # Redis服务器地址

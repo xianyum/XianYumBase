@@ -1,6 +1,7 @@
 package cn.xianyum.framwork.config;
 
 import cn.xianyum.common.annotation.Permission;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,16 +32,24 @@ public class PermitAllUrlProperties implements InitializingBean, ApplicationCont
 
     @Override
     public void afterPropertiesSet() {
-        RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
+        RequestMappingHandlerMapping mapping = applicationContext.getBean("requestMappingHandlerMapping",RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
 
         map.keySet().forEach(info -> {
             HandlerMethod handlerMethod = map.get(info);
-
+            if(null == info.getPatternsCondition()){
+                return;
+            }
             // 获取方法上边的注解 替代path variable 为 *
             Permission method = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), Permission.class);
-            Optional.ofNullable(method).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
-                    .forEach(url -> urls.add(RegExUtils.replaceAll(url, PATTERN, ASTERISK))));
+
+            try {
+                Optional.ofNullable(method).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
+                        .forEach(url -> urls.add(RegExUtils.replaceAll(url, PATTERN, ASTERISK))));
+            }catch (Exception e){
+                System.out.println(e);
+            }
+
 
             // 获取类上边的注解, 替代path variable 为 *
             Permission controller = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), Permission.class);
