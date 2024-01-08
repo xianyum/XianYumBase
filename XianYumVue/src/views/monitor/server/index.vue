@@ -83,7 +83,7 @@
             <table cellspacing="0" style="width: 100%;">
               <tbody>
                 <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">服务器版本</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell">API版本</div></td>
                   <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.version }}</div></td>
 
                   <td class="el-table__cell is-leaf"><div class="cell">服务器名称</div></td>
