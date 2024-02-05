@@ -42,7 +42,7 @@
         <easy.excel.version>3.0.5</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
         <bitwalker.version>1.21</bitwalker.version>
-        <oshi.version>6.4.8</oshi.version>
+        <oshi.version>6.4.11</oshi.version>
         <commons.io.version>2.11.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <hibernate.version>7.0.2.Final</hibernate.version>
