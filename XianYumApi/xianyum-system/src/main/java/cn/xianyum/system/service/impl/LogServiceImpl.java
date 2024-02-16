@@ -13,6 +13,8 @@ import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.entity.request.LogRequest;
 import cn.xianyum.system.entity.response.LogResponse;
 import cn.xianyum.system.service.LogService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,7 +176,10 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public Long getLogCount() {
-        return logMapper.selectCount(null);
+        LambdaQueryWrapper<LogEntity> queryWrapper = Wrappers.<LogEntity>lambdaQuery()
+                .orderByDesc(LogEntity::getId).last("limit 1");
+        Optional<LogEntity> first = logMapper.selectList(queryWrapper).stream().findFirst();
+        return first.isPresent()?first.get().getId():0L;
     }
 
 }
