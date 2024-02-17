@@ -1,4 +1,4 @@
-package cn.xianyum.analysis.task;
+package cn.xianyum.analysis.infra.task;
 
 import cn.xianyum.analysis.service.HaoKaLotService;
 import cn.xianyum.common.annotation.JobHandler;
