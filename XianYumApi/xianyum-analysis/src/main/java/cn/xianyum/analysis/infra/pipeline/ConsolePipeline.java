@@ -1,4 +1,4 @@
-package cn.xianyum.analysis.pipeline;
+package cn.xianyum.analysis.infra.pipeline;
 
 import com.alibaba.fastjson2.JSON;
 import com.geccocrawler.gecco.pipeline.Pipeline;

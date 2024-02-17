@@ -6,7 +6,7 @@ import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.SchedulerTool;
 import com.geccocrawler.gecco.GeccoEngine;
 import com.geccocrawler.gecco.pipeline.PipelineFactory;
-import com.geccocrawler.gecco.request.HttpGetRequest;
+import cn.xianyum.analysis.infra.common.utils.HttpGetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 

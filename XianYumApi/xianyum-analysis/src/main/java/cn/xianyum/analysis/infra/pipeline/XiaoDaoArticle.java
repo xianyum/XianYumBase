@@ -1,4 +1,4 @@
-package cn.xianyum.analysis.pipeline;
+package cn.xianyum.analysis.infra.pipeline;
 
 import com.geccocrawler.gecco.annotation.Href;
 import com.geccocrawler.gecco.annotation.HtmlField;

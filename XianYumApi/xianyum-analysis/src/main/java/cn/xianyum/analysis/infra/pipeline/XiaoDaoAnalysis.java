@@ -1,4 +1,4 @@
-package cn.xianyum.analysis.pipeline;
+package cn.xianyum.analysis.infra.pipeline;
 
 import com.geccocrawler.gecco.annotation.Gecco;
 import com.geccocrawler.gecco.annotation.HtmlField;
@@ -6,6 +6,7 @@ import com.geccocrawler.gecco.annotation.Request;
 import com.geccocrawler.gecco.request.HttpRequest;
 import com.geccocrawler.gecco.spider.HtmlBean;
 import lombok.Data;
+
 import java.util.List;
 
 /**
