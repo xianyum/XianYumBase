@@ -54,6 +54,7 @@
         <actuator.version>2.7.18</actuator.version>
         <mysql-connector.version>8.0.33</mysql-connector.version>
         <okio.version>2.8.0</okio.version>
+        <cglib.version>3.3.0</cglib.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -220,6 +221,12 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>cglib</artifactId>
+                <groupId>cglib</groupId>
+                <version>${cglib.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

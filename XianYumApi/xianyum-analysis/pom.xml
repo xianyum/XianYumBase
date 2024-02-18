@@ -65,6 +65,12 @@
             </exclusions>
         </dependency>
 
+        <!-- cglib -->
+        <dependency>
+            <artifactId>cglib</artifactId>
+            <groupId>cglib</groupId>
+        </dependency>
+
         <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>
