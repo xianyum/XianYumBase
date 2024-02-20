@@ -137,7 +137,7 @@
       :title="messageConfigDialog"
       :close-on-click-modal="false"
       :visible.sync="messageConfigVisible"
-      width="30%"
+      width="40%"
       center
     >
       <div v-show="messageConfigDialogForm.messageAccountType === 'wechat'">
@@ -423,8 +423,8 @@ export default {
         'pageSize': this.pageSize
       }
       getMessageSendRelationPage(requestForm).then(res => {
-        this.dataList = res.data.records
-        this.totalPage = res.data.total
+        this.dataList = res.data
+        this.totalPage = res.data
         this.dataListLoading = false
       })
     },
