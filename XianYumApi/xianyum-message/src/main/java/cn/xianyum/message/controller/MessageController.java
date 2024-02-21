@@ -34,10 +34,10 @@ public class MessageController {
         return Results.success();
     }
 
-    @PostMapping("/sendSimpleMessage")
-    @ApiOperation(value = "发送简单消息")
+    @PostMapping("/sendStandardMessage")
+    @ApiOperation(value = "发送标准消息")
     @Permission(publicApi = true)
-    public Results sendSimpleMessageForPost(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
+    public Results sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
         messageService.sendStandardMessage(messageSenderRequest);
         return Results.success();
     }
