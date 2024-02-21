@@ -26,7 +26,7 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @PostMapping("/sendSimpleMessage")
+    @GetMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
     public Results sendSimpleMessageForGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
@@ -34,7 +34,7 @@ public class MessageController {
         return Results.success();
     }
 
-    @GetMapping("/sendSimpleMessage")
+    @PostMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
     public Results sendSimpleMessageForPost(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
