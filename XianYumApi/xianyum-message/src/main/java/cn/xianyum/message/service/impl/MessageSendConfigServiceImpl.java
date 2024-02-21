@@ -139,13 +139,19 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 					// 发送消息
 					switch (MessageAccountTypeEnums.getByCode(item.getMessageAccountType())){
 						case WECHAT:
-							if(StringUtil.isNotEmpty(item.getToUser())){
+							// 接口指定的发送用户>发送配置的>默认all
+							if(StringUtil.isNotEmpty(messageSender.getWechatToUser())){
+								messageSender.setWechatToUser(messageSender.getWechatToUser());
+							}else{
 								messageSender.setWechatToUser(item.getToUser());
 							}
 							wechatSender.sendMessage(messageSender);
 							break;
 						case EMAIL:
-							if(StringUtil.isNotEmpty(item.getToUser())){
+							// 接口指定的发送用户>发送配置的>默认all
+							if(StringUtil.isNotEmpty(messageSender.getEmailToUser())){
+								messageSender.setEmailToUser(messageSender.getEmailToUser());
+							}else{
 								messageSender.setEmailToUser(item.getToUser());
 							}
 							emailSender.sendMessage(messageSender);

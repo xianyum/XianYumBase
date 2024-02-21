@@ -1,7 +1,9 @@
 package cn.xianyum.message.service.impl;
 
+import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
+import cn.xianyum.message.entity.request.MessageSenderRequest;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,22 @@ public class MessageServiceImpl implements MessageService {
         messageContents.add(messageContent);
         messageSenderEntity.setMessageContents(messageContents);
         messageSender.sendAsyncMessage(messageCode,messageSenderEntity);
+    }
+
+    /**
+     * 发送标准消息
+     * @param messageSenderRequest
+     */
+    @Override
+    public void sendStandardMessage(MessageSenderRequest messageSenderRequest) {
+        MessageSenderEntity messageSenderEntity = BeanUtils.copy(messageSenderRequest, MessageSenderEntity.class);
+        List<MessageContent> messageContents = new ArrayList<>();
+        MessageContent messageContent = new MessageContent();
+        messageContent.setLabel(MESSAGE_CONTENT_PREFIX);
+        messageContent.setValue(messageSenderRequest.getContent());
+        messageContents.add(messageContent);
+        messageSenderEntity.setMessageContents(messageContents);
+        messageSender.sendAsyncMessage(messageSenderRequest.getMessageCode(),messageSenderEntity);
     }
 
 }

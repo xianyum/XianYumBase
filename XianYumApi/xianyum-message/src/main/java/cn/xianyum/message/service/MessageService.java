@@ -1,5 +1,7 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.message.entity.request.MessageSenderRequest;
+
 /**
  *
  * @description
@@ -13,4 +15,10 @@ public interface MessageService {
      * @param content
      */
     void sendSimpleMessage(String messageCode, String title, String content);
+
+    /**
+     * 发送标准消息
+     * @param messageSenderRequest
+     */
+    void sendStandardMessage(MessageSenderRequest messageSenderRequest);
 }

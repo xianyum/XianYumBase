@@ -56,7 +56,7 @@ public class WechatSender {
      */
     public void sendWechat(MessageSenderEntity messageSender) {
         messageSender.setMessageAccountType(MessageAccountTypeEnums.WECHAT.getCode());
-        MessageTypeConfigEntity messageTypeConfigEntity = messageTypeConfigService.check(messageSender.getMessageCode());
+        messageTypeConfigService.check(messageSender.getMessageCode());
         this.sendMessage(messageSender);
     }
 }
