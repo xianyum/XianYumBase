@@ -144,11 +144,6 @@ public class EmailSupporter {
                 }
             }
         }
-        sb.append("<div><p>");
-        sb.append("查看详情：");
-        sb.append("<b><span>");
-        sb.append(MessageUtils.getFormUrl(messageSender.getMessageId()));
-        sb.append("</span></b></p></div>");
         return sb.toString();
     }
 
