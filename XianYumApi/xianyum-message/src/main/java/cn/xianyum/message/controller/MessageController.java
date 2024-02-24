@@ -26,10 +26,10 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @GetMapping("/sendSimpleMessage")
+    @PostMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
-    public Results sendSimpleMessageForGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+    public Results sendSimpleMessage(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
     }
