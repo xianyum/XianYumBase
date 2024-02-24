@@ -12,7 +12,7 @@
       </el-form-item>
 
       <el-form-item label="账户类型" prop="messageType">
-        <el-select v-model="form.messageType" placeholder="请选择账户类型" filterable clearable>
+        <el-select v-model="queryParams.messageType" placeholder="请选择账户类型" filterable clearable>
           <el-option
             v-for="item in messageAccountTypeList"
             :key="item.code"
@@ -23,7 +23,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="消息类型" prop="messageCode">
-        <el-select v-model="form.messageCode" placeholder="请选择消息类型" filterable clearable>
+        <el-select v-model="queryParams.messageCode" placeholder="请选择消息类型" filterable clearable>
           <el-option
             v-for="item in messageTypeList"
             :key="item.messageCode"
