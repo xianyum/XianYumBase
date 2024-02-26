@@ -68,4 +68,6 @@ public class Constants {
     public final static String HTTP_DELETE_METHOD = "delete";
 
     public final static String MD5_DEFAULT_SECRET = "EcBK0BUARh";
+
+    public final static String DEFAULT_EMAIL_HTML = "common";
 }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>xianyu客户端代理配置详情</title>
+    <title th:text="${messageTitle}"/>
     <style type="text/css">
         * {
             margin: 0;
@@ -23,14 +23,14 @@
 
         .header {
             height: 50px;
-            background-color: #49bcff;
-            border-top-left-radius: 2px;
+            background-color: #49a4ff;
+            border-top-left-radius: 5px;
             border-top-right-radius: 5px;
             padding-left: 30px;
         }
 
         .header h2 {
-            padding-top: 5px;
+            padding-top: 6px;
             color: white;
         }
 
@@ -67,25 +67,17 @@
 <body>
 <div class="container">
     <div class="header">
-        <h2>xianyu客户端代理配置详情</h2>
+        <h2 th:text="${messageTitle}"/>
     </div>
     <div class="content">
         <p></p>
-        <p>客户端名称：<b><span th:text="${name}"></span></b></p>
-        <p>代理信息：<b><span style="color: red" th:text="${remoteAddr}"></span></b></p>
-        <p>当前是否在线：<b><span th:text="${online}"></span></b></p>
-        <p>上次登录日期：<b><span th:text="${loginTime}"></span></b></p>
-        <p>上次登录mac地址：<b><span th:text="${macAddress}"></span></b></p>
-        <p>上次登录ip：<b><span th:text="${hostIp}"></span></b></p>
-        <p>共计登录次数：<b><span th:text="${loginCount}"></span></b></p>
-        <p>客户端公告：<b><span th:text="${notice}"></span></b></p>
-        <p>客户端最新下载地址：<b><span th:text="${clientDownloadUrl}"></span></b></p>
-        <p>如果您有什么疑问可以联系管理员，Email: <b>80616059@qq.com</b></p>
+        <div th:each="item : ${messageContentList}">
+            <p th:text="${item}"></p>
+        </div>
     </div>
     <div class="footer">
-        <p>此为系统邮件，请勿回复</p>
-        <p>请保管好您的信息，避免被他人盗用</p>
-        <p>©xianyum.cn</p>
+        <p>请保管好您的信息，避免被他人盗用。此为系统邮件，请勿回复！</p>
+        <p>©base.xianyum.cn</p>
     </div>
 </div>
 </body>

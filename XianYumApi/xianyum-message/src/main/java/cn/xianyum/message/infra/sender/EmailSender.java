@@ -1,5 +1,6 @@
 package cn.xianyum.message.infra.sender;
 
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
+
+import java.util.List;
 
 /**
  * 邮箱发送
@@ -47,9 +50,12 @@ public class EmailSender {
                 for(String receiver : receivers){
                     String mId = UUIDUtils.UUIDReplace();
                     messageSender.setMessageId(mId);
-                    String messageContent  = emailSupporter.generateMessageContent(messageSender);
+                    List<String> messageContentList  = emailSupporter.generateMessageContentList(messageSender);
                     messageSender.setEmailToUser(receiver);
-                    String result = emailSupporter.sendHtmlContent(messageConfigEmailEntity,receiver,messageSender.getTitle(),messageContent);
+                    Context context = new Context();
+                    context.setVariable("messageTitle", messageSender.getTitle());
+                    context.setVariable("messageContentList", messageContentList);
+                    String result = emailSupporter.sendHtmlEmail(messageConfigEmailEntity,receiver,messageSender.getTitle(), Constants.DEFAULT_EMAIL_HTML,context);
                     this.messageMonitorService.insertMessageLog(mId,messageSender.getEmailToUser(),messageSender,result);
                 }
             }

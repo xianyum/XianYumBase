@@ -16,6 +16,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -126,7 +127,6 @@ public class EmailSupporter {
      * @return
      */
     public String generateMessageContent(MessageSenderEntity messageSender){
-
         StringBuffer sb = new StringBuffer();
         if(StringUtil.isNotEmpty(messageSender.getContent())){
             sb.append("<div><p>");
@@ -145,6 +145,26 @@ public class EmailSupporter {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * 构建消息体
+     * @param messageSender
+     * @return
+     */
+    public List<String> generateMessageContentList(MessageSenderEntity messageSender){
+        List<String> contentList = new ArrayList<>();
+        if(StringUtil.isNotEmpty(messageSender.getContent())){
+            contentList.add(messageSender.getContent());
+        }else{
+            List<MessageContent> messageContents = messageSender.getMessageContents();
+            if(messageContents != null && messageContents.size() > 0){
+                for(MessageContent item : messageContents){
+                    contentList.add(item.getLabel()+item.getValue());
+                }
+            }
+        }
+        return contentList;
     }
 
 }
