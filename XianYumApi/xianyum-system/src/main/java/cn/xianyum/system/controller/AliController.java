@@ -58,7 +58,7 @@ public class AliController {
     @PostMapping("/bindUser")
     @ApiOperation(value = "支付宝绑定用户")
     public Results bindUser(@RequestBody ThirdOauthRequest aliRequest) {
-        boolean isSuccess = userService.binAlidUser(aliRequest.getAuthCode());
+        boolean isSuccess = userService.binAliUser(aliRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");
     }
 

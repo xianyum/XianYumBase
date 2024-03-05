@@ -70,4 +70,6 @@ public class Constants {
     public final static String MD5_DEFAULT_SECRET = "EcBK0BUARh";
 
     public final static String DEFAULT_EMAIL_HTML = "common";
+
+    public final static String DEFAULT_PASSWORD = "123456";
 }

@@ -1,6 +1,6 @@
 package cn.xianyum.system.dao;
 
-import cn.xianyum.system.entity.po.ThirdUserEntity;
+import cn.xianyum.system.entity.po.UserThirdRelationEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 
@@ -9,5 +9,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @date 2019/11/9 17:45
  * @desc
  */
-public interface ThirdUserMapper extends BaseMapper<ThirdUserEntity> {
+public interface UserThirdRelationMapper extends BaseMapper<UserThirdRelationEntity> {
 }

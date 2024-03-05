@@ -97,5 +97,5 @@ public interface UserService{
      * @param authCode
      * @return
      */
-    boolean binAlidUser(String authCode);
+    boolean binAliUser(String authCode);
 }

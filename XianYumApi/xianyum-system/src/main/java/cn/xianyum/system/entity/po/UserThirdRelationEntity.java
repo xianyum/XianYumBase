@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * 阿里用户信息和本系统用户实体
  * @author zhangwei
@@ -15,8 +13,8 @@ import java.util.Date;
  * @desc
  */
 @Data
-@TableName(value = "user_third")
-public class ThirdUserEntity extends BaseEntity {
+@TableName(value = "user_third_relation")
+public class UserThirdRelationEntity extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -24,23 +22,18 @@ public class ThirdUserEntity extends BaseEntity {
     private String userId;
 
     /**
-     * 阿里用户userId
+     * 三方用户id
      */
-    private String aliUserId;
+    private String openUserId;
 
     /**
-     * 阿里用户user名称
+     * 三方用户名称
      */
-    private String aliUserName;
+    private String openUserName;
 
     /**
-     * qq用户userId
+     * 三方类型
      */
-    private String qqUserId;
-
-    /**
-     * qq用户user名称
-     */
-    private String qqUserName;
+    private Integer thirdType;
 
 }

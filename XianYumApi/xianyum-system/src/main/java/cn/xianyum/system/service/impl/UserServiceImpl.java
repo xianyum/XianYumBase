@@ -1,6 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.config.XianYumConfig;
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
@@ -8,9 +9,10 @@ import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.xianyum.system.common.enums.ThirdTypeEnum;
 import cn.xianyum.system.common.utils.SecretUtils;
 import cn.xianyum.system.dao.RoleMapper;
-import cn.xianyum.system.dao.ThirdUserMapper;
+import cn.xianyum.system.dao.UserThirdRelationMapper;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.dao.UserRoleMapper;
 import cn.xianyum.system.entity.po.*;
@@ -25,14 +27,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -49,7 +48,7 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private ThirdUserMapper thirdUserMapper;
+    private UserThirdRelationMapper userThirdRelationMapper;
 
     @Autowired
     private AliNetService aliNetService;
@@ -120,9 +119,9 @@ public class UserServiceImpl implements UserService {
             userRoleMapper.delete(userRoleEntityLambdaQueryWrapper);
 
             // 删除三方绑定
-            LambdaQueryWrapper<ThirdUserEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<ThirdUserEntity>lambdaQuery()
-                    .eq(ThirdUserEntity::getUserId,id);
-            thirdUserMapper.delete(thirdUserEntityLambdaQueryWrapper);
+            LambdaQueryWrapper<UserThirdRelationEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery()
+                    .eq(UserThirdRelationEntity::getUserId,id);
+            userThirdRelationMapper.delete(thirdUserEntityLambdaQueryWrapper);
 
             // 重新把用户刷入redis中
             this.userToRedis(true);
@@ -307,7 +306,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setId(userId);
         userEntity.setDelTag(YesOrNoEnum.YES.getStatus());
         // 设置登录密码
-        String secretPassword = SecretUtils.encryptPassword("123456");
+        String secretPassword = SecretUtils.encryptPassword(Constants.DEFAULT_PASSWORD);
         userEntity.setPassword(secretPassword);
         int count = userMapper.insert(userEntity);
         if(count > 0){
@@ -325,22 +324,22 @@ public class UserServiceImpl implements UserService {
             userRoleMapper.insert(userRoleEntity);
 
             // 关联三方
-            ThirdUserEntity thirdUserEntity = new ThirdUserEntity();
+            UserThirdRelationEntity thirdUserEntity = new UserThirdRelationEntity();
             thirdUserEntity.setUserId(userId);
             LoginTypeEnum accountTypeEnum = LoginTypeEnum.getLoginTypeEnum(loginUser.getLoginType());
             switch (accountTypeEnum){
                 case QQ:
-                    thirdUserEntity.setQqUserId(thirdUserId);
-                    thirdUserEntity.setQqUserName(loginUser.getNickName());
+                    thirdUserEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
                     break;
                 case ZHI_FU_BAO:
-                    thirdUserEntity.setAliUserId(thirdUserId);
-                    thirdUserEntity.setAliUserName(loginUser.getNickName());
+                    thirdUserEntity.setThirdType(ThirdTypeEnum.ZHI_FU_BAO.getThirdType());
                     break;
                 default:
                     break;
             }
-            thirdUserMapper.insert(thirdUserEntity);
+            thirdUserEntity.setOpenUserId(thirdUserId);
+            thirdUserEntity.setOpenUserName(loginUser.getNickName());
+            userThirdRelationMapper.insert(thirdUserEntity);
         }
     }
 
@@ -401,21 +400,24 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         String userId = SecurityUtils.getLoginUser().getId();
-        LambdaQueryWrapper<ThirdUserEntity> queryWrapper= Wrappers.<ThirdUserEntity>lambdaQuery()
-                .eq(ThirdUserEntity::getQqUserId, openUserId);
-        ThirdUserEntity thirdUserEntity = thirdUserMapper.selectOne(queryWrapper);
+        LambdaQueryWrapper<UserThirdRelationEntity> queryWrapper= Wrappers.<UserThirdRelationEntity>lambdaQuery()
+                .eq(UserThirdRelationEntity::getOpenUserId, openUserId)
+                .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.QQ.getThirdType());
+        UserThirdRelationEntity userThirdRelationEntity = userThirdRelationMapper.selectOne(queryWrapper);
         int count;
-        if(Objects.isNull(thirdUserEntity)){
-            ThirdUserEntity saveThirdUserEntity = new ThirdUserEntity();
-            saveThirdUserEntity.setUserId(userId);
-            saveThirdUserEntity.setQqUserId(openUserId);
-            saveThirdUserEntity.setQqUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
-            count = thirdUserMapper.insert(saveThirdUserEntity);
+        if(Objects.isNull(userThirdRelationEntity)){
+            UserThirdRelationEntity saveUserThirdRelationEntity = new UserThirdRelationEntity();
+            saveUserThirdRelationEntity.setUserId(userId);
+            userThirdRelationEntity.setOpenUserId(openUserId);
+            userThirdRelationEntity.setOpenUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
+            userThirdRelationEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
+            count = userThirdRelationMapper.insert(saveUserThirdRelationEntity);
         }else{
-            thirdUserEntity.setQqUserId(openUserId);
-            thirdUserEntity.setUserId(userId);
-            thirdUserEntity.setQqUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
-            count = thirdUserMapper.updateById(thirdUserEntity);
+            userThirdRelationEntity.setOpenUserId(openUserId);
+            userThirdRelationEntity.setUserId(userId);
+            userThirdRelationEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
+            userThirdRelationEntity.setOpenUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
+            count = userThirdRelationMapper.updateById(userThirdRelationEntity);
         }
         return count > 0;
     }
@@ -427,7 +429,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public boolean binAlidUser(String authCode) {
+    public boolean binAliUser(String authCode) {
         AlipayUserInfoShareResponse aLiUserInfo = this.aliNetService.getALiUserInfo(
                 this.aliNetService.getAccessToken(authCode));
         if(!aLiUserInfo.isSuccess()){
@@ -436,21 +438,24 @@ public class UserServiceImpl implements UserService {
         // 获取到阿里的openUserId
         String openUserId = aLiUserInfo.getUserId();
         String userId = SecurityUtils.getLoginUser().getId();
-        LambdaQueryWrapper<ThirdUserEntity> queryWrapper= Wrappers.<ThirdUserEntity>lambdaQuery()
-                .eq(ThirdUserEntity::getAliUserId, openUserId);
-        ThirdUserEntity thirdUserEntity = thirdUserMapper.selectOne(queryWrapper);
+        LambdaQueryWrapper<UserThirdRelationEntity> queryWrapper= Wrappers.<UserThirdRelationEntity>lambdaQuery()
+                .eq(UserThirdRelationEntity::getOpenUserId, openUserId)
+                .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.ZHI_FU_BAO.getThirdType());
+        UserThirdRelationEntity thirdUserEntity = userThirdRelationMapper.selectOne(queryWrapper);
         int count;
         if(Objects.isNull(thirdUserEntity)){
-            ThirdUserEntity saveThirdUserEntity = new ThirdUserEntity();
+            UserThirdRelationEntity saveThirdUserEntity = new UserThirdRelationEntity();
             saveThirdUserEntity.setUserId(userId);
-            saveThirdUserEntity.setAliUserId(openUserId);
-            saveThirdUserEntity.setAliUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
-            count = thirdUserMapper.insert(saveThirdUserEntity);
+            saveThirdUserEntity.setOpenUserId(openUserId);
+            saveThirdUserEntity.setThirdType(ThirdTypeEnum.ZHI_FU_BAO.getThirdType());
+            saveThirdUserEntity.setOpenUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
+            count = userThirdRelationMapper.insert(saveThirdUserEntity);
         }else{
-            thirdUserEntity.setAliUserId(openUserId);
+            thirdUserEntity.setOpenUserId(openUserId);
             thirdUserEntity.setUserId(userId);
-            thirdUserEntity.setAliUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
-            count = thirdUserMapper.updateById(thirdUserEntity);
+            thirdUserEntity.setThirdType(ThirdTypeEnum.ZHI_FU_BAO.getThirdType());
+            thirdUserEntity.setOpenUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
+            count = userThirdRelationMapper.updateById(thirdUserEntity);
         }
         return count > 0;
     }
@@ -465,7 +470,9 @@ public class UserServiceImpl implements UserService {
         AlipayUserInfoShareResponse aLiUserInfo = aliNetService.getALiUserInfo(accessToken);
         if(aLiUserInfo.isSuccess()){
             LoginUser loginUser = new LoginUser();
-            ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
+            UserThirdRelationEntity aliUserEntity = userThirdRelationMapper.selectOne(Wrappers.<UserThirdRelationEntity>lambdaQuery()
+                    .eq(UserThirdRelationEntity::getOpenUserId,aLiUserInfo.getUserId())
+                    .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.ZHI_FU_BAO.getThirdType()));
             String nickName = EmojiUtils.filterEmoji(aLiUserInfo.getNickName());
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
@@ -487,9 +494,9 @@ public class UserServiceImpl implements UserService {
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
                 }
-                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,aliUserEntity.getAliUserName())){
-                    aliUserEntity.setAliUserName(nickName);
-                    thirdUserMapper.updateById(aliUserEntity);
+                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,aliUserEntity.getOpenUserName())){
+                    aliUserEntity.setOpenUserName(nickName);
+                    userThirdRelationMapper.updateById(aliUserEntity);
                 }
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
             }
@@ -509,7 +516,9 @@ public class UserServiceImpl implements UserService {
         QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
         if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
             LoginUser loginUser = new LoginUser();
-            ThirdUserEntity qqThirdUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
+            UserThirdRelationEntity qqThirdUserEntity = userThirdRelationMapper.selectOne(Wrappers.<UserThirdRelationEntity>lambdaQuery()
+                    .eq(UserThirdRelationEntity::getOpenUserId,qqUserEntity.getUserId())
+                    .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.QQ.getThirdType()));
             String nickName = EmojiUtils.filterEmoji(qqUserEntity.getNickname());
             if(qqThirdUserEntity == null ){
                 loginUser.setId(UUIDUtils.UUIDReplace());
@@ -539,9 +548,9 @@ public class UserServiceImpl implements UserService {
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
                 }
-                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getQqUserName())){
-                    qqThirdUserEntity.setQqUserName(nickName);
-                    thirdUserMapper.updateById(qqThirdUserEntity);
+                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getOpenUserName())){
+                    qqThirdUserEntity.setOpenUserName(nickName);
+                    userThirdRelationMapper.updateById(qqThirdUserEntity);
                 }
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
                 loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());
