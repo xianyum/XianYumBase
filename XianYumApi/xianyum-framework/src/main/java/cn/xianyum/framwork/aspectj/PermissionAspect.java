@@ -22,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -74,6 +76,17 @@ public class PermissionAspect {
                 Object id = ReflectUtils.getFieldValue(data, "id");
                 if(Objects.nonNull(id)){
                     ReflectUtils.setFieldValue(data,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
+                }
+            }
+            if(data instanceof Collection<?>){
+                Collection<?> collection = (Collection<?>) data;
+                for (Object item : collection) {
+                    if(item instanceof BaseResponse){
+                        Object id = ReflectUtils.getFieldValue(item, "id");
+                        if(Objects.nonNull(id)){
+                            ReflectUtils.setFieldValue(item,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
+                        }
+                    }
                 }
             }
         }

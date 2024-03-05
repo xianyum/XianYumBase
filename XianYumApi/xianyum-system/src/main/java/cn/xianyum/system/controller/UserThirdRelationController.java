@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.response.UserThirdRelationResponse;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,7 @@ public class UserThirdRelationController{
 
     @GetMapping("/getCurrentUserThirdRelation")
     @ApiOperation(value = "获取当前用户绑定三方账号列表")
+    @Permission(ignoreDataScope = true)
     public Results getCurrentUserThirdRelation() {
         List<UserThirdRelationResponse> responseList = userThirdRelationService.getCurrentUserThirdRelation();
         return Results.success(responseList);
