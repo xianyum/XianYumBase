@@ -4,7 +4,6 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.ThirdOauthRequest;
-import cn.xianyum.system.service.QqNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
 import io.swagger.annotations.Api;
@@ -30,9 +29,6 @@ public class QqController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private QqNetService qqNetService;
 
     @PostMapping("/login")
     @ApiOperation(value = "QQ第三方登录")
