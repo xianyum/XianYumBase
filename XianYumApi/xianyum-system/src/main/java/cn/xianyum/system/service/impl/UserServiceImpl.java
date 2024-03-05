@@ -331,9 +331,11 @@ public class UserServiceImpl implements UserService {
             switch (accountTypeEnum){
                 case QQ:
                     thirdUserEntity.setQqUserId(thirdUserId);
+                    thirdUserEntity.setQqUserName(loginUser.getNickName());
                     break;
                 case ZHI_FU_BAO:
                     thirdUserEntity.setAliUserId(thirdUserId);
+                    thirdUserEntity.setAliUserName(loginUser.getNickName());
                     break;
                 default:
                     break;
@@ -407,10 +409,12 @@ public class UserServiceImpl implements UserService {
             ThirdUserEntity saveThirdUserEntity = new ThirdUserEntity();
             saveThirdUserEntity.setUserId(userId);
             saveThirdUserEntity.setQqUserId(openUserId);
+            saveThirdUserEntity.setQqUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
             count = thirdUserMapper.insert(saveThirdUserEntity);
         }else{
             thirdUserEntity.setQqUserId(openUserId);
             thirdUserEntity.setUserId(userId);
+            thirdUserEntity.setQqUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
             count = thirdUserMapper.updateById(thirdUserEntity);
         }
         return count > 0;
@@ -440,10 +444,12 @@ public class UserServiceImpl implements UserService {
             ThirdUserEntity saveThirdUserEntity = new ThirdUserEntity();
             saveThirdUserEntity.setUserId(userId);
             saveThirdUserEntity.setAliUserId(openUserId);
+            saveThirdUserEntity.setAliUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
             count = thirdUserMapper.insert(saveThirdUserEntity);
         }else{
             thirdUserEntity.setAliUserId(openUserId);
             thirdUserEntity.setUserId(userId);
+            thirdUserEntity.setAliUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
             count = thirdUserMapper.updateById(thirdUserEntity);
         }
         return count > 0;
@@ -460,12 +466,13 @@ public class UserServiceImpl implements UserService {
         if(aLiUserInfo.isSuccess()){
             LoginUser loginUser = new LoginUser();
             ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("ali_user_id",aLiUserInfo.getUserId()));
+            String nickName = EmojiUtils.filterEmoji(aLiUserInfo.getNickName());
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
                 loginUser.setId(UUIDUtils.UUIDReplace());
                 loginUser.setThirdUserId(aLiUserInfo.getUserId());
                 loginUser.setUsername(UUIDUtils.getCodeChar(5));
-                loginUser.setNickName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
+                loginUser.setNickName(nickName);
                 loginUser.setStatus(YesOrNoEnum.YES.getStatus());
                 loginUser.setAvatar(aLiUserInfo.getAvatar());
                 loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getAccountType());
@@ -479,6 +486,10 @@ public class UserServiceImpl implements UserService {
                 UserEntity userEntity = userMapper.selectOne(queryWrapper);
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
+                }
+                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,aliUserEntity.getAliUserName())){
+                    aliUserEntity.setAliUserName(nickName);
+                    thirdUserMapper.updateById(aliUserEntity);
                 }
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
             }
@@ -498,12 +509,13 @@ public class UserServiceImpl implements UserService {
         QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
         if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
             LoginUser loginUser = new LoginUser();
-            ThirdUserEntity aliUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
-            if(aliUserEntity == null ){
+            ThirdUserEntity qqThirdUserEntity = thirdUserMapper.selectOne(new QueryWrapper<ThirdUserEntity>().eq("qq_user_id",qqUserEntity.getUserId()));
+            String nickName = EmojiUtils.filterEmoji(qqUserEntity.getNickname());
+            if(qqThirdUserEntity == null ){
                 loginUser.setId(UUIDUtils.UUIDReplace());
                 loginUser.setThirdUserId(qqUserEntity.getUserId());
                 loginUser.setUsername(UUIDUtils.getCodeChar(5));
-                loginUser.setNickName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
+                loginUser.setNickName(nickName);
                 loginUser.setStatus(YesOrNoEnum.YES.getStatus());
                 if("女".equals(qqUserEntity.getGender())){
                     loginUser.setSex(1);
@@ -520,12 +532,16 @@ public class UserServiceImpl implements UserService {
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
-                        .eq(UserEntity::getId,aliUserEntity.getUserId())
+                        .eq(UserEntity::getId,qqThirdUserEntity.getUserId())
                         .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
                         .eq(UserEntity::getStatus, YesOrNoEnum.YES.getStatus());
                 UserEntity userEntity = userMapper.selectOne(queryWrapper);
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
+                }
+                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getAliUserName())){
+                    qqThirdUserEntity.setAliUserName(nickName);
+                    thirdUserMapper.updateById(qqThirdUserEntity);
                 }
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
                 loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());

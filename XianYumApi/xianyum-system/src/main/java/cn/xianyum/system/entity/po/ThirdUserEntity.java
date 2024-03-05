@@ -29,8 +29,18 @@ public class ThirdUserEntity extends BaseEntity {
     private String aliUserId;
 
     /**
+     * 阿里用户user名称
+     */
+    private String aliUserName;
+
+    /**
      * qq用户userId
      */
     private String qqUserId;
+
+    /**
+     * qq用户user名称
+     */
+    private String qqUserName;
 
 }
