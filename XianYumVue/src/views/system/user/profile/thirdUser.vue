@@ -52,10 +52,12 @@ export default {
   },
   methods: {
     unbindUserThirdRelation(id){
-      unbindUserThirdRelation(id).then(result =>{
+      this.$modal.confirm('确定要解除绑定吗?').then(function() {
+        return unbindUserThirdRelation(id);
+      }).then(() => {
+        this.getCurrentUserThirdRelation();
         this.$modal.msgSuccess("解除绑定成功！");
-        this.getCurrentUserThirdRelation()
-      })
+      }).catch(() => {});
     },
     bindAli(){
       alert("等待完善！")
