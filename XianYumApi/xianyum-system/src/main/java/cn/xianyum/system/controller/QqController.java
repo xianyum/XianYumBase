@@ -3,10 +3,10 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
+import cn.xianyum.system.entity.request.ThirdOauthRequest;
+import cn.xianyum.system.service.QqNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +31,14 @@ public class QqController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private QqNetService qqNetService;
+
     @PostMapping("/login")
     @ApiOperation(value = "QQ第三方登录")
     @Permission(publicApi = true)
-    public Results login(@RequestBody String requestInfo) {
-        JSONObject jsonObject = JSON.parseObject(requestInfo);
-        String authCode = jsonObject.getString("authCode");
-        LoginUser loginUser = userService.getUserByQq(authCode);
+    public Results login(@RequestBody ThirdOauthRequest request) {
+        LoginUser loginUser = userService.getUserByQq(request.getAuthCode());
         if(loginUser != null){
             return userTokenService.createToken(loginUser);
         }else {
@@ -45,4 +46,10 @@ public class QqController {
         }
     }
 
+    @PostMapping("/bindUser")
+    @ApiOperation(value = "QQ绑定用户")
+    public Results bindUser(@RequestBody ThirdOauthRequest aliRequest) {
+        boolean isSuccess = userService.bindQqUser(aliRequest.getAuthCode());
+        return isSuccess ? Results.success() : Results.error("绑定用户失败！");
+    }
 }

@@ -3,11 +3,10 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
+import cn.xianyum.system.entity.request.ThirdOauthRequest;
 import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +37,8 @@ public class AliController {
     @PostMapping("/login")
     @ApiOperation(value = "支付宝第三方登录")
     @Permission(publicApi = true)
-    public Results login(@RequestBody String requestInfo) {
-        JSONObject jsonObject = JSON.parseObject(requestInfo);
-        String authCode = jsonObject.getString("authCode");
-        LoginUser loginUser = userService.getUserByAli(authCode);
+    public Results login(@RequestBody ThirdOauthRequest aliRequest) {
+        LoginUser loginUser = userService.getUserByAli(aliRequest.getAuthCode());
         if(loginUser != null){
             return userTokenService.createToken(loginUser);
         }else {
@@ -55,6 +52,14 @@ public class AliController {
     public Results flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
         return Results.success();
+    }
+
+
+    @PostMapping("/bindUser")
+    @ApiOperation(value = "支付宝绑定用户")
+    public Results bindUser(@RequestBody ThirdOauthRequest aliRequest) {
+        boolean isSuccess = userService.binAlidUser(aliRequest.getAuthCode());
+        return isSuccess ? Results.success() : Results.error("绑定用户失败！");
     }
 
 }

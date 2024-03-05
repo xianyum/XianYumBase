@@ -381,6 +381,74 @@ public class UserServiceImpl implements UserService {
         return userEntities.size();
     }
 
+    /**
+     * 绑定qq用户
+     *
+     * @param authCode
+     * @return
+     */
+    @Override
+    public boolean bindQqUser(String authCode) {
+        if(StringUtil.isBlank(authCode)){
+            return false;
+        }
+        String accessToken = qqNetService.getAccessToken(authCode);
+        QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
+        String openUserId = qqUserEntity.getUserId();
+        if(StringUtil.isBlank(openUserId)){
+            return false;
+        }
+        String userId = SecurityUtils.getLoginUser().getId();
+        LambdaQueryWrapper<ThirdUserEntity> queryWrapper= Wrappers.<ThirdUserEntity>lambdaQuery()
+                .eq(ThirdUserEntity::getQqUserId, openUserId);
+        ThirdUserEntity thirdUserEntity = thirdUserMapper.selectOne(queryWrapper);
+        int count;
+        if(Objects.isNull(thirdUserEntity)){
+            ThirdUserEntity saveThirdUserEntity = new ThirdUserEntity();
+            saveThirdUserEntity.setUserId(userId);
+            saveThirdUserEntity.setQqUserId(openUserId);
+            count = thirdUserMapper.insert(saveThirdUserEntity);
+        }else{
+            thirdUserEntity.setQqUserId(openUserId);
+            thirdUserEntity.setUserId(userId);
+            count = thirdUserMapper.updateById(thirdUserEntity);
+        }
+        return count > 0;
+    }
+
+    /**
+     * 绑定支付宝用户
+     *
+     * @param authCode
+     * @return
+     */
+    @Override
+    public boolean binAlidUser(String authCode) {
+        AlipayUserInfoShareResponse aLiUserInfo = this.aliNetService.getALiUserInfo(
+                this.aliNetService.getAccessToken(authCode));
+        if(!aLiUserInfo.isSuccess()){
+            return false;
+        }
+        // 获取到阿里的openUserId
+        String openUserId = aLiUserInfo.getUserId();
+        String userId = SecurityUtils.getLoginUser().getId();
+        LambdaQueryWrapper<ThirdUserEntity> queryWrapper= Wrappers.<ThirdUserEntity>lambdaQuery()
+                .eq(ThirdUserEntity::getAliUserId, openUserId);
+        ThirdUserEntity thirdUserEntity = thirdUserMapper.selectOne(queryWrapper);
+        int count;
+        if(Objects.isNull(thirdUserEntity)){
+            ThirdUserEntity saveThirdUserEntity = new ThirdUserEntity();
+            saveThirdUserEntity.setUserId(userId);
+            saveThirdUserEntity.setAliUserId(openUserId);
+            count = thirdUserMapper.insert(saveThirdUserEntity);
+        }else{
+            thirdUserEntity.setAliUserId(openUserId);
+            thirdUserEntity.setUserId(userId);
+            count = thirdUserMapper.updateById(thirdUserEntity);
+        }
+        return count > 0;
+    }
+
 
     @Override
     public LoginUser getUserByAli(String authCode) {

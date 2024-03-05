@@ -84,4 +84,18 @@ public interface UserService{
     int userToRedis(boolean isAsync);
 
     int userToRedis();
+
+    /**
+     * 绑定qq用户
+     * @param authCode
+     * @return
+     */
+    boolean bindQqUser(String authCode);
+
+    /**
+     * 绑定支付宝用户
+     * @param authCode
+     * @return
+     */
+    boolean binAlidUser(String authCode);
 }
