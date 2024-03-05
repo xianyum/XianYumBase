@@ -539,8 +539,8 @@ public class UserServiceImpl implements UserService {
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
                 }
-                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getAliUserName())){
-                    qqThirdUserEntity.setAliUserName(nickName);
+                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getQqUserName())){
+                    qqThirdUserEntity.setQqUserName(nickName);
                     thirdUserMapper.updateById(qqThirdUserEntity);
                 }
                 loginUser = BeanUtils.copy(userEntity,LoginUser.class);
