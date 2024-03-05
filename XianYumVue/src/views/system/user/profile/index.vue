@@ -50,12 +50,15 @@
           <div slot="header" class="clearfix">
             <span>基本资料</span>
           </div>
-          <el-tabs v-model="activeTab">
+          <el-tabs @tab-click="clickTabPane" v-model="activeTab">
             <el-tab-pane label="基本资料" name="userinfo">
               <userInfo :user="user" />
             </el-tab-pane>
             <el-tab-pane label="修改密码" name="resetPwd">
               <resetPwd />
+            </el-tab-pane>
+            <el-tab-pane label="三方账户" name="thirdUser" >
+              <thirdUser ref="thirdUserRef" />
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -68,11 +71,12 @@
 import userAvatar from "./userAvatar";
 import userInfo from "./userInfo";
 import resetPwd from "./resetPwd";
+import thirdUser from "./thirdUser";
 import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Profile",
-  components: { userAvatar, userInfo, resetPwd },
+  components: { userAvatar, userInfo, resetPwd,thirdUser },
   data() {
     return {
       user: {},
@@ -83,6 +87,11 @@ export default {
     this.getUser();
   },
   methods: {
+    clickTabPane(tab,event){
+      if(tab.index == 2){
+        this.$refs.thirdUserRef.getCurrentUserThirdRelation();
+      }
+    },
     getUser() {
       getUserProfile().then(response => {
         this.user = response.data;

@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/ruoyi";
 
 // 查询用户列表
 export function listUser(query) {
@@ -133,5 +132,21 @@ export function deptTreeSelect() {
   return request({
     url: '/xianyum-system/v1/user/deptTree',
     method: 'get'
+  })
+}
+
+// 获取绑定的三方用户列表
+export function getCurrentUserThirdRelation() {
+  return request({
+    url: 'xianyum-system/v1/userThirdRelation/getCurrentUserThirdRelation',
+    method: 'get'
+  })
+}
+// 解绑三方用户
+export function unbindUserThirdRelation(id) {
+  return request({
+    url: 'xianyum-system/v1/userThirdRelation/unbind',
+    method: 'delete',
+    data: id
   })
 }
