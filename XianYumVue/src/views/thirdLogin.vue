@@ -50,20 +50,14 @@ import { qqBindUserRequest,aliBindUserRequest } from "@/api/system/user";
     methods: {
       aliBindUser(){
         aliBindUserRequest(this.form).then(res => {
-          this.$store.dispatch("ThirdLogin", res).then(() => {
-            this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser'} });
-          }).catch(() => {
-          });
+          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser'} });
         }).catch(error => {
           location.href = '/index';
         })
       },
       qqBindUser(){
         qqBindUserRequest(this.form).then(res => {
-          this.$store.dispatch("ThirdLogin", res).then(() => {
-            this.$router.push({ name: 'Profile', query: {'activeTab': 'thirdUser'} });
-          }).catch(() => {
-          });
+          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser'} });
         }).catch(error => {
           location.href = '/index';
         })

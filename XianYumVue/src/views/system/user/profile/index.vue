@@ -87,14 +87,16 @@ export default {
     this.getUser();
   },
   mounted() {
-    this.activeTab = this.$route.params.activeTab;
-    // 使用 $nextTick 确保在 DOM 更新后调用方法
-    this.$nextTick(() => {
-      if(this.activeTab  === 'thirdUser'){
-        this.$refs.thirdUserRef.getCurrentUserThirdRelation();
-      }
-
-    });
+    let activeTab = this.$route.params.activeTab
+    if(activeTab){
+      this.activeTab = this.$route.params.activeTab;
+      // 使用 $nextTick 确保在 DOM 更新后调用方法
+      this.$nextTick(() => {
+        if(this.activeTab  === 'thirdUser'){
+          this.$refs.thirdUserRef.getCurrentUserThirdRelation();
+        }
+      });
+    }
   },
   methods: {
     clickTabPane(tab,event){
