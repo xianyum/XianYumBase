@@ -408,9 +408,9 @@ public class UserServiceImpl implements UserService {
         if(Objects.isNull(userThirdRelationEntity)){
             UserThirdRelationEntity saveUserThirdRelationEntity = new UserThirdRelationEntity();
             saveUserThirdRelationEntity.setUserId(userId);
-            userThirdRelationEntity.setOpenUserId(openUserId);
-            userThirdRelationEntity.setOpenUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
-            userThirdRelationEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
+            saveUserThirdRelationEntity.setOpenUserId(openUserId);
+            saveUserThirdRelationEntity.setOpenUserName(EmojiUtils.filterEmoji(qqUserEntity.getNickname()));
+            saveUserThirdRelationEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
             count = userThirdRelationMapper.insert(saveUserThirdRelationEntity);
         }else{
             if(!userThirdRelationEntity.getUserId().equals(userId)){

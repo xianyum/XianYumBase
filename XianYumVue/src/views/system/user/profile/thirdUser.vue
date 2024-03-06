@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <el-table v-if="showThirdUserList" :data="thirdUserList">
       <el-table-column label="序号" type="index" align="center" width="50" />
       <el-table-column label="绑定账号信息" align="center">
@@ -25,8 +25,8 @@
         </template>
       </el-table-column>
     </el-table>
+    <br v-if="isAllUnbindFlag && showThirdUserList">
     <div v-if="isAllUnbindFlag">
-      <br>
       <div>你还可以绑定以下第三方帐号</div>
       <br>
       <span v-if="bindAliFlag" class="other_login_info" @click="bindAli()" title="绑定支付宝"><svg-icon icon-class="zhifubaologin" class-name='icon_style'></svg-icon></span>
@@ -74,8 +74,12 @@ export default {
           this.bindQQFlag = !this.thirdUserList.some(item => item.thirdType === 0);
           this.bindAliFlag = !this.thirdUserList.some(item => item.thirdType === 1);
           this.isAllUnbindFlag = this.bindQQFlag || this.bindAliFlag;
+          this.showThirdUserList = true
         }else{
           this.showThirdUserList = false
+          this.bindQQFlag = true
+          this.bindAliFlag = true
+          this.isAllUnbindFlag = true
         }
       })
     }
