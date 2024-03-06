@@ -150,3 +150,20 @@ export function unbindUserThirdRelation(id) {
     data: id
   })
 }
+
+
+export function qqBindUserRequest(data) {
+  return request({
+    url: '/xianyum-system/v1/qq/bindUser',
+    method: 'post',
+    data: data
+  })
+}
+
+export function aliBindUserRequest(data) {
+  return request({
+    url: '/xianyum-system/v1/ali/bindUser',
+    method: 'post',
+    data: data
+  })
+}
