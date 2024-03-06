@@ -60,12 +60,12 @@ export default {
       }).catch(() => {});
     },
     bindAli(){
-      let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dqq%26type%3DbindUser%0A%20%20%20%20%20';
-      window.location.replace(qqUrl)
+      let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dalipay%26type%3DbindUser'
+      window.location.replace(aliUrl)
     },
     bindQQ(){
-      let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https://base.xianyum.cn/thirdLogin?loginType=alipay&type=bindUser'
-      window.location.replace(aliUrl)
+      let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dqq%26type%3DbindUser%0A%20%20%20%20%20';
+      window.location.replace(qqUrl)
     },
     getCurrentUserThirdRelation(){
       getCurrentUserThirdRelation().then(result =>{
