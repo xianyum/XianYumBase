@@ -413,6 +413,9 @@ public class UserServiceImpl implements UserService {
             userThirdRelationEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
             count = userThirdRelationMapper.insert(saveUserThirdRelationEntity);
         }else{
+            if(!userThirdRelationEntity.getUserId().equals(userId)){
+                throw new SoException("该三方账号已绑定其他账号，请先解除绑定！");
+            }
             userThirdRelationEntity.setOpenUserId(openUserId);
             userThirdRelationEntity.setUserId(userId);
             userThirdRelationEntity.setThirdType(ThirdTypeEnum.QQ.getThirdType());
@@ -451,6 +454,9 @@ public class UserServiceImpl implements UserService {
             saveThirdUserEntity.setOpenUserName(EmojiUtils.filterEmoji(aLiUserInfo.getNickName()));
             count = userThirdRelationMapper.insert(saveThirdUserEntity);
         }else{
+            if(!thirdUserEntity.getUserId().equals(userId)){
+                throw new SoException("该三方账号已绑定其他账号，请先解除绑定！");
+            }
             thirdUserEntity.setOpenUserId(openUserId);
             thirdUserEntity.setUserId(userId);
             thirdUserEntity.setThirdType(ThirdTypeEnum.ZHI_FU_BAO.getThirdType());

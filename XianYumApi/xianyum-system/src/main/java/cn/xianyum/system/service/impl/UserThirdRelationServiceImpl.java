@@ -42,7 +42,8 @@ public class UserThirdRelationServiceImpl implements UserThirdRelationService {
 	@Override
 	public List<UserThirdRelationResponse> getCurrentUserThirdRelation() {
 		LambdaQueryWrapper<UserThirdRelationEntity> lambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery()
-				.eq(UserThirdRelationEntity::getUserId, SecurityUtils.getLoginUser().getId());
+				.eq(UserThirdRelationEntity::getUserId, SecurityUtils.getLoginUser().getId())
+				.orderByDesc(UserThirdRelationEntity::getCreateTime);
 		List<UserThirdRelationEntity> userThirdRelationEntities = userThirdRelationMapper.selectList(lambdaQueryWrapper);
 		return BeanUtils.copyList(userThirdRelationEntities,UserThirdRelationResponse.class);
 	}
