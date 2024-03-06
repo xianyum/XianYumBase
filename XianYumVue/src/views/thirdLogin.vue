@@ -50,16 +50,16 @@ import { qqBindUserRequest,aliBindUserRequest } from "@/api/system/user";
     methods: {
       aliBindUser(){
         aliBindUserRequest(this.form).then(res => {
-          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser'} });
+          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser','successMsg':'绑定支付宝账号成功！'} });
         }).catch(error => {
-          location.href = '/index';
+          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser','errorMsg':error.msg} });
         })
       },
       qqBindUser(){
         qqBindUserRequest(this.form).then(res => {
-          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser'} });
+          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser','successMsg':'绑定QQ账号成功！'} });
         }).catch(error => {
-          location.href = '/index';
+          this.$router.push({ name: 'Profile', params: {'activeTab': 'thirdUser','errorMsg':error.msg} });
         })
       },
       // 支付宝登录

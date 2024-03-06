@@ -88,6 +88,14 @@ export default {
   },
   mounted() {
     let activeTab = this.$route.params.activeTab
+    let successMsg = this.$route.params.successMsg
+    let errorMsg = this.$route.params.errorMsg
+    if(successMsg){
+      this.$modal.msgSuccess(successMsg);
+    }
+    if(errorMsg){
+      this.$modal.msgError(errorMsg);
+    }
     if(activeTab){
       this.activeTab = this.$route.params.activeTab;
       // 使用 $nextTick 确保在 DOM 更新后调用方法
