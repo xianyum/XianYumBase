@@ -7,7 +7,6 @@ import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
 import cn.xianyum.analysis.entity.response.XiaoDaoResponse;
 import cn.xianyum.analysis.service.XiaoDaoService;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -21,9 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 /**
@@ -40,9 +37,6 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
     @Autowired
     private MessageSender messageSender;
 
-    @Autowired
-    private ThreadPoolTaskExecutor xianYumTaskExecutor;
-
     public static final String XIAO_DAO_URL = "https://x6d.com";
 
     public static final String FILTER_NAME = "广告";
@@ -51,24 +45,15 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
      * 实时推送更新消息
      */
     @Override
-    public void push() {
-        List<XiaoDaoEntity> pushInfo = xiaoDaoMapper.selectList(new QueryWrapper<XiaoDaoEntity>().eq("push_status", 0)
-        );
-
+    public void push(List<XiaoDaoEntity> pushInfo) {
         for (XiaoDaoEntity xiaoDaoEntity : pushInfo) {
-
             Map<String,Object> content = new LinkedHashMap<>();
             content.put("活动内容：",xiaoDaoEntity.getTitle());
             content.put("活动url：",xiaoDaoEntity.getUrl());
-
             MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
             messageSenderEntity.setFormUrl(xiaoDaoEntity.getUrl());
             messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
             messageSender.sendAsyncMessage(MessageCodeEnums.NEW_ACTIVITY_NOTIFY.getMessageCode(),messageSenderEntity);
-
-            xiaoDaoEntity.setPushStatus(1);
-            xiaoDaoEntity.setPushTime(new Date());
-            xiaoDaoMapper.updateById(xiaoDaoEntity);
         }
 
     }
@@ -91,7 +76,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
         if(Objects.isNull(xiaoDaoAnalysisEntity)){
             return;
         }
-        boolean isPushMessage = false;
+        List<XiaoDaoEntity> xiaoDaoEntityList = new ArrayList<>();
         for (int i = 0; i < xiaoDaoAnalysisEntity.getTime().size(); i++) {
             List<String> times = xiaoDaoAnalysisEntity.getTime();
             String time = times.get(i);
@@ -101,27 +86,21 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
                continue;
             }
             LambdaQueryWrapper<XiaoDaoEntity> queryWrapper = Wrappers.<XiaoDaoEntity>lambdaQuery()
-                    .eq(XiaoDaoEntity::getUrl,url)
-                    .eq(XiaoDaoEntity::getTime,time);
+                    .eq(XiaoDaoEntity::getUrl,url);
             Long count = xiaoDaoMapper.selectCount(queryWrapper);
             if(count > 0){
                 continue;
             }
             XiaoDaoEntity bean = new XiaoDaoEntity();
             bean.setId(UUIDUtils.UUIDReplace());
-            bean.setPushStatus(0);
             bean.setUrl(url);
-            bean.setTime(time);
             bean.setTitle(title);
-            isPushMessage = true;
-            xiaoDaoMapper.insert(bean);
+            int insert = xiaoDaoMapper.insert(bean);
+            if(insert > 0){
+                xiaoDaoEntityList.add(bean);
+            }
         }
-
-        if(isPushMessage){
-            xianYumTaskExecutor.execute(()->{
-                SpringUtils.getBean(XiaoDaoService.class).push();
-            });
-        }
+        this.push(xiaoDaoEntityList);
     }
 
 }

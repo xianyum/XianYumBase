@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * 爬取www.xiaodao.com每日更新内容
  * @author zhangwei
@@ -23,11 +21,4 @@ public class XiaoDaoEntity extends BaseEntity {
     private String title;
 
     private String url;
-
-    private String time;
-
-    private Integer pushStatus;
-
-    private Date pushTime;
-
 }

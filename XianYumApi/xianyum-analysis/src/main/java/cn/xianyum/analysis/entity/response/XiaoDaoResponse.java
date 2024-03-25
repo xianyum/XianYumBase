@@ -17,10 +17,4 @@ public class XiaoDaoResponse extends BaseResponse {
     private String title;
 
     private String url;
-
-    private String time;
-
-    private Integer pushStatus;
-
-    private Date pushTime;
 }

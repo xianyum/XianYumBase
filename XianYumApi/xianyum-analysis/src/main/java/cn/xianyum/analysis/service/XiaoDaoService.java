@@ -2,9 +2,12 @@ package cn.xianyum.analysis.service;
 
 
 import cn.xianyum.analysis.entity.po.XiaoDaoAnalysisEntity;
+import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
 import cn.xianyum.analysis.entity.response.XiaoDaoResponse;
 import cn.xianyum.common.entity.base.PageResponse;
+
+import java.util.List;
 
 /**
  * @author zhangwei
@@ -12,7 +15,7 @@ import cn.xianyum.common.entity.base.PageResponse;
  */
 public interface XiaoDaoService {
 
-    void push();
+    void push(List<XiaoDaoEntity> pushInfo);
 
     PageResponse<XiaoDaoResponse> getPage(XiaoDaoRequest request);
 
