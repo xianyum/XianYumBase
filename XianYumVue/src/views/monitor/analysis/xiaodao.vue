@@ -23,18 +23,7 @@
           <el-link type="primary" @click="toUrl(scope.row.url)">{{scope.row.title}}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="推送状态" align="center" prop="pushStatus" >
-        <template v-slot="scope">
-          <el-tag v-if="scope.row.pushStatus === 0" size="small" type="danger">未推送</el-tag>
-          <el-tag v-else size="small">已推送</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="推送时间" align="center" prop="pushTime" width="180">
-        <template v-slot="scope">
-          <span>{{ parseTime(scope.row.pushTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="爬取时间" align="center" prop="createTime">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
