@@ -1,26 +1,30 @@
 package cn.xianyum.analysis.service.impl;
 
 import cn.xianyum.analysis.dao.XiaoDaoMapper;
+import cn.xianyum.analysis.entity.po.XiaoDaoAnalysisEntity;
 import cn.xianyum.analysis.entity.po.XiaoDaoEntity;
 import cn.xianyum.analysis.entity.request.XiaoDaoRequest;
 import cn.xianyum.analysis.entity.response.XiaoDaoResponse;
 import cn.xianyum.analysis.service.XiaoDaoService;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * @author zhangwei
@@ -35,6 +39,13 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
 
     @Autowired
     private MessageSender messageSender;
+
+    @Autowired
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
+
+    public static final String XIAO_DAO_URL = "https://x6d.com";
+
+    public static final String FILTER_NAME = "广告";
 
     /**
      * 实时推送更新消息
@@ -69,6 +80,48 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
                 .like(StringUtil.isNotEmpty(request.getTitle()),"title", request.getTitle()).orderByDesc("create_time");
         IPage<XiaoDaoEntity> xiaoDaoEntityPage = xiaoDaoMapper.selectPage(page, xiaoDaoEntityQueryWrapper);
         return PageResponse.of(xiaoDaoEntityPage,XiaoDaoResponse.class);
+    }
+
+    /**
+     * 解析爬虫数据
+     * @param xiaoDaoAnalysisEntity
+     */
+    @Override
+    public void xxlCrawlerParse(XiaoDaoAnalysisEntity xiaoDaoAnalysisEntity) {
+        if(Objects.isNull(xiaoDaoAnalysisEntity)){
+            return;
+        }
+        boolean isPushMessage = false;
+        for (int i = 0; i < xiaoDaoAnalysisEntity.getTime().size(); i++) {
+            List<String> times = xiaoDaoAnalysisEntity.getTime();
+            String time = times.get(i);
+            String url = XIAO_DAO_URL+xiaoDaoAnalysisEntity.getUrl().get(i);
+            String title = xiaoDaoAnalysisEntity.getTitle().get(i);
+            if(time.contains(FILTER_NAME)){
+               continue;
+            }
+            LambdaQueryWrapper<XiaoDaoEntity> queryWrapper = Wrappers.<XiaoDaoEntity>lambdaQuery()
+                    .eq(XiaoDaoEntity::getUrl,url)
+                    .eq(XiaoDaoEntity::getTime,time);
+            Long count = xiaoDaoMapper.selectCount(queryWrapper);
+            if(count > 0){
+                continue;
+            }
+            XiaoDaoEntity bean = new XiaoDaoEntity();
+            bean.setId(UUIDUtils.UUIDReplace());
+            bean.setPushStatus(0);
+            bean.setUrl(url);
+            bean.setTime(time);
+            bean.setTitle(title);
+            isPushMessage = true;
+            xiaoDaoMapper.insert(bean);
+        }
+
+        if(isPushMessage){
+            xianYumTaskExecutor.execute(()->{
+                SpringUtils.getBean(XiaoDaoService.class).push();
+            });
+        }
     }
 
 }

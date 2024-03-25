@@ -16,10 +16,22 @@
     </description>
 
     <properties>
-        <gecco.version>1.3.0</gecco.version>
+        <crawler.version>1.3.0</crawler.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-crawler</artifactId>
+            <version>${crawler.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>fastjson</artifactId>
+                    <groupId>com.alibaba</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
@@ -48,32 +60,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.geccocrawler</groupId>
-            <artifactId>gecco-spring</artifactId>
-            <version>${gecco.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>fastjson</artifactId>
-                    <groupId>com.alibaba</groupId>
-                </exclusion>
-<!--                <exclusion>-->
-<!--                    <artifactId>guava</artifactId>-->
-<!--                    <groupId>com.google.guava</groupId>-->
-<!--                </exclusion>-->
-                <exclusion>
-                    <artifactId>cglib</artifactId>
-                    <groupId>cglib</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- cglib -->
-        <dependency>
-            <artifactId>cglib</artifactId>
-            <groupId>cglib</groupId>
         </dependency>
 
         <!--mybatis-plus-->
