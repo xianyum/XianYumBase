@@ -33,7 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dynamic.datasource.boot.version>3.5.0</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.5.3.2</mybatisplus.boot.version>
-        <fastjson.version>2.0.43</fastjson.version>
+        <fastjson.version>2.0.47</fastjson.version>
         <okhttps.fastjson.version>4.0.1</okhttps.fastjson.version>
         <joda.time.version>2.10.13</joda.time.version>
         <lombok.version>1.18.26</lombok.version>
@@ -153,6 +153,12 @@
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
 
