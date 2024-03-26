@@ -13,6 +13,7 @@ import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -76,6 +77,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
         if(Objects.isNull(xiaoDaoAnalysisEntity)){
             return;
         }
+        log.info("爬虫小刀娱乐网数据：{}", JSONObject.toJSONString(xiaoDaoAnalysisEntity));
         List<XiaoDaoEntity> xiaoDaoEntityList = new ArrayList<>();
         for (int i = 0; i < xiaoDaoAnalysisEntity.getTime().size(); i++) {
             List<String> times = xiaoDaoAnalysisEntity.getTime();
