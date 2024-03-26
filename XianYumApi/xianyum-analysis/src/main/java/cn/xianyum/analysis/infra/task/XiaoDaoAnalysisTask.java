@@ -11,6 +11,8 @@ import com.xuxueli.crawler.parser.PageParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,10 +29,14 @@ public class XiaoDaoAnalysisTask implements IJobHandler {
 
     @Override
     public ReturnT execute(Map<String, String> jobMapParams, SchedulerTool tool) throws Exception {
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put("Cookie","Hm_lvt_d60e542115f2ca02adf147d409bb5f6b=1711291303,1711369895,1711372680,1711462155; Hm_lpvt_d60e542115f2ca02adf147d409bb5f6b=1711467919");
+        headerMap.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
         XxlCrawler crawler = new XxlCrawler.Builder()
                 .setUrls(XIAO_DAO_URL)
                 .setAllowSpread(false)
                 .setThreadCount(1)
+                .setHeaderMap(headerMap)
                 .setPageParser(new PageParser<XiaoDaoAnalysisEntity>() {
                     @Override
                     public void parse(Document document, Element element, XiaoDaoAnalysisEntity xiaoDaoAnalysisEntity) {
