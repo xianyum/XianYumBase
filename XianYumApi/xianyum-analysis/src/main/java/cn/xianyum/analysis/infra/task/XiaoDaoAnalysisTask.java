@@ -7,6 +7,7 @@ import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.SchedulerTool;
 import com.xuxueli.crawler.XxlCrawler;
+import com.xuxueli.crawler.loader.strategy.JsoupPageLoader;
 import com.xuxueli.crawler.parser.PageParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
@@ -45,6 +46,7 @@ public class XiaoDaoAnalysisTask implements IJobHandler {
                 .setAllowSpread(false)
                 .setThreadCount(1)
                 .setHeaderMap(headerMap)
+                .setPageLoader(new JsoupPageLoader())
                 .setPageParser(new PageParser<XiaoDaoAnalysisEntity>() {
                     @Override
                     public void parse(Document document, Element element, XiaoDaoAnalysisEntity xiaoDaoAnalysisEntity) {
