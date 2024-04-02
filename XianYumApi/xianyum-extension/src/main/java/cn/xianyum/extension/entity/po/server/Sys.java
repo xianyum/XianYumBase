@@ -1,4 +1,4 @@
-package cn.xianyum.system.infra.server;
+package cn.xianyum.extension.entity.po.server;
 
 /**
  * 系统相关

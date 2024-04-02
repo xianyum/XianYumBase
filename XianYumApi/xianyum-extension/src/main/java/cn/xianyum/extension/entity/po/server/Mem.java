@@ -1,4 +1,4 @@
-package cn.xianyum.system.infra.server;
+package cn.xianyum.extension.entity.po.server;
 
 
 import cn.xianyum.common.utils.ArithUtils;

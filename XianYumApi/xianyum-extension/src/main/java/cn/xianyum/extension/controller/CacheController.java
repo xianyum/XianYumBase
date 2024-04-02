@@ -1,4 +1,4 @@
-package cn.xianyum.system.controller;
+package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
@@ -18,7 +18,7 @@ import java.util.*;
  * @date 2023/9/20 12:37
  */
 @RestController
-@RequestMapping("xym-system/v1/cache")
+@RequestMapping("xym-extension/v1/cache")
 public class CacheController {
 
     @Autowired
