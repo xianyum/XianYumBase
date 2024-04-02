@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Api(tags = "客户端配置详细接口")
 @RestController
-@RequestMapping(value = "xianyum-proxy/v1/proxyDetails")
+@RequestMapping(value = "xym-proxy/v1/proxyDetails")
 @Slf4j
 public class ProxyDetailsController {
 

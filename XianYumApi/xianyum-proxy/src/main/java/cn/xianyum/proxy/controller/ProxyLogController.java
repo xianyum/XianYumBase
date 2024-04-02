@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Api(tags = "远程代理日志接口")
 @RestController
-@RequestMapping(value = "xianyum-proxy/v1/proxyLog")
+@RequestMapping(value = "xym-proxy/v1/proxyLog")
 @Slf4j
 public class ProxyLogController {
 
