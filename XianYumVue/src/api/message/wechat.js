@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 分页查询企微配置
 export function getMessageWechatConfigPage(query) {
   return request({
-    url: '/xianyum-message/v1/messageConfigWechat/getPage',
+    url: '/xym-message/v1/messageConfigWechat/getPage',
     method: 'get',
     params: query
   })
@@ -14,7 +14,7 @@ export function getMessageWechatConfigPage(query) {
 // 查询企微配置详细
 export function getMessageWechatConfigById(id) {
   return request({
-    url: '/xianyum-message/v1/messageConfigWechat/getById/' + id,
+    url: '/xym-message/v1/messageConfigWechat/getById/' + id,
     method: 'get'
   })
 }
@@ -22,7 +22,7 @@ export function getMessageWechatConfigById(id) {
 // 查询企微配置
 export function addMessageWechatConfig(data) {
   return request({
-    url: '/xianyum-message/v1/messageConfigWechat/save',
+    url: '/xym-message/v1/messageConfigWechat/save',
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function addMessageWechatConfig(data) {
 // 更新企微配置
 export function updateMessageWechatConfig(data) {
   return request({
-    url: '/xianyum-message/v1/messageConfigWechat/update',
+    url: '/xym-message/v1/messageConfigWechat/update',
     method: 'put',
     data: data
   })
@@ -41,7 +41,7 @@ export function updateMessageWechatConfig(data) {
 // 删除企微配置
 export function delMessageWechatConfig(data) {
   return request({
-    url: '/xianyum-message/v1/messageConfigWechat/delete',
+    url: '/xym-message/v1/messageConfigWechat/delete',
     method: 'delete',
     data: data
   })
@@ -51,7 +51,7 @@ export function delMessageWechatConfig(data) {
 // 使用企微配置测试发信
 export function sendWechat(data) {
   return request({
-    url: '/xianyum-message/v1/messageConfigWechat/sendWechat',
+    url: '/xym-message/v1/messageConfigWechat/sendWechat',
     method: 'put',
     data: data
   })
