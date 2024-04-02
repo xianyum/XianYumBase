@@ -55,7 +55,7 @@
 
         <dependency>
             <groupId>cn.xianyum</groupId>
-            <artifactId>xianyum-analysis</artifactId>
+            <artifactId>xianyum-extension</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

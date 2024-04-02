@@ -9,10 +9,10 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>xianyum-analysis</artifactId>
+    <artifactId>xianyum-extension</artifactId>
 
     <description>
-        爬虫框架模块
+        扩展模块
     </description>
 
     <properties>

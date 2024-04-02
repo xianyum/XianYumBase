@@ -21,7 +21,7 @@
         <module>xianyum-common</module>
         <module>xianyum-framework</module>
         <module>xianyum-system</module>
-        <module>xianyum-analysis</module>
+        <module>xianyum-extension</module>
         <module>xianyum-proxy</module>
         <module>xianyum-starter</module>
         <module>xianyum-message</module>
