@@ -4,7 +4,7 @@ import data from '@/views/system/dict/data'
 // 查询调度日志列表
 export function listJobLog(query) {
   return request({
-    url: '/xianyum-sheduler/v1/jobLog/getPage',
+    url: '/xym-sheduler/v1/jobLog/getPage',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function listJobLog(query) {
 // 删除调度日志
 export function delJobLog(data) {
   return request({
-    url: '/xianyum-sheduler/v1/jobLog/delete',
+    url: '/xym-sheduler/v1/jobLog/delete',
     method: 'delete',
     data: data
   })
@@ -22,14 +22,14 @@ export function delJobLog(data) {
 // 清空调度日志
 export function cleanJobLog() {
   return request({
-    url: '/xianyum-sheduler/v1/jobLog/truncateLog',
+    url: '/xym-sheduler/v1/jobLog/truncateLog',
     method: 'delete'
   })
 }
 
 export function getJobLogCount() {
   return request({
-    url: '/xianyum-sheduler/v1/jobLog/getJobLogCount',
+    url: '/xym-sheduler/v1/jobLog/getJobLogCount',
     method: 'get'
   })
 }

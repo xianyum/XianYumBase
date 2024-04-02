@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2023/10/5 20:27
  */
 @RestController
-@RequestMapping("xianyum-analysis/v1/haoKaLot")
+@RequestMapping("xym-analysis/v1/haoKaLot")
 @Api(tags = "172号卡系统")
 public class HaoKaLotController {
 

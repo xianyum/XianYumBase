@@ -225,7 +225,7 @@ export default {
       let requestParams = {
           "id": id
       }
-      this.download('xianyum-proxy/v1/proxy/downloadConfig', requestParams, `config.ini`)
+      this.download('xym-proxy/v1/proxy/downloadConfig', requestParams, `config.ini`)
     },
     sendEmail(id){
       sendConfigByEmail(id).then(response => {

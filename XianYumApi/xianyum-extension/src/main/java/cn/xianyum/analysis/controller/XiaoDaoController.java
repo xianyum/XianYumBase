@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2019/9/25 17:02
  */
 @RestController
-@RequestMapping("xianyum-analysis/v1/xiaodao")
+@RequestMapping("xym-analysis/v1/xiaodao")
 @Api(tags = "小刀爬取数据接口")
 public class XiaoDaoController {
 

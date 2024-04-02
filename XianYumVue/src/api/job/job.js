@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询定时任务调度列表
 export function listJob(query) {
   return request({
-    url: '/xianyum-sheduler/v1/job/getPage',
+    url: '/xym-sheduler/v1/job/getPage',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listJob(query) {
 // 查询定时任务调度详细
 export function getJob(jobId) {
   return request({
-    url: '/xianyum-sheduler/v1/job/getById/'+jobId,
+    url: '/xym-sheduler/v1/job/getById/'+jobId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getJob(jobId) {
 // 新增定时任务调度
 export function addJob(data) {
   return request({
-    url: '/xianyum-sheduler/v1/job/save',
+    url: '/xym-sheduler/v1/job/save',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addJob(data) {
 // 修改定时任务调度
 export function updateJob(data) {
   return request({
-    url: '/xianyum-sheduler/v1/job/update',
+    url: '/xym-sheduler/v1/job/update',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateJob(data) {
 // 删除定时任务调度
 export function delJob(data) {
   return request({
-    url: '/xianyum-sheduler/v1/job/delete',
+    url: '/xym-sheduler/v1/job/delete',
     method: 'delete',
     data: data
   })
@@ -47,7 +47,7 @@ export function delJob(data) {
 // 任务状态修改
 export function changeJobStatus(data) {
   return request({
-    url: '/xianyum-sheduler/v1/job/changeStatus',
+    url: '/xym-sheduler/v1/job/changeStatus',
     method: 'put',
     data: data
   })
@@ -60,7 +60,7 @@ export function runJob(jobId) {
     jobId: jobId
   }
   return request({
-    url: '/xianyum-sheduler/v1/job/runOnce',
+    url: '/xym-sheduler/v1/job/runOnce',
     method: 'put',
     data: requestParams
   })
