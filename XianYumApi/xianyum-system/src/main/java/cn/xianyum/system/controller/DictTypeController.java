@@ -19,7 +19,7 @@ import java.util.List;
  * @date 2023/9/19 17:22
  */
 @RestController
-@RequestMapping("xianyum-system/v1/dict/type")
+@RequestMapping("xym-system/v1/dict/type")
 @Api(tags = "字典类型接口")
 public class DictTypeController {
 

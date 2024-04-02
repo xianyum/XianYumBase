@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询角色列表
 export function listRole(query) {
   return request({
-    url: '/xianyum-system/v1/role/getPage',
+    url: '/xym-system/v1/role/getPage',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listRole(query) {
 // 查询角色详细
 export function getRole(roleId) {
   return request({
-    url: '/xianyum-system/v1/role/getById/' + roleId,
+    url: '/xym-system/v1/role/getById/' + roleId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getRole(roleId) {
 // 新增角色
 export function addRole(data) {
   return request({
-    url: '/xianyum-system/v1/role/save',
+    url: '/xym-system/v1/role/save',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addRole(data) {
 // 修改角色
 export function updateRole(data) {
   return request({
-    url: '/xianyum-system/v1/role/update',
+    url: '/xym-system/v1/role/update',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateRole(data) {
 // 角色数据权限
 export function dataScope(data) {
   return request({
-    url: '/xianyum-system/v1/role/',
+    url: '/xym-system/v1/role/',
     method: 'put',
     data: data
   })
@@ -47,7 +47,7 @@ export function dataScope(data) {
 // 删除角色
 export function delRole(data) {
   return request({
-    url: '/xianyum-system/v1/role/delete',
+    url: '/xym-system/v1/role/delete',
     method: 'delete',
     data: data
   })
@@ -61,7 +61,7 @@ export function changeRoleStatus(id, status) {
     status
   }
   return request({
-    url: '/xianyum-system/v1/role/changeStatus',
+    url: '/xym-system/v1/role/changeStatus',
     method: 'put',
     data: data
   })
@@ -70,7 +70,7 @@ export function changeRoleStatus(id, status) {
 // 角色权限范围修改
 export function changeDataScope(data) {
   return request({
-    url: '/xianyum-system/v1/role/changeDataScope',
+    url: '/xym-system/v1/role/changeDataScope',
     method: 'put',
     data: data
   })
@@ -78,7 +78,7 @@ export function changeDataScope(data) {
 
 export function authorizationMenu(data) {
   return request({
-    url: '/xianyum-system/v1/role/authorizationMenu',
+    url: '/xym-system/v1/role/authorizationMenu',
     method: 'put',
     data: data
   })
@@ -87,7 +87,7 @@ export function authorizationMenu(data) {
 
 export function getRoleList() {
   return request({
-    url: '/xianyum-system/v1/role/getList',
+    url: '/xym-system/v1/role/getList',
     method: 'get'
   })
 }
@@ -95,7 +95,7 @@ export function getRoleList() {
 
 export function getUserByRoleId(roleId) {
   return request({
-    url: '/xianyum-system/v1/user/getByRoleId/'+roleId,
+    url: '/xym-system/v1/user/getByRoleId/'+roleId,
     method: 'get'
   })
 }

@@ -19,7 +19,7 @@ import javax.validation.Valid;
  */
 @Api(tags = "消息接口")
 @RestController
-@RequestMapping("xianyum-message/v1/message")
+@RequestMapping("xym-message/v1/message")
 @Slf4j
 public class MessageController {
 

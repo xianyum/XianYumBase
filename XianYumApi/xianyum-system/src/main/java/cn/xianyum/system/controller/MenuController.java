@@ -20,7 +20,7 @@ import java.util.Map;
  * @email 80616059@qq.com
  */
 @RestController
-@RequestMapping("xianyum-system/v1/menu")
+@RequestMapping("xym-system/v1/menu")
 @Api(tags = "菜单接口")
 public class MenuController {
 

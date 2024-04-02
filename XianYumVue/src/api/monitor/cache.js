@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询缓存详细
 export function getCache() {
   return request({
-    url: '/xianyum-system/v1/cache/getInfo',
+    url: '/xym-system/v1/cache/getInfo',
     method: 'get'
   })
 }

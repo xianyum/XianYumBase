@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2023-10-31 19:57:15
  */
 @RestController
-@RequestMapping("xianyum-system/v1/role")
+@RequestMapping("xym-system/v1/role")
 @Api(tags = "角色管理接口")
 public class RoleController{
 

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/11/21 16:12
  */
 @RestController
-@RequestMapping("xianyum-system/v1/gitee")
+@RequestMapping("xym-system/v1/gitee")
 @Api(tags = "Gitee相关接口")
 @Slf4j
 public class GiteeController {

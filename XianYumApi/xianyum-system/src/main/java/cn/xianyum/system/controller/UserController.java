@@ -23,7 +23,7 @@ import java.util.List;
  * 用户相关
  */
 @RestController
-@RequestMapping("xianyum-system/v1/user")
+@RequestMapping("xym-system/v1/user")
 @Api(tags = "用户接口")
 public class UserController {
 

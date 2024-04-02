@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询用户列表
 export function listUser(query) {
   return request({
-    url: '/xianyum-system/v1/user/getPage',
+    url: '/xym-system/v1/user/getPage',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listUser(query) {
 // 查询用户详细
 export function getUser(id) {
   return request({
-    url: '/xianyum-system/v1/user/getById/'+id,
+    url: '/xym-system/v1/user/getById/'+id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getUser(id) {
 // 新增用户
 export function addUser(data) {
   return request({
-    url: '/xianyum-system/v1/user/save',
+    url: '/xym-system/v1/user/save',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addUser(data) {
 // 修改用户
 export function updateUser(data) {
   return request({
-    url: '/xianyum-system/v1/user/update',
+    url: '/xym-system/v1/user/update',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateUser(data) {
 // 删除用户
 export function delUser(data) {
   return request({
-    url: '/xianyum-system/v1/user/delete',
+    url: '/xym-system/v1/user/delete',
     method: 'delete',
     data: data
   })
@@ -51,7 +51,7 @@ export function resetUserPwd(userId, password) {
     password
   }
   return request({
-    url: '/xianyum-system/v1/user/resetPwd',
+    url: '/xym-system/v1/user/resetPwd',
     method: 'put',
     data: data
   })
@@ -64,7 +64,7 @@ export function changeUserStatus(id, status) {
     status
   }
   return request({
-    url: '/xianyum-system/v1/user/changeStatus',
+    url: '/xym-system/v1/user/changeStatus',
     method: 'put',
     data: data
   })
@@ -73,7 +73,7 @@ export function changeUserStatus(id, status) {
 // 查询用户个人信息
 export function getUserProfile() {
   return request({
-    url: '/xianyum-system/v1/user/profile',
+    url: '/xym-system/v1/user/profile',
     method: 'get'
   })
 }
@@ -81,7 +81,7 @@ export function getUserProfile() {
 // 修改用户个人信息
 export function updateUserProfile(data) {
   return request({
-    url: '/xianyum-system/v1/user/updateCurrentUser',
+    url: '/xym-system/v1/user/updateCurrentUser',
     method: 'put',
     data: data
   })
@@ -95,7 +95,7 @@ export function updateUserPwd(oldPassword, newPassword) {
     "password": oldPassword
   }
   return request({
-    url: '/xianyum-system/v1/user/password',
+    url: '/xym-system/v1/user/password',
     method: 'put',
     data: data
   })
@@ -104,7 +104,7 @@ export function updateUserPwd(oldPassword, newPassword) {
 // 用户头像上传
 export function uploadAvatar(data) {
   return request({
-    url: '/xianyum-system/v1/user/upload',
+    url: '/xym-system/v1/user/upload',
     method: 'post',
     data: data
   })
@@ -113,7 +113,7 @@ export function uploadAvatar(data) {
 // 查询授权角色
 export function getAuthRole(userId) {
   return request({
-    url: '/xianyum-system/v1/user/authRole/' + userId,
+    url: '/xym-system/v1/user/authRole/' + userId,
     method: 'get'
   })
 }
@@ -121,7 +121,7 @@ export function getAuthRole(userId) {
 // 保存授权角色
 export function updateAuthRole(data) {
   return request({
-    url: '/xianyum-system/v1/user/authRole',
+    url: '/xym-system/v1/user/authRole',
     method: 'put',
     params: data
   })
@@ -130,7 +130,7 @@ export function updateAuthRole(data) {
 // 查询部门下拉树结构
 export function deptTreeSelect() {
   return request({
-    url: '/xianyum-system/v1/user/deptTree',
+    url: '/xym-system/v1/user/deptTree',
     method: 'get'
   })
 }
@@ -138,14 +138,14 @@ export function deptTreeSelect() {
 // 获取绑定的三方用户列表
 export function getCurrentUserThirdRelation() {
   return request({
-    url: 'xianyum-system/v1/userThirdRelation/getCurrentUserThirdRelation',
+    url: 'xym-system/v1/userThirdRelation/getCurrentUserThirdRelation',
     method: 'get'
   })
 }
 // 解绑三方用户
 export function unbindUserThirdRelation(id) {
   return request({
-    url: 'xianyum-system/v1/userThirdRelation/unbind',
+    url: 'xym-system/v1/userThirdRelation/unbind',
     method: 'delete',
     data: id
   })
@@ -154,7 +154,7 @@ export function unbindUserThirdRelation(id) {
 
 export function qqBindUserRequest(data) {
   return request({
-    url: '/xianyum-system/v1/qq/bindUser',
+    url: '/xym-system/v1/qq/bindUser',
     method: 'post',
     data: data
   })
@@ -162,7 +162,7 @@ export function qqBindUserRequest(data) {
 
 export function aliBindUserRequest(data) {
   return request({
-    url: '/xianyum-system/v1/ali/bindUser',
+    url: '/xym-system/v1/ali/bindUser',
     method: 'post',
     data: data
   })

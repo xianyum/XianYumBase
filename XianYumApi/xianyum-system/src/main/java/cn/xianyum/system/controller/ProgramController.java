@@ -30,7 +30,7 @@ import java.util.List;
  * @date 2020/11/20 20:29
  */
 @RestController
-@RequestMapping("xianyum-system/v1/program")
+@RequestMapping("xym-system/v1/program")
 @Api(tags = "程序设计接口")
 @Slf4j
 public class ProgramController {

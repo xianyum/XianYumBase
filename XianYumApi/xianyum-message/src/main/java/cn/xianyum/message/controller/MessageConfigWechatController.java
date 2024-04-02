@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "账户配置wechat接口")
 @RestController
-@RequestMapping(value = "xianyum-message/v1/messageConfigWechat")
+@RequestMapping(value = "xym-message/v1/messageConfigWechat")
 @Slf4j
 public class MessageConfigWechatController {
 

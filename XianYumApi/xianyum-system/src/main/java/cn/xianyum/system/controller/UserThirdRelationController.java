@@ -18,7 +18,7 @@ import java.util.List;
  * @since 2024-03-05 15:03:57
  */
 @RestController
-@RequestMapping("xianyum-system/v1/userThirdRelation")
+@RequestMapping("xym-system/v1/userThirdRelation")
 @Api(tags = "三方平台账号接口")
 public class UserThirdRelationController{
 

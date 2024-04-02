@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "消息监控接口")
 @RestController
-@RequestMapping(value = "xianyum-message/v1/messageMonitor")
+@RequestMapping(value = "xym-message/v1/messageMonitor")
 @Slf4j
 public class MessageMonitorController {
 

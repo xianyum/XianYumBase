@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Api(tags = "消息类型配置表接口")
 @RestController
-@RequestMapping(value = "xianyum-message/v1/messageTypeConfig")
+@RequestMapping(value = "xym-message/v1/messageTypeConfig")
 @Slf4j
 public class MessageTypeConfigController {
 

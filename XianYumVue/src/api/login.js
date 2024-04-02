@@ -34,7 +34,7 @@ export function register(data) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/xianyum-system/v1/user/info',
+    url: '/xym-system/v1/user/info',
     method: 'get'
   })
 }
@@ -64,7 +64,7 @@ export function getCodeImg() {
 // 退出方法
 export function aliLogin(data) {
   return request({
-    url: '/xianyum-system/v1/ali/login',
+    url: '/xym-system/v1/ali/login',
     method: 'post',
     data: data
   })
@@ -73,7 +73,7 @@ export function aliLogin(data) {
 
 export function qqLogin(data) {
   return request({
-    url: '/xianyum-system/v1/qq/login',
+    url: '/xym-system/v1/qq/login',
     method: 'post',
     data: data
   })
