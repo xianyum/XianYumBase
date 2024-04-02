@@ -19,7 +19,7 @@ import org.springframework.core.annotation.Order;
 @Order(1)
 public class RequestLogInterceptor {
 
-    @Pointcut("execution(* cn.xianyum.system.controller.IpController.*(..))")
+    @Pointcut("execution(* cn.xianyum.analysis.controller.IpController.*(..))")
     private void executeRequestLog() {
     }
 

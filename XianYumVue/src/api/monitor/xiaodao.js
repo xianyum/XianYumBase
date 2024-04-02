@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询【请填写功能名称】列表
 export function getPageList(query) {
   return request({
-    url: '/xym-analysis/v1/xiaodao/getPage',
+    url: '/xym-extension/v1/xiaodao/getPage',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function getPageList(query) {
 // 查询【请填写功能名称】详细
 export function getDao(id) {
   return request({
-    url: '/xym-analysis/v1/xiaodao/' + id,
+    url: '/xym-extension/v1/xiaodao/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getDao(id) {
 // 新增【请填写功能名称】
 export function addDao(data) {
   return request({
-    url: '/xym-analysis/v1/xiaodao',
+    url: '/xym-extension/v1/xiaodao',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addDao(data) {
 // 修改【请填写功能名称】
 export function updateDao(data) {
   return request({
-    url: '/xym-analysis/v1/xiaodao',
+    url: '/xym-extension/v1/xiaodao',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateDao(data) {
 // 删除【请填写功能名称】
 export function delDao(id) {
   return request({
-    url: '/xym-analysis/v1/xiaodao/' + id,
+    url: '/xym-extension/v1/xiaodao/' + id,
     method: 'delete'
   })
 }
