@@ -250,10 +250,13 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        corpId: undefined,
-        corpSecret: undefined,
-        agentId: undefined,
-        description: undefined
+        serverName: undefined,
+        tag: undefined,
+        cpuNum: undefined,
+        memTotal: undefined,
+        serverPublicIp: undefined,
+        serverLanIp: undefined,
+        useRemark: undefined
       }
       this.resetForm('form')
     },
