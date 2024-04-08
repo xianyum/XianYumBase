@@ -1,6 +1,5 @@
 package cn.xianyum.extension.entity.request;
 
-import java.util.Date;
 import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
 

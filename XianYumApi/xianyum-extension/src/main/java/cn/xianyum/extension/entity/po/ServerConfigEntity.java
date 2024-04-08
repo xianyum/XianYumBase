@@ -54,4 +54,8 @@ public class ServerConfigEntity extends BaseEntity {
      */
     private String useRemark;
 
+    /**
+     * 服务器位置
+     */
+    private String serverLocation;
 }

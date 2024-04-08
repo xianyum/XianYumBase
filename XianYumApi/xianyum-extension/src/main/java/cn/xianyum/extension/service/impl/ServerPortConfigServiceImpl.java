@@ -15,6 +15,8 @@ import cn.xianyum.extension.entity.response.ServerPortConfigResponse;
 import cn.xianyum.extension.service.ServerPortConfigService;
 import cn.xianyum.extension.dao.ServerPortConfigMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -72,6 +74,13 @@ public class ServerPortConfigServiceImpl implements ServerPortConfigService {
 			resultCount = serverPortConfigMapper.deleteById(id)+resultCount;
 		}
 		return resultCount;
+	}
+
+	@Override
+	public List<ServerPortConfigEntity> selectByServerId(Long serverId) {
+		LambdaQueryWrapper<ServerPortConfigEntity> queryWrapper = Wrappers.<ServerPortConfigEntity>lambdaQuery()
+				.eq(ServerPortConfigEntity::getServerConfigId,serverId);
+		return this.serverPortConfigMapper.selectList(queryWrapper);
 	}
 }
 

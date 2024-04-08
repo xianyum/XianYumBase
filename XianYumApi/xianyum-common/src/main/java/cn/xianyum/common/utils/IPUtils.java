@@ -302,8 +302,13 @@ public class IPUtils {
      * @return
      */
     public static String getIpInfo(String ip) {
-        Map<String, String> ipInfoMap = getIpInfoMap(ip);
-        return ipInfoMap.get("prov") + ipInfoMap.get("city") + " " + ipInfoMap.get("isp");
+        try {
+            Map<String, String> ipInfoMap = getIpInfoMap(ip);
+            return ipInfoMap.get("prov") + ipInfoMap.get("city") + " " + ipInfoMap.get("isp");
+        }catch (Exception e){
+            logger.error("获取ip位置失败,{}",ip,e);
+            return "";
+        }
     }
 
     public static Map<String, String> getIpInfoMap(String ip) {
@@ -311,21 +316,21 @@ public class IPUtils {
         String[] data = new String[6];
         try {
             String search = ipSearcherConfig.search(ip);
-            if(StringUtil.isNotEmpty(search)){
+            if (StringUtil.isNotEmpty(search)) {
                 data = search.split("\\|");
             }
-        String country = "0".equals(data[0]) || Objects.isNull(data[0]) ? "" : data[0];
-        String prov = "0".equals(data[2]) || Objects.isNull(data[2]) ? "" : data[2];
-        String city = "0".equals(data[3]) || Objects.isNull(data[3]) ? "" : data[3];
-        String isp = "0".equals(data[4]) || Objects.isNull(data[4]) ? "" : data[4];
-        Map<String, String> ipInfoMap = new HashMap<>(4);
-        ipInfoMap.put("country", country);
-        ipInfoMap.put("prov", prov);
-        ipInfoMap.put("city", city);
-        ipInfoMap.put("isp", isp);
-        return ipInfoMap;
+            String country = "0".equals(data[0]) || Objects.isNull(data[0]) ? "" : data[0];
+            String prov = "0".equals(data[2]) || Objects.isNull(data[2]) ? "" : data[2];
+            String city = "0".equals(data[3]) || Objects.isNull(data[3]) ? "" : data[3];
+            String isp = "0".equals(data[4]) || Objects.isNull(data[4]) ? "" : data[4];
+            Map<String, String> ipInfoMap = new HashMap<>(4);
+            ipInfoMap.put("country", country);
+            ipInfoMap.put("prov", prov);
+            ipInfoMap.put("city", city);
+            ipInfoMap.put("isp", isp);
+            return ipInfoMap;
         } catch (Exception e) {
-            logger.error("获取ip信息异常，ip：{}",ip,e);
+            logger.error("获取ip信息异常，ip：{}", ip, e);
             throw new SoException("获取ip信息异常");
         }
     }

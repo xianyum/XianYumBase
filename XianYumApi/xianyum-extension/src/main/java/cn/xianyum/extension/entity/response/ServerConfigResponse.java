@@ -49,4 +49,9 @@ public class ServerConfigResponse extends BaseResponse {
      */
     private String useRemark;
 
+    /**
+     * 服务器位置
+     */
+    private String serverLocation;
+
 }
