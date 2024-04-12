@@ -24,6 +24,8 @@ import cn.xianyum.system.service.RoleService;
 import cn.xianyum.system.dao.RoleMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -147,14 +149,14 @@ public class RoleServiceImpl implements RoleService {
 		LambdaQueryWrapper<RoleMenuEntity> queryWrapper = Wrappers.<RoleMenuEntity>lambdaQuery()
 				.eq(RoleMenuEntity::getRoleId,request.getId());
 		roleMenuMapper.delete(queryWrapper);
-		int resultCount = 0;
+		List<RoleMenuEntity> roleMenuEntityList = new ArrayList<>();
 		for(Long menuId : request.getMenuIds()){
 			RoleMenuEntity roleMenuEntity = new RoleMenuEntity();
 			roleMenuEntity.setRoleId(request.getId());
 			roleMenuEntity.setMenuId(menuId);
-			resultCount = roleMenuMapper.insert(roleMenuEntity)+resultCount;
+			roleMenuEntityList.add(roleMenuEntity);
 		}
-		return resultCount;
+		return roleMenuMapper.savBatchRoleMenus(roleMenuEntityList);
 	}
 
 	@Override

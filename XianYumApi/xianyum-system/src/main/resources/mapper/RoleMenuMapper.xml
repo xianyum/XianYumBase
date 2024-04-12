@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.system.dao.RoleMenuMapper">
+
+
+    <!-- 批量新增角色菜单关联表信息 -->
+    <insert id="savBatchRoleMenus" parameterType="java.util.List">
+        INSERT INTO role_menu (
+            role_id, menu_id, create_time, create_by, create_by_name, update_time, update_by,
+        update_by_name
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.roleId},
+            #{item.menuId},
+            #{item.createTime},
+            #{item.createBy},
+            #{item.createByName},
+            #{item.updateTime},
+            #{item.updateBy},
+            #{item.updateByName}
+            )
+        </foreach>
+    </insert>
+
+</mapper>
