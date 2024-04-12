@@ -4,6 +4,7 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.RoleMenuMapper;
 import cn.xianyum.system.dao.UserRoleMapper;
@@ -25,10 +26,7 @@ import cn.xianyum.system.dao.RoleMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -150,10 +148,17 @@ public class RoleServiceImpl implements RoleService {
 				.eq(RoleMenuEntity::getRoleId,request.getId());
 		roleMenuMapper.delete(queryWrapper);
 		List<RoleMenuEntity> roleMenuEntityList = new ArrayList<>();
+		LoginUser loginUser = SecurityUtils.getLoginUser();
 		for(Long menuId : request.getMenuIds()){
 			RoleMenuEntity roleMenuEntity = new RoleMenuEntity();
 			roleMenuEntity.setRoleId(request.getId());
 			roleMenuEntity.setMenuId(menuId);
+			roleMenuEntity.setCreateTime(new Date());
+			roleMenuEntity.setUpdateTime(new Date());
+			roleMenuEntity.setCreateBy(loginUser.getId());
+			roleMenuEntity.setCreateByName(loginUser.getUsername());
+			roleMenuEntity.setUpdateBy(loginUser.getId());
+			roleMenuEntity.setUpdateByName(loginUser.getUsername());
 			roleMenuEntityList.add(roleMenuEntity);
 		}
 		return roleMenuMapper.savBatchRoleMenus(roleMenuEntityList);
