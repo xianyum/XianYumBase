@@ -81,7 +81,6 @@
 
     <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="角色编号" prop="id"/>
       <el-table-column label="角色编码" prop="roleCode"/>
       <el-table-column label="角色名称" prop="roleName"/>
       <el-table-column label="数据范围" prop="dataScope">
@@ -90,7 +89,6 @@
         </template>
       </el-table-column>
       <el-table-column label="显示顺序" prop="roleSort"/>
-      <el-table-column label="备注" prop="remark" :show-overflow-tooltip="true"/>
       <el-table-column label="状态" align="center">
         <template v-slot="scope">
           <el-switch
@@ -101,6 +99,7 @@
           ></el-switch>
         </template>
       </el-table-column>
+      <el-table-column label="备注" prop="remark" :show-overflow-tooltip="true"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -540,10 +539,10 @@ export default {
       const roleId = row.id || this.ids
       // const roleMenu = this.getRoleMenuTreeselect(roleId);
       getRole(roleId).then(response => {
-        this.form = response.data;
-        if (this.form && this.form.status) {
-          this.form.status = this.form.status.toString()
+        if (response.data) {
+          response.data.status = response.data.status.toString()
         }
+        this.form = response.data;
         this.open = true;
         // this.$nextTick(() => {
         //   roleMenu.then(res => {

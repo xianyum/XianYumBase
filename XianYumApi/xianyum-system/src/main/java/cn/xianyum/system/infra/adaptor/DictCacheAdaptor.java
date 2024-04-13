@@ -2,11 +2,12 @@ package cn.xianyum.system.infra.adaptor;
 
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.system.entity.po.DictDataEntity;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 字典缓存适配器
@@ -33,21 +34,12 @@ public class DictCacheAdaptor {
     }
 
     public boolean setDictDataByTypeCache(String dictType, List<DictDataEntity> dictDataEntities) {
-        Map<String,Object> map = new HashMap<>();
-        for(DictDataEntity item : dictDataEntities){
-            map.put(item.getId().toString(),item);
-        }
-        return redisUtils.hMSet(dictTypeRedisPrefix+dictType,map,8L, TimeUnit.HOURS);
+        return redisUtils.setMin(dictTypeRedisPrefix+dictType, JSONObject.toJSONString(dictDataEntities), 60*80);
     }
 
-
     public List<DictDataEntity> getDictDataByTypeCache(String dictType) {
-        List<DictDataEntity> dictDataEntities = new ArrayList<>();
-        Map<Object, Object> objectObjectMap = redisUtils.hMGet(dictTypeRedisPrefix + dictType);
-        for(Map.Entry<Object, Object> entry : objectObjectMap.entrySet()){
-            dictDataEntities.add((DictDataEntity)entry.getValue());
-        }
-        return dictDataEntities;
+        String redisResult = redisUtils.getString(dictTypeRedisPrefix + dictType);
+        return JSONObject.parseObject(redisResult,new TypeReference<List<DictDataEntity>>(){});
     }
 
     /**
