@@ -33,7 +33,7 @@ public class ServerPortConfigController{
      */
 	@ApiOperation(value = "分页查询主机端口维护")
     @GetMapping(value = "/getPage")
-    @Permission(value = "@ps.hasPerm('server-port-config:page')")
+    @Permission(value = "@ps.hasPerm('zz:page')")
     public Results getPage(ServerPortConfigRequest request) {
 		PageResponse<ServerPortConfigResponse> responsePage = serverPortConfigService.getPage(request);
         return Results.page(responsePage);

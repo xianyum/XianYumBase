@@ -5,6 +5,8 @@ import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
@@ -35,6 +37,26 @@ public class PermissionHandler {
         }
         return hasPermissions(loginUser.getPermissions(),permission);
     }
+
+
+    /**
+     * 校验用户是否具有以下任意一个权限，|分割
+     * @param permissions
+     * @return
+     */
+    public boolean hasAnyPerm(String permissions){
+        if (StringUtil.isEmpty(permissions)) {
+            return false;
+        }
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        if(Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions()) ){
+            return false;
+        }
+        boolean hasPermission = Arrays.stream(permissions.split("\\|"))
+                .anyMatch(permission -> hasPermissions(loginUser.getPermissions(), permission));
+        return hasPermission;
+    }
+
 
 
     /**

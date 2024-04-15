@@ -1,5 +1,7 @@
 package cn.xianyum.common.exception;
 
+import cn.xianyum.common.constant.Constants;
+
 /**
  * 简称 索马里异常
  * 自定义异常
@@ -7,10 +9,12 @@ package cn.xianyum.common.exception;
  * @date 2019/1/31 14:16
  */
 public class SoException extends RuntimeException {
+
     private static final long serialVersionUID = 1L;
 
     private String msg;
-    private int code = 500;
+
+    private int code = Constants.SERVER_ERROR_STATUS_CODE;
 
     public SoException(String msg) {
         super(msg);

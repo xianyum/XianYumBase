@@ -20,6 +20,11 @@ public class ServerPortConfigResponse extends BaseResponse {
     private Long serverConfigId;
 
     /**
+     * 服务器名
+     */
+    private String serverName;
+
+    /**
      * 端口
      */
     private String port;
@@ -27,7 +32,7 @@ public class ServerPortConfigResponse extends BaseResponse {
     /**
      * 使用备注
      */
-    private String remark;
+        private String remark;
 
     /**
      * 访问url,多个逗号分割开

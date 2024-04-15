@@ -98,5 +98,20 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 		});
 		return idsStream.mapToInt(id -> serverConfigMapper.deleteById(id)).sum();
 	}
+
+	@Override
+	public List<ServerConfigResponse> getList(ServerConfigRequest request) {
+		LambdaQueryWrapper<ServerConfigEntity> queryWrapper = Wrappers.<ServerConfigEntity>lambdaQuery()
+				.orderByDesc(ServerConfigEntity::getCreateTime);
+		List<ServerConfigEntity> serverConfigEntities = this.serverConfigMapper.selectList(queryWrapper);
+		return BeanUtils.copyList(serverConfigEntities,ServerConfigResponse.class);
+	}
+
+	@Override
+	public List<ServerConfigEntity> selectByIds(List<Long> serverConfigIdList) {
+		LambdaQueryWrapper<ServerConfigEntity> queryWrapper = Wrappers.<ServerConfigEntity>lambdaQuery()
+				.in(ServerConfigEntity::getId,serverConfigIdList);
+		return this.serverConfigMapper.selectList(queryWrapper);
+	}
 }
 

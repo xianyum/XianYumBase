@@ -72,4 +72,14 @@ public class Constants {
     public final static String DEFAULT_EMAIL_HTML = "common";
 
     public final static String DEFAULT_PASSWORD = "123456";
+
+
+    public final static String ERROR_CODE_FIELD = "code";
+    public final static String ERROR_MSG_FIELD = "msg";
+
+
+    /** 服务500错误码 */
+    public final static int SERVER_ERROR_STATUS_CODE = 500;
+
+    public final static String SERVER_ERROR_SQL_DUPLICATE_MSG = "已有重复数据，请勿重新添加";
 }

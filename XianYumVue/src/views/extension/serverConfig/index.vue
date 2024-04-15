@@ -68,8 +68,16 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" type="index" align="center" width="50"/>
       <el-table-column label="主机名称" align="center" prop="serverName"/>
-      <el-table-column label="公网ip" align="center" prop="serverPublicIp"/>
-      <el-table-column label="主机位置" align="center" prop="serverLocation"/>
+      <el-table-column label="公网ip" align="center" prop="serverPublicIp">
+        <template v-slot="{ row }">
+          {{ row.serverPublicIp || '暂无' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="主机位置" align="center" prop="serverLocation">
+        <template v-slot="{ row }">
+          {{ row.serverLocation || '暂无' }}
+        </template>
+      </el-table-column>
       <el-table-column label="内网ip" align="center" prop="serverLanIp"/>
       <el-table-column label="类型" align="center" prop="tag">
         <template v-slot="scope">
@@ -315,7 +323,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id ? [row.id] : this.ids
-      this.$modal.confirm('是否确认主机配置数据？').then(function() {
+      this.$modal.confirm('是否确认删除主机配置数据？').then(function() {
         return delServerConfig(ids)
       }).then(() => {
         this.getList()

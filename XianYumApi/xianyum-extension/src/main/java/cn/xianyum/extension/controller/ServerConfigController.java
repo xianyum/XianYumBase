@@ -13,6 +13,8 @@ import cn.xianyum.extension.entity.request.ServerConfigRequest;
 import cn.xianyum.extension.entity.response.ServerConfigResponse;
 import cn.xianyum.extension.service.ServerConfigService;
 
+import java.util.List;
+
 /**
  * 主机维护(ServerConfig)Controller
  *
@@ -20,7 +22,7 @@ import cn.xianyum.extension.service.ServerConfigService;
  * @since 2024-04-02 22:27:34
  */
 @RestController
-@RequestMapping("xyum-extension/v1/serverConfig")
+@RequestMapping("xym-extension/v1/serverConfig")
 @Api(tags = "主机维护接口")
 public class ServerConfigController{
 
@@ -39,6 +41,20 @@ public class ServerConfigController{
     public Results getPage(ServerConfigRequest request) {
 		PageResponse<ServerConfigResponse> responsePage = serverConfigService.getPage(request);
         return Results.page(responsePage);
+    }
+
+
+    /**
+     * 查询主机维护List
+     *
+     * @param request 查询实体
+     */
+    @ApiOperation(value = "查询主机维护list")
+    @GetMapping(value = "/getList")
+    @Permission(value = "@ps.hasPerm('server-config:query')")
+    public Results getList(ServerConfigRequest request) {
+        List<ServerConfigResponse> serverConfigResponseList = serverConfigService.getList(request);
+        return Results.success(serverConfigResponseList);
     }
 
     /**

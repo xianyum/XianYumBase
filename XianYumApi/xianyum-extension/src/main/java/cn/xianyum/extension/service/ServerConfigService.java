@@ -1,8 +1,11 @@
 package cn.xianyum.extension.service;
 
+import cn.xianyum.extension.entity.po.ServerConfigEntity;
 import cn.xianyum.extension.entity.request.ServerConfigRequest;
 import cn.xianyum.extension.entity.response.ServerConfigResponse;
 import cn.xianyum.common.entity.base.PageResponse;
+
+import java.util.List;
 
 /**
  * 主机维护(ServerConfig)service层
@@ -21,4 +24,8 @@ public interface ServerConfigService{
 	Integer update(ServerConfigRequest request);
 
 	Integer deleteById(Long[] ids);
+
+	List<ServerConfigResponse> getList(ServerConfigRequest request);
+
+	List<ServerConfigEntity> selectByIds(List<Long> serverConfigIdList);
 }

@@ -1,5 +1,6 @@
 package cn.xianyum.system.infra.handler;
 
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.DateUtils;
@@ -11,6 +12,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.LinkedHashMap;
@@ -34,10 +36,24 @@ public class SystemExceptionHandler {
     @ExceptionHandler(SoException.class)
     public Results handleRRException(SoException e){
         Results result = new Results();
-        result.put("code", e.getCode());
-        result.put("msg", e.getMessage());
+        result.put(Constants.ERROR_CODE_FIELD, e.getCode());
+        result.put(Constants.ERROR_MSG_FIELD, e.getMessage());
         return result;
     }
+
+
+
+    /**
+     * 处理MYSQL唯一索引异常
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public Results handleMysqlDuplicateException(DataIntegrityViolationException e){
+        Results result = new Results();
+        result.put(Constants.ERROR_CODE_FIELD, Constants.SERVER_ERROR_STATUS_CODE);
+        result.put(Constants.ERROR_MSG_FIELD, Constants.SERVER_ERROR_SQL_DUPLICATE_MSG);
+        return result;
+    }
+
 
 
     @ExceptionHandler(Exception.class)
