@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取服务信息
 export function getServer() {
   return request({
-    url: '/xyum-extension/v1/serverConfig/current',
+    url: '/xym-extension/v1/serverConfig/current',
     method: 'get'
   })
 }
