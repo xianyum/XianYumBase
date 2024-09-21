@@ -2,6 +2,7 @@ package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("xym-extension/v1/cache")
+@Api(tags = "缓存接口")
 public class CacheController {
 
     @Autowired
