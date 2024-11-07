@@ -29,7 +29,7 @@ public class MessageController {
     @PostMapping("/sendSimpleMessage")
     @ApiOperation(value = "发送简单消息")
     @Permission(publicApi = true)
-    public Results sendSimpleMessage(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+    public Results sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
     }
@@ -39,6 +39,14 @@ public class MessageController {
     @Permission(publicApi = true)
     public Results sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
         messageService.sendStandardMessage(messageSenderRequest);
+        return Results.success();
+    }
+
+    @GetMapping("/sendSimpleMessage")
+    @ApiOperation(value = "发送简单消息")
+    @Permission(publicApi = true)
+    public Results sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+        messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
     }
 
