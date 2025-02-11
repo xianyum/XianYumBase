@@ -39,11 +39,11 @@
         <lombok.version>1.18.26</lombok.version>
         <druid.version>1.2.16</druid.version>
         <captcha.version>1.3.0</captcha.version>
-        <easy.excel.version>3.3.4</easy.excel.version>
+        <easy.excel.version>4.0.3</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
         <bitwalker.version>1.21</bitwalker.version>
         <oshi.version>6.6.3</oshi.version>
-        <commons.io.version>2.11.0</commons.io.version>
+        <commons.io.version>2.16.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <hibernate.version>7.0.2.Final</hibernate.version>
         <swagger.version>3.0.0</swagger.version>
@@ -60,7 +60,6 @@
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>
