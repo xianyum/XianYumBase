@@ -72,7 +72,7 @@ export function getConfigByCache(query){
 // 从缓存查看系统常量
 export function deleteConfigByCache(query){
   return request({
-    url: '/systemConstant/deleteRedisCache',
+    url: '/xym-system/v1/systemConstant/deleteRedisCache',
     method: 'get',
     params: query
   })
