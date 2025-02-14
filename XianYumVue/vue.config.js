@@ -27,6 +27,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   productionSourceMap: false,
+  transpileDependencies: ['quill'],
   // webpack-dev-server 相关配置
   devServer: {
     host: '0.0.0.0',
@@ -61,11 +62,12 @@ module.exports = {
     plugins: [
       // http://doc.ruoyi.vip/ruoyi-vue/other/faq.html#使用gzip解压缩静态文件
       new CompressionPlugin({
-        cache: false,                   // 不启用文件缓存
-        test: /\.(js|css|html)?$/i,     // 压缩文件格式
-        filename: '[path].gz[query]',   // 压缩后的文件名
-        algorithm: 'gzip',              // 使用gzip压缩
-        minRatio: 0.8                   // 压缩率小于1才会压缩
+        cache: false,                                  // 不启用文件缓存
+        test: /\.(js|css|html|jpe?g|png|gif|svg)?$/i,  // 压缩文件格式
+        filename: '[path][base].gz[query]',            // 压缩后的文件名
+        algorithm: 'gzip',                             // 使用gzip压缩
+        minRatio: 0.8,                                 // 压缩比例，小于 80% 的文件不会被压缩
+        deleteOriginalAssets: false                    // 压缩后删除原文件
       })
     ],
   },

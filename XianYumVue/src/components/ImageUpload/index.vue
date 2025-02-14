@@ -19,7 +19,7 @@
     >
       <i class="el-icon-plus"></i>
     </el-upload>
-    
+
     <!-- 上传提示 -->
     <div class="el-upload__tip" slot="tip" v-if="showTip">
       请上传
@@ -44,6 +44,7 @@
 
 <script>
 import { getToken } from "@/utils/auth";
+import { isExternal } from "@/utils/validate";
 
 export default {
   props: {
@@ -55,7 +56,7 @@ export default {
     },
     // 大小限制(MB)
     fileSize: {
-       type: Number,
+      type: Number,
       default: 5,
     },
     // 文件类型, 例如['png', 'jpg', 'jpeg']
@@ -93,10 +94,10 @@ export default {
           // 然后将数组转为对象数组
           this.fileList = list.map(item => {
             if (typeof item === "string") {
-              if (item.indexOf(this.baseUrl) === -1) {
-                  item = { name: this.baseUrl + item, url: this.baseUrl + item };
+              if (item.indexOf(this.baseUrl) === -1 && !isExternal(item)) {
+                item = { name: this.baseUrl + item, url: this.baseUrl + item };
               } else {
-                  item = { name: item, url: item };
+                item = { name: item, url: item };
               }
             }
             return item;
@@ -135,7 +136,11 @@ export default {
       }
 
       if (!isImg) {
-        this.$modal.msgError(`文件格式不正确, 请上传${this.fileType.join("/")}图片格式文件!`);
+        this.$modal.msgError(`文件格式不正确，请上传${this.fileType.join("/")}图片格式文件!`);
+        return false;
+      }
+      if (file.name.includes(',')) {
+        this.$modal.msgError('文件名不正确，不能包含英文逗号!');
         return false;
       }
       if (this.fileSize) {
@@ -168,7 +173,7 @@ export default {
     // 删除图片
     handleDelete(file) {
       const findex = this.fileList.map(f => f.name).indexOf(file.name);
-      if(findex > -1) {
+      if (findex > -1) {
         this.fileList.splice(findex, 1);
         this.$emit("input", this.listToString(this.fileList));
       }
@@ -210,17 +215,17 @@ export default {
 <style scoped lang="scss">
 // .el-upload--picture-card 控制加号部分
 ::v-deep.hide .el-upload--picture-card {
-    display: none;
+  display: none;
 }
 // 去掉动画效果
 ::v-deep .el-list-enter-active,
 ::v-deep .el-list-leave-active {
-    transition: all 0s;
+  transition: all 0s;
 }
 
 ::v-deep .el-list-enter, .el-list-leave-active {
-    opacity: 0;
-    transform: translateY(0);
+  opacity: 0;
+  transform: translateY(0);
 }
 </style>
 

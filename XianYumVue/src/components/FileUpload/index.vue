@@ -119,9 +119,14 @@ export default {
         const fileExt = fileName[fileName.length - 1];
         const isTypeOk = this.fileType.indexOf(fileExt) >= 0;
         if (!isTypeOk) {
-          this.$modal.msgError(`文件格式不正确, 请上传${this.fileType.join("/")}格式文件!`);
+          this.$modal.msgError(`文件格式不正确，请上传${this.fileType.join("/")}格式文件!`);
           return false;
         }
+      }
+      // 校检文件名是否包含特殊字符
+      if (file.name.includes(',')) {
+        this.$modal.msgError('文件名不正确，不能包含英文逗号!');
+        return false;
       }
       // 校检文件大小
       if (this.fileSize) {
@@ -142,7 +147,7 @@ export default {
     // 上传失败
     handleUploadError(err) {
       this.$modal.msgError("上传文件失败，请重试");
-      this.$modal.closeLoading()
+      this.$modal.closeLoading();
     },
     // 上传成功回调
     handleUploadSuccess(res, file) {
@@ -174,10 +179,11 @@ export default {
     },
     // 获取文件名称
     getFileName(name) {
+      // 如果是url那么取最后的名字 如果不是直接返回
       if (name.lastIndexOf("/") > -1) {
         return name.slice(name.lastIndexOf("/") + 1);
       } else {
-        return "";
+        return name;
       }
     },
     // 对象转成指定字符串分隔

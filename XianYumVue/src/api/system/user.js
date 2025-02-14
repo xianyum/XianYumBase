@@ -106,6 +106,7 @@ export function uploadAvatar(data) {
   return request({
     url: '/xym-system/v1/user/upload',
     method: 'post',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     data: data
   })
 }

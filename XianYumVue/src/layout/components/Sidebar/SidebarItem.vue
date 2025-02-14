@@ -13,8 +13,8 @@
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
       <sidebar-item
-        v-for="child in item.children"
-        :key="child.path"
+        v-for="(child, index) in item.children"
+        :key="child.path + index"
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
@@ -62,11 +62,10 @@ export default {
       const showingChildren = children.filter(item => {
         if (item.hidden) {
           return false
-        } else {
-          // Temp set(will be used if only has one showing child)
-          this.onlyOneChild = item
-          return true
         }
+        // Temp set(will be used if only has one showing child)
+        this.onlyOneChild = item
+        return true
       })
 
       // When there is only one child router, the child router is displayed by default
