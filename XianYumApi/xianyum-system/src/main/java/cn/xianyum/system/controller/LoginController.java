@@ -6,8 +6,6 @@ import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.service.UserTokenService;
-import com.anji.captcha.model.common.ResponseModel;
-import com.anji.captcha.model.vo.CaptchaVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +34,8 @@ public class LoginController {
     @Autowired
     private UserTokenService userTokenService;
 
-    @Autowired
-    private com.anji.captcha.service.CaptchaService captchaService;
-
     @Resource
     private AuthenticationManager authenticationManager;
-
 
     /**
      * 登录
@@ -51,12 +45,6 @@ public class LoginController {
     @PostMapping("/login")
     @ApiOperation(value = "登录系统")
     public Results login(@RequestBody UserRequest userRequest) {
-        CaptchaVO captchaVO = new CaptchaVO();
-        captchaVO.setCaptchaVerification(userRequest.getCaptchaVerification());
-        ResponseModel response = captchaService.verification(captchaVO);
-        if(response.isSuccess() == false){
-            return Results.error("验证码不正确");
-        }
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication;
         try {

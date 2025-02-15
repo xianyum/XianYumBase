@@ -88,11 +88,6 @@
             <artifactId>easyexcel</artifactId>
         </dependency>
 
-        <!-- 验证码配置 -->
-        <dependency>
-            <groupId>com.anji-plus</groupId>
-            <artifactId>spring-boot-starter-captcha</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

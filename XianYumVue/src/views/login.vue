@@ -37,14 +37,7 @@
 <!--          <img :src="codeUrl" @click="getCode" class="login-code-img"/>-->
 <!--        </div>-->
 <!--      </el-form-item>-->
-
-      <Verify
-        @success="success"
-        :mode="'pop'"
-        :captchaType="captchaType"
-        :imgSize="{ width: '330px', height: '155px' }"
-        ref="verify"
-      ></Verify>
+      <Vcode :show="isShow" ref="vcode" @success="onSuccess" @close="onClose" />
       <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
       <el-form-item style="width:100%;">
         <el-button
@@ -84,14 +77,15 @@
 
 <script>
 import Cookies from "js-cookie";
-import Verify from '@/components/Verifition/Verify';
 import { encrypt, decrypt } from '@/utils/jsencrypt';
 import { Message } from 'element-ui'
+import Vcode from "vue-puzzle-vcode";
 
 export default {
   name: "Login",
   data() {
     return {
+      isShow:false,
       captchaType: 'blockPuzzle',
       codeUrl: "",
       loginForm: {
@@ -124,19 +118,20 @@ export default {
     }
   },
   components: {
-    Verify
+    Vcode
   },
   created() {
     // 初始化验证码类型
-    this.getCaptchaTypeParams()
+    // this.getCaptchaTypeParams()
     this.getCookie();
   },
   methods: {
-    // 初始化验证码类型
-    getCaptchaTypeParams () {
-      this.getPublicSystemConstant('captcha_type').then(response => {
-        this.captchaType = response.data.constantValue
-      })
+    onSuccess(){
+      this.success()
+      this.isShow = false
+    },
+    onClose(){
+      this.isShow = false
     },
     qqLogin(){
       let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dqq';
@@ -149,8 +144,7 @@ export default {
       let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dalipay'
       window.location.replace(aliUrl)
     },
-    success(params){
-      this.loginForm.captchaVerification = params.captchaVerification
+    success(){
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
@@ -182,7 +176,7 @@ export default {
       };
     },
     handleLogin() {
-      this.$refs.verify.show()
+      this.isShow = true
     }
   }
 };

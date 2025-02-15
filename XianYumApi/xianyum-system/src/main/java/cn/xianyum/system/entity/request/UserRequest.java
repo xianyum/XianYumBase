@@ -4,7 +4,6 @@ import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -29,7 +28,8 @@ public class UserRequest extends BaseRequest {
     private Integer status;//状态吗  1：允许登录 0：禁止登录
     private String userSource;//用户来源
     private Integer delTag;//删除标记
-    private String captchaVerification;
+
+
     private Integer sex;
 
     /**
