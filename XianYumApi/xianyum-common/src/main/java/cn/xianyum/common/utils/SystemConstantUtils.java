@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
@@ -22,5 +23,15 @@ public class SystemConstantUtils {
             log.error("通过反射获取系统常用变量异常. ",var5);
             return null;
         }
+    }
+
+    /**
+     * 通过常量key获取JsonObject
+     * @param key
+     * @return
+     */
+    public static JSONObject getValueObjectByKey(String key) {
+        String value = getValueByKey(key);
+        return JSONObject.parseObject(value);
     }
 }
