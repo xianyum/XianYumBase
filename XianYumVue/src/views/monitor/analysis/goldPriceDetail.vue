@@ -13,35 +13,32 @@
           </el-col>
           <el-col :xs="24" :sm="8" :md="6" :lg="3">
             <el-form-item label="最新价：" prop="latestPrice" style="color: red;font-weight: bold">
-              {{ goldPriceData.latestPrice }}
+              {{ goldPriceData.latestPrice }}元
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="8" :md="6" :lg="3" style="color: #1c84c6;font-weight: bold">
             <el-form-item label="昨收价：" prop="yesPrice">
-              {{ goldPriceData.yesPrice }}
+              {{ goldPriceData.yesPrice }}元
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row>
           <el-col :xs="24" :sm="8" :md="6" :lg="3">
             <el-form-item label="开盘价：" prop="openPrice">
-              {{ goldPriceData.openPrice }}
+              {{ goldPriceData.openPrice }}元
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="8" :md="6" :lg="3">
             <el-form-item label="最高价：" prop="maxPrice">
-              {{ goldPriceData.maxPrice }}
-            </el-form-item>
-          </el-col>
-          <el-col :xs="24" :sm="8" :md="6" :lg="3">
-            <el-form-item label="最低价：" prop="minPrice">
-              {{ goldPriceData.minPrice }}
+              {{ goldPriceData.maxPrice }}元
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row>
+          <el-col :xs="24" :sm="8" :md="6" :lg="3">
+            <el-form-item label="最低价：" prop="minPrice">
+              {{ goldPriceData.minPrice }}元
+            </el-form-item>
+          </el-col>
           <el-col :xs="24" :sm="8" :md="6" :lg="3">
             <el-form-item label="涨跌幅：" prop="changePercentage">
               {{ goldPriceData.changePercentage }}
