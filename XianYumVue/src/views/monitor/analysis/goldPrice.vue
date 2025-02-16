@@ -59,7 +59,6 @@
 
 <script>
 import { getGoldPricePage } from '@/api/monitor/goldPrice'
-import { Message } from 'element-ui'
 
 export default {
   name: "GoldPrice",
@@ -93,7 +92,7 @@ export default {
   },
   methods: {
     viewGoldPriceReport(){
-      Message.info("正在开发中...");
+      this.$router.push({ path: "/goldPriceDetail" });
     },
     /** 查询登录日志 */
     getList() {

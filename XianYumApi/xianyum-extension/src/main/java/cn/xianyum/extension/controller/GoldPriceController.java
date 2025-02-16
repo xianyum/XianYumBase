@@ -1,5 +1,6 @@
 package cn.xianyum.extension.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +36,19 @@ public class GoldPriceController{
     public Results getPage(GoldPriceRequest request) {
 		PageResponse<GoldPriceResponse> responsePage = goldPriceService.getPage(request);
         return Results.page(responsePage);
+    }
+
+    /**
+     * 获取最新金价
+     *
+     * @return 分页数据
+     */
+    @ApiOperation(value = "获取最新金价")
+    @GetMapping(value = "/getLatestPrice")
+    @Permission(publicApi = true)
+    public Results getLatestPrice() {
+        GoldPriceResponse response = goldPriceService.getLatestPrice();
+        return Results.success(response);
     }
 
 }

@@ -25,4 +25,10 @@ public interface GoldPriceService{
 	 * @return
 	 */
 	ReturnT pullGoldPrice(Map<String, String> jobParamsMap, SchedulerTool tool);
+
+	/**
+	 * 获取最新金价
+	 * @return
+	 */
+	GoldPriceResponse getLatestPrice();
 }

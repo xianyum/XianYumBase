@@ -58,6 +58,11 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/goldPriceDetail',
+    component: () => import('@/views/monitor/analysis/goldPriceDetail'),
+    hidden: true
+  },
+  {
     path: '/xianyu',
     component: () => import('@/views/xianyu/index'),
     hidden: true

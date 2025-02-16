@@ -100,5 +100,19 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 		return ReturnT.SUCCESS;
 	}
 
+	/**
+	 * 获取最新金价
+	 *
+	 * @return
+	 */
+	@Override
+	public GoldPriceResponse getLatestPrice() {
+		LambdaQueryWrapper<GoldPriceEntity> queryWrapper = Wrappers.<GoldPriceEntity>lambdaQuery()
+				.orderByDesc(GoldPriceEntity::getCreateTime)
+				.last("limit 1");
+		GoldPriceEntity goldPriceEntity = this.goldPriceMapper.selectOne(queryWrapper);
+		return BeanUtils.copy(goldPriceEntity,GoldPriceResponse.class);
+	}
+
 }
 
