@@ -4,9 +4,12 @@ import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.extension.entity.response.GoldPriceApiResponse;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -18,6 +21,7 @@ import cn.xianyum.extension.service.GoldPriceService;
 import cn.xianyum.extension.dao.GoldPriceMapper;
 import org.springframework.stereotype.Service;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,12 +53,6 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 	}
 
 
-	@Override
-	public Integer save(GoldPriceRequest request) {
-		GoldPriceEntity bean = BeanUtils.copy(request,GoldPriceEntity.class);
-		return goldPriceMapper.insert(bean);
-	}
-
 	/**
 	 * 拉取每日金价
 	 *
@@ -64,12 +62,22 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 	 */
 	@Override
 	public ReturnT pullGoldPrice(Map<String, String> jobParamsMap, SchedulerTool tool) {
+		// 获取限制时间
+		String limitHour = jobParamsMap.get("limitHour");
+		if(StringUtil.isNotBlank(limitHour)){
+			DateTime dateTime = new DateTime();
+			Integer hourOfDay = dateTime.getHourOfDay();
+			List<Integer> limitHourList = JSONObject.parseObject(limitHour, new TypeReference<List<Integer>>(){});
+			if(limitHourList.contains(hourOfDay)){
+				return ReturnT.SUCCESS;
+			}
+		}
 		JSONObject jsonObject = SystemConstantUtils.getValueObjectByKey(GOLD_PRICE_CONFIG);
 		String url = jsonObject.getString("url");
 		String result = HttpUtils.getHttpInstance().sync(url).get().getBody().toString();
 		GoldPriceApiResponse goldPriceApiResponse = JSONObject.parseObject(result, GoldPriceApiResponse.class);
 		if(!goldPriceApiResponse.getResultCode().equals("200")){
-			log.info("拉取每日黄金api异常,{}",result);
+			log.error("拉取每日黄金api异常,{}",result);
 			return ReturnT.FAILURE;
 		}
 		// 获取足金99的价格

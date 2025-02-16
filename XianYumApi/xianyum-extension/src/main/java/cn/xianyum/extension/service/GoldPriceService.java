@@ -18,8 +18,6 @@ public interface GoldPriceService{
 
 	PageResponse<GoldPriceResponse> getPage(GoldPriceRequest request);
 
-	Integer save(GoldPriceRequest request);
-
 	/**
 	 * 拉取每日金价
 	 * @param jobParamsMap
