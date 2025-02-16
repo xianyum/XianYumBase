@@ -8,3 +8,11 @@ export function getGoldPricePage(query) {
     params: query
   })
 }
+
+// 获取最新金价
+export function getLatestPrice() {
+  return request({
+    url: '/xym-extension/v1/goldPrice/getLatestPrice',
+    method: 'get'
+  })
+}

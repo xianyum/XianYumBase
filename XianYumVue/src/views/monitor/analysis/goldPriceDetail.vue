@@ -79,8 +79,7 @@ export default {
   name: "index",
   data() {
     return {
-      goldPriceData: {},
-      proxyLogList: []
+      goldPriceData: {}
     }
   },
   created() {
