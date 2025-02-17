@@ -63,32 +63,51 @@
         <span>金价趋势</span>
       </div>
       <div>
-        开发中...
+          <gold-price-trend :chart-data="goldPriceTrendChartData"/>
       </div>
     </el-card>
   </div>
 </template>
 
 <script>
-import { getLatestPrice } from '@/api/monitor/goldPrice'
+import { getGoldPriceLatestPrice, getGoldPriceTrend } from '@/api/monitor/goldPrice'
+import GoldPriceTrend from '@/views/dashboard/GoldPriceTrend'
+import { parseTime } from '@/utils/ruoyi'
 
 export default {
-  name: "index",
+  name: 'index',
+  components: { GoldPriceTrend },
   data() {
     return {
-      goldPriceData: {}
+      goldPriceData: {},
+      goldPriceTrendChartData: {
+        data: [],
+        date: []
+      }
     }
   },
   created() {
-    this.getLatestPriceRequest();
+    this.getLatestPriceRequest()
+    this.getGoldPriceTrendRequest()
+
   },
   methods: {
     getLatestPriceRequest() {
-      getLatestPrice().then(response => {
-          this.goldPriceData = response.data;
+      getGoldPriceLatestPrice().then(response => {
+          this.goldPriceData = response.data
         }
-      );
+      )
     },
+    getGoldPriceTrendRequest() {
+      getGoldPriceTrend().then(response => {
+          response.data.forEach((item, index) => {
+            this.goldPriceTrendChartData.data.push(item.latestPrice)
+            this.goldPriceTrendChartData.date.push(parseTime(new Date(item.time)))
+          })
+
+        }
+      )
+    }
   }
 }
 </script>

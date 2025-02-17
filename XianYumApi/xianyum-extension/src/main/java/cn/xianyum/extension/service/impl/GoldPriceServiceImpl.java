@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -112,6 +111,18 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 				.last("limit 1");
 		GoldPriceEntity goldPriceEntity = this.goldPriceMapper.selectOne(queryWrapper);
 		return BeanUtils.copy(goldPriceEntity,GoldPriceResponse.class);
+	}
+
+	/**
+	 * 获取金价趋势图
+	 *
+	 * @return
+	 */
+	@Override
+	public List<GoldPriceResponse> getTrend() {
+		LambdaQueryWrapper<GoldPriceEntity> queryWrapper = Wrappers.<GoldPriceEntity>lambdaQuery()
+				.orderByAsc(GoldPriceEntity::getTime);
+		return BeanUtils.copyList(this.goldPriceMapper.selectList(queryWrapper),GoldPriceResponse.class);
 	}
 
 }

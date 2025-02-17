@@ -10,9 +10,17 @@ export function getGoldPricePage(query) {
 }
 
 // 获取最新金价
-export function getLatestPrice() {
+export function getGoldPriceLatestPrice() {
   return request({
     url: '/xym-extension/v1/goldPrice/getLatestPrice',
+    method: 'get'
+  })
+}
+
+// 获取金价趋势图
+export function getGoldPriceTrend() {
+  return request({
+    url: '/xym-extension/v1/goldPrice/getTrend',
     method: 'get'
   })
 }
