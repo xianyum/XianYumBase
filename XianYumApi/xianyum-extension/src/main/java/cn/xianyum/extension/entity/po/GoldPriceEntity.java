@@ -66,4 +66,13 @@ public class GoldPriceEntity extends BaseEntity {
      */
     private Date time;
 
+    /**
+     * 一天中最晚的时间
+     */
+    private Integer latestTimeOfDay;
+
+    /**
+     * 是否周末
+     */
+    private Integer week;
 }

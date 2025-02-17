@@ -1,6 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.enums.ReturnT;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.extension.entity.response.GoldPriceApiResponse;
 import com.alibaba.fastjson2.JSONObject;
@@ -63,9 +64,10 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 	public ReturnT pullGoldPrice(Map<String, String> jobParamsMap, SchedulerTool tool) {
 		// 获取限制时间
 		String limitHour = jobParamsMap.get("limitHour");
+		DateTime dateTime = new DateTime();
+		Integer hourOfDay = dateTime.getHourOfDay();
+		int minuteOfHour = dateTime.getMinuteOfHour();
 		if(StringUtil.isNotBlank(limitHour)){
-			DateTime dateTime = new DateTime();
-			Integer hourOfDay = dateTime.getHourOfDay();
 			List<Integer> limitHourList = JSONObject.parseObject(limitHour, new TypeReference<List<Integer>>(){});
 			if(limitHourList.contains(hourOfDay)){
 				return ReturnT.SUCCESS;
@@ -94,6 +96,16 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 			goldPriceEntity.setTime(DateUtils.stringToDate(au99g.getTime(),DateUtils.DATE_TIME_PATTERN));
 		}catch (Exception e){
 			goldPriceEntity.setTime(new Date());
+		}
+		if(hourOfDay == 24 && minuteOfHour > 50){
+			goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.YES.getStatus());
+		}else{
+			goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.NO.getStatus());
+		}
+		if(DateUtils.isWeek()){
+			goldPriceEntity.setWeek(YesOrNoEnum.YES.getStatus());
+		}else{
+			goldPriceEntity.setWeek(YesOrNoEnum.NO.getStatus());
 		}
 		goldPriceMapper.insert(goldPriceEntity);
 		return ReturnT.SUCCESS;

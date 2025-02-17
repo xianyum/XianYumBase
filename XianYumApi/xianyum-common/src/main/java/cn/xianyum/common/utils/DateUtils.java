@@ -236,4 +236,15 @@ public class DateUtils {
         }
         return false;
     }
+
+    /**
+     * 判断是否周末
+     * @return
+     */
+    public static boolean isWeek(){
+        DateTime dateTime = new DateTime();
+        int dayOfWeek = dateTime.getDayOfWeek();
+        // 判断是否为周末
+        return  (dayOfWeek == 6 || dayOfWeek == 7);
+    }
 }
