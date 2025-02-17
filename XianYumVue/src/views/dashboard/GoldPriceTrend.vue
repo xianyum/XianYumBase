@@ -63,9 +63,9 @@ export default {
     },
     setOptions({ data,date } = {}) {
       // 获取最大值
-      let yMaxValue = Math.max(...data) + 10;
+      let yMaxValue = Math.max(...data) + 5;
       // 获取最小值
-      let yMinValue = Math.min(...data) - 10;
+      let yMinValue = Math.min(...data) - 5;
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
