@@ -6,6 +6,7 @@ import cn.xianyum.extension.entity.request.GoldPriceRequest;
 import cn.xianyum.extension.entity.response.GoldPriceResponse;
 import cn.xianyum.common.entity.base.PageResponse;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,4 +32,10 @@ public interface GoldPriceService{
 	 * @return
 	 */
 	GoldPriceResponse getLatestPrice();
+
+	/**
+	 * 获取金价趋势图
+	 * @return
+	 */
+    List<GoldPriceResponse> getTrend();
 }

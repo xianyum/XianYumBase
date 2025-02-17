@@ -11,6 +11,8 @@ import cn.xianyum.extension.entity.request.GoldPriceRequest;
 import cn.xianyum.extension.entity.response.GoldPriceResponse;
 import cn.xianyum.extension.service.GoldPriceService;
 
+import java.util.List;
+
 /**
  * 每日黄金金价(GoldPrice)Controller
  *
@@ -51,4 +53,17 @@ public class GoldPriceController{
         return Results.success(response);
     }
 
+
+    /**
+     * 获取金价趋势图
+     *
+     * @return 分页数据
+     */
+    @ApiOperation(value = "获取金价趋势图")
+    @GetMapping(value = "/getTrend")
+    @Permission(publicApi = true)
+    public Results getTrend() {
+        List<GoldPriceResponse> responseList = goldPriceService.getTrend();
+        return Results.success(responseList);
+    }
 }
