@@ -81,11 +81,12 @@ export default {
       let data = dataArray.map(item => [+item[1], +item[2], +item[5], +item[6]]);
       this.chart.setOption({
         legend: {
-          data: ['日K', '开盘价', '最高价', '最低价', '昨收价'],
+          data: ['日K','5日均', '10日均', '20日均', '30日均'],
           inactiveColor: '#777'
         },
         tooltip: {
           trigger: 'axis',
+          confine: true,//解决悬浮被遮挡问题
           axisPointer: {
             animation: false,
             type: 'cross',
@@ -144,7 +145,7 @@ export default {
             }
           },
           {
-            name: '开盘价',
+            name: '5日均',
             type: 'line',
             data: this.calculateMA(5, data),
             smooth: true,
@@ -154,7 +155,7 @@ export default {
             }
           },
           {
-            name: '最高价',
+            name: '10日均',
             type: 'line',
             data: this.calculateMA(10, data),
             smooth: true,
@@ -164,7 +165,7 @@ export default {
             }
           },
           {
-            name: '最低价',
+            name: '20日均',
             type: 'line',
             data: this.calculateMA(20, data),
             smooth: true,
@@ -174,7 +175,7 @@ export default {
             }
           },
           {
-            name: '昨收价',
+            name: '30日均',
             type: 'line',
             data: this.calculateMA(30, data),
             smooth: true,

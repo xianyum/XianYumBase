@@ -101,7 +101,7 @@ export default {
           {
             type: 'inside',
             start: 0,
-            end: 100000
+            end: 100000000
           },
           {
             start: 0,
@@ -110,7 +110,7 @@ export default {
         ],
         series: [
           {
-            name: '价格',
+            name: '金价',
             type: 'line',
             symbol: 'none',
             sampling: 'lttb',
