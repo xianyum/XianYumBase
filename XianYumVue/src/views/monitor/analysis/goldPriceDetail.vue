@@ -49,7 +49,7 @@
               {{ goldPriceData.totalVol }}
             </el-form-item>
           </el-col>
-          <el-col :xs="24" :sm="8" :md="6" :lg="4">
+          <el-col :xs="24" :sm="8" :md="6" :lg="5">
             <el-form-item label="统计时间：" prop="time">
               {{ parseTime(goldPriceData.time) }}
             </el-form-item>
