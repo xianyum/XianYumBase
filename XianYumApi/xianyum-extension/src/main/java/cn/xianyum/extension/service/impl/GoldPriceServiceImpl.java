@@ -97,7 +97,7 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 		}catch (Exception e){
 			goldPriceEntity.setTime(new Date());
 		}
-		if(hourOfDay == 24 && minuteOfHour > 50){
+		if(hourOfDay == 23 && minuteOfHour > 50){
 			goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.YES.getStatus());
 		}else{
 			goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.NO.getStatus());
