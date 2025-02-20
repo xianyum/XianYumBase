@@ -78,7 +78,7 @@ export default {
     },
     setOptions(dataArray) {
       let dates = dataArray.map(item => item[0]);
-      let data = dataArray.map(item => [+item[1], +item[2], +item[5], +item[6]]);
+      let data = dataArray.map(item => [+item[1], +item[2], +item[3], +item[4]]);
       this.chart.setOption({
         legend: {
           data: ['日K','5日均', '10日均', '20日均', '30日均'],

@@ -24,3 +24,12 @@ export function getGoldPriceTrend() {
     method: 'get'
   })
 }
+
+
+// 获取K线图
+export function getGoldPriceKLine() {
+  return request({
+    url: '/xym-extension/v1/goldPrice/getKLine',
+    method: 'get'
+  })
+}
