@@ -38,4 +38,6 @@ public interface GoldPriceService{
 	 * @return
 	 */
     List<GoldPriceResponse> getTrend();
+
+	List<List<Object>> getKLine();
 }

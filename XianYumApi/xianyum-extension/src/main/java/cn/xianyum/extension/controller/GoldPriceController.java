@@ -66,4 +66,17 @@ public class GoldPriceController{
         List<GoldPriceResponse> responseList = goldPriceService.getTrend();
         return Results.success(responseList);
     }
+
+    /**
+     * 获取K线图
+     *
+     * @return 分页数据
+     */
+    @ApiOperation(value = "获取K线图")
+    @GetMapping(value = "/getKLine")
+    @Permission(publicApi = true)
+    public Results getKLine() {
+        List<List<Object>> responseList = goldPriceService.getKLine();
+        return Results.success(responseList);
+    }
 }

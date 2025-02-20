@@ -20,10 +20,8 @@ import cn.xianyum.extension.entity.response.GoldPriceResponse;
 import cn.xianyum.extension.service.GoldPriceService;
 import cn.xianyum.extension.dao.GoldPriceMapper;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
  * 每日黄金金价(GoldPrice)service层实现
@@ -135,6 +133,32 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 		LambdaQueryWrapper<GoldPriceEntity> queryWrapper = Wrappers.<GoldPriceEntity>lambdaQuery()
 				.orderByAsc(GoldPriceEntity::getTime);
 		return BeanUtils.copyList(this.goldPriceMapper.selectList(queryWrapper),GoldPriceResponse.class);
+	}
+
+	@Override
+	public List<List<Object>> getKLine() {
+		LambdaQueryWrapper<GoldPriceEntity> queryWrapper = Wrappers.<GoldPriceEntity>lambdaQuery()
+				.eq(GoldPriceEntity::getLatestTimeOfDay,YesOrNoEnum.YES.getStatus())
+				.orderByAsc(GoldPriceEntity::getTime);
+		List<GoldPriceEntity> goldPriceEntities = this.goldPriceMapper.selectList(queryWrapper);
+		GoldPriceResponse latestPrice = this.getLatestPrice();
+		goldPriceEntities.add(BeanUtils.copy(latestPrice,GoldPriceEntity.class));
+		List<List<Object>> resultList = new ArrayList<>();
+		for (GoldPriceEntity goldPriceEntity : goldPriceEntities) {
+			List<Object> list = new ArrayList<>();
+			// 第一个是时间
+			list.add(DateUtils.format(goldPriceEntity.getTime(),DateUtils.DATE_PATTERN));
+			// 第二个是开盘价
+			list.add(goldPriceEntity.getOpenPrice());
+			// 第三个最新价
+			list.add(goldPriceEntity.getLatestPrice());
+			// 第四个是最低价
+			list.add(goldPriceEntity.getMinPrice());
+			// 第五个是最高价
+			list.add(goldPriceEntity.getMaxPrice());
+			resultList.add(list);
+		}
+		return resultList;
 	}
 
 }
