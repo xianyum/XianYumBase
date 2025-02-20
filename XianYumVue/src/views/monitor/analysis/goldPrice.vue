@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     viewGoldPriceReport(){
-      this.$router.push({ path: "/goldPriceDetail" });
+      this.$router.push({ path: "/gold" });
     },
     /** 查询登录日志 */
     getList() {

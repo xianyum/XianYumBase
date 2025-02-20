@@ -58,7 +58,7 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/goldPriceDetail',
+    path: '/gold',
     component: () => import('@/views/monitor/analysis/goldPriceDetail'),
     hidden: true
   },
