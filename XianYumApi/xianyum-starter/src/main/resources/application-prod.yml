@@ -93,19 +93,6 @@ ali:
     app_id: mpw:E7xIIUCorWxfm+bWP37MtaLN22V4JLL4nD4rWadKIQY=
     server_url: https://openapi.alipay.com/gateway.do
 
-
-# 滑块验证码配置 https://gitee.com/anji-plus/captcha/tree/master/service/springboot
-aj:
-  captcha:
-    aes-status: true
-    cache-type: redis
-    interference-options: 2
-    jigsaw: classpath:static/images/jigsaw
-    pic-click: classpath:static/images/pic-click
-    slip-offset: 5
-    type: default
-    water-mark: ''
-
 ip:
   db:
     path: /home/app/xianyum/api/ipdb/ip2region.xdb
