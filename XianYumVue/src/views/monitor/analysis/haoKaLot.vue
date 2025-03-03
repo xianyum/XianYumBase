@@ -151,12 +151,14 @@ export default {
     getPicList(row){
       let picList = []
       picList.push(row.mainPic)
-      let littlePics = row.littlepicture.split('|')
-      littlePics.forEach(item => {
-        if(item && item != ''){
-          picList.push(item)
-        }
-      })
+      if(row.littlepicture){
+        let littlePics = row.littlepicture.split('|')
+        littlePics.forEach(item => {
+          if(item && item != ''){
+            picList.push(item)
+          }
+        })
+      }
       return picList;
     },
     goMyUrl(row){
