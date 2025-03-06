@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="85px">
-      <el-form-item label="车牌号" prop="serverName">
-        <el-input
-          v-model="queryParams.vehicleNo"
-          placeholder="请输入车牌号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="车牌号" prop="serverName">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.vehicleNo"-->
+<!--          placeholder="请输入车牌号"-->
+<!--          clearable-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="驾驶日期" clearable>
         <el-date-picker
           v-model="queryParams.dateRange"
