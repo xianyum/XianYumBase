@@ -19,6 +19,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :default-time="['00:00:00', '23:59:59']"
+          :picker-options="pickerOptions"
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -66,7 +67,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="evDriveList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="evDriveList" show-summary :summary-method="summaryMethod" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" type="index" align="center" width="50"/>
       <el-table-column label="驾驶日期" align="center" prop="driveDate" width="180">
@@ -99,7 +100,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <pagination
       v-show="total>0"
       :total="total"
@@ -176,6 +176,48 @@ export default {
         ],
         vehicleNo: undefined
       },
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setMonth(start.getMonth() - 3);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近半年',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setMonth(start.getMonth() - 6);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '今年',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setMonth(0);  // 今年的1月1日
+            start.setDate(1);   // 今年的1月1日
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '去年',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setFullYear(start.getFullYear() - 1);  // 去年
+            start.setMonth(0);  // 去年的1月1日
+            start.setDate(1);   // 去年的1月1日
+            end.setFullYear(end.getFullYear() - 1);  // 去年的12月31日
+            end.setMonth(11);   // 去年的12月
+            end.setDate(31);    // 去年的12月31日
+            picker.$emit('pick', [start, end]);
+          }
+        }
+        ]
+      },
       // 表单参数
       form: {},
       // 表单校验
@@ -196,6 +238,17 @@ export default {
     this.getList()
   },
   methods: {
+    summaryMethod({ columns, data }){
+      const sums = [];
+      sums[0] = '-'
+      sums[1] = '合计'
+      sums[2] = '-'
+      sums[3] = 100
+      sums[4] = 10
+      sums[5] = 20
+      sums[6] = '-'
+      return sums;
+    },
     /** 查询客户端管理列表 */
     getList() {
       this.loading = true
