@@ -81,5 +81,4 @@ public class Constants {
     /** 服务500错误码 */
     public final static int SERVER_ERROR_STATUS_CODE = 500;
 
-    public final static String SERVER_ERROR_SQL_DUPLICATE_MSG = "已有重复数据，请勿重新添加";
 }

@@ -42,15 +42,12 @@ public class SystemExceptionHandler {
     }
 
 
-
-    /**
-     * 处理MYSQL唯一索引异常
-     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public Results handleMysqlDuplicateException(DataIntegrityViolationException e){
+        logger.error("",e);
         Results result = new Results();
         result.put(Constants.ERROR_CODE_FIELD, Constants.SERVER_ERROR_STATUS_CODE);
-        result.put(Constants.ERROR_MSG_FIELD, Constants.SERVER_ERROR_SQL_DUPLICATE_MSG);
+        result.put(Constants.ERROR_MSG_FIELD, e.getMessage());
         return result;
     }
 
