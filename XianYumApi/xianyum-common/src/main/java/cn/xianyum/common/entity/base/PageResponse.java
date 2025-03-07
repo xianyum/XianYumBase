@@ -20,6 +20,10 @@ public class PageResponse<R extends BaseResponse> {
 
     private List<R> dataList;
 
+    /** 分页返回额外的数据，一般用于分页返回汇总数据 */
+    private Object otherInfo;
+
+
     private PageResponse() {
     }
 

@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="85px">
-<!--      <el-form-item label="车牌号" prop="serverName">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.vehicleNo"-->
-<!--          placeholder="请输入车牌号"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
+      <!--      <el-form-item label="车牌号" prop="serverName">-->
+      <!--        <el-input-->
+      <!--          v-model="queryParams.vehicleNo"-->
+      <!--          placeholder="请输入车牌号"-->
+      <!--          clearable-->
+      <!--          @keyup.enter.native="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="驾驶日期" clearable>
         <el-date-picker
           v-model="queryParams.dateRange"
@@ -67,7 +67,9 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="evDriveList" show-summary :summary-method="summaryMethod" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="evDriveList" show-summary :summary-method="summaryMethod"
+              @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="序号" type="index" align="center" width="50"/>
       <el-table-column label="驾驶日期" align="center" prop="driveDate" width="180">
@@ -75,7 +77,7 @@
           <span>{{ parseTime(scope.row.driveDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="车牌号" align="center" prop="vehicleNo"/>-->
+      <!--      <el-table-column label="车牌号" align="center" prop="vehicleNo"/>-->
       <el-table-column label="行驶公里数(km)" align="center" prop="distanceKm"/>
       <el-table-column label="消耗电量(kWh)" align="center" prop="electricityConsumed"/>
       <el-table-column label="每公里电量消耗(kWh/km)" align="center" prop="electricityPerKm"/>
@@ -110,12 +112,13 @@
 
     <!-- 添加或修改行驶记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" :width="dialogWidth" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="驾驶日期" prop="driveDate">
           <el-date-picker
             v-model="form.driveDate"
             type="date"
             placeholder="选择驾驶日期"
+            :style="{ width: datePickerWidth }"
           />
         </el-form-item>
         <el-form-item label="行驶公里数(km)" prop="distanceKm">
@@ -162,6 +165,7 @@ export default {
       // 总条数
       total: 0,
       dialogWidth: '800px', // 默认宽度
+      datePickerWidth: '100%',
       evDriveList: [],
       // 弹出层标题
       title: '',
@@ -178,49 +182,87 @@ export default {
         vehicleNo: undefined
       },
       pickerOptions: {
-        shortcuts: [{
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setMonth(start.getMonth() - 3);
-            picker.$emit('pick', [start, end]);
+        shortcuts: [
+          {
+            text: '上个月',
+            onClick(picker) {
+              const end = new Date(); // 当前日期
+              const start = new Date();
+              console.log(start)
+              // 设置上个月的最后一天
+              end.setMonth(end.getMonth()); // 上个月
+              end.setDate(0); // 上个月的最后一天
+              end.setHours(23)
+              end.setMinutes(59)
+              end.setSeconds(59)
+              // 设置上个月的第一天
+              start.setMonth(end.getMonth()); // 上个月
+              start.setDate(1); // 上个月的1号
+              start.setHours(0)
+              start.setMinutes(0)
+              start.setSeconds(0)
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setMonth(start.getMonth() - 3)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近半年',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setMonth(start.getMonth() - 6)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '今年',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setMonth(0)  // 今年的1月1日
+              start.setDate(1)   // 今年的1月1日
+              start.setHours(0)
+              start.setMinutes(0)
+              start.setSeconds(0)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '去年',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setFullYear(start.getFullYear() - 1)  // 去年
+              start.setMonth(0)  // 去年的1月1日
+              start.setDate(1)   // 去年的1月1日
+              start.setHours(0)
+              start.setMinutes(0)
+              start.setSeconds(0)
+              end.setFullYear(end.getFullYear() - 1)  // 去年的12月31日
+              end.setMonth(11)   // 去年的12月
+              end.setDate(31)    // 去年的12月31日
+              end.setHours(23)
+              end.setMinutes(59)
+              end.setSeconds(59)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近半年',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setMonth(start.getMonth() - 6);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '今年',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setMonth(0);  // 今年的1月1日
-            start.setDate(1);   // 今年的1月1日
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '去年',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setFullYear(start.getFullYear() - 1);  // 去年
-            start.setMonth(0);  // 去年的1月1日
-            start.setDate(1);   // 去年的1月1日
-            end.setFullYear(end.getFullYear() - 1);  // 去年的12月31日
-            end.setMonth(11);   // 去年的12月
-            end.setDate(31);    // 去年的12月31日
-            picker.$emit('pick', [start, end]);
-          }
-        }
         ]
       },
       // 表单参数
       form: {},
+      // 表单汇总数据
+      summaryInfo: {
+        totalDistanceKm: null,
+        totalElectricityConsumed: null,
+        electricityPerKm: null
+      },
+      // 临时存储驾驶日期
+      templateDriverDate: undefined,
       // 表单校验
       rules: {
         driveDate: [
@@ -239,31 +281,31 @@ export default {
     this.getList()
   },
   mounted() {
-    this.adjustDialogWidth();
-    window.addEventListener('resize', this.adjustDialogWidth); // 响应式处理
+    this.adjustDialogWidth()
+    window.addEventListener('resize', this.adjustDialogWidth) // 响应式处理
   },
   destroyed() {
-    window.removeEventListener('resize', this.adjustDialogWidth);
+    window.removeEventListener('resize', this.adjustDialogWidth)
   },
   methods: {
-    summaryMethod({ columns, data }){
-      const sums = [];
+    summaryMethod({ columns, data }) {
+      const sums = []
       sums[0] = '-'
       sums[1] = '合计'
       sums[2] = '-'
-      sums[3] = 100
-      sums[4] = 10
-      sums[5] = 20
+      sums[3] = this.summaryInfo.totalDistanceKm
+      sums[4] = this.summaryInfo.totalElectricityConsumed
+      sums[5] = this.summaryInfo.electricityPerKm
       sums[6] = '-'
-      return sums;
+      return sums
     },
     adjustDialogWidth() {
       // 根据屏幕宽度调整对话框宽度
-      const screenWidth = window.innerWidth;
+      const screenWidth = window.innerWidth
       if (screenWidth <= 768) { // 手机屏幕
-        this.dialogWidth = '90%';  // 让宽度占据90%的屏幕宽度
+        this.dialogWidth = '90%'  // 让宽度占据90%的屏幕宽度
       } else {
-        this.dialogWidth = '800px';  // 大屏幕的默认宽度
+        this.dialogWidth = '800px'  // 大屏幕的默认宽度
       }
     },
     /** 查询客户端管理列表 */
@@ -271,6 +313,7 @@ export default {
       this.loading = true
       getEvDriveRecordsPage(this.addDateRange(this.queryParams, this.queryParams.dateRange)).then(response => {
         this.evDriveList = response.data
+        this.summaryInfo = response.otherInfo
         this.total = response.total
         this.loading = false
       })
@@ -316,6 +359,7 @@ export default {
       this.reset()
       this.open = true
       this.title = '添加车辆行驶记录'
+      this.form.driveDate = this.templateDriverDate
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -336,6 +380,7 @@ export default {
               this.$modal.msgSuccess('修改成功')
               this.open = false
               this.getList()
+              this.templateDriverDate = this.form.driveDate
             })
           } else {
             saveEvDriveRecords(this.form).then(response => {

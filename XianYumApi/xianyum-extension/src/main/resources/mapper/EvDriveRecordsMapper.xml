@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.extension.dao.EvDriveRecordsMapper">
+
+    <select id="selectSummaryData" resultType="map" parameterType="cn.xianyum.extension.entity.request.EvDriveRecordsRequest">
+        SELECT
+            sum(edr.distance_km) as totalDistanceKm,
+            sum(edr.electricity_consumed) as totalElectricityConsumed,
+            ROUND(sum(edr.electricity_consumed) / sum(edr.distance_km), 2) AS electricityPerKm
+        FROM
+            ev_drive_records edr
+        <where>
+            <if test="request.vehicleNo != null and request.vehicleNo != ''">
+                AND edr.vehicle_no LIKE CONCAT('%', #{vehicleNo}, '%')
+            </if>
+            <if test="request.params.beginTime != null and request.params.beginTime != ''">
+                AND edr.drive_date &gt;= #{request.params.beginTime}
+            </if>
+            <if test="request.params.endTime != null and request.params.endTime != ''">
+                AND edr.drive_date &lt;= #{request.params.endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

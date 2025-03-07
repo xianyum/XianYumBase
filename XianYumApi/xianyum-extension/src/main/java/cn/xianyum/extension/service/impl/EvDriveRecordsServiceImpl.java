@@ -1,6 +1,5 @@
 package cn.xianyum.extension.service.impl;
 
-import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.BigDecimalUtils;
@@ -19,6 +18,8 @@ import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -43,7 +44,13 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 .orderByDesc(EvDriveRecordsEntity::getDriveDate);
         Page<EvDriveRecordsEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
         IPage<EvDriveRecordsEntity> pageResult = evDriveRecordsMapper.selectPage(page, queryWrapper);
-        return PageResponse.of(pageResult, EvDriveRecordsResponse.class);
+        PageResponse<EvDriveRecordsResponse> response = PageResponse.of(pageResult, EvDriveRecordsResponse.class);
+        // 获取汇总数据
+        if(pageResult.getTotal() > 0){
+            Map<String,Object> otherInfoMap = evDriveRecordsMapper.selectSummaryData(request);
+            response.setOtherInfo(otherInfoMap);
+        }
+        return response;
 
     }
 
