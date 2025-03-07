@@ -38,8 +38,8 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     public PageResponse<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
         LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
                 .like(StringUtil.isNotEmpty(request.getVehicleNo()),EvDriveRecordsEntity::getVehicleNo,request.getVehicleNo())
-                .gt(Objects.nonNull(request.getParams().get("beginTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("beginTime"))
-                .lt(Objects.nonNull(request.getParams().get("endTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("endTime"))
+                .ge(Objects.nonNull(request.getParams().get("beginTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("beginTime"))
+                .le(Objects.nonNull(request.getParams().get("endTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("endTime"))
                 .orderByDesc(EvDriveRecordsEntity::getDriveDate);
         Page<EvDriveRecordsEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
         IPage<EvDriveRecordsEntity> pageResult = evDriveRecordsMapper.selectPage(page, queryWrapper);
