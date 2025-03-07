@@ -161,7 +161,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      dialogWidth: '800px' // 默认宽度
+      dialogWidth: '800px', // 默认宽度
       evDriveList: [],
       // 弹出层标题
       title: '',
