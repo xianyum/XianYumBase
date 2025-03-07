@@ -83,7 +83,7 @@ public class AliNetServiceImpl implements AliNetService {
 
     @Override
     public void yunXiaoFlowCallBack(String requestInfo) {
-        log.info("接收到云效回调数据:{}",requestInfo)
+        log.info("接收到云效回调数据:{}",requestInfo);
         JSONObject callBackEventObj = JSONObject.parseObject(requestInfo);
         JSONObject taskObj = JSONObject.parseObject(callBackEventObj.getString("task"));
         // 流水线名称
