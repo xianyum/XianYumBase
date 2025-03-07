@@ -13,6 +13,7 @@ public class Results extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
     private static final String DATA_FILED = "data";
     private static final String TOTAL_FILED = "total";
+    private static final String OTHER_INFO_FILED = "otherInfo";
     private static final String MSG_FILED = "msg";
     private static final String CODE_FILED = "code";
 
@@ -61,6 +62,7 @@ public class Results extends HashMap<String, Object> {
         Results result = new Results();
         result.put(DATA_FILED,page.getDataList());
         result.put(TOTAL_FILED,page.getTotal());
+        result.put(OTHER_INFO_FILED,page.getOtherInfo());
         return result;
     }
 
