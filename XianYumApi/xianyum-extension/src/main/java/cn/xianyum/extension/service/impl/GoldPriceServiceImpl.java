@@ -81,6 +81,10 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 		}
 		// 获取足金99的价格
 		GoldPriceApiResponse.Au99g au99g = goldPriceApiResponse.getResult().get(0).getAu99g();
+		if(StringUtil.isEmpty(au99g.getLatestPrice()) || StringUtil.isEmpty(au99g.getOpenPrice())){
+			log.error("拉取每日黄金响应数据异常，暂不保存到数据库里,{}",JSONObject.toJSONString(au99g));
+			return ReturnT.SUCCESS;
+		}
 		GoldPriceEntity goldPriceEntity = new GoldPriceEntity();
 		goldPriceEntity.setVariety(au99g.getVariety());
 		goldPriceEntity.setLatestPrice(BigDecimalUtils.formatString(au99g.getLatestPrice()));

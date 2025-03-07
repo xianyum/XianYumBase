@@ -204,7 +204,7 @@ export default {
               picker.$emit('pick', [start, end]);
             }
           }, {
-            text: '最近三个月',
+            text: '近三个月',
             onClick(picker) {
               const end = new Date()
               const start = new Date()
@@ -212,7 +212,7 @@ export default {
               picker.$emit('pick', [start, end])
             }
           }, {
-            text: '最近半年',
+            text: '近半年',
             onClick(picker) {
               const end = new Date()
               const start = new Date()

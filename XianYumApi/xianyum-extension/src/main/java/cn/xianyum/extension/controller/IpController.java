@@ -4,7 +4,6 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.po.IpInfoEntity;
 import cn.xianyum.extension.service.IpService;
-import com.alibaba.fastjson2.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 帮助文档：https://gitee.com/lionsoul/ip2region
@@ -34,18 +31,5 @@ public class IpController {
     public Results getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
         return Results.success(result);
-    }
-
-    @GetMapping("/getIpInfoRobot")
-    @ApiOperation(value = "查询IP地理位置机器人")
-    @Permission(publicApi = true)
-    public JSONObject getIpInfoRobot(@RequestParam(required = false) String ip) {
-        IpInfoEntity result = ipService.getIpInfo(ip);
-        List<IpInfoEntity> list = new ArrayList<>();
-        list.add(result);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("err_code",0);
-        jsonObject.put("data_list",list);
-        return jsonObject;
     }
 }
