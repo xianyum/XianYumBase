@@ -109,7 +109,7 @@
     />
 
     <!-- 添加或修改行驶记录对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" :width="dialogWidth" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="驾驶日期" prop="driveDate">
           <el-date-picker
@@ -161,6 +161,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      dialogWidth: '800px' // 默认宽度
       evDriveList: [],
       // 弹出层标题
       title: '',
@@ -237,6 +238,13 @@ export default {
   created() {
     this.getList()
   },
+  mounted() {
+    this.adjustDialogWidth();
+    window.addEventListener('resize', this.adjustDialogWidth); // 响应式处理
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.adjustDialogWidth);
+  },
   methods: {
     summaryMethod({ columns, data }){
       const sums = [];
@@ -248,6 +256,15 @@ export default {
       sums[5] = 20
       sums[6] = '-'
       return sums;
+    },
+    adjustDialogWidth() {
+      // 根据屏幕宽度调整对话框宽度
+      const screenWidth = window.innerWidth;
+      if (screenWidth <= 768) { // 手机屏幕
+        this.dialogWidth = '90%';  // 让宽度占据90%的屏幕宽度
+      } else {
+        this.dialogWidth = '800px';  // 大屏幕的默认宽度
+      }
     },
     /** 查询客户端管理列表 */
     getList() {
