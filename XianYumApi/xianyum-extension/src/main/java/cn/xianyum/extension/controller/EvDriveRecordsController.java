@@ -3,6 +3,7 @@ package cn.xianyum.extension.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import com.alibaba.fastjson2.JSONObject;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.extension.service.EvDriveRecordsService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 新能源车行驶记录(EvDriveRecords)Controller
@@ -87,5 +91,19 @@ public class EvDriveRecordsController {
     @Permission(value = "@ps.hasPerm('ev-drive-records:delete')")
     public Results delete(@RequestBody Long[] ids) {
         return Results.success(this.evDriveRecordsService.deleteById(ids));
+    }
+
+
+    /**
+     * 分页查询新能源车行驶折线图
+     *
+     * @param request 查询实体
+     * @return 分页数据
+     */
+    @ApiOperation(value = "分页查询新能源车行驶折线图")
+    @GetMapping(value = "/getReportLineData")
+    public Results getReportLineData(EvDriveRecordsRequest request) {
+        List<Map<String, Object>> result = this.evDriveRecordsService.getReportLineData(request);
+        return Results.success(result);
     }
 }

@@ -2,6 +2,7 @@ package cn.xianyum.extension.entity.request;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
@@ -40,5 +41,15 @@ public class EvDriveRecordsRequest extends BaseRequest {
      * 每公里的电量消耗(kWh/km)
      */
     private BigDecimal electricityPerKm;
+
+    /**
+     * 时间类型
+     */
+    private Integer dateType;
+
+    /**
+     * 时间范围
+     */
+    private List<String> timeRange;
 
 }

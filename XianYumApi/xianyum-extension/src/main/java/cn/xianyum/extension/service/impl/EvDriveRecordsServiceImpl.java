@@ -4,6 +4,7 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.BigDecimalUtils;
 import cn.xianyum.common.utils.StringUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -19,6 +20,7 @@ import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -107,6 +109,17 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         if(isRepeatData){
             throw new SoException("存在重复的驾驶日期数据");
         }
+    }
+
+    /**
+     * 获取报表折线图
+     * @param request
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> getReportLineData(EvDriveRecordsRequest request) {
+        List<Map<String, Object>> resultMap =  this.evDriveRecordsMapper.selectReportLineData(request);
+        return resultMap;
     }
 }
 

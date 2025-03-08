@@ -3,6 +3,10 @@ package cn.xianyum.extension.service;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.common.entity.base.PageResponse;
+import com.alibaba.fastjson2.JSONObject;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 新能源车行驶记录(EvDriveRecords)service层
@@ -27,4 +31,6 @@ public interface EvDriveRecordsService {
      * @param request
      */
     void checkForDuplicateData(EvDriveRecordsRequest request);
+
+    List<Map<String, Object>> getReportLineData(EvDriveRecordsRequest request);
 }

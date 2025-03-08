@@ -43,3 +43,12 @@ export function getEvDriveRecords(id) {
     method: 'get'
   })
 }
+
+
+export function getEvDriveRecordsReportLineData(query) {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/getReportLineData',
+    method: 'get',
+    params: query
+  })
+}

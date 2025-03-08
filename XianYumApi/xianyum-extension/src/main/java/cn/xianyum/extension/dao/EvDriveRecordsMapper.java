@@ -1,10 +1,12 @@
 package cn.xianyum.extension.dao;
 
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
+import cn.zhxu.data.ListMap;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cn.xianyum.extension.entity.po.EvDriveRecordsEntity;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,7 @@ import java.util.Map;
 public interface EvDriveRecordsMapper extends BaseMapper<EvDriveRecordsEntity> {
 
     Map<String, Object> selectSummaryData(@Param("request") EvDriveRecordsRequest request);
+
+    List<Map<String, Object>> selectReportLineData(@Param("request") EvDriveRecordsRequest request);
 }
 

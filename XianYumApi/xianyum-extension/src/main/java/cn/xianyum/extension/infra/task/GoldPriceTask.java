@@ -20,7 +20,8 @@ public class GoldPriceTask implements IJobHandler {
 
     @Override
     public ReturnT execute(Map<String, String> jobParamsMap, SchedulerTool tool) throws Exception {
-        return goldPriceService.pullGoldPrice(jobParamsMap,tool);
+//        return goldPriceService.pullGoldPrice(jobParamsMap,tool);
+        return ReturnT.SUCCESS;
     }
 
 }

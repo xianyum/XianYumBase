@@ -23,4 +23,41 @@
             </if>
         </where>
     </select>
+
+    <select id="selectReportLineData"  parameterType="cn.xianyum.extension.entity.request.EvDriveRecordsRequest">
+        SELECT
+        <if test="request.dateType != null and request.dateType == 0">
+            DATE_FORMAT(edr.drive_date, '%Y-%m-%d' ) as driveDate,
+        </if>
+        <if test="request.dateType != null and request.dateType == 1">
+            DATE_FORMAT(edr.drive_date, '%Y-%m' ) as driveDate,
+        </if>
+        sum(edr.distance_km) as totalDistanceKm,
+        sum(edr.electricity_consumed) as totalElectricityConsumed,
+        ROUND(sum(edr.electricity_consumed) / sum(edr.distance_km), 2) AS electricityPerKm
+        FROM
+        ev_drive_records edr
+        <where>
+            <if test="request.timeRange != null and request.timeRange.size() > 1">
+                <if test="request.dateType != null and request.dateType == 0">
+                    AND DATE_FORMAT(edr.drive_date,'%Y-%m-%d') &gt;= #{request.timeRange[0]}
+                    AND DATE_FORMAT(edr.drive_date,'%Y-%m-%d') &lt;= #{request.timeRange[1]}
+                </if>
+                <if test="request.dateType != null and request.dateType == 1">
+                    AND DATE_FORMAT(edr.drive_date,'%Y-%m') &gt;= #{request.timeRange[0]}
+                    AND DATE_FORMAT(edr.drive_date,'%Y-%m') &lt;= #{request.timeRange[1]}
+                </if>
+            </if>
+        </where>
+        <if test="request.dateType != null and request.dateType == 0">
+            GROUP BY
+            DATE_FORMAT(edr.drive_date,'%Y-%m-%d')
+            ORDER BY DATE_FORMAT(edr.drive_date,'%Y-%m-%d') asc
+        </if>
+        <if test="request.dateType != null and request.dateType == 1">
+            GROUP BY
+            DATE_FORMAT(edr.drive_date,'%Y-%m')
+            ORDER BY DATE_FORMAT(edr.drive_date,'%Y-%m') asc
+        </if>
+    </select>
 </mapper>
