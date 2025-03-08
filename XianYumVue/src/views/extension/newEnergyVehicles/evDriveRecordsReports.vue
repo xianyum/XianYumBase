@@ -11,7 +11,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="日期范围" clearable>
+      <el-form-item label="日期范围" prop="timeRange" clearable>
         <el-date-picker
           v-model="queryParams.timeRange"
           :type="elDatePicker.dateType"
@@ -60,7 +60,10 @@ export default {
       showSearch: true,
       dateValue: '',
       queryParams:{
-        timeRange: undefined,
+        timeRange:[
+          this.parseTime(new Date(new Date().getFullYear(), new Date().getMonth()-1, 1, 0, 0, 0),'{y}-{m}-{d}'),
+          this.parseTime(new Date(),'{y}-{m}-{d}')
+        ],
         dateType: 0
       }
     }
@@ -70,7 +73,6 @@ export default {
   },
   methods: {
     dateTypeChange(){
-      this.queryParams.timeRange = undefined
       if(this.queryParams.dateType == 0){
         this.elDatePicker ={
             dateType: 'daterange',
@@ -78,8 +80,12 @@ export default {
             endDesc: '请选择结束日期',
             dateFormat: 'yyyy-MM-dd'
         }
-
+        this.timeRange = [
+          this.parseTime(new Date(new Date().getFullYear(), new Date().getMonth()-1, 1, 0, 0, 0),'{y}-{m}-{d}'),
+          this.parseTime(new Date(),'{y}-{m}-{d}')
+        ]
       }else{
+        this.queryParams.timeRange = undefined
         this.elDatePicker = {
           dateType: 'monthrange',
           startDesc: '请选择开始月份',
@@ -91,6 +97,10 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm('queryForm')
+      this.timeRange = [
+        this.parseTime(new Date(new Date().getFullYear(), new Date().getMonth()-1, 1, 0, 0, 0),'{y}-{m}-{d}'),
+        this.parseTime(new Date(),'{y}-{m}-{d}')
+      ]
       this.handleQuery()
     },
     handleQuery(){
@@ -102,11 +112,10 @@ export default {
         const electricityPerKmArray = driveLineData.map(item => item.electricityPerKm);
         let driveLineDataArray = [];
         driveLineDataArray.push(driveDateArray)
-        driveLineDataArray.push(totalElectricityConsumedArray)
         driveLineDataArray.push(totalDistanceKmArray)
+        driveLineDataArray.push(totalElectricityConsumedArray)
         driveLineDataArray.push(electricityPerKmArray)
         this.evDriveLineData = driveLineDataArray
-        console.log(this.evDriveLineData)
       })
     }
   }

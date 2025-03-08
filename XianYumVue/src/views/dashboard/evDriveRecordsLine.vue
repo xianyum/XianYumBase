@@ -62,6 +62,10 @@ export default {
       this.setOptions(this.chartData)
     },
     setOptions(dataArray= []) {
+      let showDtaZoom = false
+      if (dataArray && dataArray[0] && dataArray[0].length > 38) {
+        showDtaZoom = true;
+      }
       const colors = ['#5470C6', '#91CC75', '#EE6666'];
       this.chart.setOption({
         color: colors,
@@ -75,15 +79,28 @@ export default {
           right: '20%'
         },
         toolbox: {
+          show: true,//是否显示工具栏组件。
+          orient: 'vertical',//工具栏 icon 的布局朝向。
+          left: 'right',//工具栏组件离容器左侧的距离。
+          top: 'center',//工具栏组件离容器上侧的距离。
           feature: {
+            magicType: { show: true, type: ['line', 'bar', 'stack'], title: { line: '切换为折线图', bar: '切换为柱状图', stack: '切换为堆叠' } },
             dataView: { show: true, readOnly: false },
-            restore: { show: true },
             saveAsImage: { show: true }
           }
         },
         legend: {
           data: ['行驶公里数', '消耗电量', '平均电耗']
         },
+        dataZoom: [
+          {
+            type: 'slider',//滑动条型数据区域缩放组件
+            show: showDtaZoom,//是否显示 组件。
+            start: 0,//数据窗口范围的起始百分比。范围是：0 ~ 100。表示 0% ~ 100%。
+            end: 80,//数据窗口范围的结束百分比。范围是：0 ~ 100。
+            handleSize: 5,//控制手柄的尺寸，可以是像素大小，也可以是相对于 dataZoom 组件宽度的百分比，默认跟 dataZoom 宽度相同。
+          },
+        ],
         xAxis: [
           {
             type: 'category',
