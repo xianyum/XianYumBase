@@ -34,7 +34,7 @@
 
 <script>
 import {getEvDriveRecordsReportLineData } from '@/api/extension/evDriveRecords'
-import EvDriveRecordsLine from '@/views/dashboard/evDriveRecordsLine'
+import EvDriveRecordsLine from '@/views/dashboard/EvDriveRecordsLine'
 
 export default {
   name: 'evDriveRecordsReports',
