@@ -162,13 +162,13 @@ export default {
           {
             name: '行驶公里数',
             type: 'line',
-            data: dataArray[2]
+            data: dataArray[1]
           },
           {
             name: '消耗电量',
             type: 'line',
             yAxisIndex: 1,
-            data: dataArray[1]
+            data: dataArray[2]
           },
           {
             name: '平均电耗',
