@@ -2,6 +2,7 @@ package cn.xianyum.system.service;
 
 
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.SystemConstantRequest;
 import cn.xianyum.system.entity.response.SystemConstantResponse;
@@ -37,4 +38,12 @@ public interface SystemConstantService {
     void deleteRedisCache(String key);
 
     void refreshCache();
+
+    /**
+     * 根据key新增或者更新
+     * @param systemConstantKeyEnum
+     * @param value
+     * @param visible
+     */
+    boolean saveOrUpdate(SystemConstantKeyEnum systemConstantKeyEnum,String value, Integer visible);
 }

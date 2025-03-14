@@ -2,6 +2,7 @@ package cn.xianyum.proxy.service.impl;
 
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -256,7 +257,7 @@ public class ProxyServiceImpl implements ProxyService {
 		List<ProxyDetailsEntity> proxyDetailsEntities = proxyDetailsMapper.selectList(queryWrapper);
 
 		String serverAddress = "";
-		String systemConstantJson = SystemConstantUtils.getValueByKey("xianyu_client");
+		String systemConstantJson = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.XIAN_YU_CLIENT);
 		if(StringUtil.isNotEmpty(systemConstantJson)){
 			JSONObject jsonObject = JSONObject.parseObject(systemConstantJson);
 			context.setVariable("clientDownloadUrl", jsonObject.getString("downloadUrl"));
@@ -342,7 +343,7 @@ public class ProxyServiceImpl implements ProxyService {
 		jsonObject.put("sslJksPath","xianyu.jks");
 		jsonObject.put("keyStorePassword","123456");
 		jsonObject.put("autoStart",false);
-		String systemConstantJson = SystemConstantUtils.getValueByKey("xianyu_client");
+		String systemConstantJson = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.XIAN_YU_CLIENT);
 		if(StringUtil.isNotEmpty(systemConstantJson)){
 			JSONObject systemConstantObject = JSONObject.parseObject(systemConstantJson);
 			jsonObject.put("apiUrl",systemConstantObject.getString("apiUrl"));

@@ -1,6 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.enums.ReturnT;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.extension.entity.response.GoldPriceApiResponse;
@@ -36,8 +37,6 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 	@Autowired
 	private GoldPriceMapper goldPriceMapper;
 
-	public static final String GOLD_PRICE_CONFIG = "gold_config";
-
 	@Override
 	public PageResponse<GoldPriceResponse> getPage(GoldPriceRequest request) {
 		LambdaQueryWrapper<GoldPriceEntity> queryWrapper = Wrappers.<GoldPriceEntity>lambdaQuery()
@@ -71,7 +70,7 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 				return ReturnT.SUCCESS;
 			}
 		}
-		JSONObject jsonObject = SystemConstantUtils.getValueObjectByKey(GOLD_PRICE_CONFIG);
+		JSONObject jsonObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.GOLD_CONFIG);
 		String url = jsonObject.getString("url");
 		String result = HttpUtils.getHttpInstance().sync(url).get().getBody().toString();
 		GoldPriceApiResponse goldPriceApiResponse = JSONObject.parseObject(result, GoldPriceApiResponse.class);

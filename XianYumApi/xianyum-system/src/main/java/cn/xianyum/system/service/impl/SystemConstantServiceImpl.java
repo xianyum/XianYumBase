@@ -1,6 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.dao.SystemConstantMapper;
@@ -160,6 +161,32 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     }
 
+    /**
+     * 根据key新增或者更新
+     *
+     * @param systemConstantKeyEnum
+     * @param value
+     * @param visible
+     */
+    @Override
+    public boolean saveOrUpdate(SystemConstantKeyEnum systemConstantKeyEnum,String value, Integer visible) {
+        String key = systemConstantKeyEnum.getKey();
+        QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>()
+                .eq("constant_key",key);
+        SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
+        SystemConstantRequest systemConstantRequest = new SystemConstantRequest();
+        systemConstantRequest.setConstantValue(value);
+        systemConstantRequest.setConstantDescribe(systemConstantKeyEnum.getDesc());
+        systemConstantRequest.setConstantVisible(visible);
+        systemConstantRequest.setConstantKey(key);
+        if(Objects.nonNull(systemConstantEntity)){
+            systemConstantRequest.setId(systemConstantEntity.getId());
+            return this.update(systemConstantRequest) > 0 ;
+        }else{
+            return this.save(systemConstantRequest) > 0;
+        }
+    }
+
     @Override
     public SystemConstantResponse getById(String id) {
         SystemConstantEntity result = systemConstantMapper.selectById(id);
@@ -183,5 +210,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         bean.setId(UUIDUtils.UUIDReplace());
         return systemConstantMapper.insert(bean);
     }
+
+
 
 }

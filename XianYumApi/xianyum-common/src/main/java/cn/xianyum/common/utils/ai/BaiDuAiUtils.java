@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils.ai;
 
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
@@ -41,7 +42,7 @@ public class BaiDuAiUtils {
      */
     public String getAccessToken(String clientId,String clientSecret){
         if(StringUtil.isEmpty(clientId) || StringUtil.isEmpty(clientSecret)){
-            String valueByKey = SystemConstantUtils.getValueByKey("baidu_ai_ocr");
+            String valueByKey = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.BAIDU_AI_OCR);
             JSONObject systemConstantObject = JSONObject.parseObject(valueByKey);
             clientId = systemConstantObject.getString("clientId");
             clientSecret = systemConstantObject.getString("clientSecret");

@@ -1,8 +1,8 @@
 package cn.xianyum.common.utils;
 
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-
 import java.lang.reflect.Method;
 
 /**
@@ -13,11 +13,16 @@ import java.lang.reflect.Method;
 @Slf4j
 public class SystemConstantUtils {
 
-    public static String getValueByKey(String key) {
+    /**
+     * 通过常量key获取值
+     * @param systemConstantKeyEnum
+     * @return
+     */
+    public static String getValueByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
         try {
             Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
             Method m = clazz.getDeclaredMethod("getValueKey",String.class);
-            Object object = m.invoke(SpringUtils.getBean(clazz), key);
+            Object object = m.invoke(SpringUtils.getBean(clazz), systemConstantKeyEnum.getKey());
             return object == null ? null : String.valueOf(object);
         } catch (Exception var5) {
             log.error("通过反射获取系统常用变量异常. ",var5);
@@ -26,12 +31,31 @@ public class SystemConstantUtils {
     }
 
     /**
-     * 通过常量key获取JsonObject
-     * @param key
+     *
+     * @param systemConstantKeyEnum 常量keyEnum
+     * @param value 常量value
+     * @param visible 是否可见， 0:公用 1：私有
      * @return
      */
-    public static JSONObject getValueObjectByKey(String key) {
-        String value = getValueByKey(key);
+    public static boolean saveSystemConstant(SystemConstantKeyEnum systemConstantKeyEnum,String value,Integer visible) {
+        try {
+            Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
+            Method m = clazz.getDeclaredMethod("saveOrUpdate",SystemConstantKeyEnum.class,String.class,Integer.class);
+            Object object = m.invoke(SpringUtils.getBean(clazz), systemConstantKeyEnum,value,visible);
+            return (Boolean) object;
+        } catch (Exception var5) {
+            log.error("通过反射插入系统常用变量异常. ",var5);
+            return false;
+        }
+    }
+
+    /**
+     * 通过常量key获取JsonObject
+     * @param systemConstantKeyEnum
+     * @return
+     */
+    public static JSONObject getValueObjectByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
+        String value = getValueByKey(systemConstantKeyEnum);
         return JSONObject.parseObject(value);
     }
 }

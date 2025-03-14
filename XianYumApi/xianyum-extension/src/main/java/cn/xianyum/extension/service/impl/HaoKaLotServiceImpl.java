@@ -1,5 +1,6 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.extension.entity.po.HaoKaLotArticleEntity;
 import cn.xianyum.extension.entity.request.HaoKaLotProductRequest;
 import cn.xianyum.extension.entity.response.HaoKaLotProductResponse;
@@ -94,7 +95,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
      */
     @Override
     public String getAccessTokenByLogin() {
-        String valueByKey = SystemConstantUtils.getValueByKey("hao_ka_lot_login_info");
+        String valueByKey = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.HAO_KA_LOT_LOGIN_INFO);
         JSONObject systemConstantObject = JSONObject.parseObject(valueByKey);
         String userName = systemConstantObject.getString("userName");
         String password = systemConstantObject.getString("password");
