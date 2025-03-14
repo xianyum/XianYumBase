@@ -177,4 +177,45 @@ public class WebhookSupporter {
         }
         return null;
     }
+
+    /**
+     * 发送企微webHook消息
+     * @param webhookConfig
+     * @param messageSender
+     * @return
+     */
+    public String sendWechatMessage(MessageConfigWebhookEntity webhookConfig, MessageSenderEntity messageSender) {
+        try {
+            // 构建发送消息体
+            StringBuilder markdownStr = new StringBuilder();
+            markdownStr.append("#### ");
+            markdownStr.append(messageSender.getTitle());
+            if(StringUtil.isNotEmpty(messageSender.getContent())){
+                markdownStr.append("\n");
+                markdownStr.append(">");
+                markdownStr.append(messageSender.getContent());
+            }else {
+                List<MessageContent> messageContents = messageSender.getMessageContents();
+                if(messageContents != null && messageContents.size() >0){
+                    for(MessageContent item : messageContents){
+                        markdownStr.append("\n");
+                        markdownStr.append(">");
+                        markdownStr.append(item.getLabel());
+                        markdownStr.append(item.getValue());
+                    }
+                }
+            }
+            JSONObject requestObject = new JSONObject();
+            requestObject.put("msgtype","markdown");
+            JSONObject contentObject = new JSONObject();
+            contentObject.put("content",markdownStr.toString());
+            requestObject.put("markdown",contentObject);
+            HttpResult httpResult = HttpUtils.getHttpInstance().sync(webhookConfig.getWebHookUrl())
+                    .bodyType(OkHttps.JSON).setBodyPara(requestObject.toJSONString()).post();
+            return httpResult.getBody().toString();
+        }catch (Exception e){
+            log.error("send wechat webhook message error.",e);
+            return e.getMessage();
+        }
+    }
 }

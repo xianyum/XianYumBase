@@ -9,7 +9,9 @@ public enum MessageAccountTypeEnums {
     WECHAT("wechat","微信","wechat"),
     DD_WEBHOOK("dd-webhook","钉钉webhook","webhook"),
     FS_WEBHOOK("fs-webhook","飞书webhook","webhook"),
-    CUSTOM_WEBHOOK("custom-webhook","自定义webhook","webhook");
+    WECHAT_WEBHOOK("wechat-webhook","企微webhook","webhook"),
+    CUSTOM_WEBHOOK("custom-webhook","自定义webhook","webhook"),
+    ;
 
 
     private String code;

@@ -162,6 +162,9 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 						case FS_WEBHOOK:
 							webhookSender.sendFsMessage(messageSender);
 							break;
+						case WECHAT_WEBHOOK:
+							webhookSender.sendWechatMessage(messageSender);
+							break;
 						case CUSTOM_WEBHOOK:
 							webhookSender.sendCustomMessage(messageSender);
 							break;

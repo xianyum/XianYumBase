@@ -65,11 +65,26 @@ public class WebhookSender {
     }
 
     /**
+     * 发送企微消息
+     * @param messageSender
+     */
+    public void sendWechatMessage(MessageSenderEntity messageSender) {
+        MessageConfigWebhookEntity webhookConfig = messageConfigWebhookService.getMessageConfigWithCache(messageSender.getMessageConfigId());
+        if(webhookConfig != null){
+            String mId = UUIDUtils.UUIDReplace();
+            messageSender.setMessageId(mId);
+            String sendResult = webhookSupporter.sendWechatMessage(webhookConfig,messageSender);
+            this.messageMonitorService.insertMessageLog(mId,null,messageSender,sendResult);
+        }
+    }
+
+
+    /**
      * 指定发送webhook消息
      * @param messageSender
      */
     public void sendWebhook(MessageSenderEntity messageSender) {
-        MessageTypeConfigEntity messageTypeConfigEntity = messageTypeConfigService.check(messageSender.getMessageCode());
+        this.messageTypeConfigService.check(messageSender.getMessageCode());
         switch (MessageAccountTypeEnums.getByCode(messageSender.getMessageAccountType())){
             case DD_WEBHOOK:
                 this.sendDdMessage(messageSender);
@@ -80,8 +95,10 @@ public class WebhookSender {
             case CUSTOM_WEBHOOK:
                 this.sendCustomMessage(messageSender);
                 break;
+            case WECHAT_WEBHOOK:
+                this.sendWechatMessage(messageSender);
+                break;
         }
     }
-
 
 }

@@ -294,3 +294,20 @@
 .splitpanes.default-theme .splitpanes__pane {
   background-color: #fff!important;
 }
+
+
+.el-tooltip__popper{
+  max-width:50%;
+  padding-bottom: 5px!important;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 15;
+  -webkit-box-orient: vertical;
+
+}
+.el-tooltip__popper,.el-tooltip__popper.is-dark{
+  background:rgb(48, 65, 86) !important;
+  color: #fff !important;
+  line-height: 24px;
+}

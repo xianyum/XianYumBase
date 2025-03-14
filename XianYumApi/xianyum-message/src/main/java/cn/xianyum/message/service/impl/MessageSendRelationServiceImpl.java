@@ -128,6 +128,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 			case DD_WEBHOOK:
 			case FS_WEBHOOK:
 			case CUSTOM_WEBHOOK:
+			case WECHAT_WEBHOOK:
 				QueryWrapper<MessageConfigWebhookEntity> messageConfigWebhookEntityQueryWrapper = new QueryWrapper<MessageConfigWebhookEntity>()
 						.eq("del_tag", YesOrNoEnum.YES.getStatus())
 						.eq(idNotEmpty,"id",messageConfigId)

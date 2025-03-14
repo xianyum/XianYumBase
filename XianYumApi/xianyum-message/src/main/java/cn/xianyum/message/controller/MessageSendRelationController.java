@@ -103,7 +103,6 @@ public class MessageSendRelationController {
 	@PostMapping(value = "/getMessageConfigByAccountType")
 	@Permission("@ps.hasPerm('message:send-config:query')")
 	public Results getMessageConfigByAccountType(@RequestBody MessageSendRelationRequest request) {
-
 		JSONArray response = messageSendRelationService.getMessageConfigByAccountType(request.getMessageConfigId(),request.getMessageAccountType());
 		return Results.success(response);
 	}
