@@ -29,11 +29,11 @@ public class HttpUtils {
                     http = HTTP.builder().addMsgConvertor(new Fastjson2MsgConvertor())
                             .config((OkHttpClient.Builder builder) -> {
                                 // 连接超时时间（默认10秒）
-                                builder.connectTimeout(2, TimeUnit.SECONDS);
+                                builder.connectTimeout(10, TimeUnit.SECONDS);
                                 // 写入超时时间（默认10秒）
-                                builder.writeTimeout(2, TimeUnit.SECONDS);
+                                builder.writeTimeout(10, TimeUnit.SECONDS);
                                 // 读取超时时间（默认10秒）
-                                builder.readTimeout(2, TimeUnit.SECONDS);
+                                builder.readTimeout(10, TimeUnit.SECONDS);
                             })
                             .build();
                 }
