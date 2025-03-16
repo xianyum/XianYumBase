@@ -24,7 +24,9 @@ public class Constants {
      */
     public static final String HTTPS = "https://";
 
-
+    /** 默认USER_AGENT */
+    public static final String USER_AGENT_KEY = "User-Agent";
+    public static final String USER_AGENT_VALUE = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36)";
 
     /** 是否菜单外链（否） */
     public static final String NO_FRAME = "1";
