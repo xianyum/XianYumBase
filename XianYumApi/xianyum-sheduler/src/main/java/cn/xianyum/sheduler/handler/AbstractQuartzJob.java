@@ -1,10 +1,7 @@
 package cn.xianyum.sheduler.handler;
 
 import cn.xianyum.common.enums.ReturnT;
-import cn.xianyum.common.utils.BeanUtils;
-import cn.xianyum.common.utils.SchedulerTool;
-import cn.xianyum.common.utils.SpringUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
@@ -115,6 +112,7 @@ public abstract class AbstractQuartzJob implements Job {
         jobLogEntity.setJobHandler(jobEntity.getJobHandler());
         jobLogEntity.setJobId(jobEntity.getJobId());
         jobLogEntity.setJobName(jobEntity.getJobName());
+        jobLogEntity.setExecuteIp(IPUtils.getHostIp());
         SpringUtils.getBean(JobLogMapper.class).insert(jobLogEntity);
     }
 

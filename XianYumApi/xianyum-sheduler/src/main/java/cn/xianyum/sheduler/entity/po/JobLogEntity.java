@@ -43,5 +43,8 @@ public class JobLogEntity extends BaseEntity {
 
     /** 停止时间 */
     private Date stopTime;
+
+    /** 执行ip */
+    private String executeIp;
 }
 

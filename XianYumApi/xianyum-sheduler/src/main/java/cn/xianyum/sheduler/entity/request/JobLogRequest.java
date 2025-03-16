@@ -30,5 +30,6 @@ public class JobLogRequest extends BaseRequest {
 
     private Integer jobRunTime;
 
-
+    /** 执行ip */
+    private String executeIp;
 }

@@ -29,4 +29,7 @@ public class JobLogResponse extends BaseResponse {
 
     private Long jobRunTime;
 
+    /** 执行ip */
+    private String executeIp;
+
 }
