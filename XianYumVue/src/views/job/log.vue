@@ -145,7 +145,13 @@
 
           </el-col>
           <el-col :span="24">
+            <el-col :span="12">
             <el-form-item label="JobHandler：">{{ form.jobHandler }}</el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="执行ip：">{{ form.executeIp }}</el-form-item>
+            </el-col>
+
           </el-col>
           <el-col :span="24">
             <el-form-item label="异常信息：" v-if="form.status == 1">{{ form.exceptionInfo }}</el-form-item>
