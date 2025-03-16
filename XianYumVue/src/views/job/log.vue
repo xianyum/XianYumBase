@@ -81,6 +81,7 @@
           <span>{{ scope.row.jobRunTime }}ms</span>
         </template>
       </el-table-column>
+      <el-table-column label="执行ip" align="center" prop="executeIp"/>
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.startTime) }}</span>
