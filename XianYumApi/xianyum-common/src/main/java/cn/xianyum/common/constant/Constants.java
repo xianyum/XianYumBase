@@ -82,6 +82,6 @@ public class Constants {
     public final static int SERVER_ERROR_STATUS_CODE = 500;
 
     /** 法定节假日url */
-    public static final String HOLIDAY_URL= "https://timor.tech/api/holiday/year/%s";
+    public static final String HOLIDAY_URL= "http://timor.tech/api/holiday/year/%s";
 
 }

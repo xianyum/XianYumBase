@@ -26,7 +26,9 @@ public class HolidayCnTask implements IJobHandler {
     public ReturnT execute(Map<String, String> jobParamsMap, SchedulerTool tool) throws Exception {
         String year = DateUtils.format(new Date(), DateUtils.YYYY);
         String formatHolidayUrl = String.format(Constants.HOLIDAY_URL, year);
-        String result = HttpUtils.getHttpInstance().sync(formatHolidayUrl).get().getBody().toString();
+        String result = HttpUtils.getHttpInstance().sync(formatHolidayUrl)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36)")
+                .get().getBody().toString();
         if(StringUtil.isEmpty(result)){
             return ReturnT.FAILURE;
         }
