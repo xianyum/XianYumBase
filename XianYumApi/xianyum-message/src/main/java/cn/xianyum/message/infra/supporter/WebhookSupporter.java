@@ -205,6 +205,15 @@ public class WebhookSupporter {
                     }
                 }
             }
+            markdownStr.append("\n");
+            markdownStr.append(">");
+            markdownStr.append("查看详情：");
+            markdownStr.append("[点击查看消息详情]");
+            markdownStr.append("(");
+            markdownStr.append(MessageUtils.getFormUrl(messageSender.getMessageId()));
+            markdownStr.append(")");
+
+
             JSONObject requestObject = new JSONObject();
             requestObject.put("msgtype","markdown");
             JSONObject contentObject = new JSONObject();
