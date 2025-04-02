@@ -7,7 +7,7 @@ VOLUME /tmp
 LABEL  mainatiner="zhangwei"
 
 # 复制文件到容器
-ADD ./XianYumApi/xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /home/app/xianyum/api/app.jar
+ADD ././XianYumApi/xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /home/app/xianyum/api/app.jar
 
 # 声明需要暴露的端口
 EXPOSE 9190
