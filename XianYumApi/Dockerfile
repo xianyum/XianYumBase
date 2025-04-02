@@ -13,4 +13,5 @@ ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /home/app/xianyum/a
 EXPOSE 9190
 
 # 配置容器启动后执行的命令
-CMD ["nohup", "java", "-jar", "/home/app/xianyum/api/app.jar", "--mpw.key=${MPW_KEY}", ">", "/dev/null", "2>&1", "&"]
+ENTRYPOINT ["java", "-Duser.timezone=GMT+08", "-Djava.timezone=GMT+08", "-jar", "/home/app/xianyum/api/app.jar"]
+
