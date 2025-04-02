@@ -4,10 +4,10 @@ FROM  openjdk:11-jre
 VOLUME /tmp
 
 # 复制文件到容器
-ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /usr/local/docker/app.jar
+ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /home/app/xianyum/api/app.jar
 
 # 声明需要暴露的端口
 EXPOSE 9190
 
 # 配置容器启动后执行的命令
-ENTRYPOINT ["java", "-Duser.timezone=GMT+08", "-Djava.timezone=GMT+08", "-jar", "/usr/local/docker/app.jar"]
+CMD ["nohup", "java", "-jar", "/home/app/xianyum/api/app.jar", "--mpw.key=${MPW_KEY}", ">", "/dev/null", "2>&1", "&"]
