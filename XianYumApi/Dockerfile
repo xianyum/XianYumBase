@@ -3,6 +3,9 @@ FROM  openjdk:11-jre
 # 将本地文件夹挂在到当前容器
 VOLUME /tmp
 
+#第2部分： 维护者信息
+LABEL  mainatiner="zhangwei"
+
 # 复制文件到容器
 ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /home/app/xianyum/api/app.jar
 
