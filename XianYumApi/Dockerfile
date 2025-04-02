@@ -4,7 +4,7 @@ FROM  openjdk:11-jre
 VOLUME /tmp
 
 # 复制文件到容器
-ADD ./target/xianyum-api-0.0.1-SNAPSHOT.jar  /usr/local/docker/app.jar
+ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /usr/local/docker/app.jar
 
 # 声明需要暴露的端口
 EXPOSE 9190
