@@ -1,7 +1,7 @@
 FROM  openjdk:11-jre
 
 # 将本地文件夹挂在到当前容器
-VOLUME /tmp
+# VOLUME /tmp
 
 #第2部分： 维护者信息
 LABEL  mainatiner="zhangwei"
