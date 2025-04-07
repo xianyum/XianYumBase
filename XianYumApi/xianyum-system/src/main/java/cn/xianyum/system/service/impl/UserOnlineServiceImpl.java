@@ -2,6 +2,7 @@ package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -34,13 +35,15 @@ public class UserOnlineServiceImpl implements UserOnlineService {
 
     @Override
     public PageResponse<UserOnlineResponse> queryPage(UserOnlineRequest request) {
-
         Collection<String> keys = redisUtils.keys(prefix + "*");
         List<UserOnlineEntity> userOnlineList = new ArrayList<>();
         for(String key : keys){
             String userJson = (String)redisUtils.get(key);
             UserOnlineEntity userOnlineEntity = JSONObject.parseObject(userJson,UserOnlineEntity.class);
             userOnlineEntity.setToken(key.substring(key.lastIndexOf(":")+1));
+            // 计算分钟数和剩余的秒数
+            long expire = redisUtils.getExpire(key);
+            userOnlineEntity.setExpireStr(DateUtils.getDatePoor(expire));
             userOnlineList.add(userOnlineEntity);
         }
 

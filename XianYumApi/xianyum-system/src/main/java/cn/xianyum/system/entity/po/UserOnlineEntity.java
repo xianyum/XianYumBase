@@ -52,4 +52,9 @@ public class UserOnlineEntity {
      * 登录来源
      */
     private String loginType;
+
+    /**
+     * 过期时间，单位秒
+     */
+    private String expireStr;
 }

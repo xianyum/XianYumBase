@@ -21,6 +21,8 @@ import cn.xianyum.extension.dao.ServerConfigMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -88,7 +90,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Integer deleteById(Long[] ids) {
-		Stream<Long> idsStream = Arrays.stream(ids);
+		List<Long> idsStream = Arrays.asList(ids);
 		idsStream.forEach(item -> {
 			// 校验是否有绑定的数据
 			List<ServerPortConfigEntity> serverPortConfigEntityList = this.serverPortConfigService.selectByServerId(item);
@@ -96,7 +98,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 				throw new SoException("该主机在端口配置里有应用，暂不能删除！");
 			}
 		});
-		return idsStream.mapToInt(id -> serverConfigMapper.deleteById(id)).sum();
+		return idsStream.stream().mapToInt(id -> serverConfigMapper.deleteById(id)).sum();
 	}
 
 	@Override

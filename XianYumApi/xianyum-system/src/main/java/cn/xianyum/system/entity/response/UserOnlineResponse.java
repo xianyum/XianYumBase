@@ -52,4 +52,9 @@ public class UserOnlineResponse extends BaseResponse {
      * 登录来源
      */
     private String loginType;
+
+    /**
+     * 过期时间
+     */
+    private String expireStr;
 }

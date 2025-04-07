@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -202,6 +203,23 @@ public class DateUtils {
         // 计算差多少秒//输出结果
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
+    }
+
+    /**
+     * 将秒转为时分秒字符串
+     * @param second
+     * @return
+     */
+    public static String getDatePoor(Long second) {
+        if(Objects.isNull(second)){
+            return null;
+        }
+        // 计算小时、分钟和剩余秒数
+        long hours = second / 3600;  // 1小时 = 3600秒
+        long minutes = (second % 3600) / 60;  // 剩余的秒数转成分钟
+        long remainingSeconds = second % 60;  // 剩余的秒数
+        // 设置格式化的字符串，包含小时、分钟和秒
+        return hours + "小时" + minutes + "分" + remainingSeconds + "秒";
     }
 
     /**

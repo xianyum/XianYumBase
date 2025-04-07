@@ -28,7 +28,7 @@ redis:
     expire: 120  # 验证码过期时间，单位秒
   token:
     prefix: '${spring.application.name}:xianyum-system:token:'
-    expire: 120  # token有效时长，单位分钟
+    expire: 4320  # token有效时长，单位分钟
     enable: true # 校验token开关，true开启token
     secret: ${spring.application.name}  #密匙
   system_constant:
