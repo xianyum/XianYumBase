@@ -16,6 +16,11 @@ public class MessageSenderEntity {
     /** 发送标题 */
     private String title;
 
+    /**
+     * 默认发送用户
+     */
+    private String defaultToUser;
+
     /** 发送微信用户 */
     private String wechatToUser;
 

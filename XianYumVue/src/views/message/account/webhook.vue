@@ -253,8 +253,10 @@ export default {
           this.sendWebhookLoading = true
           sendWebhook(this.webhookForm).then(res => {
             this.$modal.msgSuccess("执行成功，请看收信");
-            this.sendWebhookLoading = false
-          })
+          }) .finally(() => {
+            // 最后一定会执行的代码
+            this.sendWebhookLoading = false;
+          });
         }
       });
     },

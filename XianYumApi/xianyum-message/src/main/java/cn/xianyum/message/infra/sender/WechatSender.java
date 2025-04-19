@@ -4,8 +4,8 @@ import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
-import cn.xianyum.message.entity.po.MessageTypeConfigEntity;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
+import cn.xianyum.message.infra.core.AbstractMessageSender;
 import cn.xianyum.message.infra.supporter.WechatSupporter;
 import cn.xianyum.message.service.MessageConfigWechatService;
 import cn.xianyum.message.service.MessageMonitorService;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class WechatSender {
+public class WechatSender extends AbstractMessageSender {
 
     @Autowired
     private WechatSupporter wechatSupporter;
@@ -29,13 +29,20 @@ public class WechatSender {
     @Autowired
     private MessageConfigWechatService messageConfigWechatService;
 
-    @Autowired
-    private MessageMonitorService messageMonitorService;
 
     @Autowired
     private MessageTypeConfigService messageTypeConfigService;
 
-    public void sendMessage(MessageSenderEntity messageSender) {
+
+    /**
+     * 真正发送消息逻辑
+     *
+     * @param messageSender
+     */
+    @Override
+    public void doSendMessage(MessageSenderEntity messageSender) {
+        // 接口指定的发送用户>发送配置的>默认all
+        messageSender.setWechatToUser(StringUtil.isNotEmpty(messageSender.getWechatToUser())?messageSender.getWechatToUser():messageSender.getDefaultToUser());
         MessageConfigWechatEntity messageConfigWechatEntity = messageConfigWechatService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if(messageConfigWechatEntity != null && messageSender != null ){
             if(StringUtil.isEmpty(messageSender.getWechatToUser())){
@@ -57,6 +64,18 @@ public class WechatSender {
     public void sendWechat(MessageSenderEntity messageSender) {
         messageSender.setMessageAccountType(MessageAccountTypeEnums.WECHAT.getCode());
         messageTypeConfigService.check(messageSender.getMessageCode());
-        this.sendMessage(messageSender);
+        this.doSendMessage(messageSender);
+    }
+
+
+    /**
+     * 返回message key 用于工厂类
+     *
+     * @return
+     * @see MessageAccountTypeEnums
+     */
+    @Override
+    public String getMessageAccountTypeCode() {
+        return MessageAccountTypeEnums.WECHAT.getCode();
     }
 }

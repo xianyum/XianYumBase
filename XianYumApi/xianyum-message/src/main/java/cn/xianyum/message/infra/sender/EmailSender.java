@@ -5,17 +5,15 @@ import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
-import cn.xianyum.message.entity.po.MessageTypeConfigEntity;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
+import cn.xianyum.message.infra.core.AbstractMessageSender;
 import cn.xianyum.message.infra.supporter.EmailSupporter;
 import cn.xianyum.message.service.MessageConfigEmailService;
 import cn.xianyum.message.service.MessageMonitorService;
 import cn.xianyum.message.service.MessageTypeConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
-
 import java.util.List;
 
 /**
@@ -24,7 +22,7 @@ import java.util.List;
  * @date 2021/11/21 14:42
  */
 @Component
-public class EmailSender {
+public class EmailSender extends AbstractMessageSender {
 
     @Autowired
     private EmailSupporter emailSupporter;
@@ -39,10 +37,13 @@ public class EmailSender {
     private MessageTypeConfigService messageTypeConfigService;
 
     /**
-     * 发送邮件消息
+     * 真正发送消息逻辑
+     *
      * @param messageSender
      */
-    public void sendMessage(MessageSenderEntity messageSender) {
+    @Override
+    public void doSendMessage(MessageSenderEntity messageSender) {
+        messageSender.setEmailToUser(StringUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getEmailToUser():messageSender.getDefaultToUser());
         MessageConfigEmailEntity messageConfigEmailEntity = this.messageConfigEmailService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if (messageConfigEmailEntity != null){
             if(StringUtil.isNotEmpty(messageSender.getEmailToUser())){
@@ -68,8 +69,8 @@ public class EmailSender {
      */
     public void sendEmail(MessageSenderEntity messageSender) {
         messageSender.setMessageAccountType(MessageAccountTypeEnums.EMAIL.getCode());
-        MessageTypeConfigEntity messageTypeConfigEntity = messageTypeConfigService.check(messageSender.getMessageCode());
-        this.sendMessage(messageSender);
+        messageTypeConfigService.check(messageSender.getMessageCode());
+        this.doSendMessage(messageSender);
     }
 
     /**
@@ -78,6 +79,7 @@ public class EmailSender {
      * @param context
      */
     public void sendEmailTemplateMessage(MessageSenderEntity messageSender, Context context) {
+        messageSender.setEmailToUser(StringUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getWechatToUser():messageSender.getDefaultToUser());
         MessageConfigEmailEntity messageConfigEmailEntity = this.messageConfigEmailService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if (messageConfigEmailEntity != null){
             if(StringUtil.isNotEmpty(messageSender.getEmailToUser())){
@@ -90,5 +92,17 @@ public class EmailSender {
                 }
             }
         }
+    }
+
+
+    /**
+     * 返回message key 用于工厂类
+     *
+     * @return
+     * @see MessageAccountTypeEnums
+     */
+    @Override
+    public String getMessageAccountTypeCode() {
+        return MessageAccountTypeEnums.EMAIL.getCode();
     }
 }

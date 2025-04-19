@@ -6,7 +6,8 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigWebhookRequest;
 import cn.xianyum.message.entity.response.MessageConfigWebhookResponse;
-import cn.xianyum.message.infra.sender.WebhookSender;
+import cn.xianyum.message.enums.MessageAccountTypeEnums;
+import cn.xianyum.message.infra.core.MessageFactory;
 import cn.xianyum.message.service.MessageConfigWebhookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +29,7 @@ public class MessageConfigWebhookController {
 	private MessageConfigWebhookService messageConfigWebhookService;
 
     @Autowired
-    private WebhookSender webhookSender;
+    private MessageFactory messageFactory;
 
     /**
      * 账户配置webhook分页查询数据
@@ -109,7 +110,7 @@ public class MessageConfigWebhookController {
     @Permission("@ps.hasPerm('message:webhook:test-send')")
     public Results sendWebhook(@RequestBody MessageSenderEntity request) {
         try {
-            webhookSender.sendWebhook(request);
+            messageFactory.getMessageService(request.getMessageAccountType()).doSendMessage(request);
             return Results.success();
         }catch (Exception e){
             log.error("webhook账户测试发送异常. ",e);

@@ -245,8 +245,10 @@ export default {
           this.sendWechatLoading = true
           sendWechat(this.wechatForm).then(res => {
             this.$modal.msgSuccess("执行成功，请看收信");
-            this.sendWechatLoading = false
-          })
+          }).finally(() => {
+            // 最后一定会执行的代码
+            this.sendWechatLoading = false;
+          });
         }
       });
     },

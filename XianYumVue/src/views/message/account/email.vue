@@ -248,8 +248,10 @@ export default {
           this.sendEmailLoading = true
           sendEmail(this.emailForm).then(res => {
             this.$modal.msgSuccess("执行成功，请看收信");
-            this.sendEmailLoading = false
-          })
+          }).finally(() => {
+            // 最后一定会执行的代码
+            this.sendEmailLoading = false;
+          });
         }
       });
     },
