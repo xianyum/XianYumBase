@@ -1,4 +1,4 @@
-FROM  openjdk:21-jre
+FROM  openjdk:21
 
 # 将本地文件夹挂在到当前容器
 # VOLUME /tmp
