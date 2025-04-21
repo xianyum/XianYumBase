@@ -8,6 +8,7 @@ import cn.xianyum.message.entity.response.MessageSendConfigResponse;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
 import cn.xianyum.message.infra.core.MessageFactory;
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -43,11 +44,9 @@ public class MessageSender {
      * @param messageSender
      */
     public void sendMessage(String messageCode, MessageSenderEntity messageSender){
-        List<MessageSendConfigResponse> messageSendConfigList = this.getMessageSendConfig(messageCode,messageSender);
-        for(MessageSendConfigResponse messageSendConfigResponse : messageSendConfigList) {
-            for(MessageSendRelationResponse item : messageSendConfigResponse.getMessageSendRelationResponses()){
-                this.messageFactory.getMessageService(item.getMessageAccountType()).doSendMessage(messageSender);
-            }
+        List<MessageSenderEntity> messageSenderList = this.getMessageSenderList(messageCode,messageSender);
+        for (MessageSenderEntity messageSenderEntity : messageSenderList) {
+            this.messageFactory.getMessageService(messageSenderEntity.getMessageAccountType()).doSendMessage(messageSenderEntity);
         }
     }
 
@@ -69,15 +68,12 @@ public class MessageSender {
      */
     public void sendAsyncEmailTemplateMessage(String messageCode, MessageSenderEntity messageSender,Context context){
         xianYumTaskExecutor.execute(()-> {
-            List<MessageSendConfigResponse> messageSendConfigList = this.getMessageSendConfig(messageCode,messageSender);
-            for(MessageSendConfigResponse messageSendConfigResponse : messageSendConfigList) {
-                for(MessageSendRelationResponse item : messageSendConfigResponse.getMessageSendRelationResponses()){
-                    // 发送邮箱消息
-                    switch (MessageAccountTypeEnums.getByCode(item.getMessageAccountType())){
-                        case EMAIL:
-                            emailSender.sendEmailTemplateMessage(messageSender,context);
-                            break;
-                    }
+            for (MessageSenderEntity messageSenderEntity : this.getMessageSenderList(messageCode, messageSender)) {
+                // 发送邮箱消息
+                switch (MessageAccountTypeEnums.getByCode(messageSenderEntity.getMessageAccountType())){
+                    case EMAIL:
+                        emailSender.sendEmailTemplateMessage(messageSender,context);
+                        break;
                 }
             }
         });
@@ -87,23 +83,24 @@ public class MessageSender {
      * 获取发送消息配置类,并校验消息配置
      * @return
      */
-    public List<MessageSendConfigResponse> getMessageSendConfig(String messageCode, MessageSenderEntity messageSender){
+    public List<MessageSenderEntity> getMessageSenderList(String messageCode, MessageSenderEntity messageSender){
         List<MessageSendConfigResponse> messageSendConfigResponseList = messageSendConfigMapper.selectListByMessageCode(messageCode);
-        List<MessageSendConfigResponse> resultList = new ArrayList<>();
+        List<MessageSenderEntity> resultList = new ArrayList<>();
         for (MessageSendConfigResponse messageSendConfigResponse : messageSendConfigResponseList) {
             if(verifySendRules(messageSendConfigResponse)){
                 continue;
             }
-            if(StringUtil.isEmpty(messageSender.getTitle())){
-                messageSender.setTitle(messageSendConfigResponse.getMessageTitle());
-            }
-            messageSender.setMessageCode(messageSendConfigResponse.getMessageCode());
             for(MessageSendRelationResponse item : messageSendConfigResponse.getMessageSendRelationResponses()){
-                messageSender.setMessageConfigId(item.getMessageConfigId());
-                messageSender.setMessageAccountType(item.getMessageAccountType());
-                messageSender.setDefaultToUser(item.getToUser());
+                MessageSenderEntity messageSenderEntity = JSONObject.parseObject(JSONObject.toJSONString(messageSender),MessageSenderEntity.class);
+                if(StringUtil.isEmpty(messageSenderEntity.getTitle())){
+                    messageSenderEntity.setTitle(messageSendConfigResponse.getMessageTitle());
+                }
+                messageSenderEntity.setMessageCode(messageSendConfigResponse.getMessageCode());
+                messageSenderEntity.setMessageConfigId(item.getMessageConfigId());
+                messageSenderEntity.setMessageAccountType(item.getMessageAccountType());
+                messageSenderEntity.setDefaultToUser(item.getToUser());
+                resultList.add(messageSenderEntity);
             }
-            resultList.add(messageSendConfigResponse);
         }
         return resultList;
     }
