@@ -77,7 +77,7 @@ swagger:
 
 proxy:
   ssl:
-    enable: false
+    enable: true
     port: 9101
     jksPath: test.jks
     keyStorePassword: 123456
