@@ -2,8 +2,8 @@
   <div class="navbar">
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav"/>
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/>
+    <breadcrumb v-if="!topNav" id="breadcrumb-container" class="breadcrumb-container" />
+    <top-nav v-if="topNav" id="topmenu-container" class="topmenu-container" />
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
@@ -21,23 +21,24 @@
 
       </template>
 
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="hover">
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <span class="user-nickname"> {{ nickName }} </span>
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item @click.native="setting = true">
-            <span>布局设置</span>
-          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+
+      <div class="right-menu-item hover-effect setting" @click="setLayout" v-if="setting">
+        <svg-icon icon-class="more-up" />
+      </div>
     </div>
   </div>
 </template>
@@ -52,6 +53,7 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 
 export default {
+  emits: ['setLayout'],
   components: {
     Breadcrumb,
     TopNav,
@@ -64,17 +66,12 @@ export default {
     ...mapGetters([
       'sidebar',
       'avatar',
-      'device'
+      'device',
+      'nickName'
     ]),
     setting: {
       get() {
         return this.$store.state.settings.showSettings
-      },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'showSettings',
-          value: val
-        })
       }
     },
     topNav: {
@@ -84,6 +81,9 @@ export default {
     }
   },
   methods: {
+    setLayout(event) {
+      this.$emit('setLayout')
+    },
     toGit(){
       let url = "https://github.com/XianYum";
       window.open(url)
@@ -169,17 +169,25 @@ export default {
     }
 
     .avatar-container {
-      margin-right: 30px;
+      margin-right: 0px;
+      padding-right: 0px;
 
       .avatar-wrapper {
-        margin-top: 5px;
+        margin-top: 10px;
         position: relative;
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+        }
+
+        .user-nickname{
+          position: relative;
+          bottom: 10px;
+          font-size: 14px;
+          font-weight: bold;
         }
 
         .el-icon-caret-bottom {

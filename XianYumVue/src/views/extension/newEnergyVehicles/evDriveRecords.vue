@@ -91,7 +91,7 @@
       </el-table-column>
       <el-table-column label="事项" align="center" prop="matter">
         <template v-slot="scope">
-          <dict-tag :options="dict.type.ev_drive_matter" :value="scope.row.matter"/>
+          <dict-tag :options="dict.type.ev_drive_matter" :value="scope.row.matterList"/>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -141,7 +141,7 @@
           <el-input v-model="form.electricityConsumed" placeholder="请输入消耗电量(kWh)"/>
         </el-form-item>
         <el-form-item label="事项" prop="matter">
-          <el-select v-model="form.matter" placeholder="请选择事项" clearable>
+          <el-select v-model="form.matterList" placeholder="请选择事项" multiple  collapse-tags clearable>
             <el-option
               v-for="dict in dict.type.ev_drive_matter"
               :key="dict.value"
@@ -292,7 +292,7 @@ export default {
         //   driveDate: undefined,
         distanceKm: undefined,
         electricityConsumed: undefined,
-        matter: '10',
+        matterList: ['10'],
         driveDate: new Date().toISOString().split('T')[0]
       },
       // 表单汇总数据
@@ -365,14 +365,19 @@ export default {
     },
     // 表单重置
     reset() {
-      // this.form = {
-      //   id: undefined,
-      //   vehicleNo: undefined,
-      //   driveDate: undefined,
-      //   distanceKm: undefined,
-      //   electricityConsumed: undefined
-      // }
-      this.resetForm('form')
+      // 确保 $refs.form 在执行时已正确引用
+      if (this.$refs['form']) {
+        this.$refs['form'].resetFields();
+      }
+      this.form = {
+        id: undefined,
+        vehicleNo: undefined,
+        //   driveDate: undefined,
+        distanceKm: undefined,
+        electricityConsumed: undefined,
+        matterList: ['10'],
+        driveDate: new Date().toISOString().split('T')[0]
+      }
     },
     /** 搜索按钮操作 */
     handleQuery() {
