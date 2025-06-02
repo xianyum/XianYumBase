@@ -91,7 +91,7 @@
       </el-table-column>
       <el-table-column label="事项" align="center" prop="matter">
         <template v-slot="scope">
-          <dict-tag :options="dict.type.ev_drive_matter" :value="scope.row.matterList"/>
+          <dict-tag :options="dict.type.ev_drive_matter" :value="scope.row.matter"/>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -141,7 +141,7 @@
           <el-input v-model="form.electricityConsumed" placeholder="请输入消耗电量(kWh)"/>
         </el-form-item>
         <el-form-item label="事项" prop="matter">
-          <el-select v-model="form.matterList" placeholder="请选择事项" multiple  collapse-tags clearable>
+          <el-select v-model="form.matter" placeholder="请选择事项" multiple  collapse-tags clearable>
             <el-option
               v-for="dict in dict.type.ev_drive_matter"
               :key="dict.value"
@@ -292,7 +292,7 @@ export default {
         //   driveDate: undefined,
         distanceKm: undefined,
         electricityConsumed: undefined,
-        matterList: ['10'],
+        matter: ['10'],
         driveDate: new Date().toISOString().split('T')[0]
       },
       // 表单汇总数据
@@ -375,7 +375,7 @@ export default {
         //   driveDate: undefined,
         distanceKm: undefined,
         electricityConsumed: undefined,
-        matterList: ['10'],
+        matter: ['10'],
         driveDate: new Date().toISOString().split('T')[0]
       }
     },

@@ -39,6 +39,13 @@
 
         <dependency>
             <groupId>cn.xianyum</groupId>
+            <artifactId>xianyum-framework</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-message</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>

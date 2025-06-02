@@ -2,8 +2,11 @@ package cn.xianyum.extension.entity.po;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import cn.xianyum.framwork.mybatis.handler.StringToListTypeHandler;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import cn.xianyum.common.entity.base.BaseEntity;
@@ -16,7 +19,7 @@ import lombok.Data;
  * @since 2025-03-06 20:43:40
  */
 @Data
-@TableName("ev_drive_records")
+@TableName(value = "ev_drive_records",autoResultMap = true)
 public class EvDriveRecordsEntity extends BaseEntity {
 
     @TableId(type = IdType.AUTO)
@@ -55,5 +58,6 @@ public class EvDriveRecordsEntity extends BaseEntity {
     /**
      * 事项
      */
-    private String matter;
+    @TableField(typeHandler = StringToListTypeHandler.class)
+    private List<String> matter;
 }

@@ -50,7 +50,5 @@ public class EvDriveRecordsResponse extends BaseResponse {
     /**
      * 事项
      */
-    private String matter;
-
-    private List<String> matterList;
+    private List<String> matter;
 }
