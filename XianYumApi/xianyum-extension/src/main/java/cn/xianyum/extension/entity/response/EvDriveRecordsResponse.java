@@ -2,6 +2,7 @@ package cn.xianyum.extension.entity.response;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import cn.xianyum.common.entity.base.BaseResponse;
 import lombok.Data;
@@ -50,4 +51,6 @@ public class EvDriveRecordsResponse extends BaseResponse {
      * 事项
      */
     private String matter;
+
+    private List<String> matterList;
 }

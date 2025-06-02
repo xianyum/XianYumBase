@@ -22,9 +22,8 @@ import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 新能源车行驶记录(EvDriveRecords)service层实现
@@ -52,6 +51,9 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         PageResponse<EvDriveRecordsResponse> response = PageResponse.of(pageResult, EvDriveRecordsResponse.class);
         // 获取汇总数据
         if(pageResult.getTotal() > 0){
+            for (EvDriveRecordsResponse evDriveRecordsResponse : response.getDataList()) {
+                evDriveRecordsResponse.setMatterList(Optional.ofNullable(evDriveRecordsResponse.getMatter()).filter(matter -> !matter.isEmpty()).map(matter -> List.of(matter.split(",")).stream().map(String::trim).collect(Collectors.toList())).orElse(Collections.emptyList()));
+            }
             Map<String,Object> otherInfoMap = evDriveRecordsMapper.selectSummaryData(request);
             response.setOtherInfo(otherInfoMap);
         }
@@ -64,6 +66,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     public EvDriveRecordsResponse getById(Long id) {
         EvDriveRecordsEntity result = evDriveRecordsMapper.selectById(id);
         EvDriveRecordsResponse response = BeanUtils.copy(result, EvDriveRecordsResponse.class);
+        response.setMatterList(Optional.ofNullable(response.getMatter()).filter(matter -> !matter.isEmpty()).map(matter -> List.of(matter.split(",")).stream().map(String::trim).collect(Collectors.toList())).orElse(Collections.emptyList()));
         return response;
     }
 
@@ -76,6 +79,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         bean.setElectricityPerKm(electricityPerKm);
         boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
         bean.setStatus(isNormalStatus? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
+        bean.setMatter(String.join(",", request.getMatterList()));
         return evDriveRecordsMapper.insert(bean);
     }
 
@@ -91,6 +95,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         bean.setElectricityPerKm(electricityPerKm);
         boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
         bean.setStatus(isNormalStatus? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
+        bean.setMatter(String.join(",", request.getMatterList()));
         return evDriveRecordsMapper.updateById(bean);
     }
 
