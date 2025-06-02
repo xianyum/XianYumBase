@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="85px">
-      <!--      <el-form-item label="车牌号" prop="serverName">-->
-      <!--        <el-input-->
-      <!--          v-model="queryParams.vehicleNo"-->
-      <!--          placeholder="请输入车牌号"-->
-      <!--          clearable-->
-      <!--          @keyup.enter.native="handleQuery"-->
-      <!--        />-->
-      <!--      </el-form-item>-->
       <el-form-item label="驾驶日期" clearable>
         <el-date-picker
           v-model="queryParams.dateRange"
@@ -21,6 +13,16 @@
           :default-time="['00:00:00', '23:59:59']"
           :picker-options="pickerOptions"
         ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+          <el-option
+            v-for="item in statusList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -81,6 +83,13 @@
       <el-table-column label="行驶公里数(km)" align="center" prop="distanceKm"/>
       <el-table-column label="消耗电量(kWh)" align="center" prop="electricityConsumed"/>
       <el-table-column label="每公里电量消耗(kWh/km)" align="center" prop="electricityPerKm"/>
+      <el-table-column label="状态" align="center" prop="status">
+        <template v-slot="scope">
+          <el-tag v-if="scope.row.status === 0" effect="plain" type="success">正常</el-tag>
+          <el-tag v-else type="danger" effect="plain">异常</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template v-slot="scope">
           <el-button
@@ -127,6 +136,9 @@
         <el-form-item label="消耗电量(kWh)" prop="electricityConsumed">
           <el-input v-model="form.electricityConsumed" placeholder="请输入消耗电量(kWh)"/>
         </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input type="textarea" :rows="4" v-model="form.remark" placeholder="请输入备注"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -164,6 +176,13 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      statusList: [{
+        value: 0,
+        label: '正常'
+        }, {
+        value: 1,
+        label: '异常'
+      }],
       dialogWidth: '800px', // 默认宽度
       datePickerWidth: '100%',
       evDriveList: [],
@@ -179,6 +198,7 @@ export default {
           this.parseTime(new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0)),
           this.parseTime(new Date())
         ],
+        status: undefined,
         vehicleNo: undefined
       },
       pickerOptions: {
@@ -254,7 +274,9 @@ export default {
         ]
       },
       // 表单参数
-      form: {},
+      form: {
+        driveDate: '2025-06-02'
+      },
       // 表单汇总数据
       summaryInfo: {
         totalDistanceKm: null,
@@ -346,6 +368,7 @@ export default {
         this.parseTime(new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0)),
         this.parseTime(new Date())
       ]
+      this.queryParams.status = undefined
       this.handleQuery()
     },
     // 多选框选中数据
