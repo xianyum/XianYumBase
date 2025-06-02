@@ -53,7 +53,7 @@ public class EvDriveRecordsEntity extends BaseEntity {
     private Integer status;
 
     /**
-     * 备注
+     * 事项
      */
-    private String remark;
+    private String matter;
 }

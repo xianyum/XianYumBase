@@ -58,7 +58,7 @@ public class EvDriveRecordsRequest extends BaseRequest {
     private Integer status;
 
     /**
-     * 备注
+     * 事项
      */
-    private String remark;
+    private String matter;
 }
