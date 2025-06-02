@@ -257,16 +257,10 @@ public class ProxyServiceImpl implements ProxyService {
 		List<ProxyDetailsEntity> proxyDetailsEntities = proxyDetailsMapper.selectList(queryWrapper);
 
 		String serverAddress = "";
-		String systemConstantJson = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.XIAN_YU_CLIENT);
-		if(StringUtil.isNotEmpty(systemConstantJson)){
-			JSONObject jsonObject = JSONObject.parseObject(systemConstantJson);
-			context.setVariable("clientDownloadUrl", jsonObject.getString("downloadUrl"));
-			context.setVariable("notice", jsonObject.getString("notice"));
-			serverAddress = jsonObject.getString("serverAddress");
-		}else{
-			context.setVariable("clientDownloadUrl", "http://xianyum.cn");
-			context.setVariable("notice", "暂未有最新公告");
-		}
+		JSONObject jsonObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.XIAN_YU_CLIENT);
+		context.setVariable("clientDownloadUrl", jsonObject.getString("downloadUrl"));
+		context.setVariable("notice", jsonObject.getString("notice"));
+		serverAddress = jsonObject.getString("serverAddress");
 
 		if(proxyDetailsEntities != null && proxyDetailsEntities.size() >0){
 			StringBuilder remoteAddr = new StringBuilder();
@@ -343,11 +337,8 @@ public class ProxyServiceImpl implements ProxyService {
 		jsonObject.put("sslJksPath","xianyu.jks");
 		jsonObject.put("keyStorePassword","123456");
 		jsonObject.put("autoStart",false);
-		String systemConstantJson = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.XIAN_YU_CLIENT);
-		if(StringUtil.isNotEmpty(systemConstantJson)){
-			JSONObject systemConstantObject = JSONObject.parseObject(systemConstantJson);
-			jsonObject.put("apiUrl",systemConstantObject.getString("apiUrl"));
-		}
+		JSONObject systemConstantObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.XIAN_YU_CLIENT);
+		jsonObject.put("apiUrl",systemConstantObject.getString("apiUrl"));
 		String configInfo = jsonObject.toString();
 		return DesUtils.getEncryptString(configInfo);
 	}

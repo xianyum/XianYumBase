@@ -95,8 +95,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
      */
     @Override
     public String getAccessTokenByLogin() {
-        String valueByKey = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.HAO_KA_LOT_LOGIN_INFO);
-        JSONObject systemConstantObject = JSONObject.parseObject(valueByKey);
+        JSONObject systemConstantObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.HAO_KA_LOT_LOGIN_INFO);
         String userName = systemConstantObject.getString("userName");
         String password = systemConstantObject.getString("password");
         String redisKey = haoKaLotTokenPrefix+userName;

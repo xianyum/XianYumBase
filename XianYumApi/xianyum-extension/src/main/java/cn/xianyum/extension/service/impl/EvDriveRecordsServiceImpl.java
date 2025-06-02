@@ -1,9 +1,12 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.BigDecimalUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.SystemConstantUtils;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -19,7 +22,6 @@ import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +42,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     @Override
     public PageResponse<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
         LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
+                .like(Objects.nonNull(request.getStatus()),EvDriveRecordsEntity::getStatus,request.getStatus())
                 .like(StringUtil.isNotEmpty(request.getVehicleNo()),EvDriveRecordsEntity::getVehicleNo,request.getVehicleNo())
                 .ge(Objects.nonNull(request.getParams().get("beginTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("beginTime"))
                 .le(Objects.nonNull(request.getParams().get("endTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("endTime"))
@@ -69,7 +72,10 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     public Integer save(EvDriveRecordsRequest request) {
         this.checkForDuplicateData(request);
         EvDriveRecordsEntity bean = BeanUtils.copy(request, EvDriveRecordsEntity.class);
-        bean.setElectricityPerKm(BigDecimalUtils.divide(bean.getElectricityConsumed(),new BigDecimal(String.valueOf(bean.getDistanceKm()))));
+        BigDecimal electricityPerKm = BigDecimalUtils.divide(bean.getElectricityConsumed(), new BigDecimal(String.valueOf(bean.getDistanceKm())));
+        bean.setElectricityPerKm(electricityPerKm);
+        boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
+        bean.setStatus(isNormalStatus? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
         return evDriveRecordsMapper.insert(bean);
     }
 
@@ -81,7 +87,10 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         }
         this.checkForDuplicateData(request);
         EvDriveRecordsEntity bean = BeanUtils.copy(request, EvDriveRecordsEntity.class);
-        bean.setElectricityPerKm(BigDecimalUtils.divide(bean.getElectricityConsumed(),new BigDecimal(String.valueOf(bean.getDistanceKm()))));
+        BigDecimal electricityPerKm = BigDecimalUtils.divide(bean.getElectricityConsumed(), new BigDecimal(String.valueOf(bean.getDistanceKm())));
+        bean.setElectricityPerKm(electricityPerKm);
+        boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
+        bean.setStatus(isNormalStatus? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
         return evDriveRecordsMapper.updateById(bean);
     }
 
@@ -118,8 +127,26 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
      */
     @Override
     public List<Map<String, Object>> getReportLineData(EvDriveRecordsRequest request) {
+        request.setStatus(YesOrNoEnum.YES.getStatus());
         List<Map<String, Object>> resultMap =  this.evDriveRecordsMapper.selectReportLineData(request);
         return resultMap;
+    }
+
+    /**
+     * 判断是否异常数据
+     *
+     * @param electricityPerKm
+     * @return
+     */
+    @Override
+    public boolean checkNormalStatus(BigDecimal electricityPerKm) {
+        JSONObject electricityPerKmThresholdObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.electricity_per_km_threshold);
+        BigDecimal max = electricityPerKmThresholdObject.getBigDecimal("max");
+        BigDecimal min = electricityPerKmThresholdObject.getBigDecimal("min");
+        if(BigDecimalUtils.gt(electricityPerKm,max) || BigDecimalUtils.lt(electricityPerKm,min)){
+            return false;
+        }
+        return true;
     }
 }
 

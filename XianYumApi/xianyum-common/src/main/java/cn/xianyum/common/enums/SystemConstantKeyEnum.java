@@ -3,6 +3,7 @@ package cn.xianyum.common.enums;
 /**
  * @author zhangwei
  * @date 2025/3/14 20:43
+ *
  */
 public enum SystemConstantKeyEnum {
 
@@ -11,7 +12,8 @@ public enum SystemConstantKeyEnum {
     BAIDU_AI_OCR("baidu_ai_ocr","百度ai开放平台ocr识别"),
     HAO_KA_LOT_LOGIN_INFO("hao_ka_lot_login_info","172号卡平台登录账号和密码"),
     GOLD_CONFIG("gold_config","金价接口配置"),
-    HOLIDAY_CN("holiday_cn","中国法定节假日")
+    HOLIDAY_CN("holiday_cn","中国法定节假日"),
+    electricity_per_km_threshold("electricity_per_km_threshold","百公里电耗阀值")
     ;
 
     private String key;

@@ -32,8 +32,8 @@ public class XianYumConfig {
     private String webUrl;
 
     public static XianYumConfig getXianYumConfig(){
-        String systemJsonStr = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.SYSTEM);
-        XianYumConfig xianYumConfig = JSONObject.parseObject(systemJsonStr, XianYumConfig.class);
+        JSONObject jsonObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.SYSTEM);
+        XianYumConfig xianYumConfig = jsonObject.toJavaObject(XianYumConfig.class);
         if(Objects.isNull(xianYumConfig)){
             throw new SoException("系统配置数据为空，请检查是否已经配置【system】系统常量");
         }

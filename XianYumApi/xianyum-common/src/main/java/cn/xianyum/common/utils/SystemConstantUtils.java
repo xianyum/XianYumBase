@@ -1,6 +1,7 @@
 package cn.xianyum.common.utils;
 
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
+import cn.xianyum.common.exception.SoException;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Method;
@@ -18,7 +19,7 @@ public class SystemConstantUtils {
      * @param systemConstantKeyEnum
      * @return
      */
-    public static String getValueByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
+    private static String getValueByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
         try {
             Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
             Method m = clazz.getDeclaredMethod("getValueKey",String.class);
@@ -56,6 +57,9 @@ public class SystemConstantUtils {
      */
     public static JSONObject getValueObjectByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
         String value = getValueByKey(systemConstantKeyEnum);
+        if(StringUtil.isBlank(value)){
+            throw new SoException("系统常量不存在："+systemConstantKeyEnum.getKey());
+        }
         return JSONObject.parseObject(value);
     }
 }

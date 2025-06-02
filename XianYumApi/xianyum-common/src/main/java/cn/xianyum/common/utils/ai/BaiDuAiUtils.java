@@ -42,8 +42,7 @@ public class BaiDuAiUtils {
      */
     public String getAccessToken(String clientId,String clientSecret){
         if(StringUtil.isEmpty(clientId) || StringUtil.isEmpty(clientSecret)){
-            String valueByKey = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.BAIDU_AI_OCR);
-            JSONObject systemConstantObject = JSONObject.parseObject(valueByKey);
+            JSONObject systemConstantObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.BAIDU_AI_OCR);
             clientId = systemConstantObject.getString("clientId");
             clientSecret = systemConstantObject.getString("clientSecret");
         }

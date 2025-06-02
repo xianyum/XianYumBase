@@ -41,4 +41,13 @@ public class EvDriveRecordsResponse extends BaseResponse {
      */
     private BigDecimal electricityPerKm;
 
+    /**
+     * 状态 0 正常 1 异常
+     */
+    private Integer status;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

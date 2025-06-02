@@ -52,4 +52,13 @@ public class EvDriveRecordsRequest extends BaseRequest {
      */
     private List<String> timeRange;
 
+    /**
+     * 状态 0 正常 1 异常
+     */
+    private Integer status;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

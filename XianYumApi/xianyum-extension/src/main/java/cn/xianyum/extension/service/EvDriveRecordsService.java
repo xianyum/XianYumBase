@@ -5,6 +5,7 @@ import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.common.entity.base.PageResponse;
 import com.alibaba.fastjson2.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -33,4 +34,11 @@ public interface EvDriveRecordsService {
     void checkForDuplicateData(EvDriveRecordsRequest request);
 
     List<Map<String, Object>> getReportLineData(EvDriveRecordsRequest request);
+
+    /**
+     * 判断是否异常数据
+     * @param electricityPerKm
+     * @return
+     */
+    boolean checkNormalStatus(BigDecimal electricityPerKm);
 }

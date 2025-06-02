@@ -48,6 +48,9 @@
                     AND DATE_FORMAT(edr.drive_date,'%Y-%m') &lt;= #{request.timeRange[1]}
                 </if>
             </if>
+            <if test="request.status != null">
+                AND edr.status = #{request.status}
+            </if>
         </where>
         <if test="request.dateType != null and request.dateType == 0">
             GROUP BY
