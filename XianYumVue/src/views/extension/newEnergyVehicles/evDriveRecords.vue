@@ -89,7 +89,11 @@
           <el-tag v-else type="danger" effect="plain">异常</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true"/>
+      <el-table-column label="事项" align="center" prop="matter">
+        <template v-slot="scope">
+          <dict-tag :options="dict.type.ev_drive_matter" :value="scope.row.matter"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template v-slot="scope">
           <el-button
@@ -136,8 +140,15 @@
         <el-form-item label="消耗电量(kWh)" prop="electricityConsumed">
           <el-input v-model="form.electricityConsumed" placeholder="请输入消耗电量(kWh)"/>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input type="textarea" :rows="4" v-model="form.remark" placeholder="请输入备注"/>
+        <el-form-item label="事项" prop="matter">
+          <el-select v-model="form.matter" placeholder="请选择事项" clearable>
+            <el-option
+              v-for="dict in dict.type.ev_drive_matter"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -159,6 +170,7 @@ import {
 
 export default {
   name: 'evDriveRecords',
+  dicts: ['ev_drive_matter'],
   data() {
     return {
       sendWechatLoading: false,
@@ -275,7 +287,13 @@ export default {
       },
       // 表单参数
       form: {
-        driveDate: '2025-06-02'
+        id: undefined,
+        vehicleNo: undefined,
+        //   driveDate: undefined,
+        distanceKm: undefined,
+        electricityConsumed: undefined,
+        matter: '10',
+        driveDate: new Date().toISOString().split('T')[0]
       },
       // 表单汇总数据
       summaryInfo: {
@@ -347,13 +365,13 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        id: undefined,
-        vehicleNo: undefined,
-        driveDate: undefined,
-        distanceKm: undefined,
-        electricityConsumed: undefined
-      }
+      // this.form = {
+      //   id: undefined,
+      //   vehicleNo: undefined,
+      //   driveDate: undefined,
+      //   distanceKm: undefined,
+      //   electricityConsumed: undefined
+      // }
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
@@ -382,7 +400,11 @@ export default {
       this.reset()
       this.open = true
       this.title = '添加车辆行驶记录'
-      this.form.driveDate = this.templateDriverDate
+      if(!this.templateDriverDate){
+        this.form.driveDate = new Date().toISOString().split('T')[0]
+      }else{
+        this.form.driveDate = this.templateDriverDate
+      }
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
