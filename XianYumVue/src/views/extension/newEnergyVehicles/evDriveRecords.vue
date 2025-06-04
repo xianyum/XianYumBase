@@ -83,10 +83,10 @@
       <el-table-column label="行驶公里数(km)" align="center" prop="distanceKm"/>
       <el-table-column label="消耗电量(kWh)" align="center" prop="electricityConsumed"/>
       <el-table-column label="每公里电量消耗(kWh/km)" align="center" prop="electricityPerKm"/>
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column label="能耗状态" align="center" prop="status">
         <template v-slot="scope">
           <el-tag v-if="scope.row.status === 0" effect="plain" type="success">正常</el-tag>
-          <el-tag v-else type="danger" effect="plain">异常</el-tag>
+          <el-tag v-else type="danger" effect="plain">能耗异常</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="事项" align="center" prop="matter">
@@ -193,7 +193,7 @@ export default {
         label: '正常'
         }, {
         value: 1,
-        label: '异常'
+        label: '能耗异常'
       }],
       dialogWidth: '800px', // 默认宽度
       datePickerWidth: '100%',
