@@ -11,6 +11,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -46,6 +47,22 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 .ge(Objects.nonNull(request.getParams().get("beginTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("beginTime"))
                 .le(Objects.nonNull(request.getParams().get("endTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("endTime"))
                 .orderByDesc(EvDriveRecordsEntity::getDriveDate);
+        if(CollectionUtils.isNotEmpty(request.getMatter())){
+            if (request.getMatter().size() == 1) {
+                queryWrapper.apply("FIND_IN_SET({0}, matter)", request.getMatter().get(0));
+            } else {
+                queryWrapper.nested(wrapper -> {
+                    for (int i = 0; i < request.getMatter().size(); i++) {
+                        String role = request.getMatter().get(i);
+                        if (i == 0) {
+                            wrapper.apply("FIND_IN_SET({0}, matter)", role);
+                        } else {
+                            wrapper.or().apply("FIND_IN_SET({0}, matter)", role);
+                        }
+                    }
+                });
+            }
+        }
         Page<EvDriveRecordsEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
         IPage<EvDriveRecordsEntity> pageResult = evDriveRecordsMapper.selectPage(page, queryWrapper);
         PageResponse<EvDriveRecordsResponse> response = PageResponse.of(pageResult, EvDriveRecordsResponse.class);
