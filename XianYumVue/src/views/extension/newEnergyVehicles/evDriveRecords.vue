@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="85px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="70px">
       <el-form-item label="驾驶日期" clearable>
         <el-date-picker
           v-model="queryParams.dateRange"
@@ -22,6 +22,16 @@
             :label="item.label"
             :value="item.value">
           </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="事项">
+        <el-select v-model="queryParams.matter" placeholder="请选择事项" multiple  collapse-tags clearable>
+          <el-option
+            v-for="dict in dict.type.ev_drive_matter"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -211,7 +221,8 @@ export default {
           this.parseTime(new Date())
         ],
         status: undefined,
-        vehicleNo: undefined
+        vehicleNo: undefined,
+        matter: undefined
       },
       pickerOptions: {
         shortcuts: [
