@@ -114,7 +114,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/actuator/**",
                         "/druid/**",
                         "/login",
-                        "/captcha/*"
+                        "/captcha/*",
+                        "xym-extension/v1/robot/*"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
