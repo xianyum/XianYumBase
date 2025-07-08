@@ -2,6 +2,7 @@ package cn.xianyum.framwork.config;
 
 import cn.xianyum.common.annotation.Permission;
 import com.alibaba.fastjson2.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
  *
  */
 @Configuration
+@Slf4j
 public class PermitAllUrlProperties implements InitializingBean, ApplicationContextAware {
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
@@ -47,7 +49,7 @@ public class PermitAllUrlProperties implements InitializingBean, ApplicationCont
                 Optional.ofNullable(method).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
                         .forEach(url -> urls.add(RegExUtils.replaceAll(url, PATTERN, ASTERISK))));
             }catch (Exception e){
-                System.out.println(e);
+                log.error("设置Permission注解允许匿名访问的url异常.",e.getMessage());
             }
 
 
