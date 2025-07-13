@@ -73,6 +73,8 @@
   <logger name="com.anji.captcha" level="WARN"/>
   <logger name="com.geccocrawler.gecco" level="WARN"/>
   <logger name="org.reflections.Reflections" level="WARN"/>
+  <logger name="org.reflections.Reflections" level="WARN"/>
+  <logger name="cn.xianyum.extension.dao" level="DEBUG"/>
 
   <!-- root将级别为“INFO”及大于“INFO”的日志信息交给已经配置好的名为“Console”的appender处理，“Console”appender将信息打印到Console； -->
   <!--ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF。-->

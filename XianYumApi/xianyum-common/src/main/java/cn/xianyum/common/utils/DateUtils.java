@@ -1,11 +1,16 @@
 package cn.xianyum.common.utils;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +43,7 @@ public class DateUtils {
      * @return  返回yyyy-MM-dd格式日期
      */
     public static String format(Date date) {
-        return format(date, DATE_PATTERN);
+        return format(date, DATE_TIME_PATTERN);
     }
 
     /**
@@ -266,5 +271,56 @@ public class DateUtils {
         int dayOfWeek = dateTime.getDayOfWeek();
         // 判断是否为周末
         return  (dayOfWeek == 6 || dayOfWeek == 7);
+    }
+    /**
+     * 获取本月的开始时间（第一天的 00:00:00）
+     * @return Date 本月开始时间
+     */
+    public static Date getMonthStartTime() {
+        return new DateTime(DateTimeZone.getDefault())
+                .dayOfMonth().withMinimumValue()  // 设置为当月第一天
+                .hourOfDay().withMinimumValue()   // 小时: 0
+                .minuteOfHour().withMinimumValue() // 分钟: 0
+                .secondOfMinute().withMinimumValue() // 秒: 0
+                .millisOfSecond().withMinimumValue() // 毫秒: 0
+                .toDate();
+    }
+
+    /**
+     * 获取本月的结束时间（最后一天的 23:59:59）
+     * @return Date 本月结束时间
+     */
+    public static Date getMonthEndTime() {
+        return new DateTime(DateTimeZone.getDefault())
+                .dayOfMonth().withMaximumValue()  // 设置为当月最后一天
+                .hourOfDay().withMaximumValue()   // 小时: 23
+                .minuteOfHour().withMaximumValue() // 分钟: 59
+                .secondOfMinute().withMaximumValue() // 秒: 59
+                .millisOfSecond().withMaximumValue() // 毫秒: 999
+                .toDate();
+    }
+
+    /**
+     * 获取近一年的开始日期（当前日期往前推12个月的日期，时间为00:00:00）
+     * @return Date 近一年开始日期
+     */
+    public static Date getLastYearStartTime() {
+        return new DateTime(DateTimeZone.getDefault())
+                .minusYears(1)                      // 往前推12个月
+                .withTimeAtStartOfDay()             // 设置时间为00:00:00
+                .toDate();
+    }
+
+    /**
+     * 获取近一年的结束日期（当前日期，时间为23:59:59）
+     * @return Date 近一年结束日期
+     */
+    public static Date getLastYearEndTime() {
+        return new DateTime(DateTimeZone.getDefault())
+                .withHourOfDay(23)                  // 小时设置为23
+                .withMinuteOfHour(59)               // 分钟设置为59
+                .withSecondOfMinute(59)             // 秒设置为59
+                .withMillisOfSecond(999)            // 毫秒设置为999
+                .toDate();
     }
 }

@@ -24,7 +24,6 @@ import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 新能源车行驶记录(EvDriveRecords)service层实现
@@ -68,8 +67,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         PageResponse<EvDriveRecordsResponse> response = PageResponse.of(pageResult, EvDriveRecordsResponse.class);
         // 获取汇总数据
         if(pageResult.getTotal() > 0){
-            Map<String,Object> otherInfoMap = evDriveRecordsMapper.selectSummaryData(request);
-            response.setOtherInfo(otherInfoMap);
+            response.setOtherInfo(evDriveRecordsMapper.selectSummaryData(request));
         }
         return response;
 

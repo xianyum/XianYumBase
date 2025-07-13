@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.xianyum.extension.dao.EvDriveRecordsMapper">
 
-    <select id="selectSummaryData" resultType="map" parameterType="cn.xianyum.extension.entity.request.EvDriveRecordsRequest">
+    <select id="selectSummaryData" resultType="cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse" parameterType="cn.xianyum.extension.entity.request.EvDriveRecordsRequest">
         SELECT
             sum(edr.distance_km) as totalDistanceKm,
             sum(edr.electricity_consumed) as totalElectricityConsumed,
