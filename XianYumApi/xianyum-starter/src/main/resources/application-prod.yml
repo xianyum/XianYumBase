@@ -95,7 +95,7 @@ ali:
 
 ip:
   db:
-    path: /home/app/xianyum/api/ipdb/ip2region.xdb
+    path: /xianyum/app/api/xianyum-api/ipdb/ip2region.xdb
 
 #mybatis plus
 mybatis-plus:
