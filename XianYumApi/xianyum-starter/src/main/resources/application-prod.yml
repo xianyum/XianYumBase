@@ -136,7 +136,7 @@ spring:
     #    database: 0 #Redis数据库索引（默认为0）
     host: mpw:2E9HoOOXusIU22BFOQ8Jkg== # Redis服务器地址
     port: 6379 # Redis服务器连接端口
-    password: mpw:SmSUEOjd/X4B3EIFAeURfg== # Redis服务器连接密码（默认为空）
+    password: mpw:lPtxqC6SC8fZdY6XfYfoVNLzYus1r0wtsvYxPdLAtXA= # Redis服务器连接密码（默认为空）
     timeout: 5000 # 连接超时时间（毫秒）
     jedis:
       pool:
@@ -165,7 +165,7 @@ spring:
         master:
           url: mpw:sR3rIglLgps1SmEJaf5ZL/sqWUPkJppWu8SeRPfUF7CE1pGXJmozB9aLADOJJU3O8GBFDdhfeOgFnJordt6S/ePKzAmT+5CcqMNBVp1p6m5SQ20g+GKl7sMdFy48DxbhMfsifmVwmGCT4MpRhv4hKNAMEgihh+6TDhNmgQTe1TTLEQzXKT9gLwdQnZpiowUM7MyjWggS9tJ4VbkmnE/5Hg==
           username: mpw:F3RIuQ2oysG5oe7LzHrHOQ==
-          password: mpw:SmSUEOjd/X4B3EIFAeURfg==
+          password: mpw:lPtxqC6SC8fZdY6XfYfoVNLzYus1r0wtsvYxPdLAtXA=
           driverClassName:  com.mysql.cj.jdbc.Driver
         slave:
           url: jdbc:mysql://localhost:3306/BaseDemo?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
