@@ -15,7 +15,7 @@ import java.util.Map;
  * @date 2023/11/6 21:06
  */
 @JobHandler("userToRedisTask")
-public class userToRedisTask implements IJobHandler {
+public class UserToRedisTask implements IJobHandler {
 
     @Autowired
     private UserService userService;
