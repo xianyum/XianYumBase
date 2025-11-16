@@ -1,4 +1,4 @@
-FROM  openjdk:21
+FROM  eclipse-temurin:21.0.3_9-jdk
 
 # 将本地文件夹挂在到当前容器
 # VOLUME /tmp
