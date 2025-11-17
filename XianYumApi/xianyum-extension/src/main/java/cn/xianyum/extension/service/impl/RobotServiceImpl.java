@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author zhangwei
@@ -26,11 +27,19 @@ public class RobotServiceImpl implements RobotService {
     @Resource
     private EvDriveRecordsMapper evDriveRecordsMapper;
 
+    private static final Pattern PATTERN_01 = Pattern.compile(".*01.*");
+    private static final Pattern PATTERN_02 = Pattern.compile(".*02.*");
+    private static final Pattern PATTERN_03_FULL = Pattern.compile("^04\\s+(\\d{4}-\\d{2}-\\d{2})\\s+(\\d+)\\s+(\\d+)$");
+    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile(".*03.*");
+    private static final Pattern PATTERN_HELP = Pattern.compile(".*(帮助|菜单).*");
+
+
     @Override
     public RobotResponse autoReply(String content) {
         RobotResponse robotResponse = new RobotResponse();
         switch (content) {
-            case String s when s.contains("01") -> {
+            // 匹配包含01的内容
+            case String s when PATTERN_01.matcher(s).matches() -> {
                 GoldPriceResponse latestPrice = goldPriceService.getLatestPrice();
                 String time = DateUtils.format(latestPrice.getTime(), DateUtils.DATE_TIME_PATTERN);
                 robotResponse.setReplyContent(String.format(
@@ -39,23 +48,47 @@ public class RobotServiceImpl implements RobotService {
                         time
                 ));
             }
-            case String s when s.contains("02") -> {
-                EvDriveRecordsSummaryResponse response = this.queryEvDriveRecordsSummary(DateUtils.format(DateUtils.getMonthStartTime()),DateUtils.format(DateUtils.getMonthEndTime()));
-                if(Objects.isNull(response)){
-                    robotResponse.setReplyContent("\n暂未查到行驶记录");
-                }else{
-                    robotResponse.setReplyContent(buildEvDriveRecordsSummaryMessage(response));
-                }
+            // 匹配包含02的内容
+            case String s when PATTERN_02.matcher(s).matches() -> {
+                EvDriveRecordsSummaryResponse response = this.queryEvDriveRecordsSummary(
+                        DateUtils.format(DateUtils.getMonthStartTime()),
+                        DateUtils.format(DateUtils.getMonthEndTime())
+                );
+                robotResponse.setReplyContent(Objects.isNull(response)
+                        ? "\n暂未查到行驶记录"
+                        : buildEvDriveRecordsSummaryMessage(response)
+                );
             }
-            case String s when s.contains("03") -> {
-                EvDriveRecordsSummaryResponse response = this.queryEvDriveRecordsSummary(DateUtils.format(DateUtils.getLastYearStartTime()),DateUtils.format(DateUtils.getLastYearEndTime()));
-                if(Objects.isNull(response)){
-                    robotResponse.setReplyContent("\n暂未查到行驶记录");
-                }else{
-                   robotResponse.setReplyContent(buildEvDriveRecordsSummaryMessage(response));
-                }
+            // 匹配包含03但不符合完整格式的内容
+            case String s when PATTERN_03_SIMPLE.matcher(s).matches() -> {
+                EvDriveRecordsSummaryResponse response = this.queryEvDriveRecordsSummary(
+                        DateUtils.format(DateUtils.getLastYearStartTime()),
+                        DateUtils.format(DateUtils.getLastYearEndTime())
+                );
+                robotResponse.setReplyContent(Objects.isNull(response)
+                        ? "\n暂未查到行驶记录"
+                        : buildEvDriveRecordsSummaryMessage(response)
+                );
             }
-            case String s when s.contains("帮助") || s.contains("菜单") -> robotResponse.setReplyContent(buildHelpMessage());
+            // 匹配03+日期+数字的完整格式（优先匹配）
+            case String s when PATTERN_03_FULL.matcher(s).matches() -> {
+                var matcher = PATTERN_03_FULL.matcher(s);
+                matcher.matches(); // 已匹配，直接提取分组
+                String date = matcher.group(1);
+                int param1 = Integer.parseInt(matcher.group(2));
+                int param2 = Integer.parseInt(matcher.group(3));
+                // 处理带参数的04逻辑（示例）
+                robotResponse.setReplyContent(String.format(
+                        "\n04带参数查询：日期=%s, 参数1=%d, 参数2=%d",
+                        date, param1, param2
+                ));
+            }
+
+            // 匹配帮助/菜单
+            case String s when PATTERN_HELP.matcher(s).matches() -> {
+                robotResponse.setReplyContent(buildHelpMessage());
+            }
+            // 默认情况
             default -> robotResponse.setReplyContent("\n请发送帮助查看功能");
         }
         return robotResponse;
