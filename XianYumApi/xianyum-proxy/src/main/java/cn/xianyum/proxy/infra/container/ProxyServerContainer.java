@@ -81,7 +81,6 @@ public class ProxyServerContainer implements Container, ProxyChangedListener {
 
         try {
             bootstrap.bind("0.0.0.0", serverPort);
-            logger.info("proxy server start on port " + serverPort);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -120,7 +119,6 @@ public class ProxyServerContainer implements Container, ProxyChangedListener {
             // Bind and start to accept incoming connections.
             ChannelFuture f = b.bind(host, port);
             f.sync();
-            logger.info("proxy ssl server start on port {}", port);
         } catch (InterruptedException ex) {
             logger.error("An interruptedException was caught while initializing server", ex);
         }

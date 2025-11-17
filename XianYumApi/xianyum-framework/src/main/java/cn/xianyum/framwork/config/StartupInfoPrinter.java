@@ -40,8 +40,7 @@ public class StartupInfoPrinter implements CommandLineRunner {
         String startupInfo = "\n======= 服务启动信息 =======\n"
                 + "激活环境: " + activeProfiles + "\n"
                 + "本地访问地址: " + localUrl + "\n"
-                + "Swagger文档地址: " + swaggerUrl + "\n"
-                + "===========================";
+                + "Swagger文档地址: " + swaggerUrl;
 
         log.info(startupInfo);
     }
