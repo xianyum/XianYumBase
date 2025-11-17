@@ -27,12 +27,13 @@ public class RobotServiceImpl implements RobotService {
     @Resource
     private EvDriveRecordsMapper evDriveRecordsMapper;
 
-    private static final Pattern PATTERN_01 = Pattern.compile(".*01.*");
-    private static final Pattern PATTERN_02 = Pattern.compile(".*02.*");
-    private static final Pattern PATTERN_03_FULL = Pattern.compile("^04\\s+(\\d{4}-\\d{2}-\\d{2})\\s+(\\d+)\\s+(\\d+)$");
-    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile(".*03.*");
-    private static final Pattern PATTERN_HELP = Pattern.compile(".*(帮助|菜单).*");
 
+    // 修正正则：必须以01/02/03开头，且支持后续任意字符（或特定格式）
+    private static final Pattern PATTERN_01 = Pattern.compile("^01.*"); // 以01开头，后面可跟任意字符
+    private static final Pattern PATTERN_02 = Pattern.compile("^02.*"); // 以02开头，后面可跟任意字符
+    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^03.*"); // 以03开头但不符合完整格式的内容
+    private static final Pattern PATTERN_04_FULL = Pattern.compile("^04\\s+(\\d{4}-\\d{2}-\\d{2})\\s+(\\d+)\\s+(\\d+)$"); // 以04开头的完整格式
+    private static final Pattern PATTERN_HELP = Pattern.compile("^(帮助|菜单).*"); // 以帮助/菜单开头（可选，根据需求调整）
 
     @Override
     public RobotResponse autoReply(String content) {
@@ -71,8 +72,8 @@ public class RobotServiceImpl implements RobotService {
                 );
             }
             // 匹配03+日期+数字的完整格式（优先匹配）
-            case String s when PATTERN_03_FULL.matcher(s).matches() -> {
-                var matcher = PATTERN_03_FULL.matcher(s);
+            case String s when PATTERN_04_FULL.matcher(s).matches() -> {
+                var matcher = PATTERN_04_FULL.matcher(s);
                 matcher.matches(); // 已匹配，直接提取分组
                 String date = matcher.group(1);
                 int param1 = Integer.parseInt(matcher.group(2));
