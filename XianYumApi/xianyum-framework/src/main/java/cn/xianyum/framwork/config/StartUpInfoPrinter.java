@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class StartupInfoPrinter implements CommandLineRunner {
+public class StartUpInfoPrinter implements CommandLineRunner {
 
     private final Environment environment;
 
@@ -26,7 +26,7 @@ public class StartupInfoPrinter implements CommandLineRunner {
     @Value("${spring.profiles.active:default}")
     private String activeProfiles;
 
-    public StartupInfoPrinter(Environment environment) {
+    public StartUpInfoPrinter(Environment environment) {
         this.environment = environment;
     }
 
