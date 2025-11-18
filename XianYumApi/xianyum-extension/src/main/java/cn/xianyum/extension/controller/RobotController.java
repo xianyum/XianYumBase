@@ -32,6 +32,6 @@ public class RobotController {
     @PostMapping(value = "/auto-reply")
     @Permission(publicApi = true)
     public RobotResponse autoReply(@RequestBody RobotRequest request) {
-        return robotService.autoReply(request.getContent());
+        return robotService.autoReply(request.getRequest().getContent());
     }
 }

@@ -9,5 +9,10 @@ import lombok.Data;
 @Data
 public class RobotRequest {
 
-    private String content;
+    private ContentRequest request;
+
+    @Data
+    public static class ContentRequest{
+        private String content;
+    }
 }
