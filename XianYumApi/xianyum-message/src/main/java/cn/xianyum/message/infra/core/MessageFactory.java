@@ -2,13 +2,11 @@ package cn.xianyum.message.infra.core;
 
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** 消息发送工厂类

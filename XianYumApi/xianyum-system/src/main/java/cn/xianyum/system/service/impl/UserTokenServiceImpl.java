@@ -9,13 +9,12 @@ import cn.xianyum.system.service.RoleService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson2.JSONObject;
 import eu.bitwalker.useragentutils.UserAgent;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+
 
 @Service
 public class UserTokenServiceImpl implements UserTokenService {

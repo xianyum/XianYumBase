@@ -1,9 +1,9 @@
 package cn.xianyum.message.entity.request;
 
 import cn.xianyum.common.entity.base.BaseRequest;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 
 /**
  * @Description

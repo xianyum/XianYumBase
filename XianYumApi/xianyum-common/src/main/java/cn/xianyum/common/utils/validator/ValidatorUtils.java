@@ -1,9 +1,9 @@
 package cn.xianyum.common.utils.validator;
 
 import cn.xianyum.common.exception.SoException;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.Set;
 
 /**
@@ -15,6 +15,7 @@ import java.util.Set;
  * @date 2019/1/31 14:23
  */
 public class ValidatorUtils {
+
     private static Validator validator;
 
     static {

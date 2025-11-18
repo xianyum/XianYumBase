@@ -2,10 +2,9 @@ package cn.xianyum.common.utils;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.ip.IpSearcher;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
