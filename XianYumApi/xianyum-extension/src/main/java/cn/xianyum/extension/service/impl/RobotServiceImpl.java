@@ -27,13 +27,21 @@ public class RobotServiceImpl implements RobotService {
     @Resource
     private EvDriveRecordsMapper evDriveRecordsMapper;
 
+    // 匹配以 @任意用户名 01 开头的内容（@和01之间至少一个空格）
+    private static final Pattern PATTERN_01 = Pattern.compile("^@[^\\s]+\\s+(01|金价).*");
 
-    // 修正正则：必须以01/02/03开头，且支持后续任意字符（或特定格式）
-    private static final Pattern PATTERN_01 = Pattern.compile("^01.*"); // 以01开头，后面可跟任意字符
-    private static final Pattern PATTERN_02 = Pattern.compile("^02.*"); // 以02开头，后面可跟任意字符
-    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^03.*"); // 以03开头但不符合完整格式的内容
-    private static final Pattern PATTERN_04_FULL = Pattern.compile("^04\\s+(\\d{4}-\\d{2}-\\d{2})\\s+(\\d+)\\s+(\\d+)$"); // 以04开头的完整格式
-    private static final Pattern PATTERN_HELP = Pattern.compile("^(帮助|菜单).*"); // 以帮助/菜单开头（可选，根据需求调整）
+    // 匹配以 @任意用户名 02 开头的内容
+    private static final Pattern PATTERN_02 = Pattern.compile("^@[^\\s]+\\s+02.*");
+
+    // 匹配以 @任意用户名 03 开头（但不符合完整格式）的内容
+    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^@[^\\s]+\\s+03.*");
+
+    // 匹配以 @任意用户名 04 开头的完整格式（04后跟随日期和两个数字）
+    private static final Pattern PATTERN_04_FULL = Pattern.compile("^@[^\\s]+\\s+04\\s+(\\d{4}-\\d{2}-\\d{2})\\s+(\\d+)\\s+(\\d+)$");
+
+    // 匹配以 @任意用户名 帮助/菜单 开头的内容
+    private static final Pattern PATTERN_HELP = Pattern.compile("^@[^\\s]+\\s+(帮助|菜单).*");
+
 
     @Override
     public RobotResponse autoReply(String content) {
