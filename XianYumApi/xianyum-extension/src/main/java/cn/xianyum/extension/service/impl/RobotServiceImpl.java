@@ -1,6 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.utils.DateUtils;
+import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
@@ -28,7 +29,7 @@ public class RobotServiceImpl implements RobotService {
     private EvDriveRecordsMapper evDriveRecordsMapper;
 
     // 匹配 @用户名 + （任意空白/分隔符） + 01/金价（作为首个指令）
-    private static final Pattern PATTERN_01 = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+(01|金价)\\b.*");
+    private static final Pattern PATTERN_01 = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+(01|金价).*");
 
     // 匹配 @用户名 + （任意空白/分隔符） + 02（作为首个指令）
     private static final Pattern PATTERN_02 = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+02\\b.*");
@@ -41,9 +42,10 @@ public class RobotServiceImpl implements RobotService {
 
     // 匹配 @用户名 + （任意空白/分隔符） + 帮助/菜单（作为首个指令）
     private static final Pattern PATTERN_HELP = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+(帮助|菜单)\\b.*");
-    
+
     @Override
     public RobotResponse autoReply(String content) {
+        content = content.replaceAll("[\\p{Z}\\s]+", " ");
         RobotResponse robotResponse = new RobotResponse();
         switch (content) {
             // 匹配包含01的内容
