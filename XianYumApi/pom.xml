@@ -37,7 +37,7 @@
         <okhttps.fastjson.version>4.0.1</okhttps.fastjson.version>
         <joda.time.version>2.12.7</joda.time.version>
         <lombok.version>1.18.38</lombok.version>
-        <druid.version>1.2.16</druid.version>
+        <druid.version>1.2.18</druid.version>
         <captcha.version>1.3.0</captcha.version>
         <easy.excel.version>4.0.3</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
@@ -78,11 +78,11 @@
                 <version>${quartz.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.alibaba</groupId>-->
+<!--                <artifactId>druid-spring-boot-starter</artifactId>-->
+<!--                <version>${druid.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>joda-time</groupId>

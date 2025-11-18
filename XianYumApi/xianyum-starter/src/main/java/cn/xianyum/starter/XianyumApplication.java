@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 
-@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class}) //去掉springboot 默认的数据源配置
+@SpringBootApplication
 @MapperScan("cn.xianyum.**.dao")
 @EnableAspectJAutoProxy(exposeProxy = true)
 @ComponentScan(basePackages = {"cn.xianyum"})
