@@ -1,63 +1,120 @@
 # XianYumBase
 
-#### 项目简介
+## 项目简介
+XianYumBase 是一个基于前后端分离架构的企业级基础开发平台，集成了用户认证、权限管理、数据交互、第三方服务对接等核心功能，旨在为开发者提供可直接复用的基础框架，快速搭建业务系统。
 
-1. 定时爬取某娱乐网站数据，进行实时推送到微信/钉钉
-2. 支持QQ、支付宝等第三方登录
-3. 支持按钮及数据权限，可自定义部门数据权限。
-4. 动态菜单，通过菜单管理统一管理访问路由
-5. 支持多数据源，简单配置即可实现切换
-6. 完善的日志记录体系简单注解即可实现
-7. 在线演示地址：[https://base.xianyum.cn](https://base.xianyum.cn)
+项目采用模块化设计，支持多场景扩展，内置数据爬取、消息推送、加密传输等实用功能，可满足中小型企业的系统开发需求。
 
-#### 项目截图
-
-![微信截图_20201203201546](https://xiaoyaxiaokeai.gitee.io/base/20201113/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20201203201546.png)
+在线演示：[https://base.xianyum.cn](https://base.xianyum.cn)
 
 
+## 核心功能
 
-![微信截图_20201203201602](https://xiaoyaxiaokeai.gitee.io/base/20201113/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20201203201602.png)
+### 1. 身份认证与权限控制
+- 基于 Spring Security 的认证体系，支持账号密码登录及支付宝第三方 OAuth 授权
+- 细粒度权限管理：实现按钮级操作权限与部门级数据权限控制
+- JWT 令牌机制：无状态会话管理，支持令牌刷新与过期控制
+- 密码安全：采用 BCrypt 加密存储，支持密码重置与强度校验
 
-#### 软件架构
+### 2. 系统配置与管理
+- 动态菜单：数据库驱动的菜单配置，支持路由动态生成与权限绑定
+- 字典管理：通用数据字典功能，支持缓存自动刷新
+- 多数据源：注解式数据源切换，适配复杂业务数据存储场景
+- 在线用户监控：实时查看登录用户状态，支持强制登出操作
 
-**后端**
+### 3. 数据交互与集成
+- 定时任务：基于 Cron 表达式的任务调度，支持数据爬取与自动执行
+- 消息推送：集成企业微信、钉钉、微信等平台的消息推送能力
+- 数据爬取：通过 Gecco 框架实现网页数据抓取，支持定时与触发式执行
+- 第三方集成：支付宝登录、阿里云效流水线回调等外部服务对接
 
-SpringBoot 
+### 4. 安全与日志
+- 传输安全：支持 RSA、AES、DES 等加密算法，保障接口数据安全
+- 行为验证：集成滑动/点选验证码，防御恶意请求
+- 日志体系：操作日志、异常日志、登录日志的全面记录，支持注解式日志埋点
+- 接口防护：请求频率限制与非法访问拦截
 
-Mybatis-Plus
+### 5. 代理服务
+- 客户端代理管理：支持代理配置的增删改查与状态监控
+- 代理日志：记录代理连接详情，支持日志清理与筛选
+- 上下线通知：客户端状态变更时通过邮件等方式提醒
 
-Shiro
 
-Redis
+## 技术栈详情
 
-Gecco爬虫
+### 后端技术
+| 类别         | 技术选型                          | 说明                                  |
+|--------------|-----------------------------------|---------------------------------------|
+| 核心框架     | Spring Boot 2.x                   | 快速开发脚手架                        |
+| ORM 框架     | MyBatis-Plus                      | 增强 MyBatis，简化 CRUD 操作          |
+| 安全框架     | Spring Security                   | 认证授权、资源访问控制                |
+| 缓存         | Redis                             | 数据缓存、会话存储、分布式锁          |
+| API 文档     | Swagger/SpringFox                 | 自动生成接口文档，支持在线调试        |
+| 任务调度     | 自定义 Cron 任务框架              | 定时任务管理与执行                    |
+| 网络请求     | OkHttp3                           | HTTP 客户端，处理外部 API 调用        |
+| 爬虫框架     | Gecco                             | 网页数据抓取与解析                    |
+| 加密工具     | JCE、BouncyCastle                 | 提供 RSA、AES 等加密算法实现          |
+| 通讯框架     | Netty                             | 支持代理服务的 NIO 通信框架           |
+| 第三方 SDK   | 支付宝 SDK                        | 第三方登录功能对接                    |
 
-**前端**
+### 前端技术
+| 类别         | 技术选型                          | 说明                                  |
+|--------------|-----------------------------------|---------------------------------------|
+| 核心框架     | Vue 2.x                           | 构建用户界面的渐进式框架              |
+| UI 组件库    | Element UI                        | 企业级 UI 组件库                      |
+| 状态管理     | Vuex                              | 集中式状态管理                        |
+| 路由管理     | Vue Router                        | 前端路由控制                          |
+| HTTP 客户端  | Axios                             | 处理与后端的 API 交互                 |
+| 加密工具     | Crypto-js、JSEncrypt              | 前端数据加密与解密                    |
+| 图形验证     | vue-puzzle-vcode                  | 滑动/点选验证码组件                   |
+| 树形组件     | vue-treeselect                    | 支持搜索与多级选择的树形组件          |
+| 构建工具     | Webpack                           | 前端资源打包与构建                    |
 
-vue
 
-element-ui
+## 快速开始
 
-#### 安装教程
+### 环境要求
+- JDK 1.8+
+- MySQL 5.7+
+- Redis 5.0+
+- Node.js 12.x+ (前端)
 
-1. 后端修改application-test.yml 160行mysql账号密码以及url，139以及141行redis密码，启动项目即可
+### 后端部署
+1. 克隆仓库：`git clone https://github.com/xianyum/XianYumBase.git`
+2. 导入数据库脚本（脚本路径：`sql/` 目录下）
+3. 修改配置文件 `application-test.yml`：
+   - 配置 MySQL 连接：`spring.datasource.druid.master` 节点（账号、密码、URL）
+   - 配置 Redis 连接：`spring.redis` 节点（密码、地址）
+4. 启动项目：运行 `XianYumApplication.java` 主类
 
-2. 前端安装
+### 前端部署
+1. 进入前端目录：`cd xianyum-admin`
+2. 安装依赖：`npm install --registry=https://registry.npmmirror.com`
+3. 启动开发环境：`npm run dev`
+4. 访问：`http://localhost:80`（默认端口）
 
-   ```java
-   npm install
-   
-   npm run dev
-   ```
+### 初始账号
+- 用户名：admin
+- 密码：123456
 
-   
 
-#### 使用说明
+## 构建与发布
+- 前端测试环境构建：`npm run build:stage`
+- 前端生产环境构建：`npm run build:prod`
+- 后端打包：`mvn clean package -Dmaven.test.skip=true`
 
-1. 账号密码默认admin/123456
 
-#### 项目感谢
+## 接口文档
+项目集成 Swagger，启动后可访问：`http://localhost:8080/swagger-ui/index.html`（默认地址，需根据实际配置调整）
 
-​	感谢[renren-fast](https://gitee.com/renrenio)，本项目大多借鉴renren开源
 
-​	
+## 贡献指南
+1. Fork 本仓库
+2. 创建特性分支：`git checkout -b feature/xxx`
+3. 提交修改：`git commit -m "feat: 新增xxx功能"`
+4. 推送分支：`git push origin feature/xxx`
+5. 提交 Pull Request
+
+
+## 开源协议
+本项目基于 MIT 协议开源，详情参见 [LICENSE](LICENSE) 文件。
