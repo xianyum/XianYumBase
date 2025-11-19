@@ -2,17 +2,20 @@ package cn.xianyum.starter;
 
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.proxy.infra.container.ProxyServerContainer;
+import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 
-@SpringBootApplication
+// 排除原生数据源自动配置，避免与动态数据源冲突
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @MapperScan("cn.xianyum.**.dao")
 @EnableAspectJAutoProxy(exposeProxy = true)
 @ComponentScan(basePackages = {"cn.xianyum"})
