@@ -7,8 +7,8 @@ import cn.xianyum.message.entity.po.MessageSendConfigEntity;
 import cn.xianyum.message.entity.request.MessageSendConfigRequest;
 import cn.xianyum.message.entity.response.MessageSendConfigResponse;
 import cn.xianyum.message.service.MessageSendConfigService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 消息发送配置接口
  *
  */
-@Api(tags = "消息发送配置接口")
+@Tag(name = "消息发送配置接口")
 @RestController
 @RequestMapping(value = "xym-message/v1/messageSendConfig")
 @Slf4j
@@ -30,7 +30,7 @@ public class MessageSendConfigController {
      * 消息发送配置分页查询数据
      *
      */
-	@ApiOperation(value = "消息发送配置分页查询数据")
+	@Operation(summary = "消息发送配置分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('message:send-config:page')")
 	public Results getPage(MessageSendConfigRequest request) {
@@ -43,7 +43,7 @@ public class MessageSendConfigController {
      * 消息发送配置根据ID查询数据
      *
      */
-    @ApiOperation(value = "消息发送配置根据ID查询数据")
+    @Operation(summary = "消息发送配置根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('message:send-config:query')")
     public Results getById(@PathVariable String id) {
@@ -55,7 +55,7 @@ public class MessageSendConfigController {
      * 消息发送配置保存数据
 	 *
      */
-    @ApiOperation(value = "消息发送配置保存数据")
+    @Operation(summary = "消息发送配置保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('message:send-config:save')")
     public Results save(@RequestBody MessageSendConfigRequest request) {
@@ -71,7 +71,7 @@ public class MessageSendConfigController {
      * 消息发送配置修改数据
 	 *
      */
-    @ApiOperation(value = "消息发送配置修改数据")
+    @Operation(summary = "消息发送配置修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('message:send-config:update')")
     public Results update(@RequestBody MessageSendConfigRequest request) {
@@ -87,7 +87,7 @@ public class MessageSendConfigController {
      * 消息发送配置删除数据
 	 *
      */
-    @ApiOperation(value = "消息发送配置删除数据")
+    @Operation(summary = "消息发送配置删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:send-config:delete')")
     public Results delete(@RequestBody String[] ids) {
@@ -101,7 +101,7 @@ public class MessageSendConfigController {
      * 消息发送配置保存数据
      *
      */
-    @ApiOperation(value = "消息发送配置保存数据")
+    @Operation(summary = "消息发送配置保存数据")
     @PostMapping(value = "/saveOrUpdate")
     @Permission("@ps.hasPerm('message:send-config:save')")
     public Results saveOrUpdate(@RequestBody MessageSendConfigRequest request) {

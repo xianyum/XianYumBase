@@ -8,7 +8,7 @@ import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.service.LogService;
 import com.alibaba.fastjson2.JSONObject;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -77,10 +77,10 @@ public class RequestLogInterceptor {
     private void saveSysLog(ProceedingJoinPoint joinPoint, long time, String requestParam) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
-        ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+        Operation apiOperation = method.getAnnotation(Operation.class);
         if(Objects.nonNull(apiOperation)) {
             LogEntity logEntity = new LogEntity();
-            logEntity.setOperation(apiOperation.value());
+            logEntity.setOperation(apiOperation.summary());
             //请求的方法名
             String className = joinPoint.getTarget().getClass().getName();
             String methodName = methodSignature.getName();

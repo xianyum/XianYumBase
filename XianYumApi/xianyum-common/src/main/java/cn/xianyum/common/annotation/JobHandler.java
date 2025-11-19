@@ -1,5 +1,6 @@
 package cn.xianyum.common.annotation;
 
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
@@ -14,5 +15,6 @@ import java.lang.annotation.*;
 @Component
 public @interface JobHandler {
 
+    @AliasFor(annotation = Component.class, attribute = "value")
     String value();
 }

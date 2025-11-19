@@ -3,14 +3,13 @@ package cn.xianyum.extension.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import cn.xianyum.extension.entity.request.GoldPriceRequest;
 import cn.xianyum.extension.entity.response.GoldPriceResponse;
 import cn.xianyum.extension.service.GoldPriceService;
-
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("xym-extension/v1/goldPrice")
-@Api(tags = "每日黄金金价接口")
+@Tag(name = "每日黄金金价接口")
 public class GoldPriceController{
 
     @Autowired
@@ -33,7 +32,7 @@ public class GoldPriceController{
      * @param request 查询实体
      * @return 分页数据
      */
-	@ApiOperation(value = "分页查询每日黄金金价")
+	@Operation(summary = "分页查询每日黄金金价")
     @GetMapping(value = "/getPage")
     public Results getPage(GoldPriceRequest request) {
 		PageResponse<GoldPriceResponse> responsePage = goldPriceService.getPage(request);
@@ -45,7 +44,7 @@ public class GoldPriceController{
      *
      * @return 分页数据
      */
-    @ApiOperation(value = "获取最新金价")
+    @Operation(summary = "获取最新金价")
     @GetMapping(value = "/getLatestPrice")
     @Permission(publicApi = true)
     public Results getLatestPrice() {
@@ -59,7 +58,7 @@ public class GoldPriceController{
      *
      * @return 分页数据
      */
-    @ApiOperation(value = "获取金价趋势图")
+    @Operation(summary = "获取金价趋势图")
     @GetMapping(value = "/getTrend")
     @Permission(publicApi = true)
     public Results getTrend() {
@@ -72,7 +71,7 @@ public class GoldPriceController{
      *
      * @return 分页数据
      */
-    @ApiOperation(value = "获取K线图")
+    @Operation(summary = "获取K线图")
     @GetMapping(value = "/getKLine")
     @Permission(publicApi = true)
     public Results getKLine() {

@@ -6,8 +6,8 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageTypeConfigRequest;
 import cn.xianyum.message.entity.response.MessageTypeConfigResponse;
 import cn.xianyum.message.service.MessageTypeConfigService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import java.util.List;
  * 消息类型配置表接口
  *
  */
-@Api(tags = "消息类型配置表接口")
+@Tag(name = "消息类型配置表接口")
 @RestController
 @RequestMapping(value = "xym-message/v1/messageTypeConfig")
 @Slf4j
@@ -30,7 +30,7 @@ public class MessageTypeConfigController {
      * 消息类型配置表分页查询数据
      *
      */
-	@ApiOperation(value = "消息类型配置表分页查询数据")
+	@Operation(summary = "消息类型配置表分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('message:type-config:page')")
 	public Results getPage(MessageTypeConfigRequest request) {
@@ -43,7 +43,7 @@ public class MessageTypeConfigController {
      * 消息类型配置表根据ID查询数据
      *
      */
-    @ApiOperation(value = "消息类型配置表根据ID查询数据")
+    @Operation(summary = "消息类型配置表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('message:type-config:query')")
     public Results getById(@PathVariable String id) {
@@ -56,7 +56,7 @@ public class MessageTypeConfigController {
      * 消息类型配置表保存数据
 	 *
      */
-    @ApiOperation(value = "消息类型配置表保存数据")
+    @Operation(summary = "消息类型配置表保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('message:type-config:save')")
     public Results save(@RequestBody MessageTypeConfigRequest request) {
@@ -72,7 +72,7 @@ public class MessageTypeConfigController {
      * 消息类型配置表修改数据
 	 *
      */
-    @ApiOperation(value = "消息类型配置表修改数据")
+    @Operation(summary = "消息类型配置表修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('message:type-config:update')")
     public Results update(@RequestBody MessageTypeConfigRequest request) {
@@ -88,7 +88,7 @@ public class MessageTypeConfigController {
      * 消息类型配置表删除数据
 	 *
      */
-    @ApiOperation(value = "消息类型配置表删除数据")
+    @Operation(summary = "消息类型配置表删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:type-config:delete')")
     public Results delete(@RequestBody String[] ids) {
@@ -102,7 +102,7 @@ public class MessageTypeConfigController {
      * 消息类型配置查询全量数据
      *
      */
-    @ApiOperation(value = "消息类型配置查询全量数据")
+    @Operation(summary = "消息类型配置查询全量数据")
     @GetMapping(value = "/getList")
     public Results getList() {
         List<MessageTypeConfigResponse> responseList = messageTypeConfigService.getList();

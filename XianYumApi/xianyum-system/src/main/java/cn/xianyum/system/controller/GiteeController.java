@@ -3,8 +3,8 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.GiteeSerivce;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("xym-system/v1/gitee")
-@Api(tags = "Gitee相关接口")
+@Tag(name = "Gitee相关接口")
 @Slf4j
 public class GiteeController {
 
@@ -26,7 +26,7 @@ public class GiteeController {
     private GiteeSerivce giteeSerivce;
 
     @PostMapping("/push")
-    @ApiOperation(value = "接受仓库推送请求")
+    @Operation(summary = "接受仓库推送请求")
     @Permission(publicApi = true)
     public Results getIpInfo(@RequestBody String json) {
         log.info("接受的参数:{}",json);

@@ -1,14 +1,13 @@
 package cn.xianyum.system.controller;
 
-
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.service.MenuService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("xym-system/v1/menu")
-@Api(tags = "菜单接口")
+@Tag(name = "菜单接口")
 public class MenuController {
 
     @Autowired
@@ -31,7 +30,7 @@ public class MenuController {
      * 导航栏菜单
      */
     @GetMapping("/nav")
-    @ApiOperation(value = "获取导航菜单以及权限", httpMethod = "GET")
+    @Operation(summary = "获取导航菜单以及权限")
     public Results nav(){
         List<MenuResponse> menuResponses = menuService.getUserMenuList();
         return Results.success(menuResponses);
@@ -41,7 +40,7 @@ public class MenuController {
      * 分页查询菜单列表
      */
     @GetMapping("/getPage")
-    @ApiOperation(value = "分页查询菜单列表")
+    @Operation(summary = "分页查询菜单列表")
     @Permission(value = "@ps.hasPerm('system:menu:page')",ignoreDataScope = true)
     public Results selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
@@ -53,7 +52,7 @@ public class MenuController {
      * 根据菜单编号获取详细信息
      */
     @GetMapping(value = "/{menuId}")
-    @ApiOperation(value = "根据菜单编号获取详细信息")
+    @Operation(summary = "根据菜单编号获取详细信息")
     @Permission(value = "@ps.hasPerm('system:menu:query')",ignoreDataScope = true)
     public Results getInfo(@PathVariable Long menuId) {
         return Results.success(menuService.selectMenuById(menuId));
@@ -64,7 +63,7 @@ public class MenuController {
      * 保存菜单信息
      */
     @PostMapping(value = "/save")
-    @ApiOperation(value = "保存菜单信息")
+    @Operation(summary = "保存菜单信息")
     @Permission("@ps.hasPerm('system:menu:save')")
     public Results save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
@@ -75,7 +74,7 @@ public class MenuController {
      * 更新菜单信息
      */
     @PutMapping(value = "/update")
-    @ApiOperation(value = "保存菜单信息")
+    @Operation(summary = "保存菜单信息")
     @Permission("@ps.hasPerm('system:menu:update')")
     public Results update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
@@ -87,7 +86,7 @@ public class MenuController {
      * 删除菜单
      */
     @DeleteMapping("/{menuId}")
-    @ApiOperation(value = "删除菜单")
+    @Operation(summary = "删除菜单")
     @Permission("@ps.hasPerm('system:menu:delete')")
     public Results remove(@PathVariable("menuId") Long menuId) {
         return Results.success(menuService.deleteMenuById(menuId));

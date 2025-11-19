@@ -6,8 +6,8 @@ import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.service.UserTokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @email 80616059@qq.com
  */
 @RestController
-@Api(tags = "登录接口")
+@Tag(name = "登录接口")
 @Slf4j
 public class LoginController {
 
@@ -43,7 +43,7 @@ public class LoginController {
      * @return
      */
     @PostMapping("/login")
-    @ApiOperation(value = "登录系统")
+    @Operation(summary = "登录系统")
     public Results login(@RequestBody UserRequest userRequest) {
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication;
@@ -71,7 +71,7 @@ public class LoginController {
      * 获取手机验证码
      */
     @PostMapping("/getPhoneCode")
-    @ApiOperation(value = "获取手机验证码")
+    @Operation(summary = "获取手机验证码")
     @Permission(publicApi = true)
     public Results getPhoneCode(@RequestBody UserRequest request) {
         //captchaService.getPhoneCaptcha(request);
@@ -80,7 +80,7 @@ public class LoginController {
 
 
     @PostMapping("/xianYuLogin")
-    @ApiOperation(value = "咸鱼客户端登录系统")
+    @Operation(summary = "咸鱼客户端登录系统")
     @Permission(publicApi = true)
     public Results xianYuLogin(@RequestBody UserRequest userRequest) {
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername

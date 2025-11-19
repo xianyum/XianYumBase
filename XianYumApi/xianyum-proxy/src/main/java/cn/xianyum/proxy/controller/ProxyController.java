@@ -9,8 +9,8 @@ import cn.xianyum.proxy.entity.response.ProxyResponse;
 import cn.xianyum.proxy.service.ProxyLogService;
 import cn.xianyum.proxy.service.ProxyService;
 import cn.xianyum.proxy.task.ProxyDetailsFlushWriteAndReadBytes;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Map;
  * 客户端管理接口
  *
  */
-@Api(tags = "客户端管理接口")
+@Tag(name = "客户端管理接口")
 @RestController
 @RequestMapping(value = "xym-proxy/v1/proxy")
 @Slf4j
@@ -43,7 +43,7 @@ public class ProxyController {
      * 客户端管理分页查询数据
      *
      */
-	@ApiOperation(value = "客户端管理分页查询数据")
+	@Operation(summary = "客户端管理分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(value = "@ps.hasPerm('xianyu:proxy:page')",ignoreDataScope = true)
 	public Results getPage(ProxyRequest request) {
@@ -55,7 +55,7 @@ public class ProxyController {
      * 客户端管理根据ID查询数据
      *
      */
-    @ApiOperation(value = "客户端管理根据ID查询数据")
+    @Operation(summary = "客户端管理根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(value = "@ps.hasPerm('xianyu:proxy:query')",ignoreDataScope = true)
     public Results getById(@PathVariable String id) {
@@ -67,7 +67,7 @@ public class ProxyController {
      * 客户端管理保存数据
 	 *
      */
-    @ApiOperation(value = "客户端管理保存数据")
+    @Operation(summary = "客户端管理保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('xianyu:proxy:save')")
     public Results save(@RequestBody ProxyRequest request) {
@@ -83,7 +83,7 @@ public class ProxyController {
      * 客户端管理修改数据
 	 *
      */
-    @ApiOperation(value = "客户端管理修改数据")
+    @Operation(summary = "客户端管理修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('xianyu:proxy:update')")
     public Results update(@RequestBody ProxyRequest request) {
@@ -99,7 +99,7 @@ public class ProxyController {
      * 客户端管理删除数据
 	 *
      */
-    @ApiOperation(value = "客户端管理删除数据")
+    @Operation(summary = "客户端管理删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('xianyu:proxy:delete')")
     public Results delete(@RequestBody String[] ids) {
@@ -111,7 +111,7 @@ public class ProxyController {
      * 获取客户端所有数据
      *
      */
-    @ApiOperation(value = "获取客户端所有数据")
+    @Operation(summary = "获取客户端所有数据")
     @GetMapping(value = "/getList")
     public Results getList() {
         List<ProxyResponse> response = proxyService.getList();
@@ -123,7 +123,7 @@ public class ProxyController {
      * 数据刷入系统
      *
      */
-    @ApiOperation(value = "刷入系统")
+    @Operation(summary = "刷入系统")
     @PutMapping(value = "/flushProxy")
     @Permission("@ps.hasPerm('xianyu:proxy:flush')")
     public Results flushProxy() {
@@ -136,7 +136,7 @@ public class ProxyController {
      * 发送客户端配置信息
      *
      */
-    @ApiOperation(value = "发送客户端配置信息")
+    @Operation(summary = "发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
     @Permission(value = "@ps.hasPerm('xianyu:proxy:send-email')",ignoreDataScope = true)
     public Results sendEmail(@PathVariable String id) {
@@ -149,7 +149,7 @@ public class ProxyController {
      * 获取在线online数量
      *
      */
-    @ApiOperation(value = "获取在线online数量")
+    @Operation(summary = "获取在线online数量")
     @GetMapping(value = "/getOnlineProxyCount")
     public Results getOnlineProxyCount() {
         return Results.success(proxyService.getOnlineProxyCount());
@@ -160,7 +160,7 @@ public class ProxyController {
      * 获取可绑定的用户列表
      *
      */
-    @ApiOperation(value = "获取可绑定的用户列表")
+    @Operation(summary = "获取可绑定的用户列表")
     @GetMapping(value = "/getProxyBindUser")
     @Permission("@ps.hasPerm('xianyu:proxy:save')")
     public Results getProxyBindUser(@RequestParam(required = false) String id) {
@@ -172,7 +172,7 @@ public class ProxyController {
      * 获取当前用户绑定的客户端配置
      *
      */
-    @ApiOperation(value = "获取当前用户绑定的客户端配置")
+    @Operation(summary = "获取当前用户绑定的客户端配置")
     @GetMapping(value = "/getCurrentProxy")
     public Results getCurrentProxy() {
         return Results.success(proxyService.getCurrentProxy());
@@ -183,7 +183,7 @@ public class ProxyController {
      * @param id
      * @return
      */
-    @ApiOperation(value = "生成客户端配置信息")
+    @Operation(summary = "生成客户端配置信息")
     @PostMapping(value = "/downloadConfig")
     @Permission("@ps.hasPerm('xianyu:proxy:download')")
     public void downloadConfig(@RequestParam String id, HttpServletResponse response) {
@@ -204,7 +204,7 @@ public class ProxyController {
     }
 
 
-    @ApiOperation(value = "重启java应用刷入写入量和读取量")
+    @Operation(summary = "重启java应用刷入写入量和读取量")
     @GetMapping(value = "/flushWriteAndReadBytes")
     @Permission(publicApi = true)
     public Results flushWriteAndReadBytes() throws Exception {

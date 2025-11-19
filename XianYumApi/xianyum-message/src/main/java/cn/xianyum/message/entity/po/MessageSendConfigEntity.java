@@ -27,10 +27,10 @@ public class MessageSendConfigEntity extends BaseEntity {
     private Integer status;
 
     /** 限制发送开始时间（期间内不能发送消息） */
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @TableField(updateStrategy = FieldStrategy.ALWAYS)
     private Date limitSendStartTime;
 
     /** 限制发送结束时间（期间内不能发送消息） */
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @TableField(updateStrategy = FieldStrategy.ALWAYS)
     private Date limitSendEndTime;
 }

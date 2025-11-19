@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-@Mapper
+
 public interface MessageSendConfigMapper extends BaseMapper<MessageSendConfigEntity> {
 
     List<MessageSendConfigResponse> queryList(@Param("request") MessageSendConfigRequest request, Page<MessageSendConfigResponse> page);

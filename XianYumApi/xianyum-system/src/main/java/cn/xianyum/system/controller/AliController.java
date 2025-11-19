@@ -7,8 +7,8 @@ import cn.xianyum.system.entity.request.ThirdOauthRequest;
 import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("xym-system/v1/ali")
-@Api(tags = "阿里相关接口")
+@Tag(name = "阿里相关接口")
 public class AliController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class AliController {
     private AliNetService aliNetService;
 
     @PostMapping("/login")
-    @ApiOperation(value = "支付宝第三方登录")
+    @Operation(summary = "支付宝第三方登录")
     @Permission(publicApi = true)
     public Results login(@RequestBody ThirdOauthRequest aliRequest) {
         LoginUser loginUser = userService.getUserByAli(aliRequest.getAuthCode());
@@ -47,7 +47,7 @@ public class AliController {
     }
 
     @PostMapping("/yunXiao/flowCallBack")
-    @ApiOperation(value = "阿里云-云效-流水线执行结果回调")
+    @Operation(summary = "阿里云-云效-流水线执行结果回调")
     @Permission(publicApi = true)
     public Results flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
@@ -56,7 +56,7 @@ public class AliController {
 
 
     @PostMapping("/bindUser")
-    @ApiOperation(value = "支付宝绑定用户")
+    @Operation(summary = "支付宝绑定用户")
     public Results bindUser(@RequestBody ThirdOauthRequest aliRequest) {
         boolean isSuccess = userService.binAliUser(aliRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");

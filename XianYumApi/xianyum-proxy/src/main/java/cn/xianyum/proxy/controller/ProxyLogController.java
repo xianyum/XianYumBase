@@ -6,19 +6,18 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
 import cn.xianyum.proxy.entity.response.ProxyLogResponse;
 import cn.xianyum.proxy.service.ProxyLogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
  * 远程代理日志接口
  *
  */
-@Api(tags = "远程代理日志接口")
+@Tag(name = "远程代理日志接口")
 @RestController
 @RequestMapping(value = "xym-proxy/v1/proxyLog")
 @Slf4j
@@ -32,7 +31,7 @@ public class ProxyLogController {
      * 远程代理日志分页查询数据
      *
      */
-	@ApiOperation(value = "远程代理日志分页查询数据")
+	@Operation(summary = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
 	public Results getPage(ProxyLogRequest request) {
@@ -44,7 +43,7 @@ public class ProxyLogController {
      * 远程代理日志根据ID查询数据
      *
      */
-    @ApiOperation(value = "远程代理日志根据ID查询数据")
+    @Operation(summary = "远程代理日志根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
     public Results getById(@PathVariable Long id) {
@@ -58,7 +57,7 @@ public class ProxyLogController {
      * 通过客户端上报数据
 	 *
      */
-    @ApiOperation(value = "通过客户端上报数据")
+    @Operation(summary = "通过客户端上报数据")
     @PostMapping(value = "/reportClientInfo")
     @Permission(publicApi = true)
     public Results reportClientInfo(@RequestBody ProxyLogRequest request) {
@@ -74,7 +73,7 @@ public class ProxyLogController {
      * 远程代理日志删除数据
 	 *
      */
-    @ApiOperation(value = "远程代理日志删除数据")
+    @Operation(summary = "远程代理日志删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('xianyu:proxy-log:delete')")
     public Results delete(@RequestBody Long[] ids) {
@@ -83,7 +82,7 @@ public class ProxyLogController {
     }
 
 
-    @ApiOperation(value = "查询最近十条数据")
+    @Operation(summary = "查询最近十条数据")
     @GetMapping(value = "/getLastProxyLog")
     public Results getLastProxyLog(ProxyLogRequest request) {
         List<ProxyLogResponse> response = proxyLogService.getLastProxyLog(request);

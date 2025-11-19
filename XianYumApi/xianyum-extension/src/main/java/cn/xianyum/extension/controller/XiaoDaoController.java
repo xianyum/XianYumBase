@@ -5,8 +5,8 @@ import cn.xianyum.extension.entity.response.XiaoDaoResponse;
 import cn.xianyum.extension.service.XiaoDaoService;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("xym-extension/v1/xiaodao")
-@Api(tags = "小刀爬取数据接口")
+@Tag(name = "小刀爬取数据接口")
 public class XiaoDaoController {
 
     @Autowired
     private XiaoDaoService xiaoDaoService;
 
     @GetMapping("/getPage")
-    @ApiOperation(value = "获取小刀数据列表")
+    @Operation(summary = "获取小刀数据列表")
     public Results getPage(XiaoDaoRequest request){
         PageResponse<XiaoDaoResponse> list = xiaoDaoService.getPage(request);
         return Results.page(list);

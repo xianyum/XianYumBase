@@ -4,15 +4,14 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.extension.entity.po.server.Server;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Api;
+import cn.xianyum.extension.service.ServerConfigService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import cn.xianyum.extension.entity.request.ServerConfigRequest;
 import cn.xianyum.extension.entity.response.ServerConfigResponse;
-import cn.xianyum.extension.service.ServerConfigService;
-
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("xym-extension/v1/serverConfig")
-@Api(tags = "主机维护接口")
+@Tag(name = "主机维护接口")
 public class ServerConfigController{
 
     @Autowired
@@ -35,7 +34,7 @@ public class ServerConfigController{
      * @param request 查询实体
      * @return 分页数据
      */
-	@ApiOperation(value = "分页查询主机维护")
+	@Operation(summary = "分页查询主机维护")
     @GetMapping(value = "/getPage")
     @Permission(value = "@ps.hasPerm('server-config:page')")
     public Results getPage(ServerConfigRequest request) {
@@ -49,7 +48,7 @@ public class ServerConfigController{
      *
      * @param request 查询实体
      */
-    @ApiOperation(value = "查询主机维护list")
+    @Operation(summary = "查询主机维护list")
     @GetMapping(value = "/getList")
     @Permission(value = "@ps.hasPerm('server-config:query')")
     public Results getList(ServerConfigRequest request) {
@@ -63,7 +62,7 @@ public class ServerConfigController{
      * @param id 主键
      * @return 单条数据
      */
-	@ApiOperation(value = "根据ID查询主机维护")
+	@Operation(summary = "根据ID查询主机维护")
     @GetMapping("getById/{id}")
     @Permission(value = "@ps.hasPerm('server-config:query')")
     public Results selectOne(@PathVariable Long id) {
@@ -76,7 +75,7 @@ public class ServerConfigController{
      * @param request
      * @return 新增结果
      */
-	@ApiOperation(value = "主机维护保存数据")
+	@Operation(summary = "主机维护保存数据")
     @PostMapping(value = "/save")
     @Permission(value = "@ps.hasPerm('server-config:save')")
     public Results insert(@RequestBody ServerConfigRequest request) {
@@ -89,7 +88,7 @@ public class ServerConfigController{
      * @param request
      * @return 修改结果
      */
-	@ApiOperation(value = "主机维护更新数据")
+	@Operation(summary = "主机维护更新数据")
     @PutMapping(value = "/update")
     @Permission(value = "@ps.hasPerm('server-config:update')")
     public Results update(@RequestBody ServerConfigRequest request) {
@@ -102,7 +101,7 @@ public class ServerConfigController{
      * @param ids 主键集合
      * @return 删除结果
      */
-	@ApiOperation(value = "主机维护批量删除数据")
+	@Operation(summary = "主机维护批量删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(value = "@ps.hasPerm('server-config:delete')")
     public Results delete(@RequestBody Long[] ids) {
@@ -111,7 +110,7 @@ public class ServerConfigController{
 
 
     @GetMapping("/current")
-    @ApiOperation(value = "获取当前jar启动服务器相关信息")
+    @Operation(summary = "获取当前jar启动服务器相关信息")
     @Permission("@ps.hasPerm('monitor:server:list')")
     @SneakyThrows
     public Results getServerInfo(){

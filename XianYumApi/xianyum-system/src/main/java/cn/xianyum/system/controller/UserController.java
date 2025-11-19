@@ -10,12 +10,11 @@ import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
 import cn.xianyum.system.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 
@@ -24,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("xym-system/v1/user")
-@Api(tags = "用户接口")
+@Tag(name = "用户接口")
 public class UserController {
 
     @Autowired
@@ -34,7 +33,7 @@ public class UserController {
      * 分页获取用户列表
      */
     @GetMapping("/getPage")
-    @ApiOperation(value = "分页获取用户列表")
+    @Operation(summary = "分页获取用户列表")
     @Permission(value = "@ps.hasPerm('system:user:page')",ignoreDataScope = true)
     public Results getPage(UserRequest user){
         PageResponse<UserResponse> list = userService.getPage(user);
@@ -45,7 +44,7 @@ public class UserController {
      * 获取登录的用户信息
      */
     @GetMapping("/info")
-    @ApiOperation(value = "获取登录的用户信息", httpMethod = "GET")
+    @Operation(summary = "获取登录的用户信息")
     public Results info(){
         LoginUser userEntity = userService.getUserSelf();
         return Results.success().put("user", userEntity);
@@ -57,7 +56,7 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/delete")
-    @ApiOperation(value = "删除用户")
+    @Operation(summary = "删除用户")
     @Permission("@ps.hasPerm('system:user:delete')")
     public Results delete(@RequestBody String[] userIds){
         try {
@@ -72,7 +71,7 @@ public class UserController {
      * 根据Id查询用户
      */
     @GetMapping("/getById/{id}")
-    @ApiOperation(value = "根据Id查询用户")
+    @Operation(summary = "根据Id查询用户")
     @Permission(value = "@ps.hasPerm('system:user:query')",ignoreDataScope = true)
     public Results selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
@@ -84,7 +83,7 @@ public class UserController {
      * 根据Id查询用户
      */
     @GetMapping("/getByRoleId/{roleId}")
-    @ApiOperation(value = "根据角色ID查询用户")
+    @Operation(summary = "根据角色ID查询用户")
     @Permission(value = "@ps.hasPerm('system:role:user')")
     public Results getByRoleId(@PathVariable String roleId){
         List<UserResponse> userResponse = userService.getByRoleId(roleId);
@@ -95,7 +94,7 @@ public class UserController {
      * 保存用户
      */
     @PostMapping("/save")
-    @ApiOperation(value = "保存用户")
+    @Operation(summary = "保存用户")
     @Permission("@ps.hasPerm('system:user:save')")
     public Results save(@RequestBody UserRequest user){
         try {
@@ -115,7 +114,7 @@ public class UserController {
      * 修改用户
      */
     @PutMapping("/update")
-    @ApiOperation(value = "修改用户", httpMethod = "POST", notes = "修改用户")
+    @Operation(summary = "修改用户")
     @Permission("@ps.hasPerm('system:user:update')")
     public Results update(@RequestBody UserRequest user){
         try {
@@ -132,7 +131,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    @ApiOperation(value = "修改密码")
+    @Operation(summary = "修改密码")
     public Results updatePassword(@RequestBody UpdatePasswordRequest info){
         ValidatorUtils.validateEntity(info);
         boolean flag = userService.updatePassword(info);
@@ -144,7 +143,7 @@ public class UserController {
 
 
     @PutMapping("/changeStatus")
-    @ApiOperation(value = "修改用户状态")
+    @Operation(summary = "修改用户状态")
     @Permission("@ps.hasPerm('system:user:update')")
     public Results updatePassword(@RequestBody UserRequest request){
         int count = userService.changeStatus(request);
@@ -155,7 +154,7 @@ public class UserController {
      * 更新当前用户信息
      */
     @PutMapping ("/updateCurrentUser")
-    @ApiOperation(value = "更新当前用户信息")
+    @Operation(summary = "更新当前用户信息")
     public Results updateCurrentUser(@RequestBody UserRequest user){
         int count = userService.updateCurrentUser(user);
         if(count>0){
@@ -167,7 +166,7 @@ public class UserController {
 
 
     @PostMapping("/upload")
-    @ApiOperation(value = "上传图像接口", httpMethod = "POST")
+    @Operation(summary = "上传图像接口")
     public Results upload(@RequestParam("file") MultipartFile file){
         String imageUrl = userService.upload(file);
         return Results.success(imageUrl);

@@ -6,8 +6,8 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.sheduler.entity.request.JobRequest;
 import cn.xianyum.sheduler.entity.response.JobResponse;
 import cn.xianyum.sheduler.service.JobService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 定时任务调度表接口
  *
  */
-@Api(tags = "定时任务调度表接口")
+@Tag(name = "定时任务调度表接口")
 @RestController
 @RequestMapping(value = "xym-sheduler/v1/job")
 @Slf4j
@@ -30,7 +30,7 @@ public class JobController {
      * 定时任务调度表分页查询数据
      *
      */
-	@ApiOperation(value = "定时任务调度表分页查询数据")
+	@Operation(summary = "定时任务调度表分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('job:mange:page')")
 	public Results getPage(JobRequest request) {
@@ -42,7 +42,7 @@ public class JobController {
      * 定时任务调度表根据ID查询数据
      *
      */
-    @ApiOperation(value = "定时任务调度表根据ID查询数据")
+    @Operation(summary = "定时任务调度表根据ID查询数据")
     @GetMapping(value = "/getById/{jobId}")
     @Permission("@ps.hasPerm('job:mange:query')")
     public Results getById(@PathVariable Long jobId){
@@ -54,7 +54,7 @@ public class JobController {
      * 定时任务调度表保存数据
 	 *
      */
-    @ApiOperation(value = "定时任务调度表保存数据")
+    @Operation(summary = "定时任务调度表保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('job:mange:save')")
     public Results save(@RequestBody JobRequest request) {
@@ -74,7 +74,7 @@ public class JobController {
      * 定时任务调度表修改数据
 	 *
      */
-    @ApiOperation(value = "定时任务调度表修改数据")
+    @Operation(summary = "定时任务调度表修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('job:mange:update')")
     public Results update(@RequestBody JobRequest request) {
@@ -94,7 +94,7 @@ public class JobController {
      * 定时任务调度表删除数据
 	 *
      */
-    @ApiOperation(value = "定时任务调度表删除数据")
+    @Operation(summary = "定时任务调度表删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('job:mange:delete')")
     public Results delete(@RequestBody Long[] ids) {
@@ -111,7 +111,7 @@ public class JobController {
      * 更新任务状态
      *
      */
-    @ApiOperation(value = "更新任务状态")
+    @Operation(summary = "更新任务状态")
     @PutMapping(value = "/changeStatus")
     @Permission("@ps.hasPerm('job:mange:update')")
     public Results changeStatus(@RequestBody JobRequest request) {
@@ -128,7 +128,7 @@ public class JobController {
      * @param request
      * @return
      */
-    @ApiOperation(value = "立即执行一次")
+    @Operation(summary = "立即执行一次")
     @PutMapping(value = "/runOnce")
     @Permission("@ps.hasPerm('job:mange:once')")
     public Results runOnce(@RequestBody JobRequest request) {

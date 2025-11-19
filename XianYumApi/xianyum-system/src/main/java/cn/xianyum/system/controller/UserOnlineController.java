@@ -6,8 +6,8 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
 import cn.xianyum.system.entity.response.UserOnlineResponse;
 import cn.xianyum.system.service.UserOnlineService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("xym-system/v1/online")
-@Api(tags = "在线用户接口")
+@Tag(name = "在线用户接口")
 @Slf4j
 public class UserOnlineController {
 
@@ -29,7 +29,7 @@ public class UserOnlineController {
      * 获取在线用户列表
      */
     @GetMapping("/getPage")
-    @ApiOperation(value = "获取在线用户列表")
+    @Operation(summary = "获取在线用户列表")
     @Permission("@ps.hasPerm('monitor:online:page')")
     public Results list(UserOnlineRequest request){
         PageResponse<UserOnlineResponse> responsePage = userOnlineService.queryPage(request);
@@ -42,7 +42,7 @@ public class UserOnlineController {
      * @return
      */
     @DeleteMapping("/delete")
-    @ApiOperation(value = "踢出用户")
+    @Operation(summary = "踢出用户")
     @Permission("@ps.hasPerm('monitor:online:exit')")
     public Results delete(@RequestBody String[] tokenIds){
         userOnlineService.delete(tokenIds);

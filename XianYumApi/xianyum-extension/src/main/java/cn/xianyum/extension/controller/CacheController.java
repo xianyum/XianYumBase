@@ -2,8 +2,8 @@ package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
@@ -11,7 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.*;
 
 /**
@@ -20,14 +19,14 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("xym-extension/v1/cache")
-@Api(tags = "缓存接口")
+@Tag(name = "缓存接口")
 public class CacheController {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @GetMapping("/getInfo")
-    @ApiOperation(value = "查询Redis缓存基本信息")
+    @Operation(summary = "查询Redis缓存基本信息")
     @Permission("@ps.hasPerm('monitor:cache:list')")
     public Results getInfo() {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());

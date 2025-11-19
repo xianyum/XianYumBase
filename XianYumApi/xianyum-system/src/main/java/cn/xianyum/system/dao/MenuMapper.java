@@ -15,7 +15,7 @@ import java.util.Set;
  * @date 2019/5/25 19:29
  * @email 80616059@qq.com
  */
-@Mapper
+
 public interface MenuMapper extends BaseMapper<MenuEntity> {
 
     List<MenuEntity> selectMenuTreeByUserId(@RequestParam("userId") String userId);

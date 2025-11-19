@@ -31,13 +31,13 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dynamic.datasource.boot.version>3.5.0</dynamic.datasource.boot.version>
-        <mybatisplus.boot.version>3.5.3.2</mybatisplus.boot.version>
+        <dynamic.datasource.boot.version>4.3.1</dynamic.datasource.boot.version>
+        <mybatisplus.boot.version>3.5.14</mybatisplus.boot.version>
         <fastjson.version>2.0.50</fastjson.version>
         <okhttps.fastjson.version>4.0.1</okhttps.fastjson.version>
         <joda.time.version>2.12.7</joda.time.version>
         <lombok.version>1.18.38</lombok.version>
-        <druid.version>1.2.18</druid.version>
+        <druid.version>1.2.23</druid.version>
         <captcha.version>1.3.0</captcha.version>
         <easy.excel.version>4.0.3</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
@@ -45,16 +45,15 @@
         <oshi.version>6.6.3</oshi.version>
         <commons.io.version>2.16.0</commons.io.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
-        <hibernate.version>7.0.2.Final</hibernate.version>
-        <swagger.version>3.0.0</swagger.version>
-        <swagger.models.version>1.6.2</swagger.models.version>
-        <quartz.version>2.3.2</quartz.version>
-        <commons.codec.version>1.9</commons.codec.version>
-        <prometheus.version>1.12.1</prometheus.version>
-        <actuator.version>2.7.18</actuator.version>
+        <quartz.version>2.5.1</quartz.version>
+        <commons.codec.version>1.20.0</commons.codec.version>
+        <prometheus.version>1.16.0</prometheus.version>
         <mysql-connector.version>8.0.33</mysql-connector.version>
         <okio.version>3.9.0</okio.version>
         <cglib.version>3.3.0</cglib.version>
+        <jakarta.version>6.0.0</jakarta.version>
+        <springdoc.version>2.8.9</springdoc.version>
+        <mybatis.spring.version>3.0.5</mybatis.spring.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -69,7 +68,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${actuator.version}</version>
+                <version>3.5.7</version>
             </dependency>
 
             <dependency>
@@ -78,11 +77,25 @@
                 <version>${quartz.version}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>com.alibaba</groupId>-->
-<!--                <artifactId>druid-spring-boot-starter</artifactId>-->
-<!--                <version>${druid.version}</version>-->
-<!--            </dependency>-->
+            <!-- 阿里数据库连接池 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta.version}</version>
+            </dependency>
+
+            <!-- 添加 Spring Boot 验证 starter，自动引入 Hibernate Validator -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>3.5.7</version>
+            </dependency>
 
             <dependency>
                 <groupId>joda-time</groupId>
@@ -103,26 +116,6 @@
                 <version>${okio.version}</version>
             </dependency>
 
-            <!-- Swagger3依赖 -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-models</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- 防止进入swagger页面报类型转换错误，排除3.0.0中的引用，手动增加1.6.2版本 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-models</artifactId>
-                <version>${swagger.models.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -137,7 +130,13 @@
             <!--mybatis-plus-->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatisplus.boot.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatisplus.boot.version}</version>
             </dependency>
 
@@ -168,6 +167,13 @@
                 <version>${alipay.version}</version>
             </dependency>
 
+            <!-- spring-doc -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
             <!--阿里easyExcel-->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -187,13 +193,6 @@
                 <groupId>com.github.oshi</groupId>
                 <artifactId>oshi-core</artifactId>
                 <version>${oshi.version}</version>
-            </dependency>
-
-            <!-- hibernate校验 -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>${hibernate.version}</version>
             </dependency>
 
             <!-- io常用工具类 -->

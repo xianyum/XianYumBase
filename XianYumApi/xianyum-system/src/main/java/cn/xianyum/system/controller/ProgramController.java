@@ -13,8 +13,8 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.fastjson2.JSONObject;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("xym-system/v1/program")
-@Api(tags = "程序设计接口")
+@Tag(name = "程序设计接口")
 @Slf4j
 public class ProgramController {
 
@@ -42,7 +42,7 @@ public class ProgramController {
      * 所有用户列表
      */
     @PostMapping("/getPage")
-    @ApiOperation(value = "获取程序设计列表", httpMethod = "POST")
+    @Operation(summary = "获取程序设计列表")
     public Results getPage(@RequestBody ProgramRequest request){
         PageResponse<ProgramResponse> list = programService.getPage(request);
         return Results.page(list);
@@ -53,14 +53,14 @@ public class ProgramController {
      * 根据Id查询用户
      */
     @PostMapping("/selectById")
-    @ApiOperation(value = "根据Id查询程序设计", httpMethod = "POST")
+    @Operation(summary = "根据Id查询程序设计")
     public Results selectOneById(@RequestBody ProgramRequest request){
         ProgramEntity info = programService.selectOneById(request);
         return Results.success(info);
     }
 
     @PostMapping("/save")
-    @ApiOperation(value = "保存程序记录操作", httpMethod = "POST")
+    @Operation(summary = "保存程序记录操作")
     public Results save(@RequestBody ProgramRequest request){
         int count = programService.save(request);
         if(count>0){
@@ -72,7 +72,7 @@ public class ProgramController {
 
 
     @PostMapping("/update")
-    @ApiOperation(value = "更新程序记录操作", httpMethod = "POST")
+    @Operation(summary = "更新程序记录操作")
     public Results update(@RequestBody ProgramRequest request){
         int count = programService.update(request);
         if(count>0){
@@ -83,7 +83,7 @@ public class ProgramController {
     }
 
     @PostMapping("/delete")
-    @ApiOperation(value = "删除程序操作", httpMethod = "POST")
+    @Operation(summary = "删除程序操作")
     public Results delete(@RequestBody String[] ids){
         try {
             programService.deleteById(ids);
@@ -95,7 +95,7 @@ public class ProgramController {
 
 
     @PostMapping("/complete")
-    @ApiOperation(value = "完成程序订单操作", httpMethod = "POST")
+    @Operation(summary = "完成程序订单操作")
     public Results complete(@RequestBody ProgramRequest request){
         try {
             programService.complete(request);
@@ -107,7 +107,7 @@ public class ProgramController {
 
 
     @PostMapping("/schedule")
-    @ApiOperation(value = "查询订单实时进度", httpMethod = "POST")
+    @Operation(summary = "查询订单实时进度")
     public Results schedule(@RequestBody ProgramRequest request){
         List<JSONObject> info = programService.schedule(request);
         return Results.success(info);
@@ -115,7 +115,7 @@ public class ProgramController {
 
 
     @PostMapping("/export")
-    @ApiOperation(value = "导出程序订单列表", httpMethod = "POST")
+    @Operation(summary = "导出程序订单列表")
     public void export(@RequestBody ProgramRequest request, HttpServletResponse response){
         ExcelWriter excelWriter = null;
         try {

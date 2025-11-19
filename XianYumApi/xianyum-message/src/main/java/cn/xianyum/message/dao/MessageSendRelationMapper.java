@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
 
-@Mapper
+
 public interface MessageSendRelationMapper extends BaseMapper<MessageSendRelationEntity> {
 
 }

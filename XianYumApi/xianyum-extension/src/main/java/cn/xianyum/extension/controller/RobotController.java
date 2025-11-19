@@ -1,14 +1,12 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.RobotRequest;
-import cn.xianyum.extension.entity.request.ServerConfigRequest;
 import cn.xianyum.extension.entity.response.RobotResponse;
 import cn.xianyum.extension.service.RobotService;
 import com.alibaba.fastjson2.JSONObject;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,14 +22,14 @@ import jakarta.annotation.Resource;
 
 @RestController
 @RequestMapping("xym-extension/v1/robot")
-@Api(tags = "机器人接口")
+@Tag(name = "机器人接口")
 @Slf4j
 public class RobotController {
 
     @Resource
     private RobotService robotService;
 
-    @ApiOperation(value = "机器人自动回复")
+    @Operation(summary = "机器人自动回复")
     @PostMapping(value = "/auto-reply")
     @Permission(publicApi = true)
     public RobotResponse autoReply(@RequestBody RobotRequest request) {

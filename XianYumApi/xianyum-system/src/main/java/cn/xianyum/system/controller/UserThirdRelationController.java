@@ -3,12 +3,11 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.response.UserThirdRelationResponse;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import cn.xianyum.system.service.UserThirdRelationService;
-
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("xym-system/v1/userThirdRelation")
-@Api(tags = "三方平台账号接口")
+@Tag(name = "三方平台账号接口")
 public class UserThirdRelationController{
 
     @Autowired
@@ -27,7 +26,7 @@ public class UserThirdRelationController{
 
 
     @GetMapping("/getCurrentUserThirdRelation")
-    @ApiOperation(value = "获取当前用户绑定三方账号列表")
+    @Operation(summary = "获取当前用户绑定三方账号列表")
     @Permission(ignoreDataScope = true)
     public Results getCurrentUserThirdRelation() {
         List<UserThirdRelationResponse> responseList = userThirdRelationService.getCurrentUserThirdRelation();
@@ -40,7 +39,7 @@ public class UserThirdRelationController{
      * @param id 主键
      * @return 解除绑定
      */
-	@ApiOperation(value = "解除绑定三方账号")
+	@Operation(summary = "解除绑定三方账号")
     @DeleteMapping(value = "/unbind")
     public Results unbind(@RequestBody String id) {
         return Results.success(this.userThirdRelationService.unbind(id));

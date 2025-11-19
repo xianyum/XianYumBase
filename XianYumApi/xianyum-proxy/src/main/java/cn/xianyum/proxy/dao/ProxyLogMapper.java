@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
-@Mapper
+
 public interface ProxyLogMapper extends BaseMapper<ProxyLogEntity> {
 
     IPage<ProxyLogEntity> getPage(@Param("request") ProxyLogRequest request, Page<ProxyLogEntity> page);

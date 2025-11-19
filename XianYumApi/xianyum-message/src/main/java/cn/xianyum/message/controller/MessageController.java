@@ -4,8 +4,8 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageSenderRequest;
 import cn.xianyum.message.service.MessageService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @description
  * @date 2022/1/3 18:56
  */
-@Api(tags = "消息接口")
+@Tag(name = "消息接口")
 @RestController
 @RequestMapping("xym-message/v1/message")
 @Slf4j
@@ -26,7 +26,7 @@ public class MessageController {
     private MessageService messageService;
 
     @PostMapping("/sendSimpleMessage")
-    @ApiOperation(value = "发送简单消息")
+    @Operation(summary = "发送简单消息")
     @Permission(publicApi = true)
     public Results sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
@@ -34,7 +34,7 @@ public class MessageController {
     }
 
     @PostMapping("/sendStandardMessage")
-    @ApiOperation(value = "发送标准消息")
+    @Operation(summary = "发送标准消息")
     @Permission(publicApi = true)
     public Results sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
         messageService.sendStandardMessage(messageSenderRequest);
@@ -42,7 +42,7 @@ public class MessageController {
     }
 
     @GetMapping("/sendSimpleMessage")
-    @ApiOperation(value = "发送简单消息")
+    @Operation(summary = "发送简单消息")
     @Permission(publicApi = true)
     public Results sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
