@@ -13,7 +13,6 @@ xian_yum:
     #  最大存活时间
     keep-alive-seconds: 60
 
-
 redis:
   user:
     data: '${spring.application.name}:xianyum-system:user'
@@ -55,7 +54,6 @@ oss:
   bucket: xianyum
   url: http://oss.xianyum.cn/
 
-
 qq:
   # qq第三方登录配置
   login:
@@ -66,14 +64,6 @@ qq:
     redirect_uri: http://xianyum.cn/#/checkQQLogin
     open_id_url: https://graph.qq.com/oauth2.0/me
     user_info_url: https://graph.qq.com/user/get_user_info
-
-
-# Swagger配置
-swagger:
-  # 是否开启swagger
-  enabled: true
-  # 请求前缀
-  pathMapping: /api
 
 proxy:
   ssl:
@@ -132,46 +122,32 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  redis:
-    #    database: 0 #Redis数据库索引（默认为0）
-    host: mpw:2E9HoOOXusIU22BFOQ8Jkg== # Redis服务器地址
-    port: 6379 # Redis服务器连接端口
-    password: mpw:lPtxqC6SC8fZdY6XfYfoVNLzYus1r0wtsvYxPdLAtXA= # Redis服务器连接密码（默认为空）
-    timeout: 5000 # 连接超时时间（毫秒）
-    jedis:
-      pool:
-        max-active: 10 # 连接池中的最小空闲连接
-        max-wait: 3s # 连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-idle: 20 # 连接池中的最大空闲连接
-        min-idle: 0 # 最大活跃连接数，负数为不限制
+  data:
+    redis:
+      #    database: 0 #Redis数据库索引（默认为0）
+      host: mpw:2E9HoOOXusIU22BFOQ8Jkg== # Redis服务器地址
+      port: 6379 # Redis服务器连接端口
+      password: mpw:lPtxqC6SC8fZdY6XfYfoVNLzYus1r0wtsvYxPdLAtXA= # Redis服务器连接密码（默认为空）
+      timeout: 5000 # 连接超时时间（毫秒）
   autoconfigure:
-    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure  # 为了某些版本的springboot  @SpringBootApplication(exclude= {DataSourceAutoConfiguration.class}) 无法生效
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfiguration
   datasource:
-    druid:
-      stat-view-servlet:
-        #默认为false，表示不使用StatViewServlet配置，就是属性名去短线
-        enabled: true
-        #配置DruidStatViewServlet的访问地址。后台监控页面的访问地址
-        url-pattern: /druid/*
-        #禁用HTML页面上的“重置”功能，会把所有监控的数据全部清空，一般不使用
-        reset-enable: false
-        #监控页面登录的用户名
-        login-username: admin
-        #监控页面登录的密码
-        login-password: mpw:UByz+M4cr4n8EkCiGLQjZw==
     dynamic:
       primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
+      strict: false # 关闭严格模式，允许单数据源（可选）
       datasource:
         master:
           url: mpw:sR3rIglLgps1SmEJaf5ZL/sqWUPkJppWu8SeRPfUF7CE1pGXJmozB9aLADOJJU3O8GBFDdhfeOgFnJordt6S/ePKzAmT+5CcqMNBVp1p6m5SQ20g+GKl7sMdFy48DxbhMfsifmVwmGCT4MpRhv4hKNAMEgihh+6TDhNmgQTe1TTLEQzXKT9gLwdQnZpiowUM7MyjWggS9tJ4VbkmnE/5Hg==
           username: mpw:F3RIuQ2oysG5oe7LzHrHOQ==
           password: mpw:lPtxqC6SC8fZdY6XfYfoVNLzYus1r0wtsvYxPdLAtXA=
-          driverClassName:  com.mysql.cj.jdbc.Driver
-        slave:
-          url: jdbc:mysql://localhost:3306/BaseDemo?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-          username: root
-          password: 80616059
-          driverClassName:  com.mysql.cj.jdbc.Driver
+          driverClassName: com.mysql.cj.jdbc.Driver
+#        slave:
+#          url: jdbc:mysql://localhost:3306/BaseDemo?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#          username: root
+#          password: 80616059
+#          driverClassName: com.mysql.cj.jdbc.Driver
       initial-size: 10 # 以下是连接池配置
       max-active: 100
       min-idle: 10
@@ -189,6 +165,62 @@ spring:
           log-slow-sql: true
           slow-sql-millis: 1000
           merge-sql: false
+        wall:
+          config:
+            multi-statement-allow: true
+    # 3. 全局 Druid 配置（所有数据源共享，优先级低于单个数据源的 druid 配置）
+    druid:
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置连接超时时间
+      connectTimeout: 30000
+      # 配置网络超时时间
+      socketTimeout: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 配置监控统计拦截的filters  stat=>监控统计 wall=>防SQL注入 slf4j log4j2=>日志记录
+      filters: stat,wall,slf4j,log4j2
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 配置spring监控的匹配类
+      aop-patterns: com.ruoyi.*.service.*,com.ruoyi.*.mapper.*
+      # Web应用 和 URL监控 配置
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+        session-stat-enable: false  # 是否开启session统计功能
+      # 监控视图配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: true      # 是否可以重置日志
+        login-username: admin   # 用户名
+        login-password: mpw:UByz+M4cr4n8EkCiGLQjZw==  # 密码
+        allow: ""               # IP白名单 (没有配置或者为空，则允许所有访问)
+        deny: ""                # IP黑名单 (存在共同时，deny优先于allow)
+      filter:
+        stat:
+          enabled: true
+          # 慢SQL记录
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
         wall:
           config:
             multi-statement-allow: true

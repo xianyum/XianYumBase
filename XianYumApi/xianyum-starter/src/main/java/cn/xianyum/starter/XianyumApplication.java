@@ -2,7 +2,6 @@ package cn.xianyum.starter;
 
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.proxy.infra.container.ProxyServerContainer;
-import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
