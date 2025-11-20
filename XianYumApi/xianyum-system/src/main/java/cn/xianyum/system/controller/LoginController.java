@@ -44,6 +44,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     @Operation(summary = "登录系统")
+    @Permission(publicApi = true)
     public Results login(@RequestBody UserRequest userRequest) {
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication;

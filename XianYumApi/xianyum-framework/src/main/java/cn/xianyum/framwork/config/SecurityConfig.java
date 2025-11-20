@@ -113,8 +113,8 @@ public class SecurityConfig{
                     // 对于登录login 注册register 验证码captchaImage 允许匿名访问
                     requests
                             // 匿名访问的静态资源
-                            .requestMatchers(HttpMethod.GET, "/", "/*.html", "/**.html", "/**.css", "/**.js", "/profile/**").permitAll()
-                            .requestMatchers("/index.html", "/v3/api-docs/**", "/swagger-ui/**", "/druid/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/", "/*.html", "/**.html", "/**.css", "/**.js","/profile/**","/oss/getImage").permitAll()
+                            .requestMatchers("/index.html", "/v3/api-docs/**", "/swagger-ui/**", "/druid/**","/actuator/**").permitAll()
                             // 除上面外的所有请求全部需要鉴权认证
                             .anyRequest().authenticated();
                 });
