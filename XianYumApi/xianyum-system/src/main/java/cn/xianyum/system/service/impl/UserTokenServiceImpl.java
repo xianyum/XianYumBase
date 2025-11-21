@@ -84,7 +84,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         String token = UUIDUtils.UUIDReplace();
         Date now = new Date();
         //过期时间
-        Date expireTime = new Date(now.getTime() + expire * 1000);
+        Date expireTime = new Date(now.getTime() + expire * 86400L * 1000L);
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
 
