@@ -27,8 +27,32 @@ public class XianyumApplication {
         ProxyServerContainer proxyServerContainer = new ProxyServerContainer();
         proxyServerContainer.start();
         Environment env = run.getEnvironment();
-        String msg = "\n----------------------------------------------------------\n应用 '{}' 启动成功， JDK版本号：{} ！\nswagger文档：http://{}:{}{}/swagger-ui/index.html\nnacos地址：http://{}/nacos\n当前环境变量：{}";
-        log.info(msg,env.getProperty("spring.application.name"), env.getProperty("java.version"), IPUtils.getHostIp(), env.getProperty("server.port"), env.getProperty("server.servlet.context-path", ""),env.getProperty("spring.cloud.nacos.discovery.server-addr",""),env.getProperty("spring.profiles.active","default"));
+        printStartupLog(env);
     }
 
+    public static void printStartupLog(Environment env) {
+        String STARTUP_MSG = "\n----------------------------------------------------------" +
+                "\n应用 '{}' 启动成功，JDK版本号：{} ！" +
+                "\nswagger文档：http://{}:{}{}/swagger-ui/index.html" +
+                "\ndruid地址：http://{}:{}/druid/login.html" +
+                "\n当前环境变量：{}" +
+                "\n----------------------------------------------------------";
+        // 获取配置参数
+        String appName = env.getProperty("spring.application.name", "unknown");
+        String jdkVersion = env.getProperty("java.version", "");
+        String hostIp = IPUtils.getHostIp();
+        String serverPort = env.getProperty("server.port", "");
+        String contextPath = env.getProperty("server.servlet.context-path", ""); // 应用上下文路径（默认空）
+        String activeEnv = env.getProperty("spring.profiles.active", "default");
+        log.info(STARTUP_MSG,
+                appName,          // 占位符1：应用名
+                jdkVersion,       // 占位符2：JDK版本
+                hostIp,           // 占位符3：swagger - IP
+                serverPort,       // 占位符4：swagger - 端口
+                contextPath,      // 占位符5：swagger - 上下文路径
+                hostIp,           // 占位符6：druid - IP
+                serverPort,       // 占位符7：druid - 端口
+                activeEnv         // 占位符8：当前环境
+        );
+    }
 }

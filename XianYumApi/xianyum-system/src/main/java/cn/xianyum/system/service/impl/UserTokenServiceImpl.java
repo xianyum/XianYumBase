@@ -19,7 +19,7 @@ import java.util.Date;
 @Service
 public class UserTokenServiceImpl implements UserTokenService {
 
-    @Value("${redis.token.expire:60}")
+    @Value("${redis.token.expire:30}")
     private Integer expire;
 
     @Value("${redis.token.prefix:token}")
@@ -88,7 +88,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
 
-        redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
+        redisUtils.setDay(prefix+token,JSONObject.toJSONString(loginUser),expire);
         Results result = Results.success().put("token", token).put("expire", expireTime);
         return result;
     }
