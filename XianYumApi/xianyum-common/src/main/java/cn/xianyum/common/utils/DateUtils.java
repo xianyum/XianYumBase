@@ -301,6 +301,37 @@ public class DateUtils {
     }
 
     /**
+     * 获取上个月的开始时间：上个月1号 00:00:00.000
+     * @return Date 类型
+     */
+    public static Date getLastMonthStartTime() {
+        return new DateTime(DateTimeZone.getDefault())
+                .dayOfMonth().setCopy(1)          // 先设置为当月1号
+                .minusMonths(1)                  // 减去1个月 → 上个月1号
+                .hourOfDay().setCopy(0)          // 小时：00
+                .minuteOfHour().setCopy(0)       // 分钟：00
+                .secondOfMinute().setCopy(0)     // 秒：00
+                .millisOfSecond().setCopy(0)     // 毫秒：000
+                .toDate();
+    }
+
+    /**
+     * 获取上个月的结束时间：上个月最后1天 23:59:59.999
+     * @return Date 类型
+     */
+    public static Date getLastMonthEndTime() {
+        return new DateTime(DateTimeZone.getDefault())
+                .dayOfMonth().setCopy(1)          // 先设置为当月1号
+                .minusMonths(1)                  // 减去1个月 → 上个月1号
+                .dayOfMonth().withMaximumValue() // 上个月最后1天
+                .hourOfDay().withMaximumValue()  // 小时：23
+                .minuteOfHour().withMaximumValue() // 分钟：59
+                .secondOfMinute().withMaximumValue() // 秒：59
+                .millisOfSecond().withMaximumValue() // 毫秒：999
+                .toDate();
+    }
+
+    /**
      * 获取近一年的开始日期（当前日期往前推12个月的日期，时间为00:00:00）
      * @return Date 近一年开始日期
      */

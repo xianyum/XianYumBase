@@ -2,8 +2,6 @@ package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.utils.BigDecimalUtils;
 import cn.xianyum.common.utils.DateUtils;
-import cn.xianyum.common.utils.Results;
-import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
@@ -12,7 +10,6 @@ import cn.xianyum.extension.entity.response.RobotResponse;
 import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.service.GoldPriceService;
 import cn.xianyum.extension.service.RobotService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 
@@ -46,9 +43,12 @@ public class RobotServiceImpl implements RobotService {
     // 匹配 # + 03（作为首个指令，前面可无内容，也可允许前导空白）
     private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^\\s*#03\\b.*");
 
+    // 匹配 # + 03（作为首个指令，前面可无内容，也可允许前导空白）
+    private static final Pattern PATTERN_04_SIMPLE = Pattern.compile("^\\s*#04\\b.*");
+
     // 匹配 #04 + 日期 + 两个数字（完整格式，前面可允许前导空白）
     // 分组1：日期（yyyy-MM-dd），分组2：第一个数字，分组3：第二个数字
-    private static final Pattern PATTERN_04_FULL = Pattern.compile("^\\s*#04[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
+    private static final Pattern PATTERN_05_FULL = Pattern.compile("^\\s*#05[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
 
     // 匹配+ 帮助/菜单（作为首个指令，前面可无内容，也可允许前导空白）
     private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*#(帮助|菜单)(\\s|$).*");
@@ -76,23 +76,34 @@ public class RobotServiceImpl implements RobotService {
                 );
                 robotResponse.setReplyContent(Objects.isNull(response)
                         ? "\n暂未查到行驶记录"
-                        : buildEvDriveRecordsSummaryMessage(response)
+                        : buildEvDriveRecordsSummaryMessage(response,DateUtils.getMonthStartTime(),DateUtils.getMonthEndTime())
                 );
             }
             // 匹配包含03但不符合完整格式的内容
             case String s when PATTERN_03_SIMPLE.matcher(s).matches() -> {
+                EvDriveRecordsSummaryResponse response = this.queryEvDriveRecordsSummary(
+                        DateUtils.format(DateUtils.getLastMonthStartTime()),
+                        DateUtils.format(DateUtils.getLastMonthEndTime())
+                );
+                robotResponse.setReplyContent(Objects.isNull(response)
+                        ? "\n暂未查到行驶记录"
+                        : buildEvDriveRecordsSummaryMessage(response,DateUtils.getLastMonthStartTime(),DateUtils.getLastMonthEndTime())
+                );
+            }
+            // 匹配包含04但不符合完整格式的内容
+            case String s when PATTERN_04_SIMPLE.matcher(s).matches() -> {
                 EvDriveRecordsSummaryResponse response = this.queryEvDriveRecordsSummary(
                         DateUtils.format(DateUtils.getLastYearStartTime()),
                         DateUtils.format(DateUtils.getLastYearEndTime())
                 );
                 robotResponse.setReplyContent(Objects.isNull(response)
                         ? "\n暂未查到行驶记录"
-                        : buildEvDriveRecordsSummaryMessage(response)
+                        : buildEvDriveRecordsSummaryMessage(response,DateUtils.getLastMonthStartTime(),DateUtils.getLastYearEndTime())
                 );
             }
-            // 匹配03+日期+数字的完整格式（优先匹配）
-            case String s when PATTERN_04_FULL.matcher(s).matches() -> {
-                var matcher = PATTERN_04_FULL.matcher(s);
+            // 匹配05+日期+数字的完整格式（优先匹配）
+            case String s when PATTERN_05_FULL.matcher(s).matches() -> {
+                var matcher = PATTERN_05_FULL.matcher(s);
                 matcher.matches(); // 已匹配，直接提取分组
                 String driveDateStr = matcher.group(1);
                 // 行驶的公里数
@@ -154,17 +165,19 @@ public class RobotServiceImpl implements RobotService {
         return "\n支持以下功能(请发送命令查看)：" +
                 "\n#01：查看金价" +
                 "\n#02：查看本月行驶记录" +
-                "\n#03：查看近一年行驶记录" +
-                "\n#04：保存记录(例2025-11-11 100 20)";
+                "\n#03：查看上个月行驶记录" +
+                "\n#04：查看近一年行驶记录" +
+                "\n#05：保存记录(例2025-11-11 100 20)";
     }
 
     // 构建行驶记录消息
-    private String buildEvDriveRecordsSummaryMessage(EvDriveRecordsSummaryResponse records) {
+    private String buildEvDriveRecordsSummaryMessage(EvDriveRecordsSummaryResponse records, Date startTime, Date endTime) {
         return String.format(
-                "\n总行驶里程：%s km\n总耗电量：%skWh\n每公里耗电量：%skWh/km",
+                "\n总行驶里程：%s km\n总耗电量：%skWh\n每公里耗电量：%skWh/km\n统计时间段：%s",
                 records.getTotalDistanceKm(),
                 records.getTotalElectricityConsumed(),
-                records.getElectricityPerKm()
+                records.getElectricityPerKm(),
+                DateUtils.format(startTime, DateUtils.DATE_PATTERN)+"至"+DateUtils.format(endTime, DateUtils.DATE_PATTERN)
         );
     }
 
