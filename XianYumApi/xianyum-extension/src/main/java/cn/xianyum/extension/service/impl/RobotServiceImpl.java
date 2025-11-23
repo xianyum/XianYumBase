@@ -172,7 +172,7 @@ public class RobotServiceImpl implements RobotService {
     // 构建行驶记录消息
     private String buildEvDriveRecordsSummaryMessage(EvDriveRecordsSummaryResponse records, String timeRangeStr) {
         return String.format(
-                "\n总行驶里程：%s km\n总耗电量：%skWh\n每公里耗电量：%skWh/km\n时间范围：%s",
+                "\n总行驶里程：%skm\n总耗电量：%skWh\n每公里耗电量：%skWh/km\n时间范围：%s",
                 records.getTotalDistanceKm(),
                 records.getTotalElectricityConsumed(),
                 records.getElectricityPerKm(),
