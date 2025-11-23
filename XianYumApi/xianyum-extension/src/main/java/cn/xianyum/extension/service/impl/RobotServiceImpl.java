@@ -12,7 +12,6 @@ import cn.xianyum.extension.service.GoldPriceService;
 import cn.xianyum.extension.service.RobotService;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -43,10 +42,10 @@ public class RobotServiceImpl implements RobotService {
     // 匹配 # + 03（作为首个指令，前面可无内容，也可允许前导空白）
     private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^\\s*#03\\b.*");
 
-    // 匹配 # + 03（作为首个指令，前面可无内容，也可允许前导空白）
+    // 匹配 # + 04（作为首个指令，前面可无内容，也可允许前导空白）
     private static final Pattern PATTERN_04_SIMPLE = Pattern.compile("^\\s*#04\\b.*");
 
-    // 匹配 #04 + 日期 + 两个数字（完整格式，前面可允许前导空白）
+    // 匹配 #05 + 日期 + 两个数字（完整格式，前面可允许前导空白）
     // 分组1：日期（yyyy-MM-dd），分组2：第一个数字，分组3：第二个数字
     private static final Pattern PATTERN_05_FULL = Pattern.compile("^\\s*#05[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
 
@@ -76,7 +75,7 @@ public class RobotServiceImpl implements RobotService {
                 );
                 robotResponse.setReplyContent(Objects.isNull(response)
                         ? "\n暂未查到行驶记录"
-                        : buildEvDriveRecordsSummaryMessage(response,DateUtils.getMonthStartTime(),DateUtils.getMonthEndTime())
+                        : buildEvDriveRecordsSummaryMessage(response,"本月")
                 );
             }
             // 匹配包含03但不符合完整格式的内容
@@ -87,7 +86,7 @@ public class RobotServiceImpl implements RobotService {
                 );
                 robotResponse.setReplyContent(Objects.isNull(response)
                         ? "\n暂未查到行驶记录"
-                        : buildEvDriveRecordsSummaryMessage(response,DateUtils.getLastMonthStartTime(),DateUtils.getLastMonthEndTime())
+                        : buildEvDriveRecordsSummaryMessage(response,"上月")
                 );
             }
             // 匹配包含04但不符合完整格式的内容
@@ -98,7 +97,7 @@ public class RobotServiceImpl implements RobotService {
                 );
                 robotResponse.setReplyContent(Objects.isNull(response)
                         ? "\n暂未查到行驶记录"
-                        : buildEvDriveRecordsSummaryMessage(response,DateUtils.getLastMonthStartTime(),DateUtils.getLastYearEndTime())
+                        : buildEvDriveRecordsSummaryMessage(response,"近一年")
                 );
             }
             // 匹配05+日期+数字的完整格式（优先匹配）
@@ -171,13 +170,13 @@ public class RobotServiceImpl implements RobotService {
     }
 
     // 构建行驶记录消息
-    private String buildEvDriveRecordsSummaryMessage(EvDriveRecordsSummaryResponse records, Date startTime, Date endTime) {
+    private String buildEvDriveRecordsSummaryMessage(EvDriveRecordsSummaryResponse records, String timeRangeStr) {
         return String.format(
-                "\n总行驶里程：%s km\n总耗电量：%skWh\n每公里耗电量：%skWh/km\n统计时间段：%s",
+                "\n总行驶里程：%s km\n总耗电量：%skWh\n每公里耗电量：%skWh/km\n时间范围：%s",
                 records.getTotalDistanceKm(),
                 records.getTotalElectricityConsumed(),
                 records.getElectricityPerKm(),
-                DateUtils.format(startTime, DateUtils.DATE_PATTERN)+"至"+DateUtils.format(endTime, DateUtils.DATE_PATTERN)
+                timeRangeStr
         );
     }
 
