@@ -37,20 +37,21 @@ public class RobotServiceImpl implements RobotService {
     @Resource
     private EvDriveRecordsService evDriveRecordsService;
 
-    // 匹配 @用户名 + （任意空白/分隔符） + 01/金价（作为首个指令）
-    private static final Pattern PATTERN_01 = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+(01|金价).*");
+    // 匹配 # + 01/金价（作为首个指令，前面可无内容，也可允许前导空白）
+    private static final Pattern PATTERN_01 = Pattern.compile("^\\s*#(01|金价)\\b.*");
 
-    // 匹配 @用户名 + （任意空白/分隔符） + 02（作为首个指令）
-    private static final Pattern PATTERN_02 = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+02\\b.*");
+    // 匹配 # + 02（作为首个指令，前面可无内容，也可允许前导空白）
+    private static final Pattern PATTERN_02 = Pattern.compile("^\\s*#02\\b.*");
 
-    // 匹配 @用户名 + （任意空白/分隔符） + 03（作为首个指令）
-    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+03\\b.*");
+    // 匹配 # + 03（作为首个指令，前面可无内容，也可允许前导空白）
+    private static final Pattern PATTERN_03_SIMPLE = Pattern.compile("^\\s*#03\\b.*");
 
-    // 匹配 @用户名 + （任意空白/分隔符） + 04 + 日期 + 两个数字（完整格式）
-    private static final Pattern PATTERN_04_FULL = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+04[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
+    // 匹配 #04 + 日期 + 两个数字（完整格式，前面可允许前导空白）
+    // 分组1：日期（yyyy-MM-dd），分组2：第一个数字，分组3：第二个数字
+    private static final Pattern PATTERN_04_FULL = Pattern.compile("^\\s*#04[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
 
-    // 匹配 @用户名 + （任意空白/分隔符） + 帮助/菜单（作为首个指令）
-    private static final Pattern PATTERN_HELP = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+(帮助|菜单)\\b.*");
+    // 匹配 # + 帮助/菜单（作为首个指令，前面可无内容，也可允许前导空白）
+    private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*#(帮助|菜单)\\b.*");
 
     @Override
     public RobotResponse autoReply(String content) {
@@ -151,10 +152,10 @@ public class RobotServiceImpl implements RobotService {
     // 构建帮助信息
     private String buildHelpMessage() {
         return "\n支持以下功能(请发送命令查看)：" +
-                "\n01：查看金价" +
-                "\n02：查看本月行驶记录" +
-                "\n03：查看近一年行驶记录" +
-                "\n04：保存某天行驶记录";
+                "\n#01：查看金价" +
+                "\n#02：查看本月行驶记录" +
+                "\n#03：查看近一年行驶记录" +
+                "\n#04：保存记录(例2025-11-11 100 20)";
     }
 
     // 构建行驶记录消息
