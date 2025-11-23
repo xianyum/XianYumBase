@@ -50,8 +50,8 @@ public class RobotServiceImpl implements RobotService {
     // 分组1：日期（yyyy-MM-dd），分组2：第一个数字，分组3：第二个数字
     private static final Pattern PATTERN_04_FULL = Pattern.compile("^\\s*#04[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
 
-    // 匹配 # + 帮助/菜单（作为首个指令，前面可无内容，也可允许前导空白）
-    private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*#(帮助|菜单)\\b.*");
+    // 匹配+ 帮助/菜单（作为首个指令，前面可无内容，也可允许前导空白）
+    private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*(帮助|菜单)(\\s|$).*");
 
     @Override
     public RobotResponse autoReply(String content) {
