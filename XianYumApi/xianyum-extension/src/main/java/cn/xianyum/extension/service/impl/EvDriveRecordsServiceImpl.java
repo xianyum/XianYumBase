@@ -125,6 +125,15 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
      */
     @Override
     public void checkForDuplicateData(EvDriveRecordsRequest request) {
+        if(Objects.isNull(request.getDistanceKm())){
+            throw new SoException("行驶公里数不能为空");
+        }
+        if(Objects.isNull(request.getElectricityConsumed())){
+            throw new SoException("消耗的电量不能为空");
+        }
+        if(Objects.isNull(request.getDriveDate())){
+            throw new SoException("行驶的日期不能为空");
+        }
         LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
                 .eq(EvDriveRecordsEntity::getDriveDate,request.getDriveDate());
         EvDriveRecordsEntity evDriveRecordsEntity = this.evDriveRecordsMapper.selectOne(queryWrapper);

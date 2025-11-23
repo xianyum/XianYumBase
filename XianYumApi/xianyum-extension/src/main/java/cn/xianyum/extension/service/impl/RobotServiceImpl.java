@@ -1,16 +1,22 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.xianyum.common.utils.BigDecimalUtils;
 import cn.xianyum.common.utils.DateUtils;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
 import cn.xianyum.extension.entity.response.GoldPriceResponse;
 import cn.xianyum.extension.entity.response.RobotResponse;
+import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.service.GoldPriceService;
 import cn.xianyum.extension.service.RobotService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
+
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -27,6 +33,9 @@ public class RobotServiceImpl implements RobotService {
 
     @Resource
     private EvDriveRecordsMapper evDriveRecordsMapper;
+
+    @Resource
+    private EvDriveRecordsService evDriveRecordsService;
 
     // 匹配 @用户名 + （任意空白/分隔符） + 01/金价（作为首个指令）
     private static final Pattern PATTERN_01 = Pattern.compile("^@[^\\s]+[\\p{Z}\\s]+(01|金价).*");
@@ -84,14 +93,12 @@ public class RobotServiceImpl implements RobotService {
             case String s when PATTERN_04_FULL.matcher(s).matches() -> {
                 var matcher = PATTERN_04_FULL.matcher(s);
                 matcher.matches(); // 已匹配，直接提取分组
-                String date = matcher.group(1);
-                int param1 = Integer.parseInt(matcher.group(2));
-                int param2 = Integer.parseInt(matcher.group(3));
-                // 处理带参数的04逻辑（示例）
-                robotResponse.setReplyContent(String.format(
-                        "\n04带参数查询：日期=%s, 参数1=%d, 参数2=%d",
-                        date, param1, param2
-                ));
+                String driveDateStr = matcher.group(1);
+                // 行驶的公里数
+                Integer distanceKm = Integer.parseInt(matcher.group(2));
+                // 行驶消耗电量
+                BigDecimal electricityConsumed = BigDecimalUtils.formatString(matcher.group(3));
+                robotResponse.setReplyContent(this.saveEvDriveRecords(driveDateStr,distanceKm,electricityConsumed));
             }
 
             // 匹配帮助/菜单
@@ -102,6 +109,28 @@ public class RobotServiceImpl implements RobotService {
             default -> robotResponse.setReplyContent("\n请发送帮助查看功能");
         }
         return robotResponse;
+    }
+
+
+    /**
+     * 返回replyContent
+     * @param driveDateStr
+     * @param distanceKm
+     * @param electricityConsumed
+     * @return
+     */
+    private String saveEvDriveRecords(String driveDateStr, Integer distanceKm, BigDecimal electricityConsumed) {
+        try {
+            EvDriveRecordsRequest evDriveRecordsRequest = new EvDriveRecordsRequest();
+            evDriveRecordsRequest.setMatter(Collections.singletonList("10"));
+            evDriveRecordsRequest.setElectricityConsumed(electricityConsumed);
+            evDriveRecordsRequest.setDistanceKm(distanceKm);
+            evDriveRecordsRequest.setDriveDate(DateUtils.stringToDate(driveDateStr, DateUtils.DATE_PATTERN));
+            Integer saveCount = this.evDriveRecordsService.save(evDriveRecordsRequest);
+            return saveCount > 0 ? "保存成功" : "保存失败";
+        }catch (Exception e){
+            return e.getMessage();
+        }
     }
 
     /**
