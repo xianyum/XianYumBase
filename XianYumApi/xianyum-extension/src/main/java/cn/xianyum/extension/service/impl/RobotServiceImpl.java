@@ -51,7 +51,7 @@ public class RobotServiceImpl implements RobotService {
     private static final Pattern PATTERN_04_FULL = Pattern.compile("^\\s*#04[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
 
     // 匹配+ 帮助/菜单（作为首个指令，前面可无内容，也可允许前导空白）
-    private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*(帮助|菜单)(\\s|$).*");
+    private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*#(帮助|菜单)(\\s|$).*");
 
     @Override
     public RobotResponse autoReply(String content) {
@@ -107,7 +107,7 @@ public class RobotServiceImpl implements RobotService {
                 robotResponse.setReplyContent(buildHelpMessage());
             }
             // 默认情况
-            default -> robotResponse.setReplyContent("\n请发送帮助查看功能");
+            default -> robotResponse.setReplyContent("\n请发送[#帮助]查看功能");
         }
         return robotResponse;
     }
