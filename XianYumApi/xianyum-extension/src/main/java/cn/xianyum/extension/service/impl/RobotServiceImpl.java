@@ -46,8 +46,7 @@ public class RobotServiceImpl implements RobotService {
     private static final Pattern PATTERN_04_SIMPLE = Pattern.compile("^\\s*#04\\b.*");
 
     // 匹配 #05 + 日期 + 两个数字（完整格式，前面可允许前导空白）
-    // 分组1：日期（yyyy-MM-dd），分组2：第一个数字，分组3：第二个数字
-    private static final Pattern PATTERN_05_FULL = Pattern.compile("^\\s*#05[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+)$");
+    private static final Pattern PATTERN_05_FULL = Pattern.compile("^\\s*#05[\\p{Z}\\s]+(\\d{4}-\\d{2}-\\d{2})[\\p{Z}\\s]+(\\d+)[\\p{Z}\\s]+(\\d+(\\.\\d+)?)$");
 
     // 匹配+ 帮助/菜单（作为首个指令，前面可无内容，也可允许前导空白）
     private static final Pattern PATTERN_HELP = Pattern.compile("^\\s*#(帮助|菜单)(\\s|$).*");
