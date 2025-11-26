@@ -10,6 +10,7 @@ import cn.xianyum.extension.entity.response.RobotResponse;
 import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.service.GoldPriceService;
 import cn.xianyum.extension.service.RobotService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
  * @date 2025/7/8 23:09
  */
 @Service
+@Slf4j
 public class RobotServiceImpl implements RobotService {
 
     @Resource
@@ -139,6 +141,7 @@ public class RobotServiceImpl implements RobotService {
             Integer saveCount = this.evDriveRecordsService.save(evDriveRecordsRequest);
             return saveCount > 0 ? "保存成功" : "保存失败";
         }catch (Exception e){
+            log.error("机器人保存行驶记录异常,{},{},{}",driveDateStr,distanceKm,electricityConsumed,e);
             return e.getMessage();
         }
     }

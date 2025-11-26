@@ -3,10 +3,7 @@ package cn.xianyum.extension.service.impl;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
-import cn.xianyum.common.utils.BigDecimalUtils;
-import cn.xianyum.common.utils.StringUtil;
-import cn.xianyum.common.utils.SystemConstantUtils;
+import cn.xianyum.common.utils.*;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -135,7 +132,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
             throw new SoException("行驶的日期不能为空");
         }
         LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
-                .eq(EvDriveRecordsEntity::getDriveDate,request.getDriveDate());
+                .apply("DATE(drive_date) = {0}", DateUtils.format(request.getDriveDate(), DateUtils.DATE_PATTERN));
         EvDriveRecordsEntity evDriveRecordsEntity = this.evDriveRecordsMapper.selectOne(queryWrapper);
         boolean isRepeatData = !(Objects.isNull(evDriveRecordsEntity) || evDriveRecordsEntity.getId().equals(request.getId()));
         if(isRepeatData){
