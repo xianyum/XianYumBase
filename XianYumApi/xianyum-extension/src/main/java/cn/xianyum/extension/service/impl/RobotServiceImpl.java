@@ -142,10 +142,10 @@ public class RobotServiceImpl implements RobotService {
             evDriveRecordsRequest.setDistanceKm(distanceKm);
             evDriveRecordsRequest.setDriveDate(DateUtils.stringToDate(driveDateStr, DateUtils.DATE_PATTERN));
             Integer saveCount = this.evDriveRecordsService.save(evDriveRecordsRequest);
-            String successMessage = "\n保存成功！\nid：%s\n日期：%s\n公里数：%skm\n电耗：%skWH\n每公里电耗：%skWH/km";
+            String successMessage = "\n保存成功！\nid：%s\n公里数：%skm\n电耗：%skWH\n每公里电耗：%skWH/km\n日期：%s";
             if(saveCount > 0){
                 EvDriveRecordsResponse response = this.evDriveRecordsService.selectByDay(evDriveRecordsRequest.getDriveDate());
-                return String.format(successMessage,response.getId(),driveDateStr, response.getDistanceKm(),response.getElectricityConsumed(), response.getElectricityPerKm());
+                return String.format(successMessage,response.getId(), response.getDistanceKm(),response.getElectricityConsumed(), response.getElectricityPerKm(),driveDateStr);
             }
             return Constants.SAVE_ERROR_MESSAGE;
         }catch (Exception e){
