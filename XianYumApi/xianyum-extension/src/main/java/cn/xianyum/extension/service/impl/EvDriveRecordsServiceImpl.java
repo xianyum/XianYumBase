@@ -84,7 +84,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         this.checkForDuplicateData(request);
         EvDriveRecordsEntity bean = BeanUtils.copy(request, EvDriveRecordsEntity.class);
         BigDecimal electricityPerKm = BigDecimalUtils.divide(bean.getElectricityConsumed(), new BigDecimal(String.valueOf(bean.getDistanceKm())));
-        bean.setElectricityPerKm(electricityPerKm);
+        bean.setElectricityPerKm(Objects.nonNull(electricityPerKm)?electricityPerKm:BigDecimal.ZERO);
         boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
         bean.setStatus(isNormalStatus? YesOrNoEnum.YES.getStatus() : YesOrNoEnum.NO.getStatus());
         return evDriveRecordsMapper.insert(bean);
