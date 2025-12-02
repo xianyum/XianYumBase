@@ -1,9 +1,12 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.utils.BigDecimalUtils;
 import cn.xianyum.common.utils.DateUtils;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
+import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
 import cn.xianyum.extension.entity.response.GoldPriceResponse;
 import cn.xianyum.extension.entity.response.RobotResponse;
@@ -139,7 +142,12 @@ public class RobotServiceImpl implements RobotService {
             evDriveRecordsRequest.setDistanceKm(distanceKm);
             evDriveRecordsRequest.setDriveDate(DateUtils.stringToDate(driveDateStr, DateUtils.DATE_PATTERN));
             Integer saveCount = this.evDriveRecordsService.save(evDriveRecordsRequest);
-            return saveCount > 0 ? "保存成功" : "保存失败";
+            String successMessage = "\n保存成功！\nid：%s\n日期：%s\n公里数：%skm\n电耗：%skWH\n每公里电耗：%skWH/km";
+            if(saveCount > 0){
+                EvDriveRecordsResponse response = this.evDriveRecordsService.selectByDay(evDriveRecordsRequest.getDriveDate());
+                return String.format(successMessage,response.getId(),driveDateStr, response.getDistanceKm(),response.getElectricityConsumed(), response.getElectricityPerKm());
+            }
+            return Constants.SAVE_ERROR_MESSAGE;
         }catch (Exception e){
             log.error("机器人保存行驶记录异常,{},{},{}",driveDateStr,distanceKm,electricityConsumed,e);
             return e.getMessage();

@@ -131,10 +131,8 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         if(Objects.isNull(request.getDriveDate())){
             throw new SoException("行驶的日期不能为空");
         }
-        LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
-                .apply("DATE(drive_date) = {0}", DateUtils.format(request.getDriveDate(), DateUtils.DATE_PATTERN));
-        EvDriveRecordsEntity evDriveRecordsEntity = this.evDriveRecordsMapper.selectOne(queryWrapper);
-        boolean isRepeatData = !(Objects.isNull(evDriveRecordsEntity) || evDriveRecordsEntity.getId().equals(request.getId()));
+        EvDriveRecordsResponse evDriveRecordsResponse = this.selectByDay(request.getDriveDate());
+        boolean isRepeatData = !(Objects.isNull(evDriveRecordsResponse) || evDriveRecordsResponse.getId().equals(request.getId()));
         if(isRepeatData){
             throw new SoException("存在重复的驾驶日期数据");
         }
@@ -167,6 +165,14 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public EvDriveRecordsResponse selectByDay(Date driveDate) {
+        LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
+                .apply("DATE(drive_date) = {0}", DateUtils.format(driveDate, DateUtils.DATE_PATTERN));
+        EvDriveRecordsEntity evDriveRecordsEntity = this.evDriveRecordsMapper.selectOne(queryWrapper);
+        return BeanUtils.copy(evDriveRecordsEntity, EvDriveRecordsResponse.class);
     }
 }
 

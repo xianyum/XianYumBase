@@ -86,4 +86,6 @@ public class Constants {
     /** 法定节假日url */
     public static final String HOLIDAY_URL= "http://timor.tech/api/holiday/year/%s?t=%s";
 
+
+    public static final String SAVE_ERROR_MESSAGE = "保存失败";
 }

@@ -6,6 +6,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import com.alibaba.fastjson2.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -41,4 +42,11 @@ public interface EvDriveRecordsService {
      * @return
      */
     boolean checkNormalStatus(BigDecimal electricityPerKm);
+
+    /**
+     * 获取某一天的驾驶数据
+     * @param driveDate
+     * @return
+     */
+    EvDriveRecordsResponse selectByDay(Date driveDate);
 }
