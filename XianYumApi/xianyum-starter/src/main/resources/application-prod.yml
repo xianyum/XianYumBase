@@ -54,6 +54,14 @@ oss:
   bucket: xianyum
   url: http://oss.xianyum.cn/
 
+mqtt:
+  port: 9191
+  host: 0.0.0.0
+  # 账号密码认证配置
+  enabled: true  # 是否开启认证
+  username: admin  # 默认用户名
+  password: mpw:P8B/0naUJeBYRk1luSXKVQ==  # 默认密码
+
 qq:
   # qq第三方登录配置
   login:

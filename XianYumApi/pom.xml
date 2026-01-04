@@ -26,6 +26,7 @@
         <module>xianyum-starter</module>
         <module>xianyum-message</module>
         <module>xianyum-sheduler</module>
+        <module>xianyum-mqtt</module>
     </modules>
 
     <properties>
@@ -54,11 +55,26 @@
         <jakarta.version>6.0.0</jakarta.version>
         <springdoc.version>2.8.9</springdoc.version>
         <mybatis.spring.version>3.0.5</mybatis.spring.version>
+        <moquette.version>0.17</moquette.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>io.moquette</groupId>
+                <artifactId>moquette-broker</artifactId>
+                <version>${moquette.version}</version>
+                <!-- 排除冲突的netty -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>netty-all</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>

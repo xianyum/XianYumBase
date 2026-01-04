@@ -88,4 +88,10 @@ public class Constants {
 
 
     public static final String SAVE_ERROR_MESSAGE = "保存失败";
+
+    /** 端口 */
+    public final static String MQTT_PORT_FIELD = "port";
+
+    /** host地址 */
+    public final static String MQTT_HOST_FIELD = "host";
 }

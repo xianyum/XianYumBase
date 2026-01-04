@@ -2,8 +2,11 @@ package cn.xianyum.common.utils;
 
 
 import cn.xianyum.common.constant.Constants;
+import io.netty.buffer.ByteBuf;
 import org.apache.commons.lang3.StringUtils;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -370,4 +373,26 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
     public static boolean ishttp(String link) {
         return StringUtils.startsWithAny(link, Constants.HTTP, Constants.HTTPS);
     }
+
+    /**
+     * 兼容所有ByteBuf类型（Direct/Heap），转为字节数组
+     */
+    public static byte[] byteBuf2Bytes(ByteBuf byteBuf) {
+        if (byteBuf == null || byteBuf.readableBytes() == 0) {
+            return new byte[0];
+        }
+        byte[] bytes = new byte[byteBuf.readableBytes()];
+        // getBytes：只读不修改指针；readBytes：会移动指针（慎用）
+        byteBuf.getBytes(byteBuf.readerIndex(), bytes);
+        return bytes;
+    }
+
+    /**
+     * ByteBuf 直接转为UTF-8字符串
+     */
+    public static String byteBuf2Utf8String(ByteBuf byteBuf) {
+        byte[] bytes = byteBuf2Bytes(byteBuf);
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
 }
