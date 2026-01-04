@@ -55,7 +55,7 @@ oss:
   url: http://oss.xianyum.cn/
 
 mqtt:
-  port: 9191
+  port: 9102
   host: 0.0.0.0
   # 账号密码认证配置
   enabled: true  # 是否开启认证
