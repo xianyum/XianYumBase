@@ -1,8 +1,8 @@
 {
-    "name" : "若依移动端",
+    "name" : "XianYumApp",
     "appid" : "__UNI__25A9D80",
     "description" : "",
-    "versionName" : "1.2.0",
+    "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
     "app-plus" : {
