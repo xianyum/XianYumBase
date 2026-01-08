@@ -255,9 +255,10 @@
 						canvasId: 'myCanvas',
 						success: function (res) {
 							uni.hideLoading()
-							let data = {name: 'avatarfile', filePath: res.tempFilePath}
+							let data = {name: 'file', filePath: res.tempFilePath}
 							uploadAvatar(data).then(response => {
-								store.commit('SET_AVATAR', baseUrl + response.imgUrl)
+                console.log(response)
+								store.commit('SET_AVATAR', response.msg)
 								uni.showToast({ title: "修改成功", icon: 'success' })
 								uni.navigateBack()
 							})

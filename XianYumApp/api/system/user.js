@@ -34,7 +34,7 @@ export function updateUserProfile(data) {
 // 用户头像上传
 export function uploadAvatar(data) {
   return upload({
-    url: '/system/user/profile/avatar',
+    url: '/xym-system/v1/user/upload',
     name: data.name,
     filePath: data.filePath
   })
