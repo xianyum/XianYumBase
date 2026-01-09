@@ -41,6 +41,10 @@ const user = {
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
       storage.set(constant.permissions, permissions)
+    },
+    SET_NICKNAME: (state, nickName) => {
+      state.nickName = nickName
+      storage.set(constant.nickName, nickName)
     }
   },
 
@@ -82,6 +86,7 @@ const user = {
           commit('SET_ID', userid)
           commit('SET_NAME', username)
           commit('SET_AVATAR', avatar)
+          commit('SET_NICKNAME', user.nickName)
           resolve(res)
         }).catch(error => {
           reject(error)

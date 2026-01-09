@@ -1,12 +1,6 @@
 <template>
   <view class="setting-container" :style="{height: `${windowHeight}px`}">
     <view class="menu-list">
-      <view class="list-cell list-cell-arrow" @click="handleToPwd">
-        <view class="menu-item-box">
-          <view class="iconfont icon-password menu-icon"></view>
-          <view>修改密码</view>
-        </view>
-      </view>
       <view class="list-cell list-cell-arrow" @click="handleToUpgrade">
         <view class="menu-item-box">
           <view class="iconfont icon-refresh menu-icon"></view>
@@ -38,9 +32,6 @@
       }
     },
     methods: {
-      handleToPwd() {
-        this.$tab.navigateTo('/pages/mine/pwd/index')
-      },
       handleToUpgrade() {
         this.$modal.showToast('开发中...')
       },

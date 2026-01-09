@@ -28,11 +28,11 @@
         <text class="text-grey1">没有账号？</text>
         <text @click="handleUserRegister" class="text-blue">立即注册</text>
       </view>
-<!--      <view class="xieyi text-center">
+      <view class="xieyi text-center">
         <text class="text-grey1">登录即代表同意</text>
-        <text @click="handleUserAgrement" class="text-blue">《用户协议》</text>
-        <text @click="handlePrivacy" class="text-blue">《隐私协议》</text>
-      </view> -->
+        <text  @tap="handleUserAgreement" class="text-blue">《用户协议》</text>
+        <text @tap="handlePrivacy" class="text-blue">《隐私协议》</text>
+      </view>
     </view>
      
   </view>
@@ -62,11 +62,9 @@
       // this.getCode()
     },
     onLoad() {
-      //#ifdef H5
       if (getToken()) {
         this.$tab.reLaunch('/pages/index')
       }
-      //#endif
     },
     methods: {
       // 用户注册
@@ -76,12 +74,12 @@
       // 隐私协议
       handlePrivacy() {
         let site = this.globalConfig.appInfo.agreements[0]
-        this.$tab.navigateTo(`/pages/common/webview/index?title=${site.title}&url=${site.url}`)
+        this.$tab.navigateTo(`/pages/common/protocol/index?type=privacy`)
       },
       // 用户协议
-      handleUserAgrement() {
+      handleUserAgreement() {
         let site = this.globalConfig.appInfo.agreements[1]
-        this.$tab.navigateTo(`/pages/common/webview/index?title=${site.title}&url=${site.url}`)
+        this.$tab.navigateTo(`/pages/common/protocol/index?type=user`)
       },
       // 获取图形验证码
       getCode() {

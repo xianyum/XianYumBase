@@ -12,9 +12,7 @@
         // 初始化应用配置
         this.initConfig()
         // 检查用户登录状态
-        //#ifdef H5
         this.checkLogin()
-        //#endif
       },
       initConfig() {
         this.globalData.config = config

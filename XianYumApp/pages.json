@@ -61,14 +61,9 @@
       "navigationBarTitleText": "关于我们"
     }
   }, {
-    "path": "pages/common/webview/index",
+    "path": "pages/common/protocol/index",
     "style": {
       "navigationBarTitleText": "浏览网页"
-    }
-  }, {
-    "path": "pages/common/textview/index",
-    "style": {
-      "navigationBarTitleText": "浏览文本"
     }
   }],
   "tabBar": {
