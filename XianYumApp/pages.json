@@ -63,7 +63,12 @@
   }, {
     "path": "pages/common/protocol/index",
     "style": {
-      "navigationBarTitleText": "浏览网页"
+      "navigationBarTitleText": "协议说明"
+    }
+  }, {
+    "path": "pages/monitor/user-online/index",
+    "style": {
+      "navigationBarTitleText": "在线用户"
     }
   }],
   "tabBar": {

@@ -26,7 +26,7 @@
       <view class="action-grid">
         <view class="action-item" v-for="(item, index) in quickActions" :key="index" @tap="handleQuickAction(item)">
           <view class="icon-box" :style="{ backgroundColor: item.bgColor }">
-            <uni-icons :type="item.icon" size="24" color="#fff"></uni-icons>
+            <uni-icons custom-prefix="iconfont" :type="item.icon" size="24" color="#fff"></uni-icons>
           </view>
           <text class="action-name">{{ item.name }}</text>
         </view>
@@ -66,10 +66,10 @@ export default {
         { label: '任务调度量', value: '39670' }
       ],
       quickActions: [
-        { name: '用户管理', icon: 'person', bgColor: '#409eff', path: '/pages/system/user/index' },
-        { name: '角色管理', icon: 'staff', bgColor: '#67c23a', path: '/pages/system/role/index' },
-        { name: '字典管理', icon: 'list', bgColor: '#e6a23c', path: '/pages/system/dict/index' },
-        { name: '部门管理', icon: 'home', bgColor: '#f56c6c', path: '/pages/system/dept/index' }
+        { name: '智能鱼缸', icon: 'icon-iot', bgColor: '#607d8b', path: '/pages/tool/test/index' },
+        { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/monitor/online/index' },
+        { name: '在线用户', icon: 'icon-zaixianyonghu', bgColor: '#b08927', path: '/pages/monitor/user-online/index' },
+        { name: '服务监控', icon: 'icon-zaixianyonghujiankong', bgColor: '#795548', path: '/pages/monitor/server/index' }
       ],
       notices: [
         { title: '系统更新通知：新版本功能发布', createTime: '2026-01-09' },
