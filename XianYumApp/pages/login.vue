@@ -49,6 +49,8 @@
         captchaEnabled: true,
         // 用户注册开关
         register: false,
+        // 记住密码开关
+        rememberPwd: true,
         globalConfig: getApp().globalData.config,
         loginForm: {
           username: "xianyu",
@@ -60,6 +62,8 @@
     },
     created() {
       // this.getCode()
+      // 页面创建时读取缓存，自动填充账号密码
+      this.loadRememberedInfo()
     },
     onLoad() {
       if (getToken()) {
@@ -67,6 +71,36 @@
       }
     },
     methods: {
+      // 新增：读取缓存的账号密码
+      loadRememberedInfo() {
+        try {
+          const loginCache = uni.getStorageSync('loginInfo') || {}
+          if (loginCache.username) {
+            this.loginForm.username = loginCache.username
+            this.loginForm.password = loginCache.password ? loginCache.password : ""
+            this.rememberPwd = true
+          }
+        } catch (e) {
+          console.error('读取登录缓存失败：', e)
+        }
+      },
+      // 新增：保存账号密码到缓存
+      saveRememberedInfo() {
+        try {
+          if (this.rememberPwd) {
+            // 缓存账号+加密后的密码
+            uni.setStorageSync('loginInfo', {
+              username: this.loginForm.username,
+              password: this.loginForm.password
+            })
+          } else {
+            // 不记住则清除缓存
+            uni.removeStorageSync('loginInfo')
+          }
+        } catch (e) {
+          console.error('保存登录缓存失败：', e)
+        }
+      },
       // 用户注册
       handleUserRegister() {
         this.$tab.redirectTo(`/pages/register`)
@@ -106,6 +140,7 @@
       async pwdLogin() {
         this.$store.dispatch('Login', this.loginForm).then(() => {
           this.$modal.closeLoading()
+          this.saveRememberedInfo()
           this.loginSuccess()
         }).catch(() => {
           if (this.captchaEnabled) {
@@ -174,7 +209,11 @@
         }
 
       }
-
+      // 记住密码样式
+      .remember-pwd {
+        padding: 0 10rpx;
+        font-size: 26rpx;
+      }
       .login-btn {
         margin-top: 40px;
         height: 45px;
