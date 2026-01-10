@@ -2,9 +2,9 @@
   <view class="mine-container">
     <!-- 用户信息卡片 -->
     <view class="user-card">
-      <view class="user-info" @tap="handleToInfo">
-        <image v-if="userLoaded" class="avatar" :src="this.user.avatar || defaultAvatar" mode="aspectFill"></image>
-        <view class="info-content">
+      <view class="user-info">
+        <image @click="handleToAvatar" v-if="userLoaded" class="avatar" :src="this.user.avatar || defaultAvatar" mode="aspectFill"></image>
+        <view class="info-content" @click="handleToInfo">
           <text class="nickname">{{ this.user.nickName || this.user.username}}</text>
           <text class="role">{{this.user.groupRoleName}}</text>
         </view>
@@ -15,10 +15,10 @@
     <!-- 功能菜单 -->
     <view class="menu-list">
       <view class="menu-group">
-        <view class="menu-item" @tap="handleToInfo">
+        <view class="menu-item" @tap="handleToEditInfo">
           <view class="item-left">
             <uni-icons type="person" size="20" color="#409eff"></uni-icons>
-            <text class="item-text">个人信息</text>
+            <text class="item-text">编辑资料</text>
           </view>
           <uni-icons type="right" size="16" color="#999"></uni-icons>
         </view>
@@ -80,6 +80,12 @@
       this.getUser()
     },
     methods: {
+      handleToAvatar() {
+        this.$tab.navigateTo('/pages/mine/avatar/index')
+      },
+      handleToEditInfo() {
+        this.$tab.navigateTo('/pages/mine/info/edit')
+      },
       handleToInfo() {
         this.$tab.navigateTo('/pages/mine/info/index')
       },

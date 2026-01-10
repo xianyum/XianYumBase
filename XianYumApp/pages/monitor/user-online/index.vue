@@ -43,7 +43,11 @@
           </view>
           <view class="info-row">
             <text class="label">登录时间：</text>
-            <text class="value">{{ item.loginTime }}</text>
+            <text class="value">{{formatTime(item.loginTime)}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">过期时间：</text>
+            <text class="value">{{item.expireStr}}</text>
           </view>
         </view>
       </view>

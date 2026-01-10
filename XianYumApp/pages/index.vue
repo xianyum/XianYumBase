@@ -66,7 +66,7 @@ export default {
         { label: '任务调度量', value: '39670' }
       ],
       quickActions: [
-        { name: '智能鱼缸', icon: 'icon-iot', bgColor: '#607d8b', path: '/pages/tool/test/index' },
+        { name: '智能鱼缸', icon: 'icon-iot', bgColor: '#607d8b', path: '/pages/iot/fish/index' },
         { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/monitor/online/index' },
         { name: '在线用户', icon: 'icon-zaixianyonghu', bgColor: '#b08927', path: '/pages/monitor/user-online/index' },
         { name: '服务监控', icon: 'icon-zaixianyonghujiankong', bgColor: '#795548', path: '/pages/monitor/server/index' }

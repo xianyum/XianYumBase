@@ -1,92 +1,116 @@
 {
-  "pages": [{
-    "path": "pages/login",
-    "style": {
-      "navigationBarTitleText": "XianYum移动端"
+  "pages": [
+    {
+      "path": "pages/login",
+      "style": {
+        "navigationBarTitleText": "XianYum移动端"
+      }
+    },
+    {
+      "path": "pages/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/index",
+      "style": {
+        "navigationBarTitleText": "XianYum移动端框架",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/work/index",
+      "style": {
+        "navigationBarTitleText": "工作台"
+      }
+    },
+    {
+      "path": "pages/mine/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/mine/avatar/index",
+      "style": {
+        "navigationBarTitleText": "修改头像"
+      }
+    },
+    {
+      "path": "pages/mine/info/index",
+      "style": {
+        "navigationBarTitleText": "个人信息"
+      }
+    },
+    {
+      "path": "pages/mine/info/edit",
+      "style": {
+        "navigationBarTitleText": "编辑资料"
+      }
+    },
+    {
+      "path": "pages/mine/pwd/index",
+      "style": {
+        "navigationBarTitleText": "修改密码"
+      }
+    },
+    {
+      "path": "pages/mine/setting/index",
+      "style": {
+        "navigationBarTitleText": "应用设置"
+      }
+    },
+    {
+      "path": "pages/mine/help/index",
+      "style": {
+        "navigationBarTitleText": "常见问题"
+      }
+    },
+    {
+      "path": "pages/mine/about/index",
+      "style": {
+        "navigationBarTitleText": "关于我们"
+      }
+    },
+    {
+      "path": "pages/common/protocol/index",
+      "style": {
+        "navigationBarTitleText": "协议说明"
+      }
+    },
+    {
+      "path": "pages/monitor/user-online/index",
+      "style": {
+        "navigationBarTitleText": "在线用户"
+      }
+    },
+    {
+      "path": "pages/iot/fish/index",
+      "style": {
+        "navigationBarTitleText": "智能鱼缸"
+      }
     }
-  }, {
-    "path": "pages/register",
-    "style": {
-      "navigationBarTitleText": "注册"
-    }
-  }, {
-    "path": "pages/index",
-    "style": {
-      "navigationBarTitleText": "XianYum移动端框架",
-      "navigationStyle": "custom"
-    }
-  }, {
-    "path": "pages/work/index",
-    "style": {
-      "navigationBarTitleText": "工作台"
-    }
-  }, {
-    "path": "pages/mine/index",
-    "style": {
-      "navigationBarTitleText": "我的"
-    }
-  }, {
-    "path": "pages/mine/avatar/index",
-    "style": {
-      "navigationBarTitleText": "修改头像"
-    }
-  }, {
-    "path": "pages/mine/info/index",
-    "style": {
-      "navigationBarTitleText": "个人信息"
-    }
-  }, {
-    "path": "pages/mine/info/edit",
-    "style": {
-      "navigationBarTitleText": "编辑资料"
-    }
-  }, {
-    "path": "pages/mine/pwd/index",
-    "style": {
-      "navigationBarTitleText": "修改密码"
-    }
-  }, {
-    "path": "pages/mine/setting/index",
-    "style": {
-      "navigationBarTitleText": "应用设置"
-    }
-  }, {
-    "path": "pages/mine/help/index",
-    "style": {
-      "navigationBarTitleText": "常见问题"
-    }
-  }, {
-    "path": "pages/mine/about/index",
-    "style": {
-      "navigationBarTitleText": "关于我们"
-    }
-  }, {
-    "path": "pages/common/protocol/index",
-    "style": {
-      "navigationBarTitleText": "协议说明"
-    }
-  }, {
-    "path": "pages/monitor/user-online/index",
-    "style": {
-      "navigationBarTitleText": "在线用户"
-    }
-  }],
+  ],
   "tabBar": {
     "color": "#000000",
     "selectedColor": "#000000",
     "borderStyle": "white",
     "backgroundColor": "#ffffff",
-    "list": [{
+    "list": [
+      {
         "pagePath": "pages/index",
         "iconPath": "static/images/tabbar/home.png",
         "selectedIconPath": "static/images/tabbar/home_.png",
         "text": "首页"
-      }, {
+      },
+      {
         "pagePath": "pages/work/index",
         "iconPath": "static/images/tabbar/work.png",
         "selectedIconPath": "static/images/tabbar/work_.png",
         "text": "工作台"
-      }, {
+      },
+      {
         "pagePath": "pages/mine/index",
         "iconPath": "static/images/tabbar/mine.png",
         "selectedIconPath": "static/images/tabbar/mine_.png",
@@ -96,7 +120,14 @@
   },
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "RuoYi",
+    "navigationBarTitleText": "XianYum",
     "navigationBarBackgroundColor": "#FFFFFF"
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      // 匹配 uni_modules 中的 uCharts 组件（固定写法）
+      "^qiun-data-charts": "@/uni_modules/qiun-data-charts/components/qiun-data-charts/qiun-data-charts.vue"
+    }
   }
 }
