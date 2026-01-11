@@ -11,16 +11,6 @@ module.exports = {
     // 应用logo
     logo: "/static/logo.png",
     // 官方网站
-    site_url: "https://base.xianyum.cn",
-    // 政策协议
-    agreements: [{
-        title: "隐私政策",
-        url: "https://ruoyi.vip/protocol.html"
-      },
-      {
-        title: "用户服务协议",
-        url: "https://ruoyi.vip/protocol.html"
-      }
-    ]
+    site_url: "https://base.xianyum.cn"
   }
 }

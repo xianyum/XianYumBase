@@ -50,6 +50,11 @@
             <text class="value">{{item.expireStr}}</text>
           </view>
         </view>
+        <view class="user-online-actions">
+          <button class="action-btn delete-btn" @tap.stop="handleDelete(item)" v-if="checkPermi(['monitor:online:exit'])">
+            <uni-icons type="trash" size="14" color="#f56c6c"></uni-icons>
+          </button>
+        </view>
       </view>
 
       <!-- 加载更多提示 -->
@@ -66,8 +71,10 @@
 
 <script>
 
-import { queryUserOnlinePage, forceLogout } from "@/api/monitor/user-online";
+import { queryUserOnlinePage, forceLogout } from '@/api/monitor/user-online'
 import { formatTime } from '@/utils/dateFormat.js'
+import { checkPermi } from '@/utils/permission'
+import {showConfirm, toast} from "@/utils/common";
 
 export default {
   data() {
@@ -93,6 +100,20 @@ export default {
     this.getList()
   },
   methods: {
+    checkPermi,
+    async handleDelete(item) {
+      const res = await this.$showConfirm(`确定踢出【${item.username}】吗？`)
+      if (res.confirm) {
+        let tokenLists = [item.token]
+        const result = await forceLogout(tokenLists)
+        if (result.code === 200) {
+          this.$showSuccessToast('踢出成功')
+          this.handleQuery()
+        }else{
+
+        }
+      }
+    },
     formatTime(time) {
       return formatTime(time)
     },

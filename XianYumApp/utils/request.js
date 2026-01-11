@@ -2,7 +2,7 @@ import store from '@/store'
 import config from '@/config'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
-import { toast, showConfirm, tansParams } from '@/utils/common'
+import { showErrorToast, showConfirm, tansParams } from '@/utils/common'
 
 let timeout = 10000
 const baseUrl = config.baseUrl
@@ -31,7 +31,7 @@ const request = config => {
       }).then(response => {
         let [error, res] = response
         if (error) {
-          toast('后端接口连接异常')
+          showErrorToast('后端接口连接异常')
           reject('后端接口连接异常')
           return
         }
@@ -47,10 +47,10 @@ const request = config => {
           })
           reject('无效的会话，或者会话已过期，请重新登录。')
         } else if (code === 500) {
-          toast(msg)
+          showErrorToast(msg)
           reject('500')
         } else if (code !== 200) {
-          toast(msg)
+          showErrorToast(msg)
           reject(code)
         }
         resolve(res.data)
@@ -64,7 +64,7 @@ const request = config => {
         } else if (message.includes('Request failed with status code')) {
           message = '系统接口' + message.substr(message.length - 3) + '异常'
         }
-        toast(message)
+        showErrorToast(message)
         reject(error)
       })
   })

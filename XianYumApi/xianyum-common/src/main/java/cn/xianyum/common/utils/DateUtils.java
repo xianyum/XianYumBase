@@ -211,20 +211,50 @@ public class DateUtils {
     }
 
     /**
-     * 将秒转为时分秒字符串
-     * @param second
-     * @return
+     * 将秒数转为 天小时分秒 格式的字符串
+     * 规则：
+     * - 超过24小时（86400秒）时，显示 天+小时+分+秒
+     * - 不足24小时但超过1小时，显示 小时+分+秒
+     * - 不足1小时但超过1分钟，显示 分+秒
+     * - 不足1分钟，仅显示 秒
+     * @param second 待转换的秒数（可为null）
+     * @return 格式化后的时间字符串，null入参返回null
      */
     public static String getDatePoor(Long second) {
-        if(Objects.isNull(second)){
+        // 处理null入参
+        if (Objects.isNull(second)) {
             return null;
         }
-        // 计算小时、分钟和剩余秒数
-        long hours = second / 3600;  // 1小时 = 3600秒
-        long minutes = (second % 3600) / 60;  // 剩余的秒数转成分钟
-        long remainingSeconds = second % 60;  // 剩余的秒数
-        // 设置格式化的字符串，包含小时、分钟和秒
-        return hours + "小时" + minutes + "分" + remainingSeconds + "秒";
+        // 处理负数秒数（容错，转为0）
+        if (second < 0) {
+            second = 0L;
+        }
+
+        // 1天 = 24小时 = 86400秒；1小时 = 3600秒；1分钟 = 60秒
+        long days = second / 86400;
+        long remainingSecondsAfterDays = second % 86400; // 扣除天数后剩余的秒数
+
+        long hours = remainingSecondsAfterDays / 3600;
+        long remainingSecondsAfterHours = remainingSecondsAfterDays % 3600; // 扣除小时后剩余的秒数
+
+        long minutes = remainingSecondsAfterHours / 60;
+        long remainingSeconds = remainingSecondsAfterHours % 60;
+
+        // 拼接结果字符串（按需显示对应单位，避免多余的0单位）
+        StringBuilder result = new StringBuilder();
+        if (days > 0) {
+            result.append(days).append("天");
+        }
+        if (hours > 0 || (days > 0 && hours == 0)) { // 有天数时，小时即使为0也显示（可选：去掉&&条件则不显示0小时）
+            result.append(hours).append("小时");
+        }
+        if (minutes > 0 || (hours > 0 && minutes == 0)) { // 有小时时，分钟即使为0也显示（可选：去掉&&条件则不显示0分钟）
+            result.append(minutes).append("分");
+        }
+        // 始终显示秒数（即使为0）
+        result.append(remainingSeconds).append("秒");
+
+        return result.toString();
     }
 
     /**

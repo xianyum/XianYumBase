@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import { formatTime } from '@/utils/dateFormat.js'
+
 export default {
   data() {
     return {
@@ -142,13 +144,13 @@ export default {
   onReady() {
     this.getLineData();
     this.getArcbarData();
-    this.updateTime = new Date().toLocaleString();
+    this.updateTime = formatTime(new Date());
 
     this.timer = setInterval(() => {
       this.updateRealTimeData();
       this.getLineData();
       this.getArcbarData();
-      this.updateTime = new Date().toLocaleString();
+      this.updateTime = formatTime(new Date());
     }, 10000);
   },
   onUnload() {

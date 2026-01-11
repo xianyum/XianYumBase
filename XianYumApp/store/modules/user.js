@@ -77,9 +77,9 @@ const user = {
           }
           const userid = (isEmpty(user) || isEmpty(user.id)) ? "" : user.id
 		  const username = (isEmpty(user) || isEmpty(user.username)) ? "" : user.username
-		  if (res.roles && res.roles.length > 0) {
-            commit('SET_ROLES', res.roles)
-            commit('SET_PERMISSIONS', res.permissions)
+		  if (user.roles && user.roles.length > 0) {
+            commit('SET_ROLES', user.roles)
+            commit('SET_PERMISSIONS', user.permissions)
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }

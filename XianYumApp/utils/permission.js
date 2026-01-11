@@ -10,7 +10,6 @@ export function checkPermi(value) {
     const permissions = store.getters && store.getters.permissions
     const permissionDatas = value
     const all_permission = "*:*:*"
-
     const hasPermission = permissions.some(permission => {
       return all_permission === permission || permissionDatas.includes(permission)
     })

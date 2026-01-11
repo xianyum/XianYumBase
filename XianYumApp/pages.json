@@ -90,6 +90,12 @@
       "style": {
         "navigationBarTitleText": "智能鱼缸"
       }
+    },
+    {
+      "path": "pages/common/textview/index",
+      "style": {
+        "navigationBarTitleText": "通用浏览"
+      }
     }
   ],
   "tabBar": {

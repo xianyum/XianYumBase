@@ -1,11 +1,23 @@
 /**
-* 显示消息提示框
-* @param content 提示的标题
-*/
-export function toast(content) {
+ * 显示成功消息提示框
+ * @param content 提示的标题
+ */
+export function showSuccessToast(content) {
   uni.showToast({
+    title: content,
+    icon: 'success'
+  })
+}
+
+/**
+ * 显示错误消息提示框（多端兼容）
+ * @param content 提示的内容
+ */
+export function showErrorToast(content) {
+  uni.showToast({
+    title: content,
     icon: 'none',
-    title: content
+    duration: 2000
   })
 }
 
