@@ -75,7 +75,7 @@ export default {
         { name: '字典管理', icon: 'paperplane', bgColor: '#909399', path: '/pages/system/dict/index' }
       ],
       newEnergyMenus: [
-        { name: '行驶记录', icon: 'icon-hangshijilu', bgColor: '#9c27b0', path: '/pages/monitor/online/index' },
+        { name: '行驶记录', icon: 'icon-hangshijilu', bgColor: '#9c27b0', path: '/pages/ev-drive/list/index' },
         { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/monitor/online/index' }
       ],
       // 系统监控菜单

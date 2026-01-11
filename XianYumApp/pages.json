@@ -96,6 +96,18 @@
       "style": {
         "navigationBarTitleText": "通用浏览"
       }
+    },
+    {
+      "path": "pages/ev-drive/list/index",
+      "style": {
+        "navigationBarTitleText": "行驶记录"
+      }
+    },
+    {
+      "path": "pages/ev-drive/list/add",
+      "style": {
+        "navigationBarTitleText": "增加行驶记录"
+      }
     }
   ],
   "tabBar": {

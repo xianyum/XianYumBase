@@ -13,7 +13,7 @@ Vue.prototype.$store = store
 Vue.prototype.getDicts = getDicts
 Vue.prototype.$showConfirm = showConfirm
 Vue.prototype.$showSuccessToast = showSuccessToast
-
+Vue.prototype.$showErrorToast = showErrorToast
 
 App.mpType = 'app'
 
