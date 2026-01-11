@@ -34,16 +34,16 @@
             <text class="value">{{ item.username}}</text>
           </view>
           <view class="info-row">
-            <text class="label">登录ip：</text>
-            <text class="value">{{ item.ipaddr}}</text>
-          </view>
-          <view class="info-row">
             <text class="label">登录地点：</text>
-            <text class="value">{{ item.loginLocation}}</text>
+            <text class="value">{{ item.loginLocation}}({{item.ipaddr}})</text>
           </view>
           <view class="info-row">
             <text class="label">登录时间：</text>
             <text class="value">{{formatTime(item.loginTime)}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">登录系统：</text>
+            <text class="value">{{ item.os }}</text>
           </view>
           <view class="info-row">
             <text class="label">过期时间：</text>
@@ -74,7 +74,6 @@
 import { queryUserOnlinePage, forceLogout } from '@/api/monitor/user-online'
 import { formatTime } from '@/utils/dateFormat.js'
 import { checkPermi } from '@/utils/permission'
-import {showConfirm, toast} from "@/utils/common";
 
 export default {
   data() {
