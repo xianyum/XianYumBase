@@ -24,9 +24,7 @@ public class TestController {
     @Resource
     private RedisUtils redisUtils;
     @GetMapping("/test")
-    @Permission(publicApi = true)
     public Results test(@RequestParam Integer day){
-        log.info("day:{}",day);
-        return Results.success(redisUtils.setDay("cn.xianyum.test","1",day));
+        return Results.success();
     }
 }

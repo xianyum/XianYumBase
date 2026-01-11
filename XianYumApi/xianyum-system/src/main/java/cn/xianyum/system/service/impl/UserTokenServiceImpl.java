@@ -109,6 +109,6 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setLoginType(SecurityUtils.getLoginUser().getLoginType());
 
         this.setExtraUserInfo(loginUser);
-        redisUtils.setMin(prefix+token,JSONObject.toJSONString(loginUser),expire);
+        redisUtils.setDay(prefix+token,JSONObject.toJSONString(loginUser),expire);
     }
 }

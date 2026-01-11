@@ -216,7 +216,6 @@ public class UserServiceImpl implements UserService {
             u.setPermissions(this.menuService.getMenuPermission(u.getId()));
             this.roleService.setLoginUserRoleService(u);
         }
-        userTokenService.refreshUser();
         return u;
     }
 
