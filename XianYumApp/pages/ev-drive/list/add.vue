@@ -36,6 +36,13 @@
             <uni-easyinput v-model="formData.electricityConsumed" placeholder="请输入消耗电量" type="digit" suffixText="kWh" precision="2" @input="handleNumberInput('electricityConsumed')"/>
           </uni-forms-item>
         </view>
+
+        <view class="form-group">
+          <view class="form-label required">行驶事项</view>
+          <uni-forms-item name="matter">
+            <uni-data-select multiple v-model="formData.matter" :localdata="options"></uni-data-select>
+          </uni-forms-item>
+        </view>
       </view>
 
       <!-- 提交按钮 -->
@@ -50,16 +57,21 @@
 <script>
 import { formatTime } from "@/utils/dateFormat";
 import { saveEvDriveRecords } from "@/api/ev-drive/list";
+import { getDicts } from "@/api/system/dict/data"
 
 export default {
   data() {
     return {
+      value: [0,2],
+      range: [{"value": 0,"text": "篮球"	},{"value": 1,"text": "足球"},{"value": 2,"text": "游泳"}],
       // 表单核心数据
       formData: {
         driveDate: '',
         distanceKm: '',
-        electricityConsumed: ''
+        electricityConsumed: '',
+        matter: ['10'],
       },
+      options: [], // 行驶事项选项列表
       // picker日期选择器绑定值（原生需要）
       driveDateValue: '',
       // 日期选择范围
@@ -83,6 +95,9 @@ export default {
             { pattern: /^(\d+)(\.\d{1,2})?$/, errorMessage: '电量最多两位小数' },
             { min: 0.01, errorMessage: '电量必须大于0' }
           ]
+        },
+        matter: {
+          rules: [{ required: true, errorMessage: '请至少选择一项行驶事项' }]
         }
       }
     }
@@ -93,8 +108,17 @@ export default {
     this.driveDateValue = this.endDate;
     // 初始化默认选中当天日期
     this.formData.driveDate = this.endDate;
+    this.queryEvDriveMatter();
   },
   methods: {
+    async queryEvDriveMatter(){
+      await getDicts("ev_drive_matter").then(response => {
+        this.options = response.data.map(item => ({
+          value: item.dictValue,
+          text: item.dictLabel
+        }))
+      })
+    },
     // 处理日期选择
     handleDateChange(e) {
       const selectedDate = e.detail.value;
@@ -131,7 +155,7 @@ export default {
           driveDate: this.formData.driveDate,
           distanceKm: Number(this.formData.distanceKm),
           electricityConsumed: Number(this.formData.electricityConsumed),
-          matter: ["10"]
+          matter: this.formData.matter // 使用选中的事项数组
         };
 
         // 调用新增接口
@@ -139,7 +163,7 @@ export default {
         uni.hideLoading();
 
         if (result.code === 200) {
-          this.$showSuccessToast('新增成功');
+          this.$modal.msgSuccess('新增成功');
           setTimeout(() => {
             const pages = getCurrentPages();
             const prevPage = pages[pages.length - 2];
@@ -150,7 +174,8 @@ export default {
           }, 1000);
         }
       } catch (error) {
-
+        uni.hideLoading();
+        console.error('提交失败:', error);
       }
     },
     // 取消操作
@@ -175,7 +200,8 @@ export default {
     box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
 
     .form-group {
-      margin-bottom: 32rpx;
+
+      margin-bottom: 16rpx;
 
       &:last-child {
         margin-bottom: 0;
@@ -184,7 +210,8 @@ export default {
       .form-label {
         font-size: 28rpx;
         color: #606266;
-        margin-bottom: 16rpx;
+        // 可选：如果觉得标签和输入框之间也有点远，可以调整这个值
+        margin-bottom: 12rpx;
         font-weight: 500;
 
         &.required::before {
@@ -199,7 +226,7 @@ export default {
         padding: 0;
 
         .uni-forms-item__content {
-          // 日期选择器样式（与输入框统一）
+          // 日期选择器样式
           .picker-box {
             display: flex;
             align-items: center;
@@ -237,6 +264,21 @@ export default {
               font-size: 26rpx;
               color: #606266;
               margin-right: 16rpx;
+            }
+          }
+
+          // 统一uni-data-select样式
+          :deep(.uni-data-select) {
+            .uni-data-select-input {
+              background-color: #f8f9fa;
+              border-radius: 12rpx;
+              height: 88rpx;
+              padding: 0 28rpx;
+              font-size: 28rpx;
+
+              .uni-input-placeholder {
+                color: #909399;
+              }
             }
           }
         }

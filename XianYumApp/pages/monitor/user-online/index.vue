@@ -101,12 +101,12 @@ export default {
   methods: {
     checkPermi,
     async handleDelete(item) {
-      const res = await this.$showConfirm(`确定踢出【${item.username}】吗？`)
+      const res = await this.$modal.confirm(`确定踢出【${item.username}】吗？`)
       if (res.confirm) {
         let tokenLists = [item.token]
         const result = await forceLogout(tokenLists)
         if (result.code === 200) {
-          this.$showSuccessToast('踢出成功')
+          this.$modal.msgSuccess('踢出成功')
           this.handleQuery()
         }else{
 

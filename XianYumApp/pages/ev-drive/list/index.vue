@@ -33,12 +33,14 @@
 
     <!-- 能耗列表 -->
     <view class="energy-consume-list" v-if="energyConsumeList.length > 0">
+      <!-- 优化后的合计行 -->
       <view class="energy-consume-item summary-item">
-        <view class="energy-consume-info">
-          <view class="info-row">
-            <text class="label">合计：</text>
-            <text class="value"></text>
-          </view>
+        <!-- 增加合计标题栏 -->
+        <view class="summary-header">
+          <uni-icons type="barchart" size="18" color="#409eff"></uni-icons>
+          <text class="summary-title">合计</text>
+        </view>
+        <view class="energy-consume-info summary-content">
           <view class="info-row">
             <text class="label">总行驶公里数：</text>
             <text class="value">{{ summaryInfo.totalDistanceKm}}km</text>
@@ -52,11 +54,6 @@
             <text class="value">{{ summaryInfo.electricityPerKm}}kWh/km</text>
           </view>
         </view>
-<!--        <view class="user-online-actions">-->
-<!--          <button class="action-btn delete-btn" @tap.stop="handleDelete(item)" v-if="checkPermi(['monitor:online:exit'])">-->
-<!--            <uni-icons type="trash" size="14" color="#f56c6c"></uni-icons>-->
-<!--          </button>-->
-<!--        </view>-->
       </view>
 
       <!-- 列表项 -->
@@ -78,6 +75,12 @@
             <text class="label">每公里电量消耗：</text>
             <text class="value">{{ item.electricityPerKm }}kWh/km</text>
           </view>
+        </view>
+        <!-- 为普通列表项添加删除按钮（使用新的UI样式） -->
+        <view class="user-online-actions" v-if="checkPermi(['monitor:online:exit'])">
+          <button class="action-btn delete-btn" @tap.stop="handleDelete(item)">
+            <uni-icons type="trash" size="14" color="#f56c6c"></uni-icons>
+          </button>
         </view>
       </view>
 
@@ -130,6 +133,7 @@
 <script>
 import { formatTime } from "@/utils/dateFormat";
 import { getEvDriveRecordsPage,delEvDriveRecords } from "@/api/ev-drive/list";
+import { checkPermi } from '@/utils/permission'
 
 export default {
   data() {
@@ -165,7 +169,9 @@ export default {
         totalDistanceKm: 0,
         totalElectricityConsumed: 0,
         electricityPerKm: 0
-      }
+      },
+      // 临时存储选中的日期
+      tempDate: {}
     }
   },
   onLoad() {
@@ -174,6 +180,7 @@ export default {
     this.getEnergyConsumeList();
   },
   methods: {
+    checkPermi,
     formatTime,
     // 新增字典
     handleAdd() {
@@ -248,6 +255,8 @@ export default {
         this.dateRangeText = `${this.tempDate.beginText} 至 ${this.tempDate.endText}`;
         // 关闭弹窗
         this.closeQuickDatePopup();
+        // 重新查询数据
+        this.handleQuery();
       }
     },
     // 关闭快捷日期弹窗
@@ -291,6 +300,17 @@ export default {
           uni.stopPullDownRefresh();
         }
       }
+    },
+    // 处理删除操作
+    async handleDelete(row) {
+      const ids = [row.id]
+      this.$modal.confirm('确定要删除这条能耗记录吗？').then(function() {
+        return delEvDriveRecords(ids)
+      }).then(() => {
+        this.$modal.msgSuccess('删除成功')
+        this.getEnergyConsumeList('refresh');
+      }).catch(() => {
+      })
     },
     // 搜索按钮逻辑
     handleQuery() {
@@ -439,6 +459,7 @@ export default {
       border-radius: 16rpx;
       box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
 
+      // 恢复默认布局，不再使用flex
       .energy-consume-info {
         .info-row {
           display: flex;
@@ -465,23 +486,95 @@ export default {
         }
       }
 
-      &:active { opacity: 0.9; }
-    }
+      // 使用新的操作按钮样式
+      .user-online-actions {
+        position: absolute;
+        right: 32rpx;
+        top: 32rpx;
+        display: flex;
+        gap: 16rpx;
 
-    // 合计行样式区分
-    .summary-item {
-      background-color: #f9fafc;
-      border: 2rpx solid #e8f4ff;
-      margin-bottom: 30rpx;
+        .action-btn {
+          width: 56rpx;
+          height: 56rpx;
+          padding: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 28rpx;
+          background-color: #f8f9fa;
+          border: none;
 
-      .label {
-        font-weight: 600;
-        color: #409eff;
+          &:active {
+            opacity: 0.8;
+          }
+
+          &.edit-btn {
+            &:active {
+              background-color: #ecf5ff;
+            }
+          }
+
+          &.delete-btn {
+            &:active {
+              background-color: #fef0f0;
+            }
+          }
+        }
       }
 
-      .value {
-        font-weight: 600;
-        color: #333;
+      &:active {
+        opacity: 0.9;
+      }
+    }
+
+    // 强化合计行样式
+    .summary-item {
+      background: linear-gradient(135deg, #e8f4ff 0%, #f0f8ff 100%);
+      //border: 3rpx solid #407cff;
+      margin-bottom: 36rpx;
+      padding: 24rpx 32rpx 32rpx;
+      box-shadow: 0 4rpx 16rpx rgba(64, 158, 255, 0.15);
+
+      // 合计标题栏
+      .summary-header {
+        display: flex;
+        align-items: center;
+        gap: 12rpx;
+        padding-bottom: 20rpx;
+        margin-bottom: 20rpx;
+        border-bottom: 2rpx solid rgba(64, 158, 255, 0.2);
+
+        .summary-title {
+          font-size: 30rpx;
+          font-weight: 700;
+          //color: #409eff;
+        }
+      }
+
+      // 合计内容样式
+      .summary-content {
+        .info-row {
+          margin-bottom: 10rpx;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .label {
+            font-size: 30rpx;
+            font-weight: 600;
+            //color: #1f6fb2;
+            width: 260rpx;
+          }
+
+          .value {
+            font-size: 30rpx;
+            font-weight: 700;
+            //color: #1989fa;
+            letter-spacing: 1rpx;
+          }
+        }
       }
     }
   }
