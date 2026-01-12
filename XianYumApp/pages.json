@@ -16,7 +16,11 @@
       "path": "pages/index",
       "style": {
         "navigationBarTitleText": "XianYum移动端框架",
-        "navigationStyle": "custom"
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "下拉刷新",
+        "enablePullDownRefresh": true, // 开启下拉刷新
+        "backgroundColor": "#f5f7fa", // 下拉刷新区域背景色（建议与页面背景一致）
+        "backgroundTextStyle": "dark"
       }
     },
     {

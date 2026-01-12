@@ -52,6 +52,9 @@
 <script>
 import {getUserProfile} from "@/api/system/user";
 import defaultAvatar from '@/static/images/profile.jpg'
+import {getMessageLogCount} from "@/api/message/monitor"
+import {getJobLogCount} from "@/api/job/jobLog"
+import {getOperLogCount} from "@/api/monitor/operlog"
 
 export default {
   data() {
@@ -61,9 +64,9 @@ export default {
       defaultAvatar,
       user: {},
       overviewData: [
-        { label: '访问量', value: '2319788' },
-        { label: '消息发送量', value: '2290' },
-        { label: '任务调度量', value: '39670' }
+        { label: '操作日志量', value: 0 },
+        { label: '消息发送量', value: 0 },
+        { label: '任务调度量', value: 0 }
       ],
       quickActions: [
         { name: '智能鱼缸', icon: 'icon-iot', bgColor: '#607d8b', path: '/pages/iot/fish/index' },
@@ -92,6 +95,7 @@ export default {
   },
   onLoad() {
     this.getUser();
+    this.getAllLogCounts();
   },
   async onShow() {
     // 获取状态栏高度
@@ -103,12 +107,52 @@ export default {
       await this.getUser()
     }
   },
+  onPullDownRefresh() {
+    this.refreshData();
+  },
   methods: {
+    async getAllLogCounts() {
+      try {
+        // 并行发起所有请求
+        const [operLogRes, messageLogRes, jobLogRes] = await Promise.all([
+          getOperLogCount(),
+          getMessageLogCount(),
+          getJobLogCount()
+        ]);
+        
+        this.overviewData = [
+          { label: '操作日志量', value: operLogRes.data || 0 },
+          { label: '消息发送量', value: messageLogRes.data || 0 },
+          { label: '任务调度量', value: jobLogRes.data || 0 }
+        ];
+
+        return {
+          operLogCount: operLogRes.data || 0,
+          messageLogCount: messageLogRes.data || 0,
+          jobLogCount: jobLogRes.data || 0
+        };
+      } catch (error) {
+        this.operLogCount = 0;
+        this.messageLogCount = 0;
+        this.jobLogCount = 0;
+      }
+    },
+    refreshData(){
+      try {
+        this.getUser();
+        this.getAllLogCounts();
+        uni.stopPullDownRefresh();
+        this.$modal.msgSuccess("刷新成功")
+      }catch (error) {
+        uni.stopPullDownRefresh();
+        this.$modal.msgError("刷新失败")
+      }
+    },
     handleToInfo() {
       this.$tab.navigateTo('/pages/mine/info/index')
     },
     async getUser() {
-      getUserProfile().then(response => {
+      await getUserProfile().then(response => {
         if (response && response.data) {
           this.user = response.data;
         }
