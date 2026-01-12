@@ -43,15 +43,15 @@
         <view class="energy-consume-info summary-content">
           <view class="info-row">
             <text class="label">总行驶公里数：</text>
-            <text class="value">{{ summaryInfo.totalDistanceKm}}km</text>
+            <text class="value">{{ summaryInfo.totalDistanceKm}}公里</text>
           </view>
           <view class="info-row">
             <text class="label">总消耗电量：</text>
-            <text class="value">{{ summaryInfo.totalElectricityConsumed}}kWh</text>
+            <text class="value">{{ summaryInfo.totalElectricityConsumed}}度</text>
           </view>
           <view class="info-row">
             <text class="label">每公里电量消耗：</text>
-            <text class="value">{{ summaryInfo.electricityPerKm}}kWh/km</text>
+            <text class="value">{{ summaryInfo.electricityPerKm}}度/公里</text>
           </view>
         </view>
       </view>
@@ -65,15 +65,15 @@
           </view>
           <view class="info-row">
             <text class="label">行驶公里数：</text>
-            <text class="value">{{ item.distanceKm }}km</text>
+            <text class="value">{{ item.distanceKm }}公里</text>
           </view>
           <view class="info-row">
             <text class="label">消耗电量：</text>
-            <text class="value">{{ item.electricityConsumed }}kWh</text>
+            <text class="value">{{ item.electricityConsumed }}度</text>
           </view>
           <view class="info-row">
             <text class="label">每公里电量消耗：</text>
-            <text class="value">{{ item.electricityPerKm }}kWh/km</text>
+            <text class="value">{{ item.electricityPerKm }}度/公里</text>
           </view>
         </view>
         <!-- 为普通列表项添加删除按钮（使用新的UI样式） -->

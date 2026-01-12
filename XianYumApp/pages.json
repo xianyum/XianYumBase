@@ -17,9 +17,10 @@
       "style": {
         "navigationBarTitleText": "XianYum移动端框架",
         "navigationStyle": "custom",
-        "navigationBarTitleText": "下拉刷新",
-        "enablePullDownRefresh": true, // 开启下拉刷新
-        "backgroundColor": "#f5f7fa", // 下拉刷新区域背景色（建议与页面背景一致）
+        "enablePullDownRefresh": true,
+        // 开启下拉刷新
+        "backgroundColor": "#f5f7fa",
+        // 下拉刷新区域背景色（建议与页面背景一致）
         "backgroundTextStyle": "dark"
       }
     },
@@ -111,6 +112,12 @@
       "path": "pages/ev-drive/list/add",
       "style": {
         "navigationBarTitleText": "增加行驶记录"
+      }
+    },
+    {
+      "path": "pages/ev-drive/report/index",
+      "style": {
+        "navigationBarTitleText": "行驶报表"
       }
     }
   ],

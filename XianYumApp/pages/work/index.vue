@@ -76,7 +76,7 @@ export default {
       ],
       newEnergyMenus: [
         { name: '行驶记录', icon: 'icon-hangshijilu', bgColor: '#9c27b0', path: '/pages/ev-drive/list/index' },
-        { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/monitor/online/index' }
+        { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/ev-drive/report/index' }
       ],
       // 系统监控菜单
       monitorMenus: [
