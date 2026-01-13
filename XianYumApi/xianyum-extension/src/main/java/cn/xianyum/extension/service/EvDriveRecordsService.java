@@ -1,8 +1,10 @@
 package cn.xianyum.extension.service;
 
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
+import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
 import com.alibaba.fastjson2.JSONObject;
 
 import java.math.BigDecimal;
@@ -49,4 +51,18 @@ public interface EvDriveRecordsService {
      * @return
      */
     EvDriveRecordsResponse selectByDay(Date driveDate);
+
+    /**
+     * 获取app汇总数据
+     * @return
+     */
+    EvDriveRecordsAppReportResponse getAppSummaryData();
+
+    /**
+     * 根据开始时间和结束时间查询汇总数据
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    EvDriveRecordsSummaryResponse queryEvDriveRecordsSummary(String startTime, String endTime);
 }

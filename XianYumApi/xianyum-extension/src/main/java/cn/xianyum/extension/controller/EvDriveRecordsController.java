@@ -3,6 +3,7 @@ package cn.xianyum.extension.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,13 @@ public class EvDriveRecordsController {
     @GetMapping(value = "/getReportLineData")
     public Results getReportLineData(EvDriveRecordsRequest request) {
         List<Map<String, Object>> result = this.evDriveRecordsService.getReportLineData(request);
+        return Results.success(result);
+    }
+
+    @Operation(summary = "获取App数据(本月,上月,近一年)")
+    @GetMapping(value = "/getAppSummaryData")
+    public Results getAppSummaryData() {
+        EvDriveRecordsAppReportResponse result = this.evDriveRecordsService.getAppSummaryData();
         return Results.success(result);
     }
 }

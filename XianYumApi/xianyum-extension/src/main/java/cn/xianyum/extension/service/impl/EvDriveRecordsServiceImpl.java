@@ -4,6 +4,8 @@ import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
+import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -173,6 +175,32 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 .apply("DATE(drive_date) = {0}", DateUtils.format(driveDate, DateUtils.DATE_PATTERN));
         EvDriveRecordsEntity evDriveRecordsEntity = this.evDriveRecordsMapper.selectOne(queryWrapper);
         return BeanUtils.copy(evDriveRecordsEntity, EvDriveRecordsResponse.class);
+    }
+
+    @Override
+    public EvDriveRecordsAppReportResponse getAppSummaryData() {
+        // 获取本月的数据
+        EvDriveRecordsSummaryResponse currentMonthResponse = this.queryEvDriveRecordsSummary(DateUtils.format(DateUtils.getMonthStartTime()), DateUtils.format(DateUtils.getMonthEndTime()));
+        // 获取上月的数据
+        EvDriveRecordsSummaryResponse lastMonthResponse = this.queryEvDriveRecordsSummary(DateUtils.format(DateUtils.getLastMonthStartTime()), DateUtils.format(DateUtils.getLastMonthEndTime()));
+        // 获取近一年的数据
+        EvDriveRecordsSummaryResponse lastYearResponse = this.queryEvDriveRecordsSummary(DateUtils.format(DateUtils.getLastYearStartTime()), DateUtils.format(DateUtils.getLastYearEndTime()));
+        EvDriveRecordsAppReportResponse response  = new EvDriveRecordsAppReportResponse();
+        response.setLastYearResponse(lastYearResponse);
+        response.setCurrentMonthResponse(currentMonthResponse);
+        response.setLastMonthResponse(lastMonthResponse);
+        return response;
+    }
+
+    @Override
+    public EvDriveRecordsSummaryResponse queryEvDriveRecordsSummary(String startTime, String endTime) {
+        EvDriveRecordsRequest request = new EvDriveRecordsRequest();
+        Map<String, Object> params = new HashMap<>();
+        params.put("beginTime",startTime);
+        params.put("endTime",endTime);
+        request.setParams(params);
+        EvDriveRecordsSummaryResponse evDriveRecordsSummaryResponse = evDriveRecordsMapper.selectSummaryData(request);
+        return Objects.nonNull(evDriveRecordsSummaryResponse) ? evDriveRecordsSummaryResponse : null;
     }
 }
 
