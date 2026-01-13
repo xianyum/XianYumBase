@@ -21,7 +21,7 @@
       return {
         list: [{
             icon: 'iconfont icon-people',
-            title: '使用问题',
+            title: '网站问题',
             childList: [{
               title: '后台地址访问地址？',
               content: 'https://base.xianyum.cn'
@@ -32,13 +32,13 @@
             title: '其他问题',
             childList: [{
               title: '如何退出登录？',
-              content: '请点击[我的] - [应用设置] - [退出登录]即可退出登录',
+              content: '请点击[我的] - [退出登录]即可退出登录',
             }, {
               title: '如何修改用户头像？',
               content: '请点击[我的] - [选择头像] - [点击提交]即可更换用户头像',
             }, {
               title: '如何修改登录密码？',
-              content: '请点击[我的] - [应用设置] - [修改密码]即可修改登录密码',
+              content: '请点击[我的] - [修改密码]即可修改登录密码',
             }]
           }
         ]

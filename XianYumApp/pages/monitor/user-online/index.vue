@@ -39,11 +39,13 @@
           </view>
           <view class="info-row">
             <text class="label">登录时间：</text>
-            <text class="value">{{formatTime(item.loginTime)}}</text>
+            <uni-dateformat class="value" :date="item.loginTime" format="yyyy-MM-dd hh:mm:ss"></uni-dateformat>
           </view>
           <view class="info-row">
             <text class="label">登录系统：</text>
-            <text class="value">{{ item.os }}</text>
+            <text class="value" :class="{ bold: isCurrentDevice(item) }">
+              {{ item.os + (isCurrentDevice(item) ? '（本机）' : '') }}
+            </text>
           </view>
           <view class="info-row">
             <text class="label">过期时间：</text>
@@ -72,7 +74,6 @@
 <script>
 
 import { queryUserOnlinePage, forceLogout } from '@/api/monitor/user-online'
-import { formatTime } from '@/utils/dateFormat.js'
 import { checkPermi } from '@/utils/permission'
 
 export default {
@@ -102,28 +103,27 @@ export default {
     checkPermi,
     async handleDelete(item) {
       const res = await this.$modal.confirm(`确定踢出【${item.username}】吗？`)
-      if (res.confirm) {
+      if (res) {
         let tokenLists = [item.token]
         const result = await forceLogout(tokenLists)
         if (result.code === 200) {
           this.$modal.msgSuccess('踢出成功')
           this.handleQuery()
-        }else{
-
         }
       }
     },
-    formatTime(time) {
-      return formatTime(time)
+    isCurrentDevice(item) {
+      // 先判空，避免null/undefined对比出错
+      if (!item?.token || !this.$store.getters.token) return false;
+      // 严格对比token
+      return item.token === this.$store.getters.token;
     },
     // 获取列表数据
     async getList(type = 'more') {
-      console.log(type)
       if (this.loading) return
       this.loading = true
       try {
         queryUserOnlinePage(this.queryParams).then(response => {
-          console.log(response)
           if (response.code === 200) {
             const list = response.data
             const total = response.total
@@ -190,7 +190,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .user-online-container {
   padding: 20rpx;
   background-color: #f5f5f5;
@@ -354,6 +354,10 @@ export default {
 
             &.text-success {
               color: #67c23a;
+            }
+            &.bold {
+              font-weight: 700 !important;
+              color: #409eff;
             }
 
             &.text-danger {

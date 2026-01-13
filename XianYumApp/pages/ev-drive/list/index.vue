@@ -61,7 +61,7 @@
         <view class="energy-consume-info">
           <view class="info-row">
             <text class="label">驾驶日期：</text>
-            <text class="value">{{ formatTime(item.driveDate,'{y}-{m}-{d}') }}</text>
+            <uni-dateformat class="value" :date="item.driveDate" format="yyyy-MM-dd"></uni-dateformat>
           </view>
           <view class="info-row">
             <text class="label">行驶公里数：</text>
@@ -76,8 +76,8 @@
             <text class="value">{{ item.electricityPerKm }}度/公里</text>
           </view>
         </view>
-        <!-- 为普通列表项添加删除按钮（使用新的UI样式） -->
-        <view class="user-online-actions" v-if="checkPermi(['monitor:online:exit'])">
+
+        <view class="user-online-actions" v-if="checkPermi(['ev-drive-records:delete'])">
           <button class="action-btn delete-btn" @tap.stop="handleDelete(item)">
             <uni-icons type="trash" size="14" color="#f56c6c"></uni-icons>
           </button>
@@ -181,7 +181,6 @@ export default {
   },
   methods: {
     checkPermi,
-    formatTime,
     // 新增字典
     handleAdd() {
       this.$tab.navigateTo('/pages/ev-drive/list/add')
