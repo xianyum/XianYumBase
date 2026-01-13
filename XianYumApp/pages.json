@@ -118,7 +118,6 @@
       "path": "pages/ev-drive/report/index",
       "style": {
         "navigationBarTitleText": "行驶报表",
-        "navigationStyle": "custom",
         "enablePullDownRefresh": true,
         // 开启下拉刷新
         "backgroundColor": "#f5f7fa",
