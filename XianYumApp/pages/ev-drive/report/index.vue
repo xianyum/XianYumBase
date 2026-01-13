@@ -156,8 +156,7 @@ export default {
   methods: {
     async refreshData(){
       try {
-        this.getAppSummaryData();
-        this.getEvDriveChartData();
+        await Promise.all([this.getAppSummaryData(), this.getEvDriveChartData()]);
         uni.stopPullDownRefresh();
         this.$modal.msgSuccess("刷新成功")
       }catch (error) {
