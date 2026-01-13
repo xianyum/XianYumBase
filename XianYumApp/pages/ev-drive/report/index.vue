@@ -8,17 +8,20 @@
         <view class="card-content">
           <view class="data-item">
             <view class="item-label">行驶里程</view>
-            <view class="item-value">{{ stats.mileage.month }}<span class="unit">公里</span></view>
+            <view class="item-value">{{ stats.currentMonthResponse.totalDistanceKm }}<span class="unit">公里</span>
+            </view>
           </view>
           <view class="split-line"></view>
           <view class="data-item">
             <view class="item-label">电耗总量</view>
-            <view class="item-value">{{ stats.power.month }}<span class="unit">度</span></view>
+            <view class="item-value">{{ stats.currentMonthResponse.totalElectricityConsumed }}<span
+                class="unit">度</span></view>
           </view>
           <view class="split-line"></view>
           <view class="data-item">
             <view class="item-label">平均电耗</view>
-            <view class="item-value">{{ stats.avgPower.month }}<span class="unit">度/公里</span></view>
+            <view class="item-value">{{ stats.currentMonthResponse.electricityPerKm }}<span class="unit">度/公里</span>
+            </view>
           </view>
         </view>
       </view>
@@ -29,17 +32,19 @@
         <view class="card-content">
           <view class="data-item">
             <view class="item-label">行驶里程</view>
-            <view class="item-value">{{ stats.mileage.lastMonth }}<span class="unit">公里</span></view>
+            <view class="item-value">{{ stats.lastMonthResponse.totalDistanceKm }}<span class="unit">公里</span></view>
           </view>
           <view class="split-line"></view>
           <view class="data-item">
             <view class="item-label">电耗总量</view>
-            <view class="item-value">{{ stats.power.lastMonth }}<span class="unit">度</span></view>
+            <view class="item-value">{{ stats.lastMonthResponse.totalElectricityConsumed }}<span class="unit">度</span>
+            </view>
           </view>
           <view class="split-line"></view>
           <view class="data-item">
             <view class="item-label">平均电耗</view>
-            <view class="item-value">{{ stats.avgPower.lastMonth }}<span class="unit">度/公里</span></view>
+            <view class="item-value">{{ stats.lastMonthResponse.electricityPerKm }}<span class="unit">度/公里</span>
+            </view>
           </view>
         </view>
       </view>
@@ -50,25 +55,45 @@
         <view class="card-content">
           <view class="data-item">
             <view class="item-label">行驶里程</view>
-            <view class="item-value">{{ stats.mileage.year }}<span class="unit">公里</span></view>
+            <view class="item-value">{{ stats.lastYearResponse.totalDistanceKm }}<span class="unit">公里</span></view>
           </view>
           <view class="split-line"></view>
           <view class="data-item">
             <view class="item-label">电耗总量</view>
-            <view class="item-value">{{ stats.power.year }}<span class="unit">度</span></view>
+            <view class="item-value">{{ stats.lastYearResponse.totalElectricityConsumed }}<span class="unit">度</span>
+            </view>
           </view>
           <view class="split-line"></view>
           <view class="data-item">
             <view class="item-label">平均电耗</view>
-            <view class="item-value">{{ stats.avgPower.year }}<span class="unit">度/公里</span></view>
+            <view class="item-value">{{ stats.lastYearResponse.electricityPerKm }}<span class="unit">度/公里</span>
+            </view>
           </view>
         </view>
       </view>
     </view>
 
-    <!-- 折线图区域：沿用极简版uCharts模板结构 -->
+    <!-- 折线图区域：新增切换按钮 -->
     <view class="chart-container">
-      <view class="chart-title">近7天行驶数据趋势</view>
+      <view class="chart-header">
+        <view class="chart-title">行驶数据趋势</view>
+        <view class="chart-switch">
+          <view
+              class="switch-btn"
+              :class="{active: dateType === 'day'}"
+              @click="switchChartType('day')"
+          >
+            近一周
+          </view>
+          <view
+              class="switch-btn"
+              :class="{active: dateType === 'month'}"
+              @click="switchChartType('month')"
+          >
+            近半年
+          </view>
+        </view>
+      </view>
       <view class="charts-box">
         <qiun-data-charts
             type="line"
@@ -81,22 +106,26 @@
 </template>
 
 <script>
+import {getAppSummaryData, getEvDriveRecordsReportLineData} from "@/api/ev-drive/list";
+
 export default {
   name: 'DrivingRecord',
   data() {
     return {
       // 统计数据
       stats: {
-        mileage: { year: 12500, month: 1200, lastMonth: 1050 },
-        power: { year: 1875, month: 180, lastMonth: 157.5 },
-        avgPower: { year: 0.15, month: 0.15, lastMonth: 0.15 }
+        currentMonthResponse: {},
+        lastMonthResponse: {},
+        lastYearResponse: {}
       },
-      // 图表数据（极简版结构）
+      // 图表数据
       chartData: {},
-      // 沿用极简版opts配置，仅调整少量业务相关样式
+      // 图表类型：day(近7天) / month(近12月)
+      dateType: 'day',
+      // 图表配置
       opts: {
-        color: ["#1890FF","#EE6666","#52c41a"], // 对应：行驶公里数、消耗电量、平均电耗
-        padding: [15,10,0,15],
+        color: ["#1890FF", "#EE6666", "#52c41a"], // 对应：行驶公里数、消耗电量、平均电耗
+        padding: [15, 10, 0, 15],
         enableScroll: false,
         legend: {},
         xAxis: {
@@ -105,7 +134,7 @@ export default {
         yAxis: {
           gridType: "dash",
           dashLength: 2,
-          min: 0 // 新增：y轴从0开始，符合业务数据逻辑
+          min: 0 // y轴从0开始
         },
         extra: {
           line: {
@@ -118,64 +147,100 @@ export default {
     };
   },
   onReady() {
-    this.getServerData();
+    this.getAppSummaryData();
+    this.getEvDriveChartData();
+  },
+  onPullDownRefresh() {
+    this.refreshData();
   },
   methods: {
-    // 沿用极简版数据获取结构，替换为近7天业务数据
-    getServerData() {
-      //模拟从服务器获取数据时的延时
-      setTimeout(() => {
-        const days = 7;
-        const categories = []; // x轴：近7天日期
+    async refreshData(){
+      try {
+        this.getAppSummaryData();
+        this.getEvDriveChartData();
+        uni.stopPullDownRefresh();
+        this.$modal.msgSuccess("刷新成功")
+      }catch (error) {
+        uni.stopPullDownRefresh();
+        this.$modal.msgError("刷新失败")
+      }
+    },
+    // 获取统计卡片数据
+    async getAppSummaryData() {
+      const response = await getAppSummaryData();
+      if (response.code === 200) {
+        this.stats = response.data;
+      }
+    },
+
+    // 切换图表类型
+    switchChartType(type) {
+      if (this.dateType === type) return;
+      this.dateType = type;
+      this.getEvDriveChartData();
+    },
+    async getEvDriveChartData() {
+      let queryParams = {
+        'dateType': this.dateType === 'day' ? 0 : 1,
+      }
+      const response = await getEvDriveRecordsReportLineData(queryParams);
+      if (response.code === 200) {
+        // 初始化数据数组
+        const categories = []; // X轴标签（日期/月份）
         const mileageData = []; // 行驶公里数
         const powerData = []; // 消耗电量
         const avgPowerData = []; // 平均电耗
 
-        // 生成近7天日期和mock数据
-        for (let i = days - 1; i >= 0; i--) {
-          const date = new Date();
-          date.setDate(date.getDate() - i);
-          const dayStr = `${date.getMonth() + 1}/${date.getDate()}`;
-          categories.push(dayStr);
-
-          // 随机生成行驶公里数（30-50公里）
-          const mileage = Math.floor(Math.random() * 20) + 30;
-          mileageData.push(mileage);
-
-          // 消耗电量 = 行驶公里数 * 平均电耗（0.14-0.16）
-          const avgPower = (Math.random() * 0.02 + 0.14).toFixed(2) * 1;
-          const power = (mileage * avgPower).toFixed(1) * 1;
-          powerData.push(power);
-          avgPowerData.push(avgPower);
+        // 1. 先对原始数据进行截取
+        let filteredData = [...response.data]; // 复制原始数据
+        if (this.dateType === 'day') {
+          // 按天：只保留最后7条（近7天）
+          filteredData = filteredData.slice(-9);
+        } else {
+          // 按月：只保留最后6条（近6个月）
+          filteredData = filteredData.slice(-6);
         }
 
-        // 拼接极简版要求的data格式
-        let res = {
+        // 处理接口返回的原始数据
+        filteredData.forEach(item => {
+          // 格式化日期：根据dateType处理不同的显示格式
+          let dateLabel = '';
+          if (this.dateType === 'day') {
+            // 日维度：2024-04-03 → 4/3
+            const date = new Date(item.driveDate);
+            dateLabel = `${date.getMonth() + 1}/${date.getDate()}`;
+          } else {
+            const dateParts = item.driveDate.split('-');
+            // 取年份后两位 + 月份（补0到两位）
+            const year = dateParts[0].slice(-2); // 截取年份最后两位
+            const month = dateParts[1].padStart(2, '0'); // 月份补0到两位
+            dateLabel = `${year}/${month}`;
+          }
+
+          // 填充各类数据
+          categories.push(dateLabel);
+          mileageData.push(item.totalDistanceKm); // 行驶公里数
+          powerData.push(item.totalElectricityConsumed); // 消耗电量
+          avgPowerData.push(item.electricityPerKm); // 平均电耗
+        });
+
+        // 组装uCharts需要的格式
+        this.chartData = {
           categories: categories,
           series: [
-            {
-              name: "行驶公里数",
-              data: mileageData
-            },
-            {
-              name: "消耗电量",
-              data: powerData
-            },
-            {
-              name: "平均电耗",
-              data: avgPowerData
-            }
+            {name: "行驶公里数", data: mileageData},
+            {name: "消耗电量", data: powerData},
+            {name: "平均电耗", data: avgPowerData}
           ]
         };
-        this.chartData = JSON.parse(JSON.stringify(res));
-      }, 500);
+      }
     }
   }
-};
+}
 </script>
 
 <style scoped>
-/* 页面基础样式：紧凑版 */
+/* 页面基础样式 */
 .driving-record-page {
   padding: 15px;
   background-color: #f5f5f5;
@@ -227,12 +292,14 @@ export default {
   justify-content: center;
   text-align: center;
 }
+
 .item-label {
   font-size: 12px;
   color: #999;
   margin-bottom: 4px;
   line-height: 1;
 }
+
 .item-value {
   font-size: 16px;
   font-weight: 700;
@@ -242,6 +309,7 @@ export default {
   gap: 3px;
   line-height: 1;
 }
+
 .unit {
   font-size: 10px;
   color: #666;
@@ -262,18 +330,45 @@ export default {
   padding: 12px 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
+
+/* 图表头部（标题+切换按钮） */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-left: 5px;
+}
+
 .chart-title {
   font-size: 14px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 8px;
-  padding-left: 5px;
   line-height: 1.2;
 }
 
-/* 极简版uCharts容器样式（沿用） */
+.chart-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.switch-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #666;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.switch-btn.active {
+  color: #fff;
+  background-color: #1890FF;
+}
+
+/* 图表容器样式 */
 .charts-box {
   width: 100%;
-  height: 260px; /* 紧凑版高度 */
+  height: 260px;
 }
 </style>

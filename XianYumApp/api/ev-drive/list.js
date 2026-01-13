@@ -51,3 +51,11 @@ export function getEvDriveRecordsReportLineData(query) {
     params: query
   })
 }
+
+export function getAppSummaryData() {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/getAppSummaryData',
+    method: 'get'
+  })
+}
+
