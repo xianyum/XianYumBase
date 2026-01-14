@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 public class TestMqttMessage implements MqttMessageHandler {
     @Override
     public String supportTopic() {
-        return "/data/iot/fish";
+        return "/data/fish-iot";
     }
 
     @Override
