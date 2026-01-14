@@ -107,12 +107,10 @@
       },
       // 隐私协议
       handlePrivacy() {
-        let site = this.globalConfig.appInfo.agreements[0]
         this.$tab.navigateTo(`/pages/common/protocol/index?type=privacy`)
       },
       // 用户协议
       handleUserAgreement() {
-        let site = this.globalConfig.appInfo.agreements[1]
         this.$tab.navigateTo(`/pages/common/protocol/index?type=user`)
       },
       // 获取图形验证码
