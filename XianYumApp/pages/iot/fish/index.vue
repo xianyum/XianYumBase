@@ -13,9 +13,6 @@
           <text class="data-label">{{ item.label }}</text>
           <view class="value-wrap">
             <text class="data-value">{{ item.value }}{{ item.unit }}</text>
-            <view class="data-trend" :class="item.trend === 'up' ? 'trend-up' : item.trend === 'down' ? 'trend-down' : 'trend-stable'">
-              <text>{{ item.trend === 'up' ? '↑' : item.trend === 'down' ? '↓' : '—' }}</text>
-            </view>
           </view>
         </view>
       </uni-col>

@@ -15,7 +15,7 @@ import cn.xianyum.mqtt.service.MqttFishService;
  * @since 2026-01-15 22:04:01
  */
 @RestController
-@RequestMapping("xianyum-/v1/mqttFish")
+@RequestMapping("/xianyum-mqtt/v1/mqttFish")
 @Tag(name = "接口")
 public class MqttFishController{
 
