@@ -16,7 +16,7 @@ import cn.xianyum.mqtt.service.MqttFishService;
  */
 @RestController
 @RequestMapping("/xianyum-mqtt/v1/mqttFish")
-@Tag(name = "接口")
+@Tag(name = "智能鱼缸接口")
 public class MqttFishController{
 
     @Autowired

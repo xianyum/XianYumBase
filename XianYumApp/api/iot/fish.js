@@ -1,11 +1,10 @@
 import request from '@/utils/request'
 
 
-export function getEvDriveRecordsPage(query) {
+export function queryLatestData() {
   return request({
-    url: 'xianyum-/v1/mqttFish',
-    method: 'get',
-    params: query
+    url: '/xianyum-mqtt/v1/mqttFish/queryLatestData',
+    method: 'get'
   })
 }
 
