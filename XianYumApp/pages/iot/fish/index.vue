@@ -27,10 +27,14 @@
         <view class="chart-section">
           <text class="section-title">温度趋势对比</text>
           <view class="charts-box line-box">
+            <!-- 增加@touchstart.stop阻止事件穿透 -->
             <qiun-data-charts
                 type="line"
                 :opts="lineOpts"
                 :chartData="lineChartData"
+                :ontouch="true"
+                @touchstart.stop="handleChartTouch"
+                ref="lineChartRef"
             />
           </view>
         </view>
@@ -91,9 +95,19 @@ export default {
       lineOpts: {
         color: ["#1890FF","#91CB74","#FAC858","#EE6666","#73C0DE","#3CA272","#FC8452","#9A60B4","#ea7ccc"],
         padding: [15,10,0,15],
-        enableScroll: false,
+        enableScroll: true,
         legend: {},
-        xAxis: { disableGrid: true },
+        xAxis: {
+          disableGrid: true,
+          scrollShow: true,
+          itemCount: 8,
+          // 新增：设置滑动方向为横向，增强兼容性
+          scrollAlign: 'right', // 默认定位到右侧
+          // 新增：增加滑动阻力，减少误触
+          scrollable: true,
+          // 新增：关闭X轴的回弹效果
+          bounce: false
+        },
         yAxis: {
           gridType: "dash",
           dashLength: 2,
@@ -103,7 +117,13 @@ export default {
           }
         },
         extra: {
-          line: { type: "straight", width: 2, activeType: "hollow" }
+          line: { type: "straight", width: 2, activeType: "hollow" },
+          // 新增：禁止纵向滑动，只允许横向滑动
+          scroll: {
+            type: 'horizontal',
+            // 增加滑动阈值，减少误触
+            threshold: 10
+          }
         }
       },
 
@@ -145,6 +165,10 @@ export default {
       timer: null
     };
   },
+  // 新增图表引用
+  refs: {
+    lineChartRef: null
+  },
   onReady() {
     // 首次加载数据
     this.fetchEnvData();
@@ -164,6 +188,13 @@ export default {
     }
   },
   methods: {
+    /**
+     * 处理图表触摸事件，阻止穿透
+     */
+    handleChartTouch() {
+      // 空函数，主要用于阻止事件冒泡
+      return false;
+    },
     /**
      * 从接口获取环境监测数据
      */
@@ -255,12 +286,24 @@ export default {
     getLineData() {
       setTimeout(() => {
         this.lineChartData = {
-          categories: ["0:00","6:00","12:00","18:00","21:00"],
+          categories: ["0:00","1:00","2:00","3:00","4:00","5:00","6:00","7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"],
           series: [
-            { name: "室内温度", data: [19.2,19.5,20.1,19.7,19.4] },
-            { name: "鱼缸水温", data: [28.8,29.0,29.4,29.2,29.1] }
+            { name: "室内温度", data: [19.2,19.3,19.3,19.4,19.4,19.5,19.5,19.6,19.7,19.8,19.9,20.0,20.1,20.0,20.0,19.9,19.8,19.8,19.7,19.6,19.5,19.4,19.4,19.4] },
+            { name: "鱼缸水温", data: [28.8,28.8,28.9,28.9,28.9,29.0,29.0,29.1,29.1,29.2,29.2,29.3,29.4,29.4,29.3,29.3,29.3,29.2,29.2,29.2,29.1,29.1,29.1,29.1] }
           ]
         };
+
+        // 新增：图表渲染完成后，手动滚动到最右侧
+        this.$nextTick(() => {
+          if (this.$refs.lineChartRef && this.$refs.lineChartRef.scrollTo) {
+            // 滚动到最右侧（最新数据）
+            this.$refs.lineChartRef.scrollTo({
+              x: this.lineChartData.categories.length - 8, // 显示最后8个数据
+              y: 0,
+              animate: false // 关闭动画，直接定位
+            });
+          }
+        });
       }, 500);
     }
   }
@@ -356,6 +399,9 @@ export default {
 .line-box {
   width: 100%;
   height: 300px;
+  /* 新增：禁止文本选择，减少误触 */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .arcbar-item {
@@ -381,5 +427,9 @@ export default {
 .arcbar-box {
   width: 100%;
   height: 200px;
+}
+.charts-box {
+  width: 100%;
+  height: 300px;
 }
 </style>
