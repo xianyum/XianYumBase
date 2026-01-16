@@ -13,6 +13,9 @@
           <text class="data-label">{{ item.label }}</text>
           <view class="value-wrap">
             <text class="data-value">{{ item.value }}{{ item.unit }}</text>
+            <view class="data-trend" :class="item.trend === 'up' ? 'trend-up' : item.trend === 'down' ? 'trend-down' : 'trend-stable'">
+              <text>{{ item.trend === 'up' ? '↑' : item.trend === 'down' ? '↓' : '—' }}</text>
+            </view>
           </view>
         </view>
       </uni-col>
@@ -65,17 +68,13 @@
 </template>
 
 <script>
-import { formatTime } from '@/utils/dateFormat.js'
+import { formatTime } from '@/utils/dateFormat'
+import { queryLatestData } from '@/api/iot/fish'
 
 export default {
   data() {
     return {
-      realTimeData: [
-        { label: '室内温度', value: 25.6, unit: '℃', trend: 'up' },
-        { label: '室内湿度', value: 58.2, unit: '%RH', trend: 'stable' },
-        { label: '鱼缸水温', value: 26.8, unit: '℃', trend: 'stable' },
-        { label: 'TDS值', value: 125, unit: 'ppm', trend: 'up' }
-      ],
+      realTimeData: [],
       lineChartData: {},
       humArcbarData: {},
       tdsArcbarData: {},
@@ -102,7 +101,7 @@ export default {
 
       humArcbarOpts: {
         color: ["#91CB74"],
-        title: { name: "58.2%", fontSize: 28, color: "#91CB74" },
+        title: { name: "0%", fontSize: 28, color: "#91CB74" },
         subtitle: { name: "室内湿度", fontSize: 20, color: "#666" },
         extra: {
           arcbar: {
@@ -119,7 +118,7 @@ export default {
 
       tdsArcbarOpts: {
         color: ["#EE6666"],
-        title: { name: "125ppm", fontSize: 28, color: "#EE6666" },
+        title: { name: "0ppm", fontSize: 28, color: "#EE6666" },
         subtitle: { name: "TDS值", fontSize: 20, color: "#666" },
         extra: {
           arcbar: {
@@ -139,60 +138,90 @@ export default {
     };
   },
   onReady() {
+    // 首次加载数据
+    this.fetchEnvData();
     this.getLineData();
-    this.getArcbarData();
-    this.updateTime = formatTime(new Date());
 
+    // 设置定时器，每10秒更新一次数据
     this.timer = setInterval(() => {
-      this.updateRealTimeData();
+      this.fetchEnvData();
       this.getLineData();
-      this.getArcbarData();
-      this.updateTime = formatTime(new Date());
     }, 10000);
   },
   onUnload() {
-    clearInterval(this.timer);
+    // 页面卸载时清除定时器
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
   },
   methods: {
-    updateRealTimeData() {
-      const newTemp = (25.6 + Math.random() * 0.6).toFixed(1);
-      this.realTimeData[0].trend = newTemp > 25.6 ? 'up' : newTemp < 25.6 ? 'down' : 'stable';
-      this.realTimeData[0].value = newTemp;
+    /**
+     * 从接口获取环境监测数据
+     */
+    async fetchEnvData() {
+      try {
+        const response = await queryLatestData();
+        // 接口请求成功，更新数据
+        if (response.code === 200 && response.data) {
+          const data = response.data;
 
-      const newHum = (58.2 + Math.random() * 0.8).toFixed(1);
-      this.realTimeData[1].trend = newHum > 58.2 ? 'up' : newHum < 58.2 ? 'down' : 'stable';
-      this.realTimeData[1].value = newHum;
-      this.humArcbarOpts.title.name = `${newHum}%`;
+          // 更新实时数据
+          this.realTimeData = [
+            { label: '室内温度', value: data.indoorTemp, unit: '℃', trend: data.indoorTempTrend },
+            { label: '室内湿度', value: data.indoorHumidity, unit: '%RH', trend: data.indoorHumidityTrend },
+            { label: '鱼缸水温', value: data.fishTankTemp, unit: '℃', trend: data.fishTankTempTrend },
+            { label: 'TDS值', value: data.fishTankTds, unit: 'ppm', trend: data.fishTankTdsTrend }
+          ];
 
-      const newWaterTemp = (26.8 + Math.random() * 0.2).toFixed(1);
-      this.realTimeData[2].trend = newWaterTemp > 26.8 ? 'up' : newWaterTemp < 26.8 ? 'down' : 'stable';
-      this.realTimeData[2].value = newWaterTemp;
+          // 更新更新时间（转换UTC时间为本地时间）
+          const createTime = new Date(data.createTime);
+          this.updateTime = formatTime(createTime);
 
-      const newTds = (125 + Math.random() * 2).toFixed(0);
-      this.realTimeData[3].trend = newTds > 125 ? 'up' : newTds < 125 ? 'down' : 'stable';
-      this.realTimeData[3].value = newTds;
-      this.tdsArcbarOpts.title.name = `${newTds}ppm`;
+          // 更新环形图数据
+          this.updateArcbarData();
+        }
+      } catch (error) {
+        console.error('获取环境监测数据失败：', error);
+        // 可以添加错误提示逻辑
+        uni.showToast({
+          title: '数据加载失败',
+          icon: 'none',
+          duration: 2000
+        });
+      }
     },
 
+    /**
+     * 更新环形图数据
+     */
+    updateArcbarData() {
+      // 室内湿度环形图
+      const humValue = this.realTimeData[1].value;
+      this.humArcbarOpts.title.name = `${humValue}%`;
+      this.humArcbarData = {
+        series: [{ name: "室内湿度", color: "#91CB74", data: humValue / 100 }]
+      };
+
+      // TDS值环形图
+      const tdsValue = this.realTimeData[3].value;
+      this.tdsArcbarOpts.title.name = `${tdsValue}ppm`;
+      this.tdsArcbarData = {
+        series: [{ name: "TDS值", color: "#EE6666", data: tdsValue / 150 }]
+      };
+    },
+
+    /**
+     * 获取折线图数据（可根据实际需求从接口获取）
+     */
     getLineData() {
       setTimeout(() => {
         this.lineChartData = {
           categories: ["0:00","6:00","12:00","18:00","21:00"],
           series: [
-            { name: "室内温度", data: [24.2,24.8,26.1,25.4,24.8] },
-            { name: "鱼缸水温", data: [26.5,26.6,26.9,26.7,26.6] }
+            { name: "室内温度", data: [19.2,19.5,20.1,19.7,19.4] },
+            { name: "鱼缸水温", data: [28.8,29.0,29.4,29.2,29.1] }
           ]
-        };
-      }, 500);
-    },
-
-    getArcbarData() {
-      setTimeout(() => {
-        this.humArcbarData = {
-          series: [{ name: "室内湿度", color: "#91CB74", data: this.realTimeData[1].value / 100 }]
-        };
-        this.tdsArcbarData = {
-          series: [{ name: "TDS值", color: "#EE6666", data: this.realTimeData[3].value / 150 }]
         };
       }, 500);
     }

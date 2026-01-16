@@ -41,4 +41,9 @@ public class MqttFishEntity extends BaseEntity {
      */
     private BigDecimal fishTankTemp;
 
+    /**
+     * 是否为当前小时的第一条数据
+     */
+    private boolean isFirstOfHour;
+
 }

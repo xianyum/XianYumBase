@@ -37,6 +37,8 @@ public class DateUtils {
 
     public final static String YYYY = "yyyy";
 
+    public final static String YYYY_MM_DD_HH_STR = "yyyyMMddHH";
+
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd
      * @param date  日期
