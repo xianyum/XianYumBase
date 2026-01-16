@@ -78,6 +78,14 @@ export default {
       lineChartData: {},
       humArcbarData: {},
       tdsArcbarData: {},
+      // TDS值颜色配置规则
+      tdsColorConfig: [
+        { min: 0, max: 50, mainColor: "#1890FF", gradientColor: "#40a9ff", desc: "优质" }, // 蓝色 - 优质
+        { min: 51, max: 100, mainColor: "#91CB74", gradientColor: "#2fc25b", desc: "良好" }, // 绿色 - 良好
+        { min: 101, max: 200, mainColor: "#FAC858", gradientColor: "#ffab91", desc: "一般" }, // 黄色 - 一般
+        { min: 201, max: 300, mainColor: "#EE6666", gradientColor: "#ff4d4f", desc: "较差" }, // 红色 - 较差
+        { min: 301, max: Infinity, mainColor: "#9A60B4", gradientColor: "#722ed1", desc: "极差" } // 紫色 - 极差
+      ],
 
       // 折线图配置：Y轴数值带℃单位
       lineOpts: {
@@ -205,10 +213,40 @@ export default {
 
       // TDS值环形图
       const tdsValue = this.realTimeData[3].value;
+      // 获取当前TDS值对应的颜色配置
+      const tdsConfig = this.getTdsConfigByValue(tdsValue);
+
+      // 更新TDS环形图标题和颜色
       this.tdsArcbarOpts.title.name = `${tdsValue}ppm`;
+      this.tdsArcbarOpts.title.color = tdsConfig.mainColor;
+      this.tdsArcbarOpts.color = [tdsConfig.mainColor];
+      // 更新副标题，增加水质描述
+      this.tdsArcbarOpts.subtitle.name = `TDS值 · ${tdsConfig.desc}`;
+      this.tdsArcbarOpts.subtitle.color = tdsConfig.mainColor;
+      // 更新渐变色
+      this.tdsArcbarOpts.extra.arcbar.linearColor = [[0, tdsConfig.mainColor], [1, tdsConfig.gradientColor]];
+
+      // 计算环形图占比（最大值设为300，超过300按100%显示）
+      const tdsRatio = Math.min(tdsValue / 300, 1);
       this.tdsArcbarData = {
-        series: [{ name: "TDS值", color: "#EE6666", data: tdsValue / 150 }]
+        series: [{ name: "TDS值", color: tdsConfig.mainColor, data: tdsRatio }]
       };
+    },
+
+    /**
+     * 根据TDS值获取对应的颜色配置
+     * @param {Number} value TDS数值
+     * @returns {Object} 对应的配置项
+     */
+    getTdsConfigByValue(value) {
+      // 遍历配置项，找到匹配的区间
+      for (const config of this.tdsColorConfig) {
+        if (value >= config.min && value <= config.max) {
+          return config;
+        }
+      }
+      // 默认返回最后一个配置（极差）
+      return this.tdsColorConfig[this.tdsColorConfig.length - 1];
     },
 
     /**
