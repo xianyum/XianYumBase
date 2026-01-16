@@ -53,8 +53,8 @@
         rememberPwd: true,
         globalConfig: getApp().globalData.config,
         loginForm: {
-          username: "xianyu",
-          password: "123456",
+          username: "",
+          password: "",
           // code: "",
           uuid: ""
         }

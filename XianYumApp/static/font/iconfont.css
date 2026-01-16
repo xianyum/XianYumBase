@@ -12,6 +12,50 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-cpu1:before {
+  content: "\e604";
+}
+
+.icon-cpu2:before {
+  content: "\e9c8";
+}
+
+.icon-bijiben:before {
+  content: "\e603";
+}
+
+.icon-cpu:before {
+  content: "\e650";
+}
+
+.icon-yugang:before {
+  content: "\e66e";
+}
+
+.icon-neicun-copy:before {
+  content: "\e60b";
+}
+
+.icon-jvm:before {
+  content: "\e601";
+}
+
+.icon-jvm1:before {
+  content: "\e61b";
+}
+
+.icon-CPU:before {
+  content: "\e602";
+}
+
+.icon-fuwuqi:before {
+  content: "\e98e";
+}
+
+.icon-cipanzhuangtai:before {
+  content: "\e728";
+}
+
 .icon-zaixianyonghujiankong:before {
   content: "\e60a";
 }

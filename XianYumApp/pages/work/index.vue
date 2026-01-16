@@ -85,7 +85,7 @@ export default {
       ],
       // 物联网菜单
       toolMenus: [
-        { name: '智能鱼缸', icon: 'icon-iot', bgColor: '#607d8b', path: '/pages/iot/fish/index' }
+        { name: '智能鱼缸', icon: 'icon-yugang', bgColor: '#607d8b', path: '/pages/iot/fish/index' }
       ]
     }
   },

@@ -428,8 +428,4 @@ export default {
   width: 100%;
   height: 200px;
 }
-.charts-box {
-  width: 100%;
-  height: 300px;
-}
 </style>

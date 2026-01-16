@@ -124,6 +124,17 @@
         // 下拉刷新区域背景色（建议与页面背景一致）
         "backgroundTextStyle": "dark"
       }
+    },
+    {
+      "path": "pages/monitor/server/index",
+      "style": {
+        "navigationBarTitleText": "服务监控",
+        "enablePullDownRefresh": true,
+        // 开启下拉刷新
+        "backgroundColor": "#f5f7fa",
+        // 下拉刷新区域背景色（建议与页面背景一致）
+        "backgroundTextStyle": "dark"
+      }
     }
   ],
   "tabBar": {
