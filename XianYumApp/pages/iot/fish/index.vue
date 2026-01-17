@@ -122,9 +122,19 @@ export default {
       // 折线图配置（移除统一Y轴单位，适配多维度数据）
       lineOpts: {
         color: ["#1890FF","#91CB74","#FAC858","#EE6666"],
-        padding: [15,10,0,15],
+        padding: [15, 10, 0, 15],
         enableScroll: true,
-        legend: {},
+        legend: {
+          orient: "horizontal",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          itemGap: 8,
+          textStyle: {
+            fontSize: 11,
+            color: "#666"
+          }
+        },
         xAxis: {
           disableGrid: true,
           scrollShow: true,
