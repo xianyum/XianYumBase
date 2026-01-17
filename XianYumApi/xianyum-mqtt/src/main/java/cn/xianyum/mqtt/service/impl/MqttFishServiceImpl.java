@@ -119,6 +119,7 @@ public class MqttFishServiceImpl implements MqttFishService {
         List<BigDecimal> indoorHumidityList = new ArrayList<>();
         List<BigDecimal> fishTankTdsList = new ArrayList<>();
         List<String> xAxisDataList = new ArrayList<>();
+        Collections.reverse(dateStrings);
         for (String dateString : dateStrings) {
             xAxisDataList.add(dateString);
             Optional<MqttFishResponse> optionalMqttFishResponse = mqttFishResponses.stream().filter(item -> item.getDateStr().equals(dateString)).findFirst();

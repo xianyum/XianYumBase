@@ -21,13 +21,32 @@
       </uni-col>
     </uni-row>
 
-    <!-- 折线图：Y轴数值带℃单位 -->
+    <!-- 折线图：4条折线 + 时间范围切换 -->
     <uni-row :gutter="15" class="mt-20">
       <uni-col :span="24">
         <view class="chart-section">
-          <text class="section-title">温度趋势对比</text>
+          <!-- 标题 + 切换按钮 -->
+          <view class="section-header">
+            <text class="section-title">环境趋势对比</text>
+            <view class="chart-tabs">
+              <text
+                  class="tab-item"
+                  :class="{active: timeRange === '0'}"
+                  @click="switchTimeRange('0')"
+              >
+                近24小时
+              </text>
+              <text
+                  class="tab-item"
+                  :class="{active: timeRange === '1'}"
+                  @click="switchTimeRange('1')"
+              >
+                近7天
+              </text>
+            </view>
+          </view>
+
           <view class="charts-box line-box">
-            <!-- 增加@touchstart.stop阻止事件穿透 -->
             <qiun-data-charts
                 type="line"
                 :opts="lineOpts"
@@ -82,18 +101,27 @@ export default {
       lineChartData: {},
       humArcbarData: {},
       tdsArcbarData: {},
+      // 时间范围切换状态（24h/7d）
+      timeRange: '0',
+      // 后端返回的原始趋势数据
+      backendLineData: {
+        xaxisDataList: [],
+        indoorTempList: [],
+        fishTankTempList: [],
+        indoorHumidityList: [],
+        fishTankTdsList: []
+      },
       // TDS值颜色配置规则
       tdsColorConfig: [
-        { min: 0, max: 50, mainColor: "#1890FF", gradientColor: "#40a9ff", desc: "优质" }, // 蓝色 - 优质
-        { min: 51, max: 100, mainColor: "#91CB74", gradientColor: "#2fc25b", desc: "良好" }, // 绿色 - 良好
-        { min: 101, max: 200, mainColor: "#FAC858", gradientColor: "#ffab91", desc: "一般" }, // 黄色 - 一般
-        { min: 201, max: 300, mainColor: "#EE6666", gradientColor: "#ff4d4f", desc: "较差" }, // 红色 - 较差
-        { min: 301, max: Infinity, mainColor: "#9A60B4", gradientColor: "#722ed1", desc: "极差" } // 紫色 - 极差
+        { min: 0, max: 50, mainColor: "#1890FF", gradientColor: "#40a9ff", desc: "优质" },
+        { min: 51, max: 100, mainColor: "#91CB74", gradientColor: "#2fc25b", desc: "良好" },
+        { min: 101, max: 200, mainColor: "#FAC858", gradientColor: "#ffab91", desc: "一般" },
+        { min: 201, max: 300, mainColor: "#EE6666", gradientColor: "#4d6bff", desc: "较差" },
+        { min: 301, max: Infinity, mainColor: "#9A60B4", gradientColor: "#d12e2e", desc: "极差" }
       ],
-
-      // 折线图配置：Y轴数值带℃单位
+      // 折线图配置（移除统一Y轴单位，适配多维度数据）
       lineOpts: {
-        color: ["#1890FF","#91CB74","#FAC858","#EE6666","#73C0DE","#3CA272","#FC8452","#9A60B4","#ea7ccc"],
+        color: ["#1890FF","#91CB74","#FAC858","#EE6666"],
         padding: [15,10,0,15],
         enableScroll: true,
         legend: {},
@@ -101,32 +129,22 @@ export default {
           disableGrid: true,
           scrollShow: true,
           itemCount: 8,
-          // 新增：设置滑动方向为横向，增强兼容性
-          scrollAlign: 'right', // 默认定位到右侧
-          // 新增：增加滑动阻力，减少误触
+          scrollAlign: 'right',
           scrollable: true,
-          // 新增：关闭X轴的回弹效果
           bounce: false
         },
         yAxis: {
           gridType: "dash",
-          dashLength: 2,
-          // 自定义Y轴格式化函数，给数值加℃
-          format: function (val) {
-            return val + "℃";
-          }
+          dashLength: 2
         },
         extra: {
           line: { type: "straight", width: 2, activeType: "hollow" },
-          // 新增：禁止纵向滑动，只允许横向滑动
           scroll: {
             type: 'horizontal',
-            // 增加滑动阈值，减少误触
             threshold: 10
           }
         }
       },
-
       humArcbarOpts: {
         color: ["#91CB74"],
         title: { name: "0%", fontSize: 28, color: "#91CB74" },
@@ -143,7 +161,6 @@ export default {
           }
         }
       },
-
       tdsArcbarOpts: {
         color: ["#EE6666"],
         title: { name: "0ppm", fontSize: 28, color: "#EE6666" },
@@ -160,12 +177,10 @@ export default {
           }
         }
       },
-
       updateTime: "",
       timer: null
     };
   },
-  // 新增图表引用
   refs: {
     lineChartRef: null
   },
@@ -178,7 +193,7 @@ export default {
     this.timer = setInterval(() => {
       this.fetchEnvData();
       this.getLineData();
-    }, 10000);
+    }, 20000);
   },
   onUnload() {
     // 页面卸载时清除定时器
@@ -192,16 +207,51 @@ export default {
      * 处理图表触摸事件，阻止穿透
      */
     handleChartTouch() {
-      // 空函数，主要用于阻止事件冒泡
       return false;
     },
     /**
-     * 从接口获取环境监测数据
+     * 切换时间范围（24h/7d）
+     */
+    switchTimeRange(range) {
+      this.timeRange = range;
+      this.getLineData();
+    },
+    /**
+     * 格式化X轴标签文本
+     * @param {String} label 原始时间标签
+     * @param {String} range 时间范围 0-24小时 1-7天
+     * @returns {String} 格式化后的标签
+     */
+    formatXAxisLabel(label, range) {
+      if (!label) return '';
+
+      if (range === '0') {
+        // 24小时模式：提取小时，格式化为 "17时"
+        const hourMatch = label.match(/\s(\d{1,2})$/);
+        if (hourMatch && hourMatch[1]) {
+          return `${hourMatch[1]}时`;
+        }
+        // 兼容其他格式，提取小时部分
+        const timeParts = label.split(/\s|:/);
+        if (timeParts.length >= 2) {
+          return `${timeParts[1]}时`;
+        }
+      } else if (range === '1') {
+        // 7天模式：提取月/日，格式化为 "01/17"
+        const dateMatch = label.match(/(\d{4})-(\d{2})-(\d{2})/);
+        if (dateMatch && dateMatch[2] && dateMatch[3]) {
+          return `${dateMatch[2]}/${dateMatch[3]}`;
+        }
+      }
+      // 兜底返回原始值
+      return label;
+    },
+    /**
+     * 从接口获取环境监测实时数据
      */
     async fetchEnvData() {
       try {
         const response = await queryLatestData();
-        // 接口请求成功，更新数据
         if (response.code === 200 && response.data) {
           const data = response.data;
 
@@ -222,7 +272,6 @@ export default {
         }
       } catch (error) {
         console.error('获取环境监测数据失败：', error);
-        // 可以添加错误提示逻辑
         uni.showToast({
           title: '数据加载失败',
           icon: 'none',
@@ -230,7 +279,6 @@ export default {
         });
       }
     },
-
     /**
      * 更新环形图数据
      */
@@ -244,17 +292,14 @@ export default {
 
       // TDS值环形图
       const tdsValue = this.realTimeData[3].value;
-      // 获取当前TDS值对应的颜色配置
       const tdsConfig = this.getTdsConfigByValue(tdsValue);
 
-      // 更新TDS环形图标题和颜色
+      // 更新TDS环形图配置
       this.tdsArcbarOpts.title.name = `${tdsValue}ppm`;
       this.tdsArcbarOpts.title.color = tdsConfig.mainColor;
       this.tdsArcbarOpts.color = [tdsConfig.mainColor];
-      // 更新副标题，增加水质描述
       this.tdsArcbarOpts.subtitle.name = `${tdsConfig.desc}`;
       this.tdsArcbarOpts.subtitle.color = tdsConfig.mainColor;
-      // 更新渐变色
       this.tdsArcbarOpts.extra.arcbar.linearColor = [[0, tdsConfig.mainColor], [1, tdsConfig.gradientColor]];
 
       // 计算环形图占比（最大值设为300，超过300按100%显示）
@@ -263,46 +308,62 @@ export default {
         series: [{ name: "TDS值", color: tdsConfig.mainColor, data: tdsRatio }]
       };
     },
-
     /**
      * 根据TDS值获取对应的颜色配置
-     * @param {Number} value TDS数值
-     * @returns {Object} 对应的配置项
      */
     getTdsConfigByValue(value) {
-      // 遍历配置项，找到匹配的区间
       for (const config of this.tdsColorConfig) {
         if (value >= config.min && value <= config.max) {
           return config;
         }
       }
-      // 默认返回最后一个配置（极差）
       return this.tdsColorConfig[this.tdsColorConfig.length - 1];
     },
-
     /**
-     * 获取折线图数据（可根据实际需求从接口获取）
+     * 获取折线图趋势数据（适配后端格式）
      */
     async getLineData() {
-        const response = await getReportLineData({ dateType: '0' });
-        this.lineChartData = {
-          categories: response.data.xAxisDataList,
-          series: [
-            { name: "室内温度", data: response.data.indoorTempList},
-            { name: "鱼缸水温", data: response.data.fishTankTempList }
-          ]
-        };
-        // 新增：图表渲染完成后，手动滚动到最右侧
-        this.$nextTick(() => {
-          if (this.$refs.lineChartRef && this.$refs.lineChartRef.scrollTo) {
-            // 滚动到最右侧（最新数据）
-            this.$refs.lineChartRef.scrollTo({
-              x: this.lineChartData.categories.length - 8, // 显示最后8个数据
-              y: 0,
-              animate: false // 关闭动画，直接定位
-            });
-          }
+      try {
+        // 传递时间范围参数给后端
+        const response = await getReportLineData({ dateType: this.timeRange });
+        if (response.code === 200 && response.data) {
+          this.backendLineData = response.data;
+
+          // 格式化X轴分类标签
+          const formattedCategories = this.backendLineData.xaxisDataList.map(label => {
+            return this.formatXAxisLabel(label, this.timeRange);
+          });
+
+          // 转换为图表所需格式
+          this.lineChartData = {
+            categories: formattedCategories,
+            series: [
+              { name: "室内温度", data: this.backendLineData.indoorTempList },
+              { name: "鱼缸水温", data: this.backendLineData.fishTankTempList },
+              { name: "室内湿度", data: this.backendLineData.indoorHumidityList },
+              { name: "鱼缸TDS", data: this.backendLineData.fishTankTdsList }
+            ]
+          };
+
+          // 滚动到最新数据
+          this.$nextTick(() => {
+            if (this.$refs.lineChartRef && this.$refs.lineChartRef.scrollTo) {
+              this.$refs.lineChartRef.scrollTo({
+                x: this.lineChartData.categories.length - 8,
+                y: 0,
+                animate: false
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error('获取趋势数据失败：', error);
+        uni.showToast({
+          title: '趋势数据加载失败',
+          icon: 'none',
+          duration: 2000
         });
+      }
     }
   }
 };
@@ -386,18 +447,44 @@ export default {
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
 }
 
+// 标题+切换按钮容器
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
 .section-title {
   font-size: 26rpx;
   color: #303133;
   font-weight: 500;
   display: block;
-  margin-bottom: 10rpx;
+}
+
+// 时间范围切换按钮
+.chart-tabs {
+  display: flex;
+  background: #f5f7fa;
+  border-radius: 6rpx;
+  padding: 2rpx;
+}
+
+.tab-item {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 4rpx;
+  color: #606266;
+  transition: all 0.3s;
+  &.active {
+    background: #1890FF;
+    color: #fff;
+  }
 }
 
 .line-box {
   width: 100%;
   height: 300px;
-  /* 新增：禁止文本选择，减少误触 */
   user-select: none;
   -webkit-user-select: none;
 }
