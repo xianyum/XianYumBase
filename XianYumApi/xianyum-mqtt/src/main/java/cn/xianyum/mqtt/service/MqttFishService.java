@@ -32,4 +32,10 @@ public interface MqttFishService{
      * @return
      */
     MqttFishReportResponse getReportLineData(MqttFishRequest request);
+
+    /**
+     * 获取IOT上报的总量
+     * @return
+     */
+    Long queryTotalCount();
 }

@@ -55,6 +55,7 @@ import defaultAvatar from '@/static/images/profile.jpg'
 import {getMessageLogCount} from "@/api/message/monitor"
 import {getJobLogCount} from "@/api/job/jobLog"
 import {getOperLogCount} from "@/api/monitor/operlog"
+import { queryMqttTotalCount} from '@/api/iot/fish'
 
 export default {
   data() {
@@ -114,14 +115,16 @@ export default {
     async getAllLogCounts() {
       try {
         // 并行发起所有请求
-        const [operLogRes, messageLogRes, jobLogRes] = await Promise.all([
+        const [operLogRes, messageLogRes, jobLogRes,mqttRes] = await Promise.all([
           getOperLogCount(),
           getMessageLogCount(),
-          getJobLogCount()
+          getJobLogCount(),
+          queryMqttTotalCount()
         ]);
         
         this.overviewData = [
           { label: '操作日志量', value: operLogRes.data || 0 },
+          { label: 'IOT上报量', value: mqttRes.data || 0 },
           { label: '消息发送量', value: messageLogRes.data || 0 },
           { label: '任务调度量', value: jobLogRes.data || 0 }
         ];

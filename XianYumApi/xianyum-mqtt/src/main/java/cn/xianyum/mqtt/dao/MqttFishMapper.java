@@ -17,5 +17,7 @@ import java.util.List;
 public interface MqttFishMapper extends BaseMapper<MqttFishEntity> {
 
     List<MqttFishResponse> getReportLineData(@Param("request") MqttFishRequest request);
+
+    Long queryTotalCount();
 }
 

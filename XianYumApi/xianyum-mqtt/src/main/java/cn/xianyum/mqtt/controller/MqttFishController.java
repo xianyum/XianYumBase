@@ -32,6 +32,14 @@ public class MqttFishController{
         return Results.success(response);
     }
 
+    @GetMapping("/queryTotalCount")
+    @Operation(summary = "获取IOT上报的总量")
+    public Results queryTotalCount(){
+        Long count = mqttFishService.queryTotalCount();
+        return Results.success(count);
+    }
+
+
     @PostMapping("/getReportLineData")
     @Operation(summary = "获取折线图")
     public Results getReportLineData(@RequestBody MqttFishRequest request){

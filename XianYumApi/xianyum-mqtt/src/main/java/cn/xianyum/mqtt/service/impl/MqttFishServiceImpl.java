@@ -144,5 +144,15 @@ public class MqttFishServiceImpl implements MqttFishService {
         return mqttFishReportResponse;
     }
 
+    /**
+     * 获取IOT上报的总量
+     *
+     * @return
+     */
+    @Override
+    public Long queryTotalCount() {
+        return this.mqttFishMapper.queryTotalCount();
+    }
+
 }
 

@@ -31,4 +31,11 @@
             LIMIT 18
         </if>
     </select>
+
+    <select id="queryTotalCount">
+        SELECT
+            MAX(mf.id)
+        FROM
+        mqtt_fish mf
+    </select>
 </mapper>
