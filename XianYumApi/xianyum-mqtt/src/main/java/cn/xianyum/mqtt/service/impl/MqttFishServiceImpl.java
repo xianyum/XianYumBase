@@ -125,7 +125,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             Optional<MqttFishResponse> optionalMqttFishResponse = mqttFishResponses.stream().filter(item -> item.getDateStr().equals(dateString)).findFirst();
             if(optionalMqttFishResponse.isPresent()){
                 MqttFishResponse mqttFishResponse = optionalMqttFishResponse.get();
-                indoorTempList.add(mqttFishResponse.getIndoorHumidity());
+                indoorTempList.add(mqttFishResponse.getIndoorTemp());
                 fishTankTempList.add(mqttFishResponse.getFishTankTemp());
                 fishTankTdsList.add(mqttFishResponse.getFishTankTds());
                 indoorHumidityList.add(mqttFishResponse.getIndoorHumidity());
