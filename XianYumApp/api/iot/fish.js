@@ -8,6 +8,13 @@ export function queryLatestData() {
   })
 }
 
+export function queryMqttTotalCount() {
+  return request({
+    url: '/xianyum-mqtt/v1/mqttFish/queryTotalCount',
+    method: 'get'
+  })
+}
+
 export function getReportLineData(data){
   return request({
     url: '/xianyum-mqtt/v1/mqttFish/getReportLineData',
