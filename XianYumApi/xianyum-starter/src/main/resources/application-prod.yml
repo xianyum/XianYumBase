@@ -49,7 +49,7 @@ redis:
     type_prefix: '${spring.application.name}:xianyum-system:dict_type:'
   mqtt:
     fish_latest_data: '${spring.application.name}:xianyum-mqtt:fish:latest'
-    data_prefix: '${spring.application.name}:xianyum-mqtt:fish:data'
+    fish_previous_data: '${spring.application.name}:xianyum-mqtt:fish:previous'
 #七牛云配置
 oss:
   access_key: mpw:zwhl7cATylP4lLJAhou0pPv9trW1rACXhGBW7PsZkVBAocvTeLULeq/EIWTL/cbD

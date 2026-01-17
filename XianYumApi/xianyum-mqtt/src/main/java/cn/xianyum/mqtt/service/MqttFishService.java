@@ -1,6 +1,8 @@
 package cn.xianyum.mqtt.service;
 
 
+import cn.xianyum.mqtt.entity.request.MqttFishRequest;
+import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
 import cn.xianyum.mqtt.entity.response.MqttFishResponse;
 
 /**
@@ -23,4 +25,11 @@ public interface MqttFishService{
      * @return
      */
     MqttFishResponse queryLatestData();
+
+    /**
+     * 获取折线图
+     * @param request
+     * @return
+     */
+    MqttFishReportResponse getReportLineData(MqttFishRequest request);
 }

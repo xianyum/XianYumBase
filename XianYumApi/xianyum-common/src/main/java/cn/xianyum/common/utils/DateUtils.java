@@ -11,10 +11,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -38,6 +35,8 @@ public class DateUtils {
     public final static String YYYY = "yyyy";
 
     public final static String YYYY_MM_DD_HH_STR = "yyyyMMddHH";
+
+    public final static String YYYY_MM_DD_HH = "yyyy-MM-dd HH";
 
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd
@@ -385,5 +384,27 @@ public class DateUtils {
                 .withSecondOfMinute(59)             // 秒设置为59
                 .withMillisOfSecond(999)            // 毫秒设置为999
                 .toDate();
+    }
+
+    /**
+     * 获取近24小时的时间列表（格式：yyyy-MM-dd HH）
+     * @return 按时间升序排列的列表（23小时前 → 当前小时）
+     */
+    public static List<String> getLast24Hours() {
+        // 获取当前时间（精确到小时，分/秒/毫秒置0）
+        DateTime now = new DateTime()
+                .withMinuteOfHour(0)    // 分钟置0
+                .withSecondOfMinute(0)  // 秒置0
+                .withMillisOfSecond(0); // 毫秒置0
+
+        List<String> timeList = new ArrayList<>();
+
+        // 循环生成近24小时的每一小时
+        for (int hourDelta = 0; hourDelta < 24; hourDelta++) {
+            // Joda Time 往前推 hourDelta 小时（核心API）
+            DateTime targetTime = now.minusHours(hourDelta);
+            timeList.add(format(targetTime.toDate(), YYYY_MM_DD_HH));
+        }
+        return timeList;
     }
 }

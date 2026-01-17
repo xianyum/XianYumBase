@@ -73,7 +73,7 @@
 
 <script>
 import { formatTime } from '@/utils/dateFormat'
-import { queryLatestData } from '@/api/iot/fish'
+import { queryLatestData,getReportLineData } from '@/api/iot/fish'
 
 export default {
   data() {
@@ -252,7 +252,7 @@ export default {
       this.tdsArcbarOpts.title.color = tdsConfig.mainColor;
       this.tdsArcbarOpts.color = [tdsConfig.mainColor];
       // 更新副标题，增加水质描述
-      this.tdsArcbarOpts.subtitle.name = `TDS值 · ${tdsConfig.desc}`;
+      this.tdsArcbarOpts.subtitle.name = `${tdsConfig.desc}`;
       this.tdsArcbarOpts.subtitle.color = tdsConfig.mainColor;
       // 更新渐变色
       this.tdsArcbarOpts.extra.arcbar.linearColor = [[0, tdsConfig.mainColor], [1, tdsConfig.gradientColor]];
@@ -283,16 +283,15 @@ export default {
     /**
      * 获取折线图数据（可根据实际需求从接口获取）
      */
-    getLineData() {
-      setTimeout(() => {
+    async getLineData() {
+        const response = await getReportLineData({ dateType: '0' });
         this.lineChartData = {
-          categories: ["0:00","1:00","2:00","3:00","4:00","5:00","6:00","7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"],
+          categories: response.data.xAxisDataList,
           series: [
-            { name: "室内温度", data: [19.2,19.3,19.3,19.4,19.4,19.5,19.5,19.6,19.7,19.8,19.9,20.0,20.1,20.0,20.0,19.9,19.8,19.8,19.7,19.6,19.5,19.4,19.4,19.4] },
-            { name: "鱼缸水温", data: [28.8,28.8,28.9,28.9,28.9,29.0,29.0,29.1,29.1,29.2,29.2,29.3,29.4,29.4,29.3,29.3,29.3,29.2,29.2,29.2,29.1,29.1,29.1,29.1] }
+            { name: "室内温度", data: response.data.indoorTempList},
+            { name: "鱼缸水温", data: response.data.fishTankTempList }
           ]
         };
-
         // 新增：图表渲染完成后，手动滚动到最右侧
         this.$nextTick(() => {
           if (this.$refs.lineChartRef && this.$refs.lineChartRef.scrollTo) {
@@ -304,7 +303,6 @@ export default {
             });
           }
         });
-      }, 500);
     }
   }
 };

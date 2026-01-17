@@ -55,4 +55,8 @@ public class MqttFishResponse extends BaseResponse {
      */
     private String fishTankTempTrend;
 
+    /**
+     * 时间字符串
+     */
+    private String dateStr;
 }

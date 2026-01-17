@@ -5,16 +5,20 @@ import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.mqtt.entity.po.MqttFishEntity;
+import cn.xianyum.mqtt.entity.request.MqttFishRequest;
+import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
 import cn.xianyum.mqtt.entity.response.MqttFishResponse;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.mqtt.service.MqttFishService;
 import cn.xianyum.mqtt.dao.MqttFishMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.Objects;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * (MqttFish)service层实现
@@ -37,9 +41,9 @@ public class MqttFishServiceImpl implements MqttFishService {
     @Value("${redis.mqtt.fish_latest_data}")
     private String fishLatestDataRedisPrefix;
 
-    // mqtt上报鱼的数据
-    @Value("${redis.mqtt.data_prefix}")
-    private String fishDataRedisPrefix;
+    // 记录每个小时第一次上报的的mqtt数据
+    @Value("${redis.mqtt.fish_previous_data}")
+    private String fishPreviousDataRedisPrefix;
 
     /**
      * 同步设备上报的iot数据
@@ -56,11 +60,11 @@ public class MqttFishServiceImpl implements MqttFishService {
         fishEntity.setCreateTime(nowDate);
         // 保存每个小时的第一条数据
         String nowHourStr = DateUtils.format(nowDate, DateUtils.YYYY_MM_DD_HH_STR);
-        boolean isHaveHourFirstData = redisUtils.hHasKey(fishDataRedisPrefix, nowHourStr);
+        boolean isHaveHourFirstData = redisUtils.hasKey(fishPreviousDataRedisPrefix+":"+nowHourStr);
         fishEntity.setFirstOfHour(!isHaveHourFirstData);
         String fishEntityJson = JSONObject.toJSONString(fishEntity);
         if(!isHaveHourFirstData){
-            redisUtils.hSet(fishDataRedisPrefix, nowHourStr,fishEntityJson);
+            redisUtils.setMin(fishPreviousDataRedisPrefix+":"+nowHourStr, fishEntityJson,130);
         }
         redisUtils.set(fishLatestDataRedisPrefix, fishEntityJson);
         mqttFishMapper.insert(fishEntity);
@@ -76,14 +80,14 @@ public class MqttFishServiceImpl implements MqttFishService {
         if(!redisUtils.hasKey(fishLatestDataRedisPrefix)){
             return null;
         }
-        String nowHourStr = DateUtils.format(new Date(), DateUtils.YYYY_MM_DD_HH_STR);
-        boolean isHaveHourFirstData = redisUtils.hHasKey(fishDataRedisPrefix, nowHourStr);
+        String previousNowHourStr = DateUtils.format(DateUtils.addDateHours(new Date(),-1), DateUtils.YYYY_MM_DD_HH_STR);
+        boolean isHaveHourFirstData = redisUtils.hasKey(fishPreviousDataRedisPrefix+":"+previousNowHourStr);
         MqttFishResponse mqttFishResponse = JSONObject.parseObject(redisUtils.getString(fishLatestDataRedisPrefix), MqttFishResponse.class);
         if(Objects.isNull(mqttFishResponse)){
             return null;
         }
         if(isHaveHourFirstData){
-            MqttFishResponse perViousMqttFishResponse = JSONObject.parseObject((String) redisUtils.hGet(fishDataRedisPrefix,nowHourStr), MqttFishResponse.class);
+            MqttFishResponse perViousMqttFishResponse = JSONObject.parseObject(redisUtils.getString(fishPreviousDataRedisPrefix+":"+previousNowHourStr), MqttFishResponse.class);
             mqttFishResponse.setFishTankTdsTrend(TrendEnum.judgeTrend(mqttFishResponse.getFishTankTds(),perViousMqttFishResponse.getFishTankTds()).getCode());
             mqttFishResponse.setFishTankTempTrend(TrendEnum.judgeTrend(mqttFishResponse.getFishTankTemp(),perViousMqttFishResponse.getFishTankTemp()).getCode());
             mqttFishResponse.setIndoorHumidityTrend(TrendEnum.judgeTrend(mqttFishResponse.getIndoorHumidity(),perViousMqttFishResponse.getIndoorHumidity()).getCode());
@@ -91,5 +95,53 @@ public class MqttFishServiceImpl implements MqttFishService {
         }
         return mqttFishResponse;
     }
+
+    /**
+     * 获取折线图
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public MqttFishReportResponse getReportLineData(MqttFishRequest request) {
+        if(Objects.isNull(request.getDateType())){
+            return new MqttFishReportResponse();
+        }
+        List<MqttFishResponse> mqttFishResponses = this.mqttFishMapper.getReportLineData(request);
+        if(CollectionUtils.isEmpty(mqttFishResponses)){
+            return new MqttFishReportResponse();
+        }
+        boolean isHour = request.getDateType().equals(0);
+        List<String> dateStrings = isHour?DateUtils.getLast24Hours():DateUtils.minusDate(DateUtils.addDateDays(new Date(),1), DateUtils.DATE_PATTERN, 15);
+        MqttFishReportResponse mqttFishReportResponse = new MqttFishReportResponse();
+        List<BigDecimal> indoorTempList = new ArrayList<>();
+        List<BigDecimal> fishTankTempList = new ArrayList<>();
+        List<BigDecimal> indoorHumidityList = new ArrayList<>();
+        List<BigDecimal> fishTankTdsList = new ArrayList<>();
+        List<String> xAxisDataList = new ArrayList<>();
+        for (String dateString : dateStrings) {
+            xAxisDataList.add(dateString);
+            Optional<MqttFishResponse> optionalMqttFishResponse = mqttFishResponses.stream().filter(item -> item.getDateStr().equals(dateString)).findFirst();
+            if(optionalMqttFishResponse.isPresent()){
+                MqttFishResponse mqttFishResponse = optionalMqttFishResponse.get();
+                indoorTempList.add(mqttFishResponse.getIndoorHumidity());
+                fishTankTempList.add(mqttFishResponse.getFishTankTemp());
+                fishTankTdsList.add(mqttFishResponse.getFishTankTds());
+                indoorHumidityList.add(mqttFishResponse.getIndoorHumidity());
+            }else{
+                indoorTempList.add(BigDecimal.ZERO);
+                fishTankTempList.add(BigDecimal.ZERO);
+                fishTankTdsList.add(BigDecimal.ZERO);
+                indoorHumidityList.add(BigDecimal.ZERO);
+            }
+        }
+        mqttFishReportResponse.setXAxisDataList(xAxisDataList);
+        mqttFishReportResponse.setFishTankTempList(fishTankTempList);
+        mqttFishReportResponse.setIndoorTempList(indoorTempList);
+        mqttFishReportResponse.setFishTankTdsList(fishTankTdsList);
+        mqttFishReportResponse.setIndoorHumidityList(indoorHumidityList);
+        return mqttFishReportResponse;
+    }
+
 }
 

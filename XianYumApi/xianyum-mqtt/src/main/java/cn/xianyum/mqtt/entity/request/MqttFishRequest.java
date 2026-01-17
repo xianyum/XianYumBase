@@ -36,4 +36,8 @@ public class MqttFishRequest extends BaseRequest {
      */
     private BigDecimal fishTankTemp;
 
+    /**
+     * 时间类型
+     */
+    private Integer dateType;
 }

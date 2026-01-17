@@ -8,4 +8,12 @@ export function queryLatestData() {
   })
 }
 
+export function getReportLineData(data){
+  return request({
+    url: '/xianyum-mqtt/v1/mqttFish/getReportLineData',
+    method: 'post',
+    data: data
+  })
+}
+
 

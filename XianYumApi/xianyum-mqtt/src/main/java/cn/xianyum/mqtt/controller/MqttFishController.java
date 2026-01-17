@@ -1,6 +1,8 @@
 package cn.xianyum.mqtt.controller;
 
 import cn.xianyum.common.utils.Results;
+import cn.xianyum.mqtt.entity.request.MqttFishRequest;
+import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
 import cn.xianyum.mqtt.entity.response.MqttFishResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +29,13 @@ public class MqttFishController{
     @Operation(summary = "获取最新的实时数据")
     public Results queryLatestData(){
         MqttFishResponse response = mqttFishService.queryLatestData();
+        return Results.success(response);
+    }
+
+    @PostMapping("/getReportLineData")
+    @Operation(summary = "获取折线图")
+    public Results getReportLineData(@RequestBody MqttFishRequest request){
+        MqttFishReportResponse response = mqttFishService.getReportLineData(request);
         return Results.success(response);
     }
 
