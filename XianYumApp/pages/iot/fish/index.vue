@@ -138,7 +138,7 @@ export default {
         xAxis: {
           disableGrid: true,
           scrollShow: true,
-          itemCount: 8,
+          itemCount: 7,
           scrollAlign: 'right',
           scrollable: true,
           bounce: false
