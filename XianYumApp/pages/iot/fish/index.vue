@@ -144,7 +144,7 @@ export default {
       tempLineChartData: {},
       tempLineOpts: {
         color: ["#1890FF", "#91CB74"],
-        padding: [15, 10, 0, 15],
+        padding: [15, 0, 0, 0],
         enableScroll: true,
         legend: {
           orient: "horizontal",
@@ -187,7 +187,7 @@ export default {
       humTdsLineChartData: {},
       humTdsLineOpts: {
         color: ["#FAC858", "#EE6666"],
-        padding: [15, 10, 0, 15],
+        padding: [15, 0, 0, 0],
         enableScroll: true,
         legend: {
           orient: "horizontal",
