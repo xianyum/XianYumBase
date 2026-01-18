@@ -73,32 +73,63 @@
       </view>
     </view>
 
-    <!-- 折线图区域：新增切换按钮 -->
+    <!-- 折线图区域：新增数据类型切换按钮 -->
     <view class="chart-container">
       <view class="chart-header">
-        <view class="chart-title">行驶数据趋势</view>
-        <view class="chart-switch">
-          <view
-              class="switch-btn"
-              :class="{active: dateType === 'day'}"
-              @click="switchChartType('day')"
-          >
-            近一周
+        <view class="chart-title">趋势</view>
+        <view class="chart-switch-group">
+          <!-- 数据类型切换 -->
+          <view class="chart-switch data-type-switch">
+            <view
+                class="switch-btn"
+                :class="{active: chartDataType === 'mileagePower'}"
+                @click="switchChartDataType('mileagePower')"
+            >
+              里程&电量
+            </view>
+            <view
+                class="switch-btn"
+                :class="{active: chartDataType === 'avgPower'}"
+                @click="switchChartDataType('avgPower')"
+            >
+              平均电耗
+            </view>
           </view>
-          <view
-              class="switch-btn"
-              :class="{active: dateType === 'month'}"
-              @click="switchChartType('month')"
-          >
-            近半年
+          <!-- 时间范围切换 -->
+          <view class="chart-switch time-range-switch">
+            <view
+                class="switch-btn"
+                :class="{active: dateType === 'day'}"
+                @click="switchChartType('day')"
+            >
+              近一周
+            </view>
+            <view
+                class="switch-btn"
+                :class="{active: dateType === 'month'}"
+                @click="switchChartType('month')"
+            >
+              近半年
+            </view>
           </view>
         </view>
       </view>
       <view class="charts-box">
+        <!-- 第一组：行驶公里数 + 消耗电量 -->
         <qiun-data-charts
+            v-if="chartDataType === 'mileagePower'"
             type="line"
-            :opts="opts"
-            :chartData="chartData"
+            :opts="mileagePowerOpts"
+            :chartData="mileagePowerChartData"
+            :key="`mileage-${dateType}`"
+        />
+        <!-- 第二组：平均电耗 -->
+        <qiun-data-charts
+            v-if="chartDataType === 'avgPower'"
+            type="line"
+            :opts="avgPowerOpts"
+            :chartData="avgPowerChartData"
+            :key="`power-${dateType}`"
         />
       </view>
     </view>
@@ -118,13 +149,17 @@ export default {
         lastMonthResponse: {},
         lastYearResponse: {}
       },
-      // 图表数据
-      chartData: {},
-      // 图表类型：day(近7天) / month(近12月)
+      // 图表数据类型切换：mileagePower(里程&电量) / avgPower(平均电耗)
+      chartDataType: 'mileagePower',
+      // 时间范围切换：day(近7天) / month(近12月)
       dateType: 'day',
-      // 图表配置
-      opts: {
-        color: ["#1890FF", "#EE6666", "#52c41a"], // 对应：行驶公里数、消耗电量、平均电耗
+      // 第一组图表数据：行驶公里数 + 消耗电量
+      mileagePowerChartData: {},
+      // 第二组图表数据：平均电耗
+      avgPowerChartData: {},
+      // 第一组图表配置（里程&电量）- 多Y轴配置方式
+      mileagePowerOpts: {
+        color: ["#1890FF", "#EE6666"], // 对应：行驶公里数、消耗电量
         padding: [15, 10, 0, 15],
         enableScroll: false,
         legend: {},
@@ -134,7 +169,43 @@ export default {
         yAxis: {
           gridType: "dash",
           dashLength: 2,
-          min: 0 // y轴从0开始
+          data: [
+            {
+              min: 0,    // 基础最小值
+              max: 0,    // 动态计算赋值
+              step: 0,   // 动态计算赋值
+              precision: 0 // 整数刻度
+            }
+          ]
+        },
+        extra: {
+          line: {
+            type: "straight",
+            width: 2,
+            activeType: "hollow"
+          }
+        }
+      },
+      // 第二组图表配置（平均电耗）- 多Y轴配置方式
+      avgPowerOpts: {
+        color: ["#52c41a"], // 对应：平均电耗
+        padding: [15, 10, 0, 15],
+        enableScroll: false,
+        legend: {},
+        xAxis: {
+          disableGrid: true
+        },
+        yAxis: {
+          gridType: "dash",
+          dashLength: 2,
+          data: [
+            {
+              min: 0,      // 基础最小值
+              max: 0,      // 动态计算赋值
+              step: 0,     // 动态计算赋值
+              precision: 2 // 保留2位小数
+            }
+          ]
         },
         extra: {
           line: {
@@ -172,12 +243,20 @@ export default {
       }
     },
 
-    // 切换图表类型
+    // 切换数据类型（里程&电量 / 平均电耗）
+    switchChartDataType(type) {
+      if (this.chartDataType === type) return;
+      this.chartDataType = type;
+    },
+
+    // 切换时间范围（近一周 / 近半年）
     switchChartType(type) {
       if (this.dateType === type) return;
       this.dateType = type;
       this.getEvDriveChartData();
     },
+
+    // 获取图表数据并动态计算Y轴刻度
     async getEvDriveChartData() {
       let queryParams = {
         'dateType': this.dateType === 'day' ? 0 : 1,
@@ -216,19 +295,50 @@ export default {
             dateLabel = `${year}/${month}`;
           }
 
-          // 填充各类数据
+          // 填充各类数据（确保为数字类型，空值赋值0）
           categories.push(dateLabel);
-          mileageData.push(item.totalDistanceKm); // 行驶公里数
-          powerData.push(item.totalElectricityConsumed); // 消耗电量
-          avgPowerData.push(item.electricityPerKm); // 平均电耗
+          mileageData.push(Number(item.totalDistanceKm) || 0);
+          powerData.push(Number(item.totalElectricityConsumed) || 0);
+          avgPowerData.push(Number(item.electricityPerKm) || 0);
         });
 
-        // 组装uCharts需要的格式
-        this.chartData = {
+        // --- 核心：动态计算Y轴刻度（适配yAxis.data配置）---
+        // 1. 里程&电量图表：动态计算max和step
+        const maxMileagePower = Math.max(...mileageData, ...powerData);
+        // 确保最大值不为0（避免全0数据）
+        const finalMaxMileage = maxMileagePower === 0 ? 10 : maxMileagePower * 1.2;
+        this.mileagePowerOpts.yAxis.data[0].max = finalMaxMileage;
+        this.mileagePowerOpts.yAxis.data[0].step = finalMaxMileage / 5; // 分成5个刻度
+
+        // 2. 平均电耗图表：动态计算max和step
+        const maxAvgPower = Math.max(...avgPowerData);
+        // 确保最大值不为0（避免全0数据，默认给0.1）
+        const finalMaxAvg = maxAvgPower === 0 ? 0.1 : maxAvgPower * 1.2;
+        this.avgPowerOpts.yAxis.data[0].max = finalMaxAvg;
+        this.avgPowerOpts.yAxis.data[0].step = finalMaxAvg / 5; // 分成5个刻度
+        // 确保step至少为0.01（避免刻度太密）
+        if (this.avgPowerOpts.yAxis.data[0].step < 0.01) {
+          this.avgPowerOpts.yAxis.data[0].step = 0.01;
+        }
+
+        // 调试打印：查看计算结果
+        console.log('平均电耗最大值：', maxAvgPower);
+        console.log('平均电耗Y轴max：', finalMaxAvg);
+        console.log('平均电耗Y轴step：', this.avgPowerOpts.yAxis.data[0].step);
+
+        // 组装第一组图表数据（里程&电量）
+        this.mileagePowerChartData = {
           categories: categories,
           series: [
             {name: "行驶公里数", data: mileageData},
-            {name: "消耗电量", data: powerData},
+            {name: "消耗电量", data: powerData}
+          ]
+        };
+
+        // 组装第二组图表数据（平均电耗）
+        this.avgPowerChartData = {
+          categories: categories,
+          series: [
             {name: "平均电耗", data: avgPowerData}
           ]
         };
@@ -346,18 +456,42 @@ export default {
   line-height: 1.2;
 }
 
-.chart-switch {
+/* 切换按钮组容器 */
+.chart-switch-group {
   display: flex;
   gap: 8px;
+  flex-wrap: nowrap; /* 强制不换行 */
+  align-items: center;
+}
+
+/* 通用切换按钮样式 */
+.chart-switch {
+  display: flex;
+  gap: 4px; /* 减小按钮内部间距 */
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 2px;
+  white-space: nowrap; /* 防止按钮文本换行 */
+}
+
+/* 数据类型切换按钮 */
+.data-type-switch {
+  background: #f5f5f5;
+}
+
+/* 时间范围切换按钮 */
+.time-range-switch {
+  background: #f5f5f5;
 }
 
 .switch-btn {
-  padding: 4px 12px;
-  font-size: 12px;
+  padding: 4px 10px; /* 减小按钮内边距，缩小按钮宽度 */
+  font-size: 11px; /* 减小字体大小 */
   color: #666;
-  background-color: #f5f5f5;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* 防止按钮文本换行 */
 }
 
 .switch-btn.active {

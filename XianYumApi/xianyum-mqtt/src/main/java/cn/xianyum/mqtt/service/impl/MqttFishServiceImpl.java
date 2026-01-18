@@ -112,7 +112,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             return new MqttFishReportResponse();
         }
         boolean isHour = request.getDateType().equals(0);
-        List<String> dateStrings = isHour?DateUtils.getLast24Hours():DateUtils.minusDate(DateUtils.addDateDays(new Date(),1), DateUtils.DATE_PATTERN, 15);
+        List<String> dateStrings = isHour?DateUtils.getLast24Hours():DateUtils.minusDate(DateUtils.addDateDays(new Date(),1), DateUtils.DATE_PATTERN, 31);
         MqttFishReportResponse mqttFishReportResponse = new MqttFishReportResponse();
         List<BigDecimal> indoorTempList = new ArrayList<>();
         List<BigDecimal> fishTankTempList = new ArrayList<>();

@@ -21,7 +21,7 @@
       </uni-col>
     </uni-row>
 
-    <!-- 折线图：4条折线 + 时间范围切换 -->
+    <!-- 折线图：拆分两组 + 切换按钮 -->
     <uni-row :gutter="15" class="mt-20">
       <uni-col :span="24">
         <view class="chart-section">
@@ -31,29 +31,59 @@
             <view class="chart-tabs">
               <text
                   class="tab-item"
-                  :class="{active: timeRange === '0'}"
-                  @click="switchTimeRange('0')"
+                  :class="{active: chartType === '0'}"
+                  @click="switchChartType('0')"
               >
-                近24小时
+                温度数据
               </text>
               <text
                   class="tab-item"
-                  :class="{active: timeRange === '1'}"
-                  @click="switchTimeRange('1')"
+                  :class="{active: chartType === '1'}"
+                  @click="switchChartType('1')"
               >
-                近7天
+                湿度&TDS
               </text>
+              <!-- 保留原有时间范围切换 -->
+              <view class="chart-tabs time-tabs">
+                <text
+                    class="tab-item"
+                    :class="{active: timeRange === '0'}"
+                    @click="switchTimeRange('0')"
+                >
+                  近24小时
+                </text>
+                <text
+                    class="tab-item"
+                    :class="{active: timeRange === '1'}"
+                    @click="switchTimeRange('1')"
+                >
+                  近31天
+                </text>
+              </view>
             </view>
           </view>
 
-          <view class="charts-box line-box">
+          <!-- 第一组：室内温度 + 鱼缸温度 -->
+          <view class="charts-box line-box" v-if="chartType === '0'">
             <qiun-data-charts
                 type="line"
-                :opts="lineOpts"
-                :chartData="lineChartData"
+                :opts="tempLineOpts"
+                :chartData="tempLineChartData"
                 :ontouch="true"
                 @touchstart.stop="handleChartTouch"
-                ref="lineChartRef"
+                ref="tempLineChartRef"
+            />
+          </view>
+
+          <!-- 第二组：室内湿度 + 鱼缸TDS -->
+          <view class="charts-box line-box" v-if="chartType === '1'">
+            <qiun-data-charts
+                type="line"
+                :opts="humTdsLineOpts"
+                :chartData="humTdsLineChartData"
+                :ontouch="true"
+                @touchstart.stop="handleChartTouch"
+                ref="humTdsLineChartRef"
             />
           </view>
         </view>
@@ -92,15 +122,14 @@
 
 <script>
 import { formatTime } from '@/utils/dateFormat'
-import { queryLatestData,getReportLineData } from '@/api/iot/fish'
+import { queryLatestData, getReportLineData } from '@/api/iot/fish'
 
 export default {
   data() {
     return {
       realTimeData: [],
-      lineChartData: {},
-      humArcbarData: {},
-      tdsArcbarData: {},
+      // 图表类型切换（0-温度数据，1-湿度&TDS）
+      chartType: '0',
       // 时间范围切换状态（24h/7d）
       timeRange: '0',
       // 后端返回的原始趋势数据
@@ -111,17 +140,10 @@ export default {
         indoorHumidityList: [],
         fishTankTdsList: []
       },
-      // TDS值颜色配置规则
-      tdsColorConfig: [
-        { min: 0, max: 50, mainColor: "#1890FF", gradientColor: "#40a9ff", desc: "优质" },
-        { min: 51, max: 100, mainColor: "#91CB74", gradientColor: "#2fc25b", desc: "良好" },
-        { min: 101, max: 200, mainColor: "#FAC858", gradientColor: "#ffab91", desc: "一般" },
-        { min: 201, max: 300, mainColor: "#EE6666", gradientColor: "#4d6bff", desc: "较差" },
-        { min: 301, max: Infinity, mainColor: "#9A60B4", gradientColor: "#d12e2e", desc: "极差" }
-      ],
-      // 折线图配置（移除统一Y轴单位，适配多维度数据）
-      lineOpts: {
-        color: ["#1890FF","#91CB74","#FAC858","#EE6666"],
+      // 第一组：温度折线图（独立变量）
+      tempLineChartData: {},
+      tempLineOpts: {
+        color: ["#1890FF", "#91CB74"],
         padding: [15, 10, 0, 15],
         enableScroll: true,
         legend: {
@@ -145,7 +167,13 @@ export default {
         },
         yAxis: {
           gridType: "dash",
-          dashLength: 2
+          dashLength: 2,
+          data: [
+            {
+              min: 0,  // 动态计算
+              max: 0   // 动态计算
+            }
+          ]
         },
         extra: {
           line: { type: "straight", width: 2, activeType: "hollow" },
@@ -155,6 +183,61 @@ export default {
           }
         }
       },
+      // 第二组：湿度&TDS折线图（独立变量）
+      humTdsLineChartData: {},
+      humTdsLineOpts: {
+        color: ["#FAC858", "#EE6666"],
+        padding: [15, 10, 0, 15],
+        enableScroll: true,
+        legend: {
+          orient: "horizontal",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          itemGap: 8,
+          textStyle: {
+            fontSize: 11,
+            color: "#666"
+          }
+        },
+        xAxis: {
+          disableGrid: true,
+          scrollShow: true,
+          itemCount: 7,
+          scrollAlign: 'right',
+          scrollable: true,
+          bounce: false
+        },
+        yAxis: {
+          gridType: "dash",
+          dashLength: 2,
+          data: [
+            {
+              min: 0,  // 动态计算
+              max: 0   // 动态计算
+            }
+          ]
+        },
+        extra: {
+          line: { type: "straight", width: 2, activeType: "hollow" },
+          scroll: {
+            type: 'horizontal',
+            threshold: 10
+          }
+        }
+      },
+      // 环形图相关
+      humArcbarData: {},
+      tdsArcbarData: {},
+      // TDS值颜色配置规则
+      tdsColorConfig: [
+        { min: 0, max: 50, mainColor: "#1890FF", gradientColor: "#40a9ff", desc: "优质" },
+        { min: 51, max: 100, mainColor: "#91CB74", gradientColor: "#2fc25b", desc: "良好" },
+        { min: 101, max: 200, mainColor: "#FAC858", gradientColor: "#ffab91", desc: "一般" },
+        { min: 201, max: 300, mainColor: "#EE6666", gradientColor: "#4d6bff", desc: "较差" },
+        { min: 301, max: Infinity, mainColor: "#9A60B4", gradientColor: "#d12e2e", desc: "极差" }
+      ],
+      // 环形图配置
       humArcbarOpts: {
         color: ["#91CB74"],
         title: { name: "0%", fontSize: 28, color: "#91CB74" },
@@ -192,14 +275,15 @@ export default {
     };
   },
   refs: {
-    lineChartRef: null
+    tempLineChartRef: null,
+    humTdsLineChartRef: null
   },
   onReady() {
     // 首次加载数据
     this.fetchEnvData();
     this.getLineData();
 
-    // 设置定时器，每10秒更新一次数据
+    // 设置定时器，每20秒更新一次数据
     this.timer = setInterval(() => {
       this.fetchEnvData();
       this.getLineData();
@@ -218,6 +302,16 @@ export default {
      */
     handleChartTouch() {
       return false;
+    },
+    /**
+     * 切换图表类型（温度数据/湿度&TDS）
+     */
+    switchChartType(type) {
+      this.chartType = type;
+      // 切换后重新滚动到最新数据
+      this.$nextTick(() => {
+        this.scrollToLatestData();
+      });
     },
     /**
      * 切换时间范围（24h/7d）
@@ -255,6 +349,48 @@ export default {
       }
       // 兜底返回原始值
       return label;
+    },
+    /**
+     * 计算Y轴的最小值和最大值（带5%余量）
+     * @param {Array} dataLists 多个数据系列的数组集合
+     * @returns {Object} { min: 最小值, max: 最大值 }
+     */
+    calculateYAxisRange(dataLists) {
+      // 合并所有数据并过滤掉无效值
+      const allData = dataLists.flat().filter(item => {
+        return item !== null && item !== undefined && !isNaN(Number(item));
+      });
+
+      if (allData.length === 0) {
+        return { min: 0, max: 100 }; // 默认值
+      }
+
+      // 计算原始极值
+      const minVal = Math.min(...allData);
+      const maxVal = Math.max(...allData);
+      const range = maxVal - minVal;
+
+      // 计算5%的余量（避免数据贴边）
+      const padding = range * 0.05;
+
+      // 处理range为0的情况（所有数据相同）
+      let finalMin = minVal;
+      let finalMax = maxVal;
+
+      if (range > 0) {
+        finalMin = minVal - padding;
+        finalMax = maxVal + padding;
+      } else {
+        // 所有数据相同，手动设置范围
+        finalMin = minVal - 1;
+        finalMax = maxVal + 1;
+      }
+
+      // 保留一位小数，避免精度问题
+      return {
+        min: Number(finalMin.toFixed(1)),
+        max: Number(finalMax.toFixed(1))
+      };
     },
     /**
      * 从接口获取环境监测实时数据
@@ -344,27 +480,45 @@ export default {
             return this.formatXAxisLabel(label, this.timeRange);
           });
 
-          // 转换为图表所需格式
-          this.lineChartData = {
+          // 第一组：温度数据（室内温度 + 鱼缸水温）
+          this.tempLineChartData = {
             categories: formattedCategories,
             series: [
               { name: "室内温度", data: this.backendLineData.indoorTempList },
-              { name: "鱼缸水温", data: this.backendLineData.fishTankTempList },
+              { name: "鱼缸水温", data: this.backendLineData.fishTankTempList }
+            ]
+          };
+
+          // 第二组：湿度&TDS（室内湿度 + 鱼缸TDS）
+          this.humTdsLineChartData = {
+            categories: formattedCategories,
+            series: [
               { name: "室内湿度", data: this.backendLineData.indoorHumidityList },
               { name: "鱼缸TDS", data: this.backendLineData.fishTankTdsList }
             ]
           };
 
+          // ========== 核心修改：动态计算Y轴范围 ==========
+          // 计算温度组Y轴范围
+          const tempRange = this.calculateYAxisRange([
+            this.backendLineData.indoorTempList,
+            this.backendLineData.fishTankTempList
+          ]);
+          // 更新温度图表Y轴配置
+          this.tempLineOpts.yAxis.data[0].min = tempRange.min;
+          this.tempLineOpts.yAxis.data[0].max = tempRange.max;
+
+          // 计算湿度&TDS组Y轴范围
+          const humTdsRange = this.calculateYAxisRange([
+            this.backendLineData.indoorHumidityList,
+            this.backendLineData.fishTankTdsList
+          ]);
+          // 更新湿度&TDS图表Y轴配置
+          this.humTdsLineOpts.yAxis.data[0].min = humTdsRange.min;
+          this.humTdsLineOpts.yAxis.data[0].max = humTdsRange.max;
+
           // 滚动到最新数据
-          this.$nextTick(() => {
-            if (this.$refs.lineChartRef && this.$refs.lineChartRef.scrollTo) {
-              this.$refs.lineChartRef.scrollTo({
-                x: this.lineChartData.categories.length - 8,
-                y: 0,
-                animate: false
-              });
-            }
-          });
+          this.scrollToLatestData();
         }
       } catch (error) {
         console.error('获取趋势数据失败：', error);
@@ -374,6 +528,28 @@ export default {
           duration: 2000
         });
       }
+    },
+    /**
+     * 滚动到图表最新数据
+     */
+    scrollToLatestData() {
+      this.$nextTick(() => {
+        const categoryLength = this.backendLineData.xaxisDataList.length;
+        // 根据当前选中的图表类型滚动对应的图表
+        if (this.chartType === '0' && this.$refs.tempLineChartRef && this.$refs.tempLineChartRef.scrollTo) {
+          this.$refs.tempLineChartRef.scrollTo({
+            x: categoryLength - 8,
+            y: 0,
+            animate: false
+          });
+        } else if (this.chartType === '1' && this.$refs.humTdsLineChartRef && this.$refs.humTdsLineChartRef.scrollTo) {
+          this.$refs.humTdsLineChartRef.scrollTo({
+            x: categoryLength - 8,
+            y: 0,
+            animate: false
+          });
+        }
+      });
     }
   }
 };
@@ -463,6 +639,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10rpx;
+  // 嵌套的tabs容器样式
+  .chart-tabs {
+    &.time-tabs {
+      margin-left: 10rpx;
+    }
+  }
 }
 
 .section-title {

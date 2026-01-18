@@ -22,13 +22,13 @@
             GROUP BY
             DATE_FORMAT(mf.create_time,'%Y-%m-%d %H')
             ORDER BY DATE_FORMAT(mf.create_time,'%Y-%m-%d %H') DESC
-            LIMIT 25
+            LIMIT 24
         </if>
         <if test="request.dateType != null and request.dateType == 1">
             GROUP BY
             DATE_FORMAT(mf.create_time,'%Y-%m-%d')
             ORDER BY DATE_FORMAT(mf.create_time,'%Y-%m-%d') DESC
-            LIMIT 18
+            LIMIT 31
         </if>
     </select>
 
