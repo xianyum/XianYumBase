@@ -64,7 +64,7 @@
     <!-- 折线图区域 -->
     <view class="chart-container">
       <view class="chart-header">
-        <view class="chart-title">趋势</view>
+        <view class="chart-title">新能源趋势</view>
         <view class="chart-switch-group">
           <view class="chart-switch data-type-switch">
             <view class="switch-btn" :class="{active: chartDataType === 'mileagePower'}" @click="switchChartDataType('mileagePower')">
@@ -356,22 +356,24 @@ export default {
   display: flex;
   gap: 4px;
   background: #f5f5f5;
-  border-radius: 12px;
+  border-radius: 16px; /* 按比例缩小容器圆角 */
   padding: 2px;
   white-space: nowrap;
 }
 .switch-btn {
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 2px 8px; /* 减少内边距，缩小按钮 */
+  font-size: 10px; /* 缩小字体 */
   color: #666;
-  border-radius: 10px;
+  border-radius: 14px; /* 按比例缩小按钮圆角 */
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  line-height: 20px; /* 降低行高，整体缩小按钮高度 */
 }
 .switch-btn.active {
   color: #fff;
   background-color: #1890FF;
+  box-shadow: 0 1px 2px rgba(24, 144, 255, 0.2);
 }
 .charts-box {
   width: 100%;

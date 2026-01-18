@@ -633,17 +633,17 @@ export default {
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
 }
 
-// 标题+切换按钮容器
+// 标题+切换按钮容器 - 核心：给容器加align-items: center 强制子元素垂直居中
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10rpx;
-  // 嵌套的tabs容器样式
-  .chart-tabs {
-    &.time-tabs {
-      margin-left: 10rpx;
-    }
+  // 外层按钮容器：固定行高，和内部按钮高度一致
+  > .chart-tabs {
+    display: flex;
+    align-items: center;
+    height: 28px;
   }
 }
 
@@ -652,25 +652,47 @@ export default {
   color: #303133;
   font-weight: 500;
   display: block;
+  line-height: 28px; // 和按钮容器高度一致，整体更协调
 }
 
-// 时间范围切换按钮
+// 按钮容器 - 统一尺寸，强制子元素垂直居中
 .chart-tabs {
   display: flex;
-  background: #f5f7fa;
-  border-radius: 6rpx;
-  padding: 2rpx;
+  gap: 4px;
+  background: #f5f5f5;
+  border-radius: 16px;
+  padding: 2px;
+  box-sizing: border-box;
+  align-items: center; // 强制内部按钮垂直居中
+  flex-shrink: 0; // 防止容器被挤压变形
+
+  &.time-tabs {
+    margin-left: 8px;
+  }
 }
 
+// 按钮样式 - 统一高度，文字绝对居中，四个按钮尺寸完全一致
 .tab-item {
-  font-size: 22rpx;
-  padding: 6rpx 16rpx;
-  border-radius: 4rpx;
+  padding: 0 8px;
+  font-size: 10px;
   color: #606266;
-  transition: all 0.3s;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  width: auto;
+  height: 24px; // 固定高度，四个按钮高度完全一致
+  line-height: 24px; // 行高匹配高度
+  display: flex;
+  align-items: center;
+  justify-content: center; // 文字水平+垂直绝对居中
+  box-sizing: border-box;
+  flex-shrink: 0; // 防止按钮被挤压
+
   &.active {
-    background: #1890FF;
     color: #fff;
+    background-color: #1890FF;
+    box-shadow: 0 1px 2px rgba(24, 144, 255, 0.2);
   }
 }
 
@@ -679,6 +701,7 @@ export default {
   height: 300px;
   user-select: none;
   -webkit-user-select: none;
+  box-sizing: border-box;
 }
 
 .arcbar-item {
@@ -704,5 +727,6 @@ export default {
 .arcbar-box {
   width: 100%;
   height: 200px;
+  box-sizing: border-box;
 }
 </style>
