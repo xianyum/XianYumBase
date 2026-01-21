@@ -1,7 +1,5 @@
 FROM  eclipse-temurin:21.0.3_9-jdk
 
-LABEL maintainer="zhangwei"
-
 # 定义主目录环境变量
 ENV API_ROOT_PATH=/home/app/xianyum/api
 
@@ -9,8 +7,8 @@ ENV API_ROOT_PATH=/home/app/xianyum/api
 RUN mkdir -p ${API_ROOT_PATH} \
     && chmod 755 ${API_ROOT_PATH}
 
-#第2部分： 维护者信息
-LABEL  mainatiner="zhangwei"
+#维护者信息
+LABEL  maintainer="zhangwei"
 
 # 复制文件到容器
 ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  ${API_ROOT_PATH}/app.jar
