@@ -1,7 +1,7 @@
 FROM  eclipse-temurin:21.0.3_9-jdk
 
 # 定义主目录环境变量
-ENV API_ROOT_PATH=/home/app/xianyum/api
+ENV API_ROOT_PATH=/home/xianyum/api
 
 # 只需要创建主目录（子目录会随宿主机挂载自动同步）
 RUN mkdir -p ${API_ROOT_PATH} \
