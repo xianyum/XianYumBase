@@ -11,7 +11,7 @@ RUN mkdir -p ${API_ROOT_PATH} \
 LABEL  maintainer="zhangwei"
 
 # 复制文件到容器
-ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  ${API_ROOT_PATH}/app.jar
+ADD ./xianyum-starter/target/xianyum-api-0.0.1-SNAPSHOT.jar  /tmp/app.jar
 
 # 声明需要暴露的端口
 EXPOSE 9190
@@ -19,5 +19,5 @@ EXPOSE 9190
 WORKDIR ${API_ROOT_PATH}
 
 # 配置容器启动后执行的命令
-ENTRYPOINT ["java", "-Duser.timezone=GMT+08", "-Djava.timezone=GMT+08", "-jar", "${API_ROOT_PATH}/app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=GMT+08", "-Djava.timezone=GMT+08", "-jar", "/tmp/app.jar"]
 
