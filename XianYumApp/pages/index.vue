@@ -9,7 +9,7 @@
         <text class="greeting">{{ greeting }}</text>
         <text class="username">{{ user.nickName || user.username || '未登录' }}</text>
       </view>
-      <image v-if="userLoaded" class="avatar" :src="user.avatar || defaultAvatar" mode="aspectFill" @tap="handleToInfo"></image>
+      <image class="avatar" :src="avatarSrc" mode="aspectFill" @tap="handleToInfo"></image>
     </view>
 
     <!-- 数据概览 -->
@@ -60,8 +60,8 @@ import { queryMqttTotalCount} from '@/api/iot/fish'
 export default {
   data() {
     return {
+      avatarSrc: '',
       statusBarHeight: 0,
-      userLoaded: false,
       defaultAvatar,
       user: {},
       overviewData: [
@@ -158,12 +158,24 @@ export default {
       await getUserProfile().then(response => {
         if (response && response.data) {
           this.user = response.data;
+          if (this.user.avatar) {
+            const img = new Image();
+            img.src = this.user.avatar;
+            // 加载完成后再赋值，避免闪图
+            img.onload = () => {
+              this.avatarSrc = this.user.avatar;
+            };
+            // 加载失败时用默认头像
+            img.onerror = () => {
+              this.avatarSrc = this.defaultAvatar;
+            };
+          } else {
+            this.avatarSrc = this.defaultAvatar;
+          }
         }
       }).catch(error => {
         console.error('获取用户信息失败：', error);
-      }).finally(() => {
-        this.userLoaded = true;
-      });
+      })
     },
     handleQuickAction(item) {
       if (item.path) {

@@ -3,7 +3,7 @@
     <!-- 用户信息卡片 -->
     <view class="user-card">
       <view class="user-info">
-        <image @click="handleToAvatar" v-if="userLoaded" class="avatar" :src="this.user.avatar || defaultAvatar" mode="aspectFill"></image>
+        <image @click="handleToAvatar" class="avatar" :src="avatarSrc" mode="aspectFill"></image>
         <view class="info-content" @click="handleToInfo">
           <text class="nickname">{{ this.user.nickName || this.user.username}}</text>
           <text class="role">{{this.user.groupRoleName}}</text>
@@ -73,11 +73,16 @@
       return {
         user: {},
         defaultAvatar,
-        userLoaded: false
+        avatarSrc: ''
       }
     },
     onLoad() {
       this.getUser()
+      uni.$on('refreshAvatar', this.getUser)
+    },
+    onUnload() {
+      // 2. 页面卸载时解绑事件（关键！避免重复触发）
+      uni.$off('refreshAvatar', this.getUser)
     },
     methods: {
       handleToAvatar() {
@@ -105,12 +110,24 @@
         getUserProfile().then(response => {
           if (response && response.data) {
             this.user = response.data;
+            if (this.user.avatar) {
+              const img = new Image();
+              img.src = this.user.avatar;
+              // 加载完成后再赋值，避免闪图
+              img.onload = () => {
+                this.avatarSrc = this.user.avatar;
+              };
+              // 加载失败时用默认头像
+              img.onerror = () => {
+                this.avatarSrc = this.defaultAvatar;
+              };
+            } else {
+              this.avatarSrc = this.defaultAvatar;
+            }
           }
         }).catch(error => {
           console.error('获取用户信息失败：', error);
-        }).finally(() => {
-          this.userLoaded = true;
-        });
+        })
       },
       handleLogout() {
         this.$modal.confirm('确定退出系统吗？').then(() => {

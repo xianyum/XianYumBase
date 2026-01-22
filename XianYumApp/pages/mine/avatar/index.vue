@@ -231,9 +231,9 @@
 
 			// 获取图片
 			getImageInfo() {
-				var _this = this
+        const _this = this
 				uni.showLoading({
-					title: '图片生成中...',
+					title: '图片上传中...',
 				})
 				// 将图片写入画布
 				const ctx = uni.createCanvasContext('myCanvas')
@@ -254,13 +254,14 @@
 						quality: 0.5,
 						canvasId: 'myCanvas',
 						success: function (res) {
-							uni.hideLoading()
 							let data = {name: 'file', filePath: res.tempFilePath}
 							uploadAvatar(data).then(response => {
-                console.log(response)
 								store.commit('SET_AVATAR', response.msg)
+                uni.hideLoading()
 								uni.showToast({ title: "修改成功", icon: 'success' })
-								uni.navigateBack()
+                // 通知刷新图像
+                uni.$emit('refreshAvatar')
+                uni.navigateBack()
 							})
 						}
 					})

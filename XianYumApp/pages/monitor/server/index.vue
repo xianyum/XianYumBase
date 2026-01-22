@@ -163,7 +163,15 @@
         </view>
         <view class="info-row">
           <text class="label">运行参数</text>
-          <text class="value long-text">{{ server.jvm && server.jvm.inputArgs ? server.jvm.inputArgs : '-' }}</text>
+          <uni-tooltip
+              :content="server.jvm && server.jvm.inputArgs ? server.jvm.inputArgs : '-'"
+              placement="top"
+              :disabled="!(server.jvm && server.jvm.inputArgs)"
+          >
+            <text class="value long-text">
+              {{ server.jvm && server.jvm.inputArgs ? server.jvm.inputArgs : '-' }}
+            </text>
+          </uni-tooltip>
         </view>
       </view>
     </view>
@@ -331,8 +339,12 @@ $color-card: #fff;
           border: none;
         }
         .label {
+          min-width: 120rpx;
           font-size: $font-base;
           color: $color-text-light;
+        }
+        &:last-child {
+          border: none;
         }
         .value {
           font-size: $font-base;
