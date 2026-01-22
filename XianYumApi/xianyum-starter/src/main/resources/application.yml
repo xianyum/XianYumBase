@@ -1,7 +1,11 @@
+server:
+  port: 9190
+
 spring:
   profiles:
     active: prod
   application:
     name: XianYumApi
+
 xian_yum:
   version: 2.0.0

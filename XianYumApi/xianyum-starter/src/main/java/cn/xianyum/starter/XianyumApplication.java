@@ -2,6 +2,7 @@ package cn.xianyum.starter;
 
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.proxy.infra.container.ProxyServerContainer;
+import org.dromara.x.file.storage.spring.EnableFileStorage;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.core.env.Environment;
 @MapperScan("cn.xianyum.**.dao")
 @EnableAspectJAutoProxy(exposeProxy = true)
 @ComponentScan(basePackages = {"cn.xianyum"})
+@EnableFileStorage
 public class XianyumApplication {
 
     public static Logger log = LoggerFactory.getLogger(XianyumApplication.class);

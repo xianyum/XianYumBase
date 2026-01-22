@@ -69,6 +69,11 @@ public class LoginUser implements UserDetails {
     private Integer sex;
 
     /**
+     * 图像地址id
+     */
+    private String avatarFileId;
+
+    /**
      * 图像地址
      */
     private String avatar;

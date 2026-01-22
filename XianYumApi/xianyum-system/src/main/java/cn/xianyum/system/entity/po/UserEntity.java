@@ -30,7 +30,8 @@ public class UserEntity extends BaseEntity {
 
     private Integer sex;
 
-    private String avatar;
+    /** 文件id */
+    private String avatarFileId;
 
     /**
      * 用户名称

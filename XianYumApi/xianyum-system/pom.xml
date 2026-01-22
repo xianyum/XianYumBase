@@ -16,6 +16,18 @@
 
     <dependencies>
 
+        <!-- 七牛云-->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+        </dependency>
+
+        <!-- 增加x-file-storage-->
+        <dependency>
+            <groupId>org.dromara.x-file-storage</groupId>
+            <artifactId>x-file-storage-spring</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-message</artifactId>

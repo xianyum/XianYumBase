@@ -1,6 +1,5 @@
 package cn.xianyum.system.service.impl;
 
-import cn.xianyum.common.config.XianYumConfig;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -80,6 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${redis.user.data}")
     private String redisUserDataPrefix;
+
+    @Autowired
+    private FileService fileService;
 
 
     @Override
@@ -214,6 +216,11 @@ public class UserServiceImpl implements UserService {
         LoginUser u = userTokenService.getUserSelf();
         if(Objects.nonNull(u)){
             u.setPermissions(this.menuService.getMenuPermission(u.getId()));
+            if(StringUtil.isNotBlank(u.getAvatarFileId()) && StringUtil.ishttp(u.getAvatarFileId())){
+                u.setAvatar(u.getAvatarFileId());
+            }else{
+                u.setAvatar(this.fileService.presignedUrl(u.getAvatarFileId()));
+            }
             this.roleService.setLoginUserRoleService(u);
         }
         return u;
@@ -222,14 +229,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public String upload(MultipartFile file) {
         try {
-            String upload = FileUtils.upload(XianYumConfig.getXianYumConfig().getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
-            String avatarUrl = XianYumConfig.getXianYumConfig().getAvatarUrl()+ upload;
+            String fileId = fileService.uploadFile(file);
             UserEntity userEntity = new UserEntity();
             userEntity.setId(SecurityUtils.getLoginUser().getId());
-            userEntity.setAvatar(avatarUrl);
+            userEntity.setAvatarFileId(fileId);
             userMapper.updateById(userEntity);
             userTokenService.refreshUser();
-            return avatarUrl;
+            return fileId;
         }catch (Exception e){
             throw new SoException(e.getMessage());
         }
@@ -263,12 +269,17 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserProfile() {
         String userId = SecurityUtils.getLoginUser().getId();
         UserEntity userEntity = userMapper.selectById(userId);
-        UserResponse useResponse = BeanUtils.copy(userEntity, UserResponse.class);
-        if(null != useResponse){
+        UserResponse userResponse = BeanUtils.copy(userEntity, UserResponse.class);
+        if(null != userResponse){
             String groupRoleName = roleMapper.getRoleByUserId(userId).stream().map(RoleResponse::getRoleName).collect(Collectors.joining(","));
-            useResponse.setGroupRoleName(groupRoleName);
+            if(StringUtil.isNotBlank(userResponse.getAvatarFileId()) && StringUtil.ishttp(userResponse.getAvatarFileId())){
+                userResponse.setAvatar(userResponse.getAvatarFileId());
+            }else{
+                userResponse.setAvatar(this.fileService.presignedUrl(userResponse.getAvatarFileId()));
+            }
+            userResponse.setGroupRoleName(groupRoleName);
         }
-        return useResponse;
+        return userResponse;
     }
 
     @Override
@@ -486,7 +497,7 @@ public class UserServiceImpl implements UserService {
                 loginUser.setUsername(UUIDUtils.getCodeChar(5));
                 loginUser.setNickName(nickName);
                 loginUser.setStatus(YesOrNoEnum.YES.getStatus());
-                loginUser.setAvatar(aLiUserInfo.getAvatar());
+                loginUser.setAvatarFileId(aLiUserInfo.getAvatar());
                 loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getAccountType());
                 loginUser.setSex(0);
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
@@ -538,9 +549,9 @@ public class UserServiceImpl implements UserService {
                 }
                 // 现在qq返回的是http连接，实际https也是支持的，这里替换下
                 if(StringUtil.isNotEmpty(qqUserEntity.getFigureurl_qq_2())){
-                    loginUser.setAvatar(qqUserEntity.getFigureurl_qq_2().replace("http","https"));
+                    loginUser.setAvatarFileId(qqUserEntity.getFigureurl_qq_2().replace("http","https"));
                 }else{
-                    loginUser.setAvatar(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
+                    loginUser.setAvatarFileId(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
                 }
                 loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);

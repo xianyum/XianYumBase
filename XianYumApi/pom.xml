@@ -56,11 +56,25 @@
         <springdoc.version>2.8.9</springdoc.version>
         <mybatis.spring.version>3.0.5</mybatis.spring.version>
         <moquette.version>0.17</moquette.version>
+        <x.file.storage.version>2.3.0</x.file.storage.version>
+        <qiniu.version>7.12.1</qiniu.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+            <!-- 七牛云-->
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu.version}</version>
+            </dependency>
+            <!-- 增加x-file-storage-->
+            <dependency>
+                <groupId>org.dromara.x-file-storage</groupId>
+                <artifactId>x-file-storage-spring</artifactId>
+                <version>${x.file.storage.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>io.moquette</groupId>

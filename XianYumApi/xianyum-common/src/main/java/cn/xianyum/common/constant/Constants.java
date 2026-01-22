@@ -1,6 +1,5 @@
 package cn.xianyum.common.constant;
 
-
 /**
  * 通用常量信息
  *
@@ -9,10 +8,16 @@ package cn.xianyum.common.constant;
 public class Constants {
 
     /**
+     * 私有构造方法，防止类被实例化（常量类无需实例化）
+     */
+    private Constants() {
+        throw new AssertionError("常量类禁止实例化");
+    }
+
+    /**
      * www主域
      */
     public static final String WWW = "www.";
-
 
     /**
      * http请求
@@ -41,57 +46,55 @@ public class Constants {
     public static final String TYPE_BUTTON = "F";
 
     /** Layout组件标识 */
-    public final static String LAYOUT = "Layout";
+    public static final String LAYOUT = "Layout";
 
     /** ParentView组件标识 */
-    public final static String PARENT_VIEW = "ParentView";
+    public static final String PARENT_VIEW = "ParentView";
 
     /** InnerLink组件标识 */
-    public final static String INNER_LINK = "InnerLink";
+    public static final String INNER_LINK = "InnerLink";
 
     /** 是否菜单外链（是） */
     public static final String YES_FRAME = "0";
 
     /** 没有权限提示语 */
-    public final static String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
-    public final static String CHECK_SIGN_MESSAGE = "Check Sign Error.";
+    public static final String NO_PERMISSION_MESSAGE = "对不起，您没有权限操作,请联系网站管理员！";
+    public static final String CHECK_SIGN_MESSAGE = "Check Sign Error.";
 
     /** admin账号 */
     public static final String USER_ADMIN_ACCOUNT = "admin";
 
-
     /** SQL WHERE 1=1  */
-    public final static String SQL_EQUALS_DEFAULT = " 1 = 1 ";
+    public static final String SQL_EQUALS_DEFAULT = " 1 = 1 ";
 
     /** http请求方法 */
-    public final static String HTTP_GET_METHOD = "get";
-    public final static String HTTP_POST_METHOD = "post";
-    public final static String HTTP_PUT_METHOD = "put";
-    public final static String HTTP_DELETE_METHOD = "delete";
+    public static final String HTTP_GET_METHOD = "get";
+    public static final String HTTP_POST_METHOD = "post";
+    public static final String HTTP_PUT_METHOD = "put";
+    public static final String HTTP_DELETE_METHOD = "delete";
 
-    public final static String MD5_DEFAULT_SECRET = "EcBK0BUARh";
+    public static final String MD5_DEFAULT_SECRET = "EcBK0BUARh";
 
-    public final static String DEFAULT_EMAIL_HTML = "common";
+    public static final String DEFAULT_EMAIL_HTML = "common";
 
-    public final static String DEFAULT_PASSWORD = "123456";
+    public static final String DEFAULT_PASSWORD = "123456";
 
-
-    public final static String ERROR_CODE_FIELD = "code";
-    public final static String ERROR_MSG_FIELD = "msg";
-
+    public static final String ERROR_CODE_FIELD = "code";
+    public static final String ERROR_MSG_FIELD = "msg";
 
     /** 服务500错误码 */
-    public final static int SERVER_ERROR_STATUS_CODE = 500;
+    public static final int SERVER_ERROR_STATUS_CODE = 500;
 
     /** 法定节假日url */
     public static final String HOLIDAY_URL= "http://timor.tech/api/holiday/year/%s?t=%s";
 
-
     public static final String SAVE_ERROR_MESSAGE = "保存失败";
 
     /** 端口 */
-    public final static String MQTT_PORT_FIELD = "port";
+    public static final String MQTT_PORT_FIELD = "port";
 
     /** host地址 */
-    public final static String MQTT_HOST_FIELD = "host";
+    public static final String MQTT_HOST_FIELD = "host";
+
+    public static final String SLASH = "/";
 }

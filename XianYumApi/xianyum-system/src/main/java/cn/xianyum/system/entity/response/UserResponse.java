@@ -22,6 +22,8 @@ public class UserResponse extends BaseResponse {
 
     private Integer sex;
 
+    private String avatarFileId;
+
     private String avatar;
 
     /**
