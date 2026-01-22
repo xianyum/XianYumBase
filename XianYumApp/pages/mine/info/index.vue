@@ -46,16 +46,15 @@ export default {
       getUserProfile().then(response => {
         this.user = response.data
         if (this.user.avatar) {
-          const img = new Image();
-          img.src = this.user.avatar;
-          // 加载完成后再赋值，避免闪图
-          img.onload = () => {
-            this.avatarSrc = this.user.avatar;
-          };
-          // 加载失败时用默认头像
-          img.onerror = () => {
-            this.avatarSrc = this.defaultAvatar;
-          };
+          uni.getImageInfo({
+            src: this.user.avatar,
+            success: (res) => {
+              this.avatarSrc = this.user.avatar;
+            },
+            fail: (err) => {
+              this.avatarSrc = this.defaultAvatar;
+            }
+          });
         } else {
           this.avatarSrc = this.defaultAvatar;
         }
