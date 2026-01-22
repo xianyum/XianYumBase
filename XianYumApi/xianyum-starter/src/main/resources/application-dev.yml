@@ -1,0 +1,278 @@
+xian_yum:
+  # 线程池配置
+  executor:
+    # 核心线程数
+    core-pool-size: 3
+    # 最大线程数
+    max-pool-size: 6
+    # 工作队列大小
+    queue-capacity: 1000
+    #  最大存活时间
+    keep-alive-seconds: 60
+
+redis:
+  user:
+    data: '${spring.application.name}:xianyum-system:user'
+  analysis:
+    hao_kao_lot:
+      token: '${spring.application.name}:xianyum-analysis:hao_kao_lot:access_token:'
+      article_index: '${spring.application.name}:xianyum-analysis:hao_kao_lot:article_index'
+  baidu-ai:
+    access_token: '${spring.application.name}:xianyum-common:baidu-ai:'
+  captcha:
+    prefix: '${spring.application.name}:xianyum-system:captcha:'
+    expire: 120  # 验证码过期时间，单位秒
+  token:
+    prefix: '${spring.application.name}:xianyum-system:token:'
+    expire: 30  # token有效时长，单位天
+    enable: true # 校验token开关，true开启token
+    secret: ${spring.application.name}  #密匙
+  system_constant:
+    prefix: '${spring.application.name}:xianyum-system:constant:'
+  log:
+    count: '${spring.application.name}:xianyum-system:log_count:'
+  message:
+    wechat:
+      token: '${spring.application.name}:xianyum-message:wechat:'
+    config:
+      prefix: '${spring.application.name}:xianyum-message:config:'
+  proxy:
+    proxy_log:
+      ignore_save: '${spring.application.name}:xianyum-proxy:proxy_log:ignore_save:flag'
+      log_data: '${spring.application.name}:xianyum-proxy:proxy_log:log_data:'
+    proxy_details:
+      lan_info: '${spring.application.name}:xianyum-proxy:proxy_details:lan_info:'
+  dict:
+    type_prefix: '${spring.application.name}:xianyum-system:dict_type:'
+  mqtt:
+    fish_latest_data: '${spring.application.name}:xianyum-mqtt:fish:latest'
+    fish_previous_data: '${spring.application.name}:xianyum-mqtt:fish:previous'
+  file:
+    presigned_url: '${spring.application.name}:xianyum-system:file_url:%s'
+
+#七牛云配置
+dromara:
+  x-file-storage: #文件存储配置
+    default-platform: qiniu-kodo-1 #默认使用的存储平台
+    qiniu-kodo:
+      - platform: qiniu-kodo-1 # 存储平台标识
+        enable-storage: true  # 启用存储
+        access-key: xxxx
+        secret-key: xxxx
+        bucket-name: xianyum
+        domain: xxxx #访问域名，注意“/”结尾
+        base-path: base-api/ # 基础路径
+
+mqtt:
+  port: xxxx
+  host: xxxx
+  # 账号密码认证配置
+  enabled: true  # 是否开启认证
+  username: xxxx  # 默认用户名
+  password: xxxx  # 默认密码
+
+qq:
+  # qq第三方登录配置
+  login:
+    access_token_url: https://graph.qq.com/oauth2.0/token
+    client_id: xxxx
+    client_secret: xxx
+    grant_type: xxx
+    redirect_uri: http://xianyum.cn/#/checkQQLogin
+    open_id_url: https://graph.qq.com/oauth2.0/me
+    user_info_url: https://graph.qq.com/user/get_user_info
+
+proxy:
+  ssl:
+    enable: true
+    port: xxxx
+    jksPath: test.jks
+    keyStorePassword: xxxx
+    keyManagerPassword: xxxx
+    needsClientAuth: false
+    bind: xxxx
+
+ali:
+  # 阿里第三方登录
+  login:
+    app_private_key: xxxx
+    alipay_public_key: xxxx
+    app_id: xxxx
+    server_url: https://openapi.alipay.com/gateway.do
+
+ip:
+  db:
+    path: /home/xianyum/api/ipdb/ip2region.xdb
+
+#mybatis plus
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: cn.xianyum.**.entity.po
+  check-config-location: true
+  configuration:
+    #是否开启自动驼峰命名规则（camel case）映射
+    map-underscore-to-camel-case: true
+    #全局地开启或关闭配置文件中的所有映射器已经配置的任何缓存
+    cache-enabled: false
+    call-setters-on-nulls: true
+    #配置JdbcTypeForNull, oracle数据库必须配置
+    jdbc-type-for-null: 'null'
+    #MyBatis 自动映射时未知列或未知属性处理策略 NONE：不做任何处理 (默认值), WARNING：以日志的形式打印相关警告信息, FAILING：当作映射失败处理，并抛出异常和详细信息
+    auto-mapping-unknown-column-behavior: warning
+  global-config:
+    banner: false
+    db-config:
+      #主键类型  0:"数据库ID自增", 1:"未设置主键类型",2:"用户输入ID (该类型可以通过自己注册自动填充插件进行填充)", 3:"全局唯一ID (idWorker), 4:全局唯一ID (UUID), 5:字符串全局唯一ID (idWorker 的字符串表示)";
+      id-type: ASSIGN_ID
+      #字段验证策略 IGNORED:"忽略判断", NOT_NULL:"非NULL判断", NOT_EMPTY:"非空判断", DEFAULT 默认的,一般只用于注解里(1. 在全局里代表 NOT_NULL,2. 在注解里代表 跟随全局)
+      field-strategy: NOT_EMPTY
+      #数据库大写下划线转换
+      capital-mode: true
+      #逻辑删除值
+      logic-delete-value: 1
+      #逻辑未删除值
+      logic-not-delete-value: 0
+
+# 数据源配置
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  data:
+    redis:
+      #    database: 0 #Redis数据库索引（默认为0）
+      host: xxxx # Redis服务器地址
+      port: 6379 # Redis服务器连接端口
+      password: xxxx # Redis服务器连接密码（默认为空）
+      timeout: 5000 # 连接超时时间（毫秒）
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    dynamic:
+      primary: master #设置默认的数据源或者数据源组,默认值即为master，如果读者只是单数据源只需要注释掉slave相关配置即可，这里为了方便演示master与slave保持相同
+      strict: false # 关闭严格模式，允许单数据源（可选）
+      datasource:
+        master:
+          url: jdbc:mysql://xxxx:3306/xxxx?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: xxxx
+          driverClassName: com.mysql.cj.jdbc.Driver
+      #        slave:
+      #          url: jdbc:mysql://localhost:3306/BaseDemo?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      #          username: root
+      #          password: 80616059
+      #          driverClassName: com.mysql.cj.jdbc.Driver
+      initial-size: 10 # 以下是连接池配置
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      #validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: false
+        wall:
+          config:
+            multi-statement-allow: true
+    # 3. 全局 Druid 配置（所有数据源共享，优先级低于单个数据源的 druid 配置）
+    druid:
+      # 初始连接数
+      initialSize: 5
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 20
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置连接超时时间
+      connectTimeout: 30000
+      # 配置网络超时时间
+      socketTimeout: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      maxEvictableIdleTimeMillis: 900000
+      # 配置检测连接是否有效
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      # 配置监控统计拦截的filters  stat=>监控统计 wall=>防SQL注入 slf4j log4j2=>日志记录
+      filters: stat,wall,slf4j,log4j2
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      # 配置spring监控的匹配类
+      aop-patterns: com.ruoyi.*.service.*,com.ruoyi.*.mapper.*
+      # Web应用 和 URL监控 配置
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+        session-stat-enable: false  # 是否开启session统计功能
+      # 监控视图配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: true      # 是否可以重置日志
+        login-username: admin   # 用户名
+        login-password: xxxx  # 密码
+        allow: ""               # IP白名单 (没有配置或者为空，则允许所有访问)
+        deny: ""                # IP黑名单 (存在共同时，deny优先于allow)
+      filter:
+        stat:
+          enabled: true
+          # 慢SQL记录
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: true
+        wall:
+          config:
+            multi-statement-allow: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+# 开启健康检查
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        # 开启端点，*表示开启所有
+        include:
+          - '*'
+        # 某些端点除外，不做开启
+        exclude:
+          - env
+          - beans
+      # 跨域配置
+      cors:
+        # 开放所有域访问
+        allowed-origins:
+          - '*'
+  metrics:
+    # 指标采集标签名
+    tags:
+      application: ${spring.application.name}
+  # 启用对接prometheus服务采集指标数据
+  prometheus:
+    metrics:
+      export:
+        enabled: true

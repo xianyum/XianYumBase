@@ -32,3 +32,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/xianyum-starter/src/main/resources/application-prod.yml
