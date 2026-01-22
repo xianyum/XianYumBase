@@ -235,7 +235,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setAvatarFileId(fileId);
             userMapper.updateById(userEntity);
             userTokenService.refreshUser();
-            return fileId;
+            return this.fileService.presignedUrl(fileId);
         }catch (Exception e){
             throw new SoException(e.getMessage());
         }
