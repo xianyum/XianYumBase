@@ -6,7 +6,7 @@ import cn.xianyum.extension.entity.po.ServerPortConfigEntity;
 /**
  * 主机端口维护(ServerPortConfig)表数据库访问层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2024-04-02 22:27:45
  */
 public interface ServerPortConfigMapper extends BaseMapper<ServerPortConfigEntity> {

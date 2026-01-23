@@ -19,12 +19,13 @@ import cn.xianyum.system.service.FileDetailService;
 import cn.xianyum.system.dao.FileDetailMapper;
 import org.springframework.stereotype.Service;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
  * 文件记录表(FileDetail)service层实现
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-19 22:20:15
  */
 @Service
@@ -187,6 +188,9 @@ public class FileDetailServiceImpl implements FileDetailService, FileRecorder {
     @Override
     public FileInfo selectFileById(String fileId) {
         FileDetailEntity fileDetailEntity = this.fileDetailMapper.selectById(fileId);
+        if(Objects.isNull(fileDetailEntity)){
+            return null;
+        }
         return toFileInfo(fileDetailEntity);
     }
 }

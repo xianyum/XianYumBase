@@ -10,7 +10,7 @@ import lombok.Data;
 /**
  * 新能源车行驶记录(EvDriveRecords)response返回实体
  *
- * @author makejava
+ * @author zhangwei
  * @since 2025-03-06 20:43:41
  */
 @Data

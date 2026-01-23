@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * 角色菜单关联表(RoleMenu)表实体类
  *
- * @author makejava
+ * @author zhangwei
  * @since 2023-11-01 20:00:35
  */
 @Data

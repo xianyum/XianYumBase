@@ -8,7 +8,7 @@ import cn.xianyum.mqtt.entity.response.MqttFishResponse;
 /**
  * (MqttFish)service层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-15 22:04:03
  */
 public interface MqttFishService{

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * (MqttFish)response返回实体
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-15 22:04:04
  */
 @Data

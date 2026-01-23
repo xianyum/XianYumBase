@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * 角色管理(Role)service层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2023-10-31 19:57:15
  */
 public interface RoleService{

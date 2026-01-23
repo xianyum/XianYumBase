@@ -6,7 +6,7 @@ import cn.xianyum.system.entity.po.FileDetailEntity;
 /**
  * 文件记录表(FileDetail)表数据库访问层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-19 22:20:15
  */
 public interface FileDetailMapper extends BaseMapper<FileDetailEntity> {

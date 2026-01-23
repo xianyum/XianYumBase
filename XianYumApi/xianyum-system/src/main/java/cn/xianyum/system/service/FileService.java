@@ -1,5 +1,6 @@
 package cn.xianyum.system.service;
 
+import cn.xianyum.common.entity.file.FileDetailResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -13,7 +14,15 @@ public interface FileService {
      * @param file
      * @return
      */
-    String uploadFile(MultipartFile file);
+    FileDetailResponse uploadFile(MultipartFile file);
+
+
+    /**
+     * 根据文件id获取响应数据
+     * @param id
+     * @return
+     */
+    FileDetailResponse selectFileById(String id);
 
     /**
      * 获取预签名url

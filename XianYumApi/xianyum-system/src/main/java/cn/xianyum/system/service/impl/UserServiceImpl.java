@@ -3,6 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
@@ -229,13 +230,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public String upload(MultipartFile file) {
         try {
-            String fileId = fileService.uploadFile(file);
+            FileDetailResponse fileDetailResponse = fileService.uploadFile(file);
             UserEntity userEntity = new UserEntity();
             userEntity.setId(SecurityUtils.getLoginUser().getId());
-            userEntity.setAvatarFileId(fileId);
+            userEntity.setAvatarFileId(fileDetailResponse.getId());
             userMapper.updateById(userEntity);
             userTokenService.refreshUser();
-            return this.fileService.presignedUrl(fileId);
+            return fileDetailResponse.getFileUrl();
         }catch (Exception e){
             throw new SoException(e.getMessage());
         }

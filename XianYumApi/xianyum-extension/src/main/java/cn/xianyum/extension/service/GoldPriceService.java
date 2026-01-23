@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * 每日黄金金价(GoldPrice)service层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2025-02-15 22:40:06
  */
 public interface GoldPriceService{

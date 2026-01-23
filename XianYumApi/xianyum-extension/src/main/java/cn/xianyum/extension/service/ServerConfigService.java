@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * 主机维护(ServerConfig)service层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2024-04-02 22:27:34
  */
 public interface ServerConfigService{

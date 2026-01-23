@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 角色菜单关联表(RoleMenu)表数据库访问层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2023-11-01 20:00:35
  */
 public interface RoleMenuMapper extends BaseMapper<RoleMenuEntity> {

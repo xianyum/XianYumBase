@@ -10,7 +10,7 @@ import lombok.Data;
 /**
  * 角色管理(Role)表实体类
  *
- * @author makejava
+ * @author zhangwei
  * @since 2023-10-31 19:57:15
  */
 @Data

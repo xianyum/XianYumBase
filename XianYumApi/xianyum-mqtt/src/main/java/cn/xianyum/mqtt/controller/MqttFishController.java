@@ -13,7 +13,7 @@ import cn.xianyum.mqtt.service.MqttFishService;
 /**
  * (MqttFish)Controller
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-15 22:04:01
  */
 @RestController

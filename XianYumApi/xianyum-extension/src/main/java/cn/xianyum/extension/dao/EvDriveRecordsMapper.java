@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * 新能源车行驶记录(EvDriveRecords)表数据库访问层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2025-03-06 20:43:41
  */
 public interface EvDriveRecordsMapper extends BaseMapper<EvDriveRecordsEntity> {

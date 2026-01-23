@@ -10,7 +10,7 @@ import lombok.Data;
 /**
  * 主机端口维护(ServerPortConfig)表实体类
  *
- * @author makejava
+ * @author zhangwei
  * @since 2024-04-02 22:27:45
  */
 @Data

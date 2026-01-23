@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * (MqttFish)表数据库访问层
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-15 22:04:04
  */
 public interface MqttFishMapper extends BaseMapper<MqttFishEntity> {

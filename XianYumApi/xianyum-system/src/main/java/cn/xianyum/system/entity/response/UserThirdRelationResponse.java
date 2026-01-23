@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * (UserThirdRelation)response返回实体
  *
- * @author makejava
+ * @author zhangwei
  * @since 2024-03-05 15:03:57
  */
 @Data

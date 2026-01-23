@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * 文件记录表(FileDetail)表实体类
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-19 22:20:15
  */
 @Data

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 /**
  * (MqttFish)表实体类
  *
- * @author makejava
+ * @author zhangwei
  * @since 2026-01-15 22:04:02
  */
 @Data

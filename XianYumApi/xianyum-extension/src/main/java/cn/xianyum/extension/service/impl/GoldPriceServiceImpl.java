@@ -27,7 +27,7 @@ import java.util.*;
 /**
  * 每日黄金金价(GoldPrice)service层实现
  *
- * @author makejava
+ * @author zhangwei
  * @since 2025-02-15 22:40:06
  */
 @Service
