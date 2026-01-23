@@ -21,19 +21,59 @@
         </view>
       </view>
     </view>
+
+    <!-- 引入更新弹窗组件 -->
+    <UpdatePopup
+        :updateInfo="updateInfo"
+        :showPopup="showUpdatePopup"
+        @close="showUpdatePopup = false"
+    />
   </view>
 </template>
 
 <script>
+  import UpdatePopup from '@/components/update-popup/update-popup.vue';
+  import {getLastAppVersion} from "@/api/app/appVersionControl";
+
   export default {
+    components: {
+      UpdatePopup
+    },
     data() {
       return {
-        windowHeight: uni.getSystemInfoSync().windowHeight
+        showUpdatePopup: false,
+        windowHeight: uni.getSystemInfoSync().windowHeight,
+        updateInfo: {}
       }
     },
     methods: {
       handleToUpgrade() {
-        this.$modal.showToast('开发中...')
+        // #ifdef APP-PLUS
+        this.$modal.loading('检查更新中...');
+        const systemInfo = uni.getSystemInfoSync();
+        const requestObject = {
+          appId: systemInfo.appId,
+          version: systemInfo.appWgtVersion
+        };
+        try{
+          getLastAppVersion(requestObject).then(response => {
+            this.$modal.closeLoading();
+            if (response && response.data) {
+              this.updateInfo = response.data;
+              this.showUpdatePopup = true
+            }else{
+              this.$modal.msg('当前是最新版本，无需更新')
+            }
+          })
+        }catch(error){
+          this.$modal.closeLoading();
+        }
+
+        // #endif
+
+        // #ifndef APP-PLUS
+          this.$modal.msg('当前是最新版本，无需更新');
+        // #endif
       },
       handleCleanTmp() {
         this.$modal.showToast('开发中...')

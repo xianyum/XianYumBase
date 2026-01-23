@@ -90,7 +90,7 @@ public class AppVersionControlController {
     }
 
     @Operation(summary = "查询最新APP版本管理")
-    @PostMapping("getLastAppVersion")
+    @PostMapping("/getLastAppVersion")
     public Results getLastAppVersion(@RequestBody AppVersionControlRequest request) {
         return Results.success(appVersionControlService.getLastAppVersion(request));
     }

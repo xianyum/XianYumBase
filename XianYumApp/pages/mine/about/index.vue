@@ -48,7 +48,33 @@
     data() {
       return {
         url: getApp().globalData.config.appInfo.site_url,
-        version: getApp().globalData.config.appInfo.version
+        version: ''
+      }
+    },
+    onShow() {
+      this.getVersion();
+    },
+    methods: {
+      /**
+       * 根据运行环境获取对应版本号
+       */
+      getVersion() {
+          const systemInfo = uni.getSystemInfoSync();
+          const me = this;
+
+          // App端（注意条件编译指令是APP-PLUS，不是APP）
+          // #ifdef APP-PLUS
+          // 优先使用系统信息中的应用版本号覆盖初始值
+          if (systemInfo.appWgtVersion) {
+            me.version = systemInfo.appWgtVersion;
+          }
+          // #endif
+
+          // H5端
+          // #ifdef H5
+          // H5端用systemInfo.appVersion（浏览器版本）或全局变量兜底
+          me.version = systemInfo.appVersion || me.version;
+          // #endif
       }
     }
   }
