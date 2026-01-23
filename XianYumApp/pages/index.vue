@@ -46,6 +46,13 @@
         </view>
       </view>
     </view>
+
+    <!-- 引入更新弹窗组件 -->
+    <UpdatePopup
+        :updateInfo="updateInfo"
+        :showPopup="showUpdatePopup"
+        @close="showUpdatePopup = false"
+    />
   </view>
 </template>
 
@@ -56,14 +63,21 @@ import {getMessageLogCount} from "@/api/message/monitor"
 import {getJobLogCount} from "@/api/job/jobLog"
 import {getOperLogCount} from "@/api/monitor/operlog"
 import { queryMqttTotalCount} from '@/api/iot/fish'
+import UpdatePopup from '@/components/update-popup/update-popup.vue';
+import {getLastAppVersion} from "@/api/app/appVersionControl";
 
 export default {
+  components: {
+    UpdatePopup
+  },
   data() {
     return {
       avatarSrc: '',
       statusBarHeight: 0,
       defaultAvatar,
       user: {},
+      showUpdatePopup: false,
+      updateInfo: {},
       overviewData: [
         { label: '操作日志量', value: 0 },
         { label: '消息发送量', value: 0 },
@@ -94,24 +108,38 @@ export default {
       return '晚上好'
     }
   },
-  onLoad() {
-    this.getUser();
-    this.getAllLogCounts();
-  },
   async onShow() {
     // 获取状态栏高度
     const systemInfo = uni.getSystemInfoSync()
     this.statusBarHeight = systemInfo.statusBarHeight
-
-    // 确保用户信息已加载
-    if(!this.user){
-      await this.getUser()
-    }
+    await this.getUser()
+    await this.getAllLogCounts()
+    this.handleToUpgrade();
   },
   onPullDownRefresh() {
     this.refreshData();
   },
   methods: {
+    handleToUpgrade() {
+      // #ifdef APP-PLUS
+      const systemInfo = uni.getSystemInfoSync();
+      const requestObject = {
+        appId: systemInfo.appId,
+        version: systemInfo.appWgtVersion
+      };
+      try{
+        getLastAppVersion(requestObject).then(response => {
+          this.$modal.closeLoading();
+          if (response && response.data) {
+            this.updateInfo = response.data;
+            this.showUpdatePopup = true
+          }
+        })
+      }catch(error){
+        this.$modal.closeLoading();
+      }
+      // #endif
+    },
     async getAllLogCounts() {
       try {
         // 并行发起所有请求
@@ -144,6 +172,7 @@ export default {
       try {
         this.getUser();
         this.getAllLogCounts();
+        this.handleToUpgrade();
         uni.stopPullDownRefresh();
         this.$modal.msgSuccess("刷新成功")
       }catch (error) {
