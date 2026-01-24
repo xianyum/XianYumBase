@@ -108,12 +108,14 @@ export default {
       return '晚上好'
     }
   },
+  onLoad() {
+    this.getAllLogCounts()
+  },
   async onShow() {
     // 获取状态栏高度
     const systemInfo = uni.getSystemInfoSync()
     this.statusBarHeight = systemInfo.statusBarHeight
     await this.getUser()
-    await this.getAllLogCounts()
     this.handleToUpgrade();
   },
   onPullDownRefresh() {
