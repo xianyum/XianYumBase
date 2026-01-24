@@ -171,7 +171,7 @@ export default {
             () => {
               uni.hideLoading();
               uni.showToast({
-                title: '更新成功，即将重启',
+                title: '更新成功,重启中.',
                 icon: 'success'
               });
               setTimeout(() => {

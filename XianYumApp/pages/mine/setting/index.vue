@@ -76,7 +76,7 @@
         // #endif
       },
       handleCleanTmp() {
-        this.$modal.showToast('开发中...')
+        this.$modal.showToast('清除成功')
       },
       handleLogout() {
         this.$modal.confirm('确定注销并退出系统吗？').then(() => {
