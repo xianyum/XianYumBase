@@ -152,7 +152,7 @@ export default {
       // 版本列表相关
       versionList: [], // 版本列表数据
       pageNum: 1, // 当前页码
-      pageSize: 10, // 每页条数
+      pageSize: 5, // 每页条数
       total: 0, // 总记录数
       loading: false, // 加载状态
       hasMore: true, // 是否有更多数据
