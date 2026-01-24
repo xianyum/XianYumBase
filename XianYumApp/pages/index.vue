@@ -47,7 +47,6 @@
           <view class="version-content">
             <text class="version-title">{{ item.updateTitle }}</text>
             <text class="version-time">{{ formatTime(item.createTime) }}</text>
-            <text class="version-tag" v-if="item.isForceUpdate === 0">强制更新</text>
           </view>
           <uni-icons type="right" size="16" color="#999"></uni-icons>
         </view>
@@ -80,7 +79,7 @@
         <scroll-view class="popup-content" scroll-y="true" :style="{ maxHeight: '600rpx' }">
           <view class="detail-item">
             <text class="label">版本号：</text>
-            <text class="value">{{ currentVersion.version }}</text>
+            <text class="value">v{{ currentVersion.version }}</text>
           </view>
           <view class="detail-item">
             <text class="label">更新标题：</text>
@@ -520,14 +519,6 @@ export default {
             color: #909399;
             margin-right: 16rpx;
           }
-
-          .version-tag {
-            font-size: 20rpx;
-            color: #fff;
-            background-color: #6cc0f5;
-            padding: 2rpx 8rpx;
-            border-radius: 8rpx;
-          }
         }
       }
 
@@ -548,6 +539,7 @@ export default {
   // 版本详情弹窗样式
   .version-detail-popup {
     width: 100%;
+    min-width: 600rpx;
     max-width: 600rpx;
     background-color: #fff;
     border-radius: 16rpx;
@@ -556,6 +548,7 @@ export default {
     max-height: 80vh;
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
 
     .popup-header {
       flex-shrink: 0;
