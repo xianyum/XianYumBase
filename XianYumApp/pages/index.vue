@@ -91,7 +91,7 @@
           </view>
           <view class="detail-item">
             <text class="label">更新类型：</text>
-            <text class="value">{{ currentVersion.packageType === 2 ? 'WGT包' : 'APK包' }}({{ currentVersion.isForceUpdate === 0 ? '强制更新' : '普通更新' }})</text>
+            <text class="value">{{ currentVersion.packageType === 1 ? 'WGT包' : 'APK包' }}({{ currentVersion.isForceUpdate === 0 ? '强制更新' : '普通更新' }})</text>
           </view>
           <view class="detail-item log-item">
             <text class="label">更新日志：</text>

@@ -84,7 +84,7 @@
       <el-table-column label="版本号" align="center" prop="version"/>
       <el-table-column label="更新包类型" align="center" prop="packageType">
         <template v-slot="scope">
-          <el-tag v-if="scope.row.packageType === '1'" effect="plain" type="success">热更新包(wgt)</el-tag>
+          <el-tag v-if="scope.row.packageType === 1" effect="plain" type="success">热更新包(wgt)</el-tag>
           <el-tag v-else type="primary" effect="plain">整包安装包(apk)</el-tag>
         </template>
       </el-table-column>
