@@ -75,9 +75,65 @@
           this.$modal.msg('当前是最新版本，无需更新');
         // #endif
       },
-      handleCleanTmp() {
-        this.$modal.showToast('清除成功')
+
+      /**
+       * 格式化文件大小（字节转 KB/MB/GB）
+       * @param {Number} size 字节数
+       * @returns {String} 格式化后的大小
+       */
+      formatSize(size) {
+        if (size < 1024) {
+          return size + "B";
+        } else if (size < 1024 * 1024) {
+          return (size / 1024).toFixed(2) + "KB";
+        } else if (size < 1024 * 1024 * 1024) {
+          return (size / (1024 * 1024)).toFixed(2) + "MB";
+        } else {
+          return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+        }
       },
+
+      /**
+       * 处理清理缓存逻辑
+       */
+      handleCleanTmp() {
+        // 先判断是否为App环境
+        if (uni.getSystemInfoSync().platform !== 'android') {
+          this.$modal.msg('仅支持App端清理缓存', 'none');
+          return;
+        }
+
+        // #ifdef APP-PLUS
+        // 显示加载提示
+        this.$modal.loading('计算缓存大小中...');
+        
+        // 计算缓存大小
+        plus.cache.calculate((size) => {
+          this.$modal.closeLoading();
+          const cacheSize = this.formatSize(size);
+
+          // 调用你原来的confirm方法（未优化版）
+          this.$modal.confirm(`当前缓存大小：${cacheSize}\n确定要清除所有缓存吗？`, '清理缓存')
+              .then((confirm) => {
+                if (confirm) {
+                  // 用户确认清除
+                  this.$modal.loading('清除缓存中...');
+                  plus.cache.clear(() => {
+                    this.$modal.closeLoading();
+                    this.$modal.msg('缓存清除成功');
+                  }, (err) => {
+                    this.$modal.closeLoading();
+                    this.$modal.msg(`清除失败：${err.message}`, 'none');
+                  });
+                }
+              });
+        }, (err) => {
+          this.$modal.closeLoading();
+          this.$modal.msg(`计算缓存失败：${err.message}`, 'none');
+        });
+        // #endif
+      },
+
       handleLogout() {
         this.$modal.confirm('确定注销并退出系统吗？').then(() => {
           this.$store.dispatch('LogOut').then(() => {}).finally(()=>{

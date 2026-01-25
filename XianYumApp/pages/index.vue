@@ -174,13 +174,14 @@ export default {
     this.getAllLogCounts()
     // 初始化加载版本列表
     this.getVersionList()
+    // 获取更新
+    this.handleToUpgrade()
   },
   async onShow() {
     // 获取状态栏高度
     const systemInfo = uni.getSystemInfoSync()
     this.statusBarHeight = systemInfo.statusBarHeight
     await this.getUser()
-    this.handleToUpgrade();
   },
   onPullDownRefresh() {
     this.refreshData();
