@@ -27,14 +27,14 @@ public class MqttFishController{
 
     @GetMapping("/queryLatestData")
     @Operation(summary = "获取最新的实时数据")
-    public Results queryLatestData(){
+    public Results<MqttFishResponse> queryLatestData(){
         MqttFishResponse response = mqttFishService.queryLatestData();
         return Results.success(response);
     }
 
     @GetMapping("/queryTotalCount")
     @Operation(summary = "获取IOT上报的总量")
-    public Results queryTotalCount(){
+    public Results<?> queryTotalCount(){
         Long count = mqttFishService.queryTotalCount();
         return Results.success(count);
     }
@@ -42,7 +42,7 @@ public class MqttFishController{
 
     @PostMapping("/getReportLineData")
     @Operation(summary = "获取折线图")
-    public Results getReportLineData(@RequestBody MqttFishRequest request){
+    public Results<MqttFishReportResponse> getReportLineData(@RequestBody MqttFishRequest request){
         MqttFishReportResponse response = mqttFishService.getReportLineData(request);
         return Results.success(response);
     }

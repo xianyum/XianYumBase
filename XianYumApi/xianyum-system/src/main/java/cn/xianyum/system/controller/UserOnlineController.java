@@ -31,7 +31,7 @@ public class UserOnlineController {
     @GetMapping("/getPage")
     @Operation(summary = "获取在线用户列表")
     @Permission("@ps.hasPerm('monitor:online:page')")
-    public Results list(UserOnlineRequest request){
+    public Results<UserOnlineResponse> list(UserOnlineRequest request){
         PageResponse<UserOnlineResponse> responsePage = userOnlineService.queryPage(request);
         return Results.page(responsePage);
     }
@@ -44,7 +44,7 @@ public class UserOnlineController {
     @DeleteMapping("/delete")
     @Operation(summary = "踢出用户")
     @Permission("@ps.hasPerm('monitor:online:exit')")
-    public Results delete(@RequestBody String[] tokenIds){
+    public Results<?> delete(@RequestBody String[] tokenIds){
         userOnlineService.delete(tokenIds);
         return Results.success();
     }

@@ -2,6 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
+
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.DictTypeEntity;
 import cn.xianyum.system.entity.request.DictTypeRequest;
@@ -31,7 +32,7 @@ public class DictTypeController {
     @GetMapping("/getPage")
     @Operation(summary = "获取字典类型列表")
     @Permission(value = "@ps.hasPerm('system:dict:page')",ignoreDataScope = true)
-    public Results list(DictTypeRequest request){
+    public Results<DictTypeResponse> list(DictTypeRequest request){
         PageResponse<DictTypeResponse> list = dictTypeService.selectDictTypeList(request);
         return Results.page(list);
     }
@@ -43,7 +44,7 @@ public class DictTypeController {
     @GetMapping(value = "/{id}")
     @Operation(summary = "查询字典类型详细")
     @Permission(value = "@ps.hasPerm('system:dict:query')",ignoreDataScope = true)
-    public Results getInfo(@PathVariable Long id) {
+    public Results<DictTypeResponse> getInfo(@PathVariable Long id) {
         return Results.success(dictTypeService.selectDictTypeById(id));
     }
 
@@ -53,7 +54,7 @@ public class DictTypeController {
     @PostMapping(value = "/save")
     @Operation(summary = "新增字典类型")
     @Permission("@ps.hasPerm('system:dict:save')")
-    public Results save(@RequestBody DictTypeEntity dictTypeEntity) {
+    public Results<?> save(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.save(dictTypeEntity));
     }
 
@@ -64,13 +65,13 @@ public class DictTypeController {
     @PutMapping(value = "/update")
     @Operation(summary = "更新字典类型详细")
     @Permission("@ps.hasPerm('system:dict:update')")
-    public Results update(@RequestBody DictTypeEntity dictTypeEntity) {
+    public Results<?> update(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.update(dictTypeEntity));
     }
 
     @Operation(summary = "刷新字典缓存")
     @DeleteMapping("/refreshCache")
-    public Results refreshCache() {
+    public Results<?> refreshCache() {
         dictTypeService.resetDictCache();
         return Results.success();
     }
@@ -78,7 +79,7 @@ public class DictTypeController {
     @DeleteMapping("/{ids}")
     @Operation(summary = "批量删除字典类型")
     @Permission("@ps.hasPerm('system:dict:delete')")
-    public Results remove(@PathVariable Long[] ids) {
+    public Results<?> remove(@PathVariable Long[] ids) {
         dictTypeService.deleteDictTypeByIds(ids);
         return Results.success();
     }
@@ -86,7 +87,7 @@ public class DictTypeController {
 
     @GetMapping("/optionSelect")
     @Operation(summary = "获取字典选择框列表")
-    public Results optionSelect() {
+    public Results<List<DictTypeEntity>> optionSelect() {
         List<DictTypeEntity> resultList = dictTypeService.optionSelect();
         return Results.success(resultList);
     }

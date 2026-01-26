@@ -28,7 +28,7 @@ public class MessageController {
     @PostMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
     @Permission(publicApi = true)
-    public Results sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+    public Results<?> sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
     }
@@ -36,7 +36,7 @@ public class MessageController {
     @PostMapping("/sendStandardMessage")
     @Operation(summary = "发送标准消息")
     @Permission(publicApi = true)
-    public Results sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
+    public Results<?> sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
         messageService.sendStandardMessage(messageSenderRequest);
         return Results.success();
     }
@@ -44,7 +44,7 @@ public class MessageController {
     @GetMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
     @Permission(publicApi = true)
-    public Results sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
+    public Results<?> sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
     }

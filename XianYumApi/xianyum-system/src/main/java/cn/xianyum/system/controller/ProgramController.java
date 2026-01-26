@@ -43,7 +43,7 @@ public class ProgramController {
      */
     @PostMapping("/getPage")
     @Operation(summary = "获取程序设计列表")
-    public Results getPage(@RequestBody ProgramRequest request){
+    public Results<ProgramResponse> getPage(@RequestBody ProgramRequest request){
         PageResponse<ProgramResponse> list = programService.getPage(request);
         return Results.page(list);
     }
@@ -54,14 +54,14 @@ public class ProgramController {
      */
     @PostMapping("/selectById")
     @Operation(summary = "根据Id查询程序设计")
-    public Results selectOneById(@RequestBody ProgramRequest request){
+    public Results<ProgramEntity> selectOneById(@RequestBody ProgramRequest request){
         ProgramEntity info = programService.selectOneById(request);
         return Results.success(info);
     }
 
     @PostMapping("/save")
     @Operation(summary = "保存程序记录操作")
-    public Results save(@RequestBody ProgramRequest request){
+    public Results<?> save(@RequestBody ProgramRequest request){
         int count = programService.save(request);
         if(count>0){
             return Results.success();
@@ -73,42 +73,30 @@ public class ProgramController {
 
     @PostMapping("/update")
     @Operation(summary = "更新程序记录操作")
-    public Results update(@RequestBody ProgramRequest request){
+    public Results<?> update(@RequestBody ProgramRequest request){
         int count = programService.update(request);
-        if(count>0){
-            return Results.success();
-        }else {
-            return Results.error("更新程序记录失败！");
-        }
+        return Results.success();
     }
 
     @PostMapping("/delete")
     @Operation(summary = "删除程序操作")
-    public Results delete(@RequestBody String[] ids){
-        try {
-            programService.deleteById(ids);
-            return Results.success();
-        }catch(SoException exception){
-            return Results.error(exception.getMsg());
-        }
+    public Results<?> delete(@RequestBody String[] ids){
+        programService.deleteById(ids);
+        return Results.success();
     }
 
 
     @PostMapping("/complete")
     @Operation(summary = "完成程序订单操作")
-    public Results complete(@RequestBody ProgramRequest request){
-        try {
-            programService.complete(request);
-            return Results.success();
-        }catch(SoException exception){
-            return Results.error(exception.getMsg());
-        }
+    public Results<?> complete(@RequestBody ProgramRequest request){
+        programService.complete(request);
+        return Results.success();
     }
 
 
     @PostMapping("/schedule")
     @Operation(summary = "查询订单实时进度")
-    public Results schedule(@RequestBody ProgramRequest request){
+    public Results<?> schedule(@RequestBody ProgramRequest request){
         List<JSONObject> info = programService.schedule(request);
         return Results.success(info);
     }

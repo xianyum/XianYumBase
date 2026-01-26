@@ -28,7 +28,7 @@ public class CacheController {
     @GetMapping("/getInfo")
     @Operation(summary = "查询Redis缓存基本信息")
     @Permission("@ps.hasPerm('monitor:cache:list')")
-    public Results getInfo() {
+    public Results<Map<String, Object>> getInfo() {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
         Object dbSize = redisTemplate.execute((RedisCallback<Object>) connection -> connection.dbSize());

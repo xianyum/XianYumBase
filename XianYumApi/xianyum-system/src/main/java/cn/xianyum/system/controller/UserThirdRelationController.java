@@ -28,7 +28,7 @@ public class UserThirdRelationController{
     @GetMapping("/getCurrentUserThirdRelation")
     @Operation(summary = "获取当前用户绑定三方账号列表")
     @Permission(ignoreDataScope = true)
-    public Results getCurrentUserThirdRelation() {
+    public Results<List<UserThirdRelationResponse>> getCurrentUserThirdRelation() {
         List<UserThirdRelationResponse> responseList = userThirdRelationService.getCurrentUserThirdRelation();
         return Results.success(responseList);
     }
@@ -41,7 +41,7 @@ public class UserThirdRelationController{
      */
 	@Operation(summary = "解除绑定三方账号")
     @DeleteMapping(value = "/unbind")
-    public Results unbind(@RequestBody String id) {
+    public Results<Integer> unbind(@RequestBody String id) {
         return Results.success(this.userThirdRelationService.unbind(id));
     }
 }

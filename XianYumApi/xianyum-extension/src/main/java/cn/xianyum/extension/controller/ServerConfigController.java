@@ -1,8 +1,8 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.po.server.Server;
 import cn.xianyum.extension.service.ServerConfigService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +37,7 @@ public class ServerConfigController{
 	@Operation(summary = "分页查询主机维护")
     @GetMapping(value = "/getPage")
     @Permission(value = "@ps.hasPerm('server-config:page')")
-    public Results getPage(ServerConfigRequest request) {
+    public Results<ServerConfigResponse> getPage(ServerConfigRequest request) {
 		PageResponse<ServerConfigResponse> responsePage = serverConfigService.getPage(request);
         return Results.page(responsePage);
     }
@@ -51,7 +51,7 @@ public class ServerConfigController{
     @Operation(summary = "查询主机维护list")
     @GetMapping(value = "/getList")
     @Permission(value = "@ps.hasPerm('server-config:query')")
-    public Results getList(ServerConfigRequest request) {
+    public Results<List<ServerConfigResponse>> getList(ServerConfigRequest request) {
         List<ServerConfigResponse> serverConfigResponseList = serverConfigService.getList(request);
         return Results.success(serverConfigResponseList);
     }
@@ -65,7 +65,7 @@ public class ServerConfigController{
 	@Operation(summary = "根据ID查询主机维护")
     @GetMapping("getById/{id}")
     @Permission(value = "@ps.hasPerm('server-config:query')")
-    public Results selectOne(@PathVariable Long id) {
+    public Results<ServerConfigResponse> selectOne(@PathVariable Long id) {
         return Results.success(serverConfigService.getById(id));
     }
 
@@ -78,7 +78,7 @@ public class ServerConfigController{
 	@Operation(summary = "主机维护保存数据")
     @PostMapping(value = "/save")
     @Permission(value = "@ps.hasPerm('server-config:save')")
-    public Results insert(@RequestBody ServerConfigRequest request) {
+    public Results<?> insert(@RequestBody ServerConfigRequest request) {
         return Results.success(this.serverConfigService.save(request));
     }
 
@@ -91,7 +91,7 @@ public class ServerConfigController{
 	@Operation(summary = "主机维护更新数据")
     @PutMapping(value = "/update")
     @Permission(value = "@ps.hasPerm('server-config:update')")
-    public Results update(@RequestBody ServerConfigRequest request) {
+    public Results<?> update(@RequestBody ServerConfigRequest request) {
         return Results.success(this.serverConfigService.update(request));
     }
 
@@ -104,7 +104,7 @@ public class ServerConfigController{
 	@Operation(summary = "主机维护批量删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(value = "@ps.hasPerm('server-config:delete')")
-    public Results delete(@RequestBody Long[] ids) {
+    public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.serverConfigService.deleteById(ids));
     }
 
@@ -113,7 +113,7 @@ public class ServerConfigController{
     @Operation(summary = "获取当前jar启动服务器相关信息")
     @Permission("@ps.hasPerm('monitor:server:list')")
     @SneakyThrows
-    public Results getServerInfo(){
+    public Results<Server> getServerInfo(){
         Server server = new Server();
         server.copyTo();
         return Results.success(server);

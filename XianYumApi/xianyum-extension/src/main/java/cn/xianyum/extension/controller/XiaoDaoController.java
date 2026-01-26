@@ -1,10 +1,10 @@
 package cn.xianyum.extension.controller;
 
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.XiaoDaoRequest;
 import cn.xianyum.extension.entity.response.XiaoDaoResponse;
 import cn.xianyum.extension.service.XiaoDaoService;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class XiaoDaoController {
 
     @GetMapping("/getPage")
     @Operation(summary = "获取小刀数据列表")
-    public Results getPage(XiaoDaoRequest request){
+    public Results<XiaoDaoResponse> getPage(XiaoDaoRequest request){
         PageResponse<XiaoDaoResponse> list = xiaoDaoService.getPage(request);
         return Results.page(list);
     }

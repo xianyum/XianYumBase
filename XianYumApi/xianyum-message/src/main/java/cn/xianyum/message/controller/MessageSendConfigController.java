@@ -33,8 +33,7 @@ public class MessageSendConfigController {
 	@Operation(summary = "消息发送配置分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('message:send-config:page')")
-	public Results getPage(MessageSendConfigRequest request) {
-
+	public Results<MessageSendConfigResponse> getPage(MessageSendConfigRequest request) {
         PageResponse<MessageSendConfigResponse> response = messageSendConfigService.getPage(request);
         return Results.page(response);
 	}
@@ -46,7 +45,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('message:send-config:query')")
-    public Results getById(@PathVariable String id) {
+    public Results<MessageSendConfigResponse> getById(@PathVariable String id) {
         MessageSendConfigResponse response = messageSendConfigService.getById(id);
         return Results.success(response);
     }
@@ -58,8 +57,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('message:send-config:save')")
-    public Results save(@RequestBody MessageSendConfigRequest request) {
-
+    public Results<?> save(@RequestBody MessageSendConfigRequest request) {
 		Integer count = messageSendConfigService.save(request);
 		if(count>0){
 			return Results.success();
@@ -74,8 +72,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('message:send-config:update')")
-    public Results update(@RequestBody MessageSendConfigRequest request) {
-
+    public Results<?> update(@RequestBody MessageSendConfigRequest request) {
 		Integer count = messageSendConfigService.update(request);
 		if(count>0){
 			return Results.success();
@@ -90,8 +87,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:send-config:delete')")
-    public Results delete(@RequestBody String[] ids) {
-
+    public Results<?> delete(@RequestBody String[] ids) {
 		messageSendConfigService.deleteById(ids);
 	    return Results.success();
     }
@@ -104,8 +100,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置保存数据")
     @PostMapping(value = "/saveOrUpdate")
     @Permission("@ps.hasPerm('message:send-config:save')")
-    public Results saveOrUpdate(@RequestBody MessageSendConfigRequest request) {
-
+    public Results<?> saveOrUpdate(@RequestBody MessageSendConfigRequest request) {
         MessageSendConfigEntity messageSendConfigEntity = messageSendConfigService.saveOrUpdate(request);
         return Results.success(messageSendConfigEntity);
     }

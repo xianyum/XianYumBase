@@ -1,8 +1,8 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "分页查询主机端口维护")
     @GetMapping(value = "/getPage")
     @Permission(value = "@ps.hasPerm('zz:page')")
-    public Results getPage(ServerPortConfigRequest request) {
+    public Results<ServerPortConfigResponse> getPage(ServerPortConfigRequest request) {
 		PageResponse<ServerPortConfigResponse> responsePage = serverPortConfigService.getPage(request);
         return Results.page(responsePage);
     }
@@ -48,7 +48,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "根据ID查询主机端口维护")
     @GetMapping("getById/{id}")
     @Permission(value = "@ps.hasPerm('server-port-config:query')")
-    public Results selectOne(@PathVariable Long id) {
+    public Results<ServerPortConfigResponse> selectOne(@PathVariable Long id) {
         return Results.success(serverPortConfigService.getById(id));
     }
 
@@ -61,7 +61,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "主机端口维护保存数据")
     @PostMapping(value = "/save")
     @Permission(value = "@ps.hasPerm('server-port-config:save')")
-    public Results insert(@RequestBody ServerPortConfigRequest request) {
+    public Results<?> insert(@RequestBody ServerPortConfigRequest request) {
         return Results.success(this.serverPortConfigService.save(request));
     }
 
@@ -74,7 +74,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "主机端口维护更新数据")
     @PutMapping(value = "/update")
     @Permission(value = "@ps.hasPerm('server-port-config:update')")
-    public Results update(@RequestBody ServerPortConfigRequest request) {
+    public Results<?> update(@RequestBody ServerPortConfigRequest request) {
         return Results.success(this.serverPortConfigService.update(request));
     }
 
@@ -87,7 +87,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "主机端口维护批量删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(value = "@ps.hasPerm('server-port-config:delete')")
-    public Results delete(@RequestBody Long[] ids) {
+    public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.serverPortConfigService.deleteById(ids));
     }
 }

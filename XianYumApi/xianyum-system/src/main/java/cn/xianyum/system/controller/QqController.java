@@ -33,18 +33,14 @@ public class QqController {
     @PostMapping("/login")
     @Operation(summary = "QQ第三方登录")
     @Permission(publicApi = true)
-    public Results login(@RequestBody ThirdOauthRequest request) {
+    public Results<LoginUser> login(@RequestBody ThirdOauthRequest request) {
         LoginUser loginUser = userService.getUserByQq(request.getAuthCode());
-        if(loginUser != null){
-            return userTokenService.createToken(loginUser);
-        }else {
-            return Results.error();
-        }
+        return userTokenService.createToken(loginUser);
     }
 
     @PostMapping("/bindUser")
     @Operation(summary = "QQ绑定用户")
-    public Results bindUser(@RequestBody ThirdOauthRequest aliRequest) {
+    public Results<?> bindUser(@RequestBody ThirdOauthRequest aliRequest) {
         boolean isSuccess = userService.bindQqUser(aliRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");
     }

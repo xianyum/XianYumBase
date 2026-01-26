@@ -32,7 +32,7 @@ public class LogController {
     @GetMapping("/getPage")
     @Operation(summary = "获取用户列表")
     @Permission(value = "@ps.hasPerm('monitor:operlog:page')",ignoreDataScope = true)
-    public Results getPage(LogRequest request){
+    public Results<LogResponse> getPage(LogRequest request){
         PageResponse<LogResponse> list = logService.getPage(request);
         return Results.page(list);
     }
@@ -42,7 +42,7 @@ public class LogController {
      */
     @GetMapping("/getVisitCountCharts")
     @Operation(summary = "获取用户列表")
-    public Results getVisitCountCharts(){
+    public Results<List<LogResponse>> getVisitCountCharts(){
         List<LogResponse> responses = logService.getVisitCountCharts();
         return Results.success(responses);
     }
@@ -50,7 +50,7 @@ public class LogController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除日志记录")
     @Permission("@ps.hasPerm('monitor:operlog:delete')")
-    public Results delete(@RequestBody String[] logIdS){
+    public Results<?> delete(@RequestBody String[] logIdS){
         try {
             logService.deleteById(logIdS);
             return Results.success();
@@ -62,13 +62,9 @@ public class LogController {
     @DeleteMapping("/truncateLog")
     @Operation(summary = "清空用户操作日志")
     @Permission("@ps.hasPerm('monitor:operlog:delete')")
-    public Results truncateLog(){
-        try {
-            logService.truncateLog();
-            return Results.success();
-        }catch(SoException exception){
-            return Results.error(exception.getMsg());
-        }
+    public Results<?> truncateLog(){
+        logService.truncateLog();
+        return Results.success();
     }
 
 
@@ -79,7 +75,7 @@ public class LogController {
     @Operation(summary = "获取接口日志数量")
     @GetMapping(value = "/getLogCount")
     @Permission(publicApi = true)
-    public Results getLogCount() {
+    public Results<Long> getLogCount() {
         return Results.success(logService.getLogCount());
     }
 }

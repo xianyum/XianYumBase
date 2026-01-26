@@ -37,7 +37,7 @@ public class MessageConfigWechatController {
 	@Operation(summary = "账户配置wechat分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('message:wechat:page')")
-	public Results getPage(MessageConfigWechatRequest request) {
+	public Results<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request) {
         PageResponse<MessageConfigWechatResponse> response = messageConfigWechatService.getPage(request);
         return Results.page(response);
 	}
@@ -49,7 +49,7 @@ public class MessageConfigWechatController {
     @Operation(summary = "账户配置wechat根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('message:wechat:query')")
-    public Results getById(@PathVariable String id) {
+    public Results<MessageConfigWechatResponse> getById(@PathVariable String id) {
         MessageConfigWechatResponse response = messageConfigWechatService.getById(id);
         return Results.success(response);
     }
@@ -61,7 +61,7 @@ public class MessageConfigWechatController {
     @Operation(summary = "账户配置wechat保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('message:wechat:save')")
-    public Results save(@RequestBody MessageConfigWechatRequest request) {
+    public Results<?> save(@RequestBody MessageConfigWechatRequest request) {
 
 		Integer count = messageConfigWechatService.save(request);
 		if(count>0){
@@ -77,7 +77,7 @@ public class MessageConfigWechatController {
     @Operation(summary = "账户配置wechat修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('message:wechat:update')")
-    public Results update(@RequestBody MessageConfigWechatRequest request) {
+    public Results<?> update(@RequestBody MessageConfigWechatRequest request) {
 
 		Integer count = messageConfigWechatService.update(request);
 		if(count>0){
@@ -93,7 +93,7 @@ public class MessageConfigWechatController {
     @Operation(summary = "账户配置wechat删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:wechat:delete')")
-    public Results delete(@RequestBody String[] ids) {
+    public Results<?> delete(@RequestBody String[] ids) {
 
 		messageConfigWechatService.deleteById(ids);
 	    return Results.success();
@@ -106,7 +106,7 @@ public class MessageConfigWechatController {
     @Operation(summary = "企业微信账户测试发送")
     @PutMapping(value = "/sendWechat")
     @Permission("@ps.hasPerm('message:wechat:test-send')")
-    public Results sendWechat(@RequestBody MessageSenderEntity request) {
+    public Results<?> sendWechat(@RequestBody MessageSenderEntity request) {
         try {
             wechatSender.sendWechat(request);
             return Results.success();

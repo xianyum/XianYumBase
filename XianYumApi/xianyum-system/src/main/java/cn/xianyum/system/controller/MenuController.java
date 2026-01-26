@@ -5,6 +5,7 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuResponse;
+import cn.xianyum.system.entity.response.MenuTreeSelect;
 import cn.xianyum.system.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,7 +32,7 @@ public class MenuController {
      */
     @GetMapping("/nav")
     @Operation(summary = "获取导航菜单以及权限")
-    public Results nav(){
+    public Results<List<MenuResponse>> nav(){
         List<MenuResponse> menuResponses = menuService.getUserMenuList();
         return Results.success(menuResponses);
     }
@@ -42,7 +43,7 @@ public class MenuController {
     @GetMapping("/getPage")
     @Operation(summary = "分页查询菜单列表")
     @Permission(value = "@ps.hasPerm('system:menu:page')",ignoreDataScope = true)
-    public Results selectMenuList(MenuRequest menuRequest){
+    public Results<List<MenuEntity>> selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
         return Results.success(menuResponses);
     }
@@ -54,7 +55,7 @@ public class MenuController {
     @GetMapping(value = "/{menuId}")
     @Operation(summary = "根据菜单编号获取详细信息")
     @Permission(value = "@ps.hasPerm('system:menu:query')",ignoreDataScope = true)
-    public Results getInfo(@PathVariable Long menuId) {
+    public Results<MenuEntity> getInfo(@PathVariable Long menuId) {
         return Results.success(menuService.selectMenuById(menuId));
     }
 
@@ -65,7 +66,7 @@ public class MenuController {
     @PostMapping(value = "/save")
     @Operation(summary = "保存菜单信息")
     @Permission("@ps.hasPerm('system:menu:save')")
-    public Results save(@RequestBody MenuEntity menuEntity) {
+    public Results<?> save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
         return Results.success(count);
     }
@@ -76,7 +77,7 @@ public class MenuController {
     @PutMapping(value = "/update")
     @Operation(summary = "保存菜单信息")
     @Permission("@ps.hasPerm('system:menu:update')")
-    public Results update(@RequestBody MenuEntity menuEntity) {
+    public Results<?> update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
         return Results.success(count);
     }
@@ -88,7 +89,7 @@ public class MenuController {
     @DeleteMapping("/{menuId}")
     @Operation(summary = "删除菜单")
     @Permission("@ps.hasPerm('system:menu:delete')")
-    public Results remove(@PathVariable("menuId") Long menuId) {
+    public Results<?> remove(@PathVariable("menuId") Long menuId) {
         return Results.success(menuService.deleteMenuById(menuId));
     }
 
@@ -97,7 +98,7 @@ public class MenuController {
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeSelect")
-    public Results treeSelect(MenuRequest request) {
+    public Results<List<MenuTreeSelect>> treeSelect(MenuRequest request) {
         List<MenuEntity> menus = menuService.selectMenuList(request);
         return Results.success(menuService.buildMenuTreeSelect(menus));
     }
@@ -106,7 +107,7 @@ public class MenuController {
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeSelect/role")
-    public Results treeSelectByRoleId(@RequestParam Long roleId) {
+    public Results<?> treeSelectByRoleId(@RequestParam Long roleId) {
         Map<String,Object> resultMap = menuService.treeSelectByRoleId(roleId);
         return Results.success(resultMap);
     }

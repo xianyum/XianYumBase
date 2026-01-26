@@ -27,7 +27,7 @@ public class SystemConstantController {
     @GetMapping("/getPublicConstant/{key}")
     @Operation(summary = "获取系统可见参数")
     @Permission(publicApi = true)
-    public Results getPublicConstant(@PathVariable String key) {
+    public Results<SystemConstantEntity> getPublicConstant(@PathVariable String key) {
         SystemConstantEntity response = systemConstantService.getPublicConstant(key);
         return Results.success(response);
     }
@@ -36,7 +36,7 @@ public class SystemConstantController {
     @GetMapping("/getPrivateConstant/{key}")
     @Operation(summary = "获取私有系统内部参数")
     @Permission("@ps.hasPerm('system:config:private')")
-    public Results getPrivateConstant(@PathVariable String key) {
+    public Results<SystemConstantEntity> getPrivateConstant(@PathVariable String key) {
         SystemConstantEntity response = systemConstantService.getPrivateConstant(key);
         return Results.success(response);
     }
@@ -44,7 +44,7 @@ public class SystemConstantController {
     @PutMapping("/update")
     @Operation(summary = "更新系统参数")
     @Permission("@ps.hasPerm('system:config:update')")
-    public Results update(@RequestBody SystemConstantRequest request) {
+    public Results<?> update(@RequestBody SystemConstantRequest request) {
         int count = systemConstantService.update(request);
         return Results.success(count);
     }
@@ -57,7 +57,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量分页查询数据")
     @GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('system:config:page')")
-    public Results getPage(SystemConstantRequest request) {
+    public Results<SystemConstantResponse> getPage(SystemConstantRequest request) {
         PageResponse<SystemConstantResponse> response = systemConstantService.getPage(request);
         return Results.page(response);
     }
@@ -69,7 +69,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('system:config:query')")
-    public Results getById(@PathVariable String id) {
+    public Results<SystemConstantResponse> getById(@PathVariable String id) {
         SystemConstantResponse response = systemConstantService.getById(id);
         return Results.success(response);
     }
@@ -82,7 +82,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('system:config:save')")
-    public Results save(@RequestBody SystemConstantRequest request) {
+    public Results<?> save(@RequestBody SystemConstantRequest request) {
 
         Integer count = systemConstantService.save(request);
         if(count>0){
@@ -98,7 +98,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('system:config:delete')")
-    public Results delete(@RequestParam String key) {
+    public Results<?> delete(@RequestParam String key) {
         systemConstantService.deleteByKey(key);
         return Results.success();
     }
@@ -107,7 +107,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量清除缓存")
     @GetMapping(value = "/deleteRedisCache")
     @Permission("@ps.hasPerm('system:config:cache')")
-    public Results deleteRedisCache(@RequestParam String key) {
+    public Results<?> deleteRedisCache(@RequestParam String key) {
         systemConstantService.deleteRedisCache(key);
         return Results.success();
     }
@@ -116,7 +116,7 @@ public class SystemConstantController {
     @Operation(summary = "从缓存中获取系统常量")
     @GetMapping(value = "/getRedisCache")
     @Permission("@ps.hasPerm('system:config:cache')")
-    public Results getRedisCache(@RequestParam String key) {
+    public Results<SystemConstantEntity> getRedisCache(@RequestParam String key) {
         SystemConstantEntity byKeyFromRedis = systemConstantService.getByKeyFromRedis(key);
         return Results.success(byKeyFromRedis);
     }
@@ -124,7 +124,7 @@ public class SystemConstantController {
 
     @Operation(summary = "刷新系统常量")
     @DeleteMapping(value = "/refreshCache")
-    public Results refreshCache() {
+    public Results<?> refreshCache() {
         systemConstantService.refreshCache();
         return Results.success();
     }

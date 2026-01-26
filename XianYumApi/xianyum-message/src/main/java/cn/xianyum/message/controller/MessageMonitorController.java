@@ -32,8 +32,7 @@ public class MessageMonitorController {
 	@Operation(summary = "消息监控分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission(value = "@ps.hasPerm('message:monitor:page')",ignoreDataScope = true)
-	public Results getPage(MessageMonitorRequest request) {
-
+	public Results<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
         PageResponse<MessageMonitorResponse> response = messageMonitorService.getPage(request);
         return Results.page(response);
 	}
@@ -45,7 +44,7 @@ public class MessageMonitorController {
     @Operation(summary = "消息监控根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission(publicApi = true)
-    public Results getById(@PathVariable String id) {
+    public Results<MessageMonitorResponse> getById(@PathVariable String id) {
         MessageMonitorResponse response = messageMonitorService.getById(id);
         return Results.success(response);
     }
@@ -58,7 +57,7 @@ public class MessageMonitorController {
     @Operation(summary = "消息监控删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:monitor:delete')")
-    public Results delete(@RequestBody String[] ids) {
+    public Results<?> delete(@RequestBody String[] ids) {
 		messageMonitorService.deleteById(ids);
 	    return Results.success();
     }
@@ -71,7 +70,7 @@ public class MessageMonitorController {
     @Operation(summary = "清空监控删除数据")
     @DeleteMapping(value = "/truncate")
     @Permission("@ps.hasPerm('message:monitor:delete')")
-    public Results truncate() {
+    public Results<?> truncate() {
         messageMonitorService.truncate();
         return Results.success();
     }
@@ -83,7 +82,7 @@ public class MessageMonitorController {
      */
     @Operation(summary = "获取消息发送数量")
     @GetMapping(value = "/getMessageLogCount")
-    public Results getMessageLogCount() {
+    public Results<Long> getMessageLogCount() {
         return Results.success(messageMonitorService.getOnlineProxyCount());
     }
 }

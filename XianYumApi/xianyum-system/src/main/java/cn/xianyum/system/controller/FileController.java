@@ -1,8 +1,8 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.file.FileDetailResponse;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,14 +26,14 @@ public class FileController {
     @Operation(summary = "上传文件")
     @PostMapping(value = "/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Permission(value = "@ps.hasPerm('system:file:upload')")
-    public Results uploadSingleFile(@RequestParam("file") MultipartFile file) {
+    public Results<FileDetailResponse> uploadSingleFile(@RequestParam("file") MultipartFile file) {
         FileDetailResponse fileDetailResponse = this.fileService.uploadFile(file);
         return Results.success(fileDetailResponse);
     }
 
     @Operation(summary = "获取文件访问url")
     @GetMapping(value = "/presignedUrl")
-    public Results presignedUrl(@RequestParam String fileId) {
+    public Results<FileDetailResponse> presignedUrl(@RequestParam String fileId) {
         return Results.success(this.fileService.selectFileById(fileId));
     }
 }

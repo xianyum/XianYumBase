@@ -37,19 +37,15 @@ public class AliController {
     @PostMapping("/login")
     @Operation(summary = "支付宝第三方登录")
     @Permission(publicApi = true)
-    public Results login(@RequestBody ThirdOauthRequest aliRequest) {
+    public Results<?> login(@RequestBody ThirdOauthRequest aliRequest) {
         LoginUser loginUser = userService.getUserByAli(aliRequest.getAuthCode());
-        if(loginUser != null){
-            return userTokenService.createToken(loginUser);
-        }else {
-            return Results.error();
-        }
+        return userTokenService.createToken(loginUser);
     }
 
     @PostMapping("/yunXiao/flowCallBack")
     @Operation(summary = "阿里云-云效-流水线执行结果回调")
     @Permission(publicApi = true)
-    public Results flowCallBack(@RequestBody String requestInfo) {
+    public Results<?> flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
         return Results.success();
     }
@@ -57,7 +53,7 @@ public class AliController {
 
     @PostMapping("/bindUser")
     @Operation(summary = "支付宝绑定用户")
-    public Results bindUser(@RequestBody ThirdOauthRequest aliRequest) {
+    public Results<?> bindUser(@RequestBody ThirdOauthRequest aliRequest) {
         boolean isSuccess = userService.binAliUser(aliRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");
     }

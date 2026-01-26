@@ -3,7 +3,6 @@ package cn.xianyum.system.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
@@ -35,7 +34,7 @@ public class UserController {
     @GetMapping("/getPage")
     @Operation(summary = "分页获取用户列表")
     @Permission(value = "@ps.hasPerm('system:user:page')",ignoreDataScope = true)
-    public Results getPage(UserRequest user){
+    public Results<UserResponse> getPage(UserRequest user){
         PageResponse<UserResponse> list = userService.getPage(user);
         return Results.page(list);
     }
@@ -45,7 +44,7 @@ public class UserController {
      */
     @GetMapping("/info")
     @Operation(summary = "获取登录的用户信息")
-    public Results info(){
+    public Results<?> info(){
         LoginUser userEntity = userService.getUserSelf();
         return Results.success().put("user", userEntity);
     }
@@ -58,13 +57,9 @@ public class UserController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除用户")
     @Permission("@ps.hasPerm('system:user:delete')")
-    public Results delete(@RequestBody String[] userIds){
-        try {
-            userService.deleteById(userIds);
-            return Results.success();
-        }catch(SoException exception){
-            return Results.error(exception.getMsg());
-        }
+    public Results<?> delete(@RequestBody String[] userIds){
+        userService.deleteById(userIds);
+        return Results.success();
     }
 
     /**
@@ -73,7 +68,7 @@ public class UserController {
     @GetMapping("/getById/{id}")
     @Operation(summary = "根据Id查询用户")
     @Permission(value = "@ps.hasPerm('system:user:query')",ignoreDataScope = true)
-    public Results selectOneById(@PathVariable String id){
+    public Results<UserResponse> selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
         return Results.success(userResponse);
     }
@@ -85,7 +80,7 @@ public class UserController {
     @GetMapping("/getByRoleId/{roleId}")
     @Operation(summary = "根据角色ID查询用户")
     @Permission(value = "@ps.hasPerm('system:role:user')")
-    public Results getByRoleId(@PathVariable String roleId){
+    public Results<List<UserResponse>> getByRoleId(@PathVariable String roleId){
         List<UserResponse> userResponse = userService.getByRoleId(roleId);
         return Results.success(userResponse);
     }
@@ -96,17 +91,13 @@ public class UserController {
     @PostMapping("/save")
     @Operation(summary = "保存用户")
     @Permission("@ps.hasPerm('system:user:save')")
-    public Results save(@RequestBody UserRequest user){
-        try {
-            ValidatorUtils.validateEntity(user);
-            int count = userService.save(user);
-            if(count>0){
-                return Results.success();
-            }else {
-                return Results.error("保存用户失败！");
-            }
-        }catch(SoException exception){
-            return Results.error(exception.getMsg());
+    public Results<?> save(@RequestBody UserRequest user){
+        ValidatorUtils.validateEntity(user);
+        int count = userService.save(user);
+        if(count>0){
+            return Results.success();
+        }else {
+            return Results.error("保存用户失败！");
         }
     }
 
@@ -116,23 +107,19 @@ public class UserController {
     @PutMapping("/update")
     @Operation(summary = "修改用户")
     @Permission("@ps.hasPerm('system:user:update')")
-    public Results update(@RequestBody UserRequest user){
-        try {
-            ValidatorUtils.validateEntity(user);
-            int count = userService.update(user);
-            if(count>0){
-                return Results.success();
-            }else {
-                return Results.error("修改用户失败！");
-            }
-        }catch(SoException exception){
-            return Results.error(exception.getMsg());
+    public Results<?> update(@RequestBody UserRequest user){
+        ValidatorUtils.validateEntity(user);
+        int count = userService.update(user);
+        if(count>0){
+            return Results.success();
+        }else {
+            return Results.error("修改用户失败！");
         }
     }
 
     @PutMapping("/password")
     @Operation(summary = "修改密码")
-    public Results updatePassword(@RequestBody UpdatePasswordRequest info){
+    public Results<?> updatePassword(@RequestBody UpdatePasswordRequest info){
         ValidatorUtils.validateEntity(info);
         boolean flag = userService.updatePassword(info);
         if(!flag){
@@ -145,7 +132,7 @@ public class UserController {
     @PutMapping("/changeStatus")
     @Operation(summary = "修改用户状态")
     @Permission("@ps.hasPerm('system:user:update')")
-    public Results updatePassword(@RequestBody UserRequest request){
+    public Results<?> updatePassword(@RequestBody UserRequest request){
         int count = userService.changeStatus(request);
         return Results.success(count);
     }
@@ -155,7 +142,7 @@ public class UserController {
      */
     @PutMapping ("/updateCurrentUser")
     @Operation(summary = "更新当前用户信息")
-    public Results updateCurrentUser(@RequestBody UserRequest user){
+    public Results<?> updateCurrentUser(@RequestBody UserRequest user){
         int count = userService.updateCurrentUser(user);
         if(count>0){
             return Results.success();
@@ -167,7 +154,7 @@ public class UserController {
 
     @PostMapping("/upload")
     @Operation(summary = "上传图像接口")
-    public Results upload(@RequestParam("file") MultipartFile file){
+    public Results<String> upload(@RequestParam("file") MultipartFile file){
         String imageUrl = userService.upload(file);
         return Results.success(imageUrl);
     }
@@ -176,7 +163,7 @@ public class UserController {
      * 个人中心
      */
     @GetMapping("/profile")
-    public Results userProfile(){
+    public Results<UserResponse> userProfile(){
         UserResponse userResponse = userService.getUserProfile();
         return Results.success(userResponse);
     }

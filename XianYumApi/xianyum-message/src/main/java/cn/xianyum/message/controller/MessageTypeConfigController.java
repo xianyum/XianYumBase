@@ -33,8 +33,7 @@ public class MessageTypeConfigController {
 	@Operation(summary = "消息类型配置表分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('message:type-config:page')")
-	public Results getPage(MessageTypeConfigRequest request) {
-
+	public Results<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request) {
         PageResponse<MessageTypeConfigResponse> response = messageTypeConfigService.getPage(request);
         return Results.page(response);
 	}
@@ -46,8 +45,7 @@ public class MessageTypeConfigController {
     @Operation(summary = "消息类型配置表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('message:type-config:query')")
-    public Results getById(@PathVariable String id) {
-
+    public Results<MessageTypeConfigResponse> getById(@PathVariable String id) {
         MessageTypeConfigResponse response = messageTypeConfigService.getById(id);
         return Results.success(response);
     }
@@ -59,8 +57,7 @@ public class MessageTypeConfigController {
     @Operation(summary = "消息类型配置表保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('message:type-config:save')")
-    public Results save(@RequestBody MessageTypeConfigRequest request) {
-
+    public Results<?> save(@RequestBody MessageTypeConfigRequest request) {
 		Integer count = messageTypeConfigService.save(request);
 		if(count>0){
 			return Results.success();
@@ -75,8 +72,7 @@ public class MessageTypeConfigController {
     @Operation(summary = "消息类型配置表修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('message:type-config:update')")
-    public Results update(@RequestBody MessageTypeConfigRequest request) {
-
+    public Results<?> update(@RequestBody MessageTypeConfigRequest request) {
 		Integer count = messageTypeConfigService.update(request);
 		if(count>0){
 			return Results.success();
@@ -91,8 +87,7 @@ public class MessageTypeConfigController {
     @Operation(summary = "消息类型配置表删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:type-config:delete')")
-    public Results delete(@RequestBody String[] ids) {
-
+    public Results<?> delete(@RequestBody String[] ids) {
 		messageTypeConfigService.deleteById(ids);
 	    return Results.success();
     }
@@ -104,7 +99,7 @@ public class MessageTypeConfigController {
      */
     @Operation(summary = "消息类型配置查询全量数据")
     @GetMapping(value = "/getList")
-    public Results getList() {
+    public Results<List<MessageTypeConfigResponse>> getList() {
         List<MessageTypeConfigResponse> responseList = messageTypeConfigService.getList();
         return Results.success(responseList);
     }

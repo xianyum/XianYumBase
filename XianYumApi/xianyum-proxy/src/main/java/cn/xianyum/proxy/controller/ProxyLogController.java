@@ -34,7 +34,7 @@ public class ProxyLogController {
 	@Operation(summary = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
-	public Results getPage(ProxyLogRequest request) {
+	public Results<ProxyLogResponse> getPage(ProxyLogRequest request) {
         PageResponse<ProxyLogResponse> response = proxyLogService.getPage(request);
         return Results.page(response);
 	}
@@ -46,7 +46,7 @@ public class ProxyLogController {
     @Operation(summary = "远程代理日志根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
-    public Results getById(@PathVariable Long id) {
+    public Results<ProxyLogResponse> getById(@PathVariable Long id) {
         ProxyLogResponse response = proxyLogService.getById(id);
         return Results.success(response);
     }
@@ -60,7 +60,7 @@ public class ProxyLogController {
     @Operation(summary = "通过客户端上报数据")
     @PostMapping(value = "/reportClientInfo")
     @Permission(publicApi = true)
-    public Results reportClientInfo(@RequestBody ProxyLogRequest request) {
+    public Results<?> reportClientInfo(@RequestBody ProxyLogRequest request) {
         Integer count = proxyLogService.save(request);
 		if(count>0){
 			return Results.success();
@@ -76,7 +76,7 @@ public class ProxyLogController {
     @Operation(summary = "远程代理日志删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('xianyu:proxy-log:delete')")
-    public Results delete(@RequestBody Long[] ids) {
+    public Results<?> delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
 	    return Results.success();
     }
@@ -84,7 +84,7 @@ public class ProxyLogController {
 
     @Operation(summary = "查询最近十条数据")
     @GetMapping(value = "/getLastProxyLog")
-    public Results getLastProxyLog(ProxyLogRequest request) {
+    public Results<?> getLastProxyLog(ProxyLogRequest request) {
         List<ProxyLogResponse> response = proxyLogService.getLastProxyLog(request);
         return Results.success(response);
     }

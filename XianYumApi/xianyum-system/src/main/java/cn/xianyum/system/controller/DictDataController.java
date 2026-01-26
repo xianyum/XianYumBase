@@ -32,7 +32,7 @@ public class DictDataController {
      */
     @GetMapping(value = "/type/{dictType}")
     @Operation(summary = "根据字典类型查询字典数据信息")
-    public Results dictType(@PathVariable String dictType) {
+    public Results<List<DictDataEntity>> dictType(@PathVariable String dictType) {
         List<DictDataEntity> data = dictDataService.selectDictDataByType(dictType);
         if (Objects.isNull(data)) {
             data = new ArrayList<>();
@@ -43,7 +43,7 @@ public class DictDataController {
     @GetMapping("/getPage")
     @Operation(summary = "分页查询字典数据信息")
     @Permission(value = "@ps.hasPerm('system:dict:page')",ignoreDataScope = true)
-    public Results list(DictDataRequest dictData) {
+    public Results<DictDataResponse> list(DictDataRequest dictData) {
         PageResponse<DictDataResponse> list = dictDataService.selectDictDataList(dictData);
         return Results.page(list);
     }
@@ -51,7 +51,7 @@ public class DictDataController {
     @GetMapping(value = "/{id}")
     @Operation(summary = "查询单条信息")
     @Permission(value = "@ps.hasPerm('system:dict:query')",ignoreDataScope = true)
-    public Results getInfo(@PathVariable Long id) {
+    public Results<DictDataResponse> getInfo(@PathVariable Long id) {
         DictDataResponse dictDataResponse = dictDataService.getInfo(id);
         return Results.success(dictDataResponse);
     }
@@ -62,7 +62,7 @@ public class DictDataController {
     @PostMapping("/save")
     @Operation(summary = "新增字典数据")
     @Permission("@ps.hasPerm('system:dict:save')")
-    public Results add(@RequestBody DictDataEntity dict) {
+    public Results<?> add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
         return Results.success(count);
     }
@@ -73,7 +73,7 @@ public class DictDataController {
     @PutMapping("/update")
     @Operation(summary = "修改字典数据")
     @Permission("@ps.hasPerm('system:dict:update')")
-    public Results edit(@RequestBody DictDataEntity dict) {
+    public Results<?> edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
         return Results.success(count);
     }
@@ -84,7 +84,7 @@ public class DictDataController {
     @DeleteMapping("/{ids}")
     @Operation(summary = "删除字典数据")
     @Permission("@ps.hasPerm('system:dict:delete')")
-    public Results remove(@PathVariable Long[] ids) {
+    public Results<?> remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
         return Results.success();
     }

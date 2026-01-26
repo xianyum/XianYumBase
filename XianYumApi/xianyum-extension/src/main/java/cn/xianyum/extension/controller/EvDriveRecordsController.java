@@ -1,8 +1,8 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +36,7 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "分页查询新能源车行驶记录")
     @GetMapping(value = "/getPage")
-    public Results getPage(EvDriveRecordsRequest request) {
+    public Results<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
         PageResponse<EvDriveRecordsResponse> responsePage = evDriveRecordsService.getPage(request);
         return Results.page(responsePage);
     }
@@ -49,7 +49,7 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "根据ID查询新能源车行驶记录")
     @GetMapping("getById/{id}")
-    public Results selectOne(@PathVariable Long id) {
+    public Results<EvDriveRecordsResponse> selectOne(@PathVariable Long id) {
         return Results.success(evDriveRecordsService.getById(id));
     }
 
@@ -62,7 +62,7 @@ public class EvDriveRecordsController {
     @Operation(summary = "新能源车行驶记录保存数据")
     @PostMapping(value = "/save")
     @Permission(value = "@ps.hasPerm('ev-drive-records:save')")
-    public Results insert(@RequestBody EvDriveRecordsRequest request) {
+    public Results<Integer> insert(@RequestBody EvDriveRecordsRequest request) {
         return Results.success(this.evDriveRecordsService.save(request));
     }
 
@@ -75,7 +75,7 @@ public class EvDriveRecordsController {
     @Operation(summary = "新能源车行驶记录更新数据")
     @PutMapping(value = "/update")
     @Permission(value = "@ps.hasPerm('ev-drive-records:update')")
-    public Results update(@RequestBody EvDriveRecordsRequest request) {
+    public Results<Integer> update(@RequestBody EvDriveRecordsRequest request) {
         return Results.success(this.evDriveRecordsService.update(request));
     }
 
@@ -88,7 +88,7 @@ public class EvDriveRecordsController {
     @Operation(summary = "新能源车行驶记录批量删除数据")
     @DeleteMapping(value = "/delete")
     @Permission(value = "@ps.hasPerm('ev-drive-records:delete')")
-    public Results delete(@RequestBody Long[] ids) {
+    public Results<Integer> delete(@RequestBody Long[] ids) {
         return Results.success(this.evDriveRecordsService.deleteById(ids));
     }
 
@@ -101,14 +101,14 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "分页查询新能源车行驶折线图")
     @GetMapping(value = "/getReportLineData")
-    public Results getReportLineData(EvDriveRecordsRequest request) {
+    public Results<List<Map<String, Object>>> getReportLineData(EvDriveRecordsRequest request) {
         List<Map<String, Object>> result = this.evDriveRecordsService.getReportLineData(request);
         return Results.success(result);
     }
 
     @Operation(summary = "获取App数据(本月,上月,近一年)")
     @GetMapping(value = "/getAppSummaryData")
-    public Results getAppSummaryData() {
+    public Results<EvDriveRecordsAppReportResponse> getAppSummaryData() {
         EvDriveRecordsAppReportResponse result = this.evDriveRecordsService.getAppSummaryData();
         return Results.success(result);
     }

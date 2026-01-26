@@ -37,7 +37,7 @@ public class MessageConfigEmailController {
 
 	@GetMapping(value = "/getPage")
     @Permission("@ps.hasPerm('message:email:page')")
-	public Results getPage(MessageConfigEmailRequest request) {
+	public Results<MessageConfigEmailResponse> getPage(MessageConfigEmailRequest request) {
         PageResponse<MessageConfigEmailResponse> response = messageConfigEmailService.getPage(request);
         return Results.page(response);
 	}
@@ -49,8 +49,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @Permission("@ps.hasPerm('message:email:query')")
-    public Results getById(@PathVariable String id) {
-
+    public Results<MessageConfigEmailResponse> getById(@PathVariable String id) {
         MessageConfigEmailResponse response = messageConfigEmailService.getById(id);
         return Results.success(response);
     }
@@ -62,7 +61,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('message:email:save')")
-    public Results save(@RequestBody MessageConfigEmailRequest request) {
+    public Results<?> save(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.save(request);
 		if(count>0){
@@ -78,7 +77,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email修改数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('message:email:update')")
-    public Results update(@RequestBody MessageConfigEmailRequest request) {
+    public Results<?> update(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.update(request);
 		if(count>0){
@@ -94,7 +93,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('message:email:delete')")
-    public Results delete(@RequestBody String[] ids) {
+    public Results<?> delete(@RequestBody String[] ids) {
 
 		messageConfigEmailService.deleteById(ids);
 	    return Results.success();
@@ -107,7 +106,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "邮箱账户测试发送")
     @PutMapping(value = "/sendEmail")
     @Permission("@ps.hasPerm('message:email:test-send')")
-    public Results sendEmail(@RequestBody MessageSenderEntity request) {
+    public Results<?> sendEmail(@RequestBody MessageSenderEntity request) {
         try {
             emailSender.sendEmail(request);
             return Results.success();

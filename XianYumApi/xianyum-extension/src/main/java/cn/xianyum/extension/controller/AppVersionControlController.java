@@ -1,8 +1,8 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "分页查询APP版本管理")
     @GetMapping(value = "/getPage")
-    public Results getPage(AppVersionControlRequest request) {
+    public Results<AppVersionControlResponse> getPage(AppVersionControlRequest request) {
         PageResponse<AppVersionControlResponse> responsePage = appVersionControlService.getPage(request);
         return Results.page(responsePage);
     }
@@ -46,7 +46,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "根据ID查询APP版本管理")
     @GetMapping("getById/{id}")
-    public Results selectOne(@PathVariable Long id) {
+    public Results<AppVersionControlResponse> selectOne(@PathVariable Long id) {
         return Results.success(appVersionControlService.getById(id));
     }
 
@@ -59,7 +59,7 @@ public class AppVersionControlController {
     @Operation(summary = "APP版本管理保存数据")
     @PostMapping(value = "/save")
     @Permission("@ps.hasPerm('app:version_control:save')")
-    public Results insert(@RequestBody AppVersionControlRequest request) {
+    public Results<?> insert(@RequestBody AppVersionControlRequest request) {
         return Results.success(this.appVersionControlService.save(request));
     }
 
@@ -72,7 +72,7 @@ public class AppVersionControlController {
     @Operation(summary = "APP版本管理更新数据")
     @PutMapping(value = "/update")
     @Permission("@ps.hasPerm('app:version_control:update')")
-    public Results update(@RequestBody AppVersionControlRequest request) {
+    public Results<Integer> update(@RequestBody AppVersionControlRequest request) {
         return Results.success(this.appVersionControlService.update(request));
     }
 
@@ -85,13 +85,13 @@ public class AppVersionControlController {
     @Operation(summary = "APP版本管理批量删除数据")
     @DeleteMapping(value = "/delete")
     @Permission("@ps.hasPerm('app:version_control:delete')")
-    public Results delete(@RequestBody Long[] ids) {
+    public Results<Integer> delete(@RequestBody Long[] ids) {
         return Results.success(this.appVersionControlService.deleteById(ids));
     }
 
     @Operation(summary = "查询最新APP版本管理")
     @PostMapping("/getLastAppVersion")
-    public Results getLastAppVersion(@RequestBody AppVersionControlRequest request) {
+    public Results<AppVersionControlResponse> getLastAppVersion(@RequestBody AppVersionControlRequest request) {
         return Results.success(appVersionControlService.getLastAppVersion(request));
     }
 }

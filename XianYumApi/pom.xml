@@ -40,7 +40,6 @@
         <joda.time.version>2.12.7</joda.time.version>
         <lombok.version>1.18.38</lombok.version>
         <druid.version>1.2.23</druid.version>
-        <captcha.version>1.3.0</captcha.version>
         <easy.excel.version>4.0.3</easy.excel.version>
         <alipay.version>4.10.192.ALL</alipay.version>
         <bitwalker.version>1.21</bitwalker.version>
@@ -58,11 +57,20 @@
         <moquette.version>0.17</moquette.version>
         <x.file.storage.version>2.3.0</x.file.storage.version>
         <qiniu.version>7.12.1</qiniu.version>
+        <tianai.captcha.version>1.5.4</tianai.captcha.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+
+            <!-- 验证码 -->
+            <dependency>
+                <groupId>cloud.tianai.captcha</groupId>
+                <artifactId>tianai-captcha-springboot-starter</artifactId>
+                <version>${tianai.captcha.version}</version>
+            </dependency>
+
             <!-- 七牛云-->
             <dependency>
                 <groupId>com.qiniu</groupId>

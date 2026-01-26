@@ -1,8 +1,8 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class GoldPriceController{
      */
 	@Operation(summary = "分页查询每日黄金金价")
     @GetMapping(value = "/getPage")
-    public Results getPage(GoldPriceRequest request) {
+    public Results<GoldPriceResponse> getPage(GoldPriceRequest request) {
 		PageResponse<GoldPriceResponse> responsePage = goldPriceService.getPage(request);
         return Results.page(responsePage);
     }
@@ -47,7 +47,7 @@ public class GoldPriceController{
     @Operation(summary = "获取最新金价")
     @GetMapping(value = "/getLatestPrice")
     @Permission(publicApi = true)
-    public Results getLatestPrice() {
+    public Results<GoldPriceResponse> getLatestPrice() {
         GoldPriceResponse response = goldPriceService.getLatestPrice();
         return Results.success(response);
     }
@@ -61,7 +61,7 @@ public class GoldPriceController{
     @Operation(summary = "获取金价趋势图")
     @GetMapping(value = "/getTrend")
     @Permission(publicApi = true)
-    public Results getTrend() {
+    public Results<List<GoldPriceResponse>> getTrend() {
         List<GoldPriceResponse> responseList = goldPriceService.getTrend();
         return Results.success(responseList);
     }
@@ -74,7 +74,7 @@ public class GoldPriceController{
     @Operation(summary = "获取K线图")
     @GetMapping(value = "/getKLine")
     @Permission(publicApi = true)
-    public Results getKLine() {
+    public Results<?> getKLine() {
         List<List<Object>> responseList = goldPriceService.getKLine();
         return Results.success(responseList);
     }
