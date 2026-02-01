@@ -34,17 +34,32 @@
         <text @tap="handlePrivacy" class="text-blue">《隐私协议》</text>
       </view>
     </view>
-     
+
+    <verify-code
+        ref="verifyCode"
+        :type="verifyType"
+        :conf="verifyConf"
+        @success="onVerifySuccess"
+    ></verify-code>
+
   </view>
 </template>
 
 <script>
   import { getCodeImg } from '@/api/login'
   import { getToken } from '@/utils/auth'
+  import verifyCode from "@/uni_modules/tianai-mini-captcha/components/tianai-mini-captcha";
 
   export default {
     data() {
       return {
+        verifyType: 'SLIDER',
+        verifyConf:{
+          // 生成验证码接口
+          gen: getApp().globalData.config.baseUrl +'/captcha/genCaptcha',
+          // 验证接口
+          validate: getApp().globalData.config.baseUrl+ '/captcha/check'
+        },
         codeUrl: "",
         captchaEnabled: true,
         // 用户注册开关
@@ -55,8 +70,7 @@
         loginForm: {
           username: "",
           password: "",
-          // code: "",
-          uuid: ""
+          code: ""
         }
       }
     },
@@ -70,7 +84,26 @@
         this.$tab.reLaunch('/pages/index')
       }
     },
+    components: {
+      verifyCode
+    },
     methods: {
+      // 打开验证码
+      showVerify() {
+        this.$refs.verifyCode.open()
+      },
+      // 验证成功回调
+      onVerifySuccess(code) {
+        this.loginForm.code = code
+        this.$store.dispatch('Login', this.loginForm).then(() => {
+          this.saveRememberedInfo()
+          this.loginSuccess()
+        }).catch(() => {
+          if (this.captchaEnabled) {
+            this.getCode()
+          }
+        })
+      },
       // 新增：读取缓存的账号密码
       loadRememberedInfo() {
         try {
@@ -136,15 +169,8 @@
       },
       // 密码登录
       async pwdLogin() {
-        this.$store.dispatch('Login', this.loginForm).then(() => {
-          this.$modal.closeLoading()
-          this.saveRememberedInfo()
-          this.loginSuccess()
-        }).catch(() => {
-          if (this.captchaEnabled) {
-            this.getCode()
-          }
-        })
+        this.$modal.closeLoading()
+        this.showVerify()
       },
       // 登录成功后，处理函数
       loginSuccess(result) {
