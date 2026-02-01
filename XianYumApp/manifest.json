@@ -2,8 +2,8 @@
     "name" : "XianYumApp",
     "appid" : "__UNI__B40ED08",
     "description" : "",
-    "versionName" : "1.0.3",
-    "versionCode" : 103,
+    "versionName" : "1.0.4",
+    "versionCode" : 104,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,
