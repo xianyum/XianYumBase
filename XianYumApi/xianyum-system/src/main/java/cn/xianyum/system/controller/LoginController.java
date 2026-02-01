@@ -4,16 +4,19 @@ import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
 import cloud.tianai.captcha.common.response.ApiResponse;
+import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.request.CheckCaptchaRequest;
+import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.service.UserTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,7 +25,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 
@@ -46,26 +48,25 @@ public class LoginController {
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
 
-    /**
-     * 登录
-     * @param userRequest
-     * @return
-     */
+
     @PostMapping("/login")
     @Operation(summary = "登录系统")
     @Permission(publicApi = true)
-    public Results<?> login(@RequestBody UserRequest userRequest) {
+    public Results<?> login(@RequestBody @Valid UserLoginRequest request) {
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication;
         try {
+            boolean valid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(request.getCode());
+            if (!valid) {
+                return Results.error("验证码错误");
+            }
             authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
             if (e instanceof BadCredentialsException) {
                 return Results.error("用户不存在或密码错误");
-            }
-            else {
+            } else {
                 return Results.error(e.getMessage());
             }
         }
@@ -76,12 +77,11 @@ public class LoginController {
         return result;
     }
 
-
     /**
      * 生成验证码
      * @return 验证码数据
      */
-    @PostMapping("/genCaptcha")
+    @PostMapping("/captcha/genCaptcha")
     @Permission(publicApi = true)
     @Operation(summary = "获取验证码")
     public ApiResponse<ImageCaptchaVO> genCaptcha() {
@@ -95,11 +95,11 @@ public class LoginController {
      * @param request 验证码数据
      * @return 校验结果
      */
-    @PostMapping("/check")
-    @ResponseBody
+    @PostMapping("/captcha/check")
     @Operation(summary = "校验验证码")
+    @Permission(publicApi = true)
     public ApiResponse<?> checkCaptcha(@RequestBody CheckCaptchaRequest request) {
-        ApiResponse<?> response = imageCaptchaApplication.matching(request.getId(), request.getImageCaptchaTrack());
+        ApiResponse<?> response = imageCaptchaApplication.matching(request.getId(), request.getData());
         if (response.isSuccess()) {
             return ApiResponse.ofSuccess(Collections.singletonMap("id", request.getId()));
         }
@@ -121,12 +121,12 @@ public class LoginController {
     @PostMapping("/xianYuLogin")
     @Operation(summary = "咸鱼客户端登录系统")
     @Permission(publicApi = true)
-    public Results<?> xianYuLogin(@RequestBody UserRequest userRequest) {
+    public Results<?> xianYuLogin(@RequestBody UserLoginRequest request) {
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication;
         try {
             authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
             if (e instanceof BadCredentialsException) {

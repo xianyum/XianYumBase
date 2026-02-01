@@ -23,22 +23,12 @@
           <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
-<!--      <el-form-item prop="code" v-if="captchaEnabled">-->
-<!--        <el-input-->
-<!--          v-model="loginForm.code"-->
-<!--          auto-complete="off"-->
-<!--          placeholder="验证码"-->
-<!--          style="width: 63%"-->
-<!--          @keyup.enter.native="handleLogin"-->
-<!--        >-->
-<!--          <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />-->
-<!--        </el-input>-->
-<!--        <div class="login-code">-->
-<!--          <img :src="codeUrl" @click="getCode" class="login-code-img"/>-->
-<!--        </div>-->
-<!--      </el-form-item>-->
-      <Vcode :show="isShow" ref="vcode" @success="onSuccess" @close="onClose" />
       <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+
+      <div id="captcha-mask" v-show="showCaptchaMask">
+        <div id="captcha-box"></div>
+      </div>
+
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
@@ -70,7 +60,7 @@
 
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2023-2025 xianyum.cn All Rights Reserved.</span>
+      <span>Copyright © 2023-2026 xianyum.cn All Rights Reserved.</span>
     </div>
   </div>
 </template>
@@ -79,21 +69,17 @@
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from '@/utils/jsencrypt';
 import { Message } from 'element-ui'
-import Vcode from "vue-puzzle-vcode";
+import logo from '@/assets/logo/logo.png'
 
 export default {
   name: "Login",
   data() {
     return {
-      isShow:false,
-      captchaType: 'blockPuzzle',
-      codeUrl: "",
       loginForm: {
         username: "xianyu",
         password: "123456",
         rememberMe: false,
-        code: "",
-        uuid: ""
+        code: ""
       },
       loginRules: {
         username: [
@@ -104,9 +90,12 @@ export default {
         ]
       },
       loading: false,
+      // 验证码开关
+      captchaEnabled: true,
       // 注册开关
       register: false,
-      redirect: undefined
+      redirect: undefined,
+      showCaptchaMask: false
     };
   },
   watch: {
@@ -117,22 +106,10 @@ export default {
       immediate: true
     }
   },
-  components: {
-    Vcode
-  },
   created() {
-    // 初始化验证码类型
-    // this.getCaptchaTypeParams()
     this.getCookie();
   },
   methods: {
-    onSuccess(){
-      this.success()
-      this.isShow = false
-    },
-    onClose(){
-      this.isShow = false
-    },
     qqLogin(){
       let qqUrl = 'https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101831000&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dqq';
       window.location.replace(qqUrl)
@@ -144,27 +121,6 @@ export default {
       let aliUrl = 'https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2019110868997443&scope=auth_user&redirect_uri=https%3A%2F%2Fbase.xianyum.cn%2FthirdLogin%3FloginType%3Dalipay'
       window.location.replace(aliUrl)
     },
-    success(){
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true;
-          if (this.loginForm.rememberMe) {
-            Cookies.set("username", this.loginForm.username, { expires: 30 });
-            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
-            Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
-          } else {
-            Cookies.remove("username");
-            Cookies.remove("password");
-            Cookies.remove('rememberMe');
-          }
-          this.$store.dispatch("Login", this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-          }).catch(() => {
-            this.loading = false;
-          });
-        }
-      });
-    },
     getCookie() {
       const username = Cookies.get("username");
       const password = Cookies.get("password");
@@ -175,8 +131,59 @@ export default {
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
     },
+    checkSuccess(){
+      if (this.loginForm.rememberMe) {
+        Cookies.set("username", this.loginForm.username, { expires: 30 });
+        Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
+        Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
+      } else {
+        Cookies.remove("username");
+        Cookies.remove("password");
+        Cookies.remove('rememberMe');
+      }
+      this.$store.dispatch("Login", this.loginForm).then(() => {
+        this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+      }).catch(() => {
+        this.loading = false;
+      });
+    },
     handleLogin() {
-      this.isShow = true
+      this.showCaptchaMask=true
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          // config 对象为TAC验证码的一些配置和验证的回调
+          const config = {
+            // 生成接口 (必选项,必须配置, 要符合tianai-captcha默认验证码生成接口规范)
+            requestCaptchaDataUrl: process.env.VUE_APP_BASE_API+"/captcha/genCaptcha",
+            // 验证接口 (必选项,必须配置, 要符合tianai-captcha默认验证码校验接口规范)
+            validCaptchaUrl: process.env.VUE_APP_BASE_API+"/captcha/check",
+            // 验证码绑定的div块 (必选项,必须配置)
+            bindEl: "#captcha-box",
+            // 验证成功回调函数(必选项,必须配置)
+            validSuccess: (res, c, tac) => {
+              // 销毁验证码服务
+              tac.destroyWindow();
+              this.showCaptchaMask=false
+              this.loginForm.code = res.data.id
+              this.checkSuccess()
+            },
+            // 关闭按钮回调事件
+            btnCloseFun: (el, tac) => {
+              tac.destroyWindow();
+              this.showCaptchaMask = false
+              this.loginForm.code = null
+            }
+          }
+          let style = {
+            logoUrl: logo,
+          }
+          window.initTAC("./tac", config, style).then(tac => {
+            tac.init(); // 调用init则显示验证码
+          }).catch(e => {
+            console.log("初始化tac失败", e);
+          })
+        }
+      });
     }
   }
 };
@@ -274,5 +281,18 @@ export default {
   border-radius: 4px;
   margin-bottom: 20px;
   margin-left: 18px;
+}
+
+#captcha-mask {
+  display: flex;
+  z-index: 99;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.53);
+  justify-content: center;
+  align-items: center;
 }
 </style>

@@ -14,5 +14,5 @@ public class CheckCaptchaRequest {
     private String id;
 
     // 验证码数据,前端回传的验证码轨迹数据
-    private ImageCaptchaTrack imageCaptchaTrack;
+    private ImageCaptchaTrack data;
 }
