@@ -178,7 +178,23 @@ export default {
     async getAppSummaryData() {
       const response = await getAppSummaryData();
       if (response.code === 200) {
-        this.stats = response.data;
+        this.stats = {
+          currentMonthResponse: typeof response.data.currentMonthResponse === 'object' && response.data.currentMonthResponse !== null
+              ? response.data.currentMonthResponse
+              : {},
+          lastMonthResponse: typeof response.data.lastMonthResponse === 'object' && response.data.lastMonthResponse !== null
+              ? response.data.lastMonthResponse
+              : {},
+          lastYearResponse: typeof response.data.lastYearResponse === 'object' && response.data.lastYearResponse !== null
+              ? response.data.lastYearResponse
+              : {}
+        };
+      }else{
+        this.stats = {
+          currentMonthResponse: {},
+          lastMonthResponse: {},
+          lastYearResponse: {}
+        };
       }
     },
     switchChartDataType(type) {
