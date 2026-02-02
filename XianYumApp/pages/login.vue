@@ -46,7 +46,7 @@
 </template>
 
 <script>
-  import { getCodeImg } from '@/api/login'
+  import { getCaptchaType } from '@/api/login'
   import { getToken } from '@/utils/auth'
   import verifyCode from "@/uni_modules/tianai-mini-captcha/components/tianai-mini-captcha";
 
@@ -75,7 +75,6 @@
       }
     },
     created() {
-      // this.getCode()
       // 页面创建时读取缓存，自动填充账号密码
       this.loadRememberedInfo()
     },
@@ -84,10 +83,18 @@
         this.$tab.reLaunch('/pages/index')
       }
     },
+    onShow() {
+      this.getCaptchaType();
+    },
     components: {
       verifyCode
     },
     methods: {
+      getCaptchaType(){
+        getCaptchaType().then(res => {
+          this.verifyType = res.msg
+        })
+      },
       // 打开验证码
       showVerify() {
         this.$refs.verifyCode.open()
@@ -98,10 +105,6 @@
         this.$store.dispatch('Login', this.loginForm).then(() => {
           this.saveRememberedInfo()
           this.loginSuccess()
-        }).catch(() => {
-          if (this.captchaEnabled) {
-            this.getCode()
-          }
         })
       },
       // 新增：读取缓存的账号密码
@@ -145,16 +148,6 @@
       // 用户协议
       handleUserAgreement() {
         this.$tab.navigateTo(`/pages/common/protocol/index?type=user`)
-      },
-      // 获取图形验证码
-      getCode() {
-        getCodeImg().then(res => {
-          this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled
-          if (this.captchaEnabled) {
-            this.codeUrl = 'data:image/gif;base64,' + res.img
-            this.loginForm.uuid = res.uuid
-          }
-        })
       },
       // 登录方法
       async handleLogin() {
