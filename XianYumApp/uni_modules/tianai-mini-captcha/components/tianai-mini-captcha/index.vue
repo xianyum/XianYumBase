@@ -347,10 +347,10 @@ export default {
                 .select("#verify-concat-bg")
                 .boundingClientRect((res) => {
                   const height =
-                    ((data.captcha.backgroundImageHeight -
-                      data.captcha.data.randomY) /
-                      data.captcha.backgroundImageHeight) *
-                    uni.upx2px(data.captcha.backgroundImageHeight);
+                    ((data.data.backgroundImageHeight -
+                            data.data.data.randomY) /
+                        data.data.backgroundImageHeight) *
+                    uni.upx2px(data.data.backgroundImageHeight);
                   this.sliderImg.height = height;
                 })
                 .exec();

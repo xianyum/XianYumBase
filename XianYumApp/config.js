@@ -1,7 +1,7 @@
 // 应用全局配置
 module.exports = {
-  // baseUrl: 'https://base.xianyum.cn/api',
-  baseUrl: 'http://192.168.10.6:9190',
+  baseUrl: 'https://base.xianyum.cn/api',
+  // baseUrl: 'http://192.168.10.7:9190',
   // 应用信息
   appInfo: {
     // 应用名称

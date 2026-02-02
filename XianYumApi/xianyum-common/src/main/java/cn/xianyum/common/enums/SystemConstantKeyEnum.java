@@ -13,7 +13,8 @@ public enum SystemConstantKeyEnum {
     HAO_KA_LOT_LOGIN_INFO("hao_ka_lot_login_info","172号卡平台登录账号和密码"),
     GOLD_CONFIG("gold_config","金价接口配置"),
     HOLIDAY_CN("holiday_cn","中国法定节假日"),
-    electricity_per_km_threshold("electricity_per_km_threshold","百公里电耗阀值")
+    ELECTRICITY_PER_KM_THRESHOLD("electricity_per_km_threshold","百公里电耗阀值"),
+    CAPTCHA_TYPE("captcha_type","验证码类型")
     ;
 
     private String key;

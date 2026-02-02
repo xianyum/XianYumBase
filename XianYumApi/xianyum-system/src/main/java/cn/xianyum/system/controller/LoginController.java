@@ -4,10 +4,14 @@ import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import cloud.tianai.captcha.common.constant.CaptchaTypeConstant;
 import cloud.tianai.captcha.common.response.ApiResponse;
+import cloud.tianai.captcha.generator.common.model.dto.GenerateParam;
+import cloud.tianai.captcha.generator.common.model.dto.ParamKeyEnum;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.constant.CaptchaConstant;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.request.CheckCaptchaRequest;
 import cn.xianyum.system.entity.request.UserLoginRequest;
@@ -23,6 +27,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,9 +90,10 @@ public class LoginController {
     @Permission(publicApi = true)
     @Operation(summary = "获取验证码")
     public ApiResponse<ImageCaptchaVO> genCaptcha() {
-        // 1.生成验证码(该数据返回给前端用于展示验证码数据)
-        // 参数1为具体的验证码类型， 默认支持 SLIDER、ROTATE、WORD_IMAGE_CLICK、CONCAT 等验证码类型，详见： `CaptchaTypeConstant`类
-        return  imageCaptchaApplication.generateCaptcha(CaptchaTypeConstant.SLIDER);
+        GenerateParam generateParam = new GenerateParam();
+        generateParam.setType(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.CAPTCHA_TYPE));
+        generateParam.addParam(ParamKeyEnum.FONT_TAG, CaptchaConstant.FONT_TAG);
+        return imageCaptchaApplication.generateCaptcha(generateParam);
     }
 
     /**
@@ -104,6 +110,18 @@ public class LoginController {
             return ApiResponse.ofSuccess(Collections.singletonMap("id", request.getId()));
         }
         return response;
+    }
+
+
+    /**
+     * 生成验证码
+     * @return 验证码数据
+     */
+    @GetMapping("/captcha/getType")
+    @Permission(publicApi = true)
+    @Operation(summary = "获取验证码类型")
+    public Results<String> getCaptchaType() {
+       return Results.success(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.CAPTCHA_TYPE));
     }
 
     /**

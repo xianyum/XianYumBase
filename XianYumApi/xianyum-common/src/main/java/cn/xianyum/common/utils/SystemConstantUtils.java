@@ -19,7 +19,7 @@ public class SystemConstantUtils {
      * @param systemConstantKeyEnum
      * @return
      */
-    private static String getValueByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
+    public static String getValueByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
         try {
             Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
             Method m = clazz.getDeclaredMethod("getValueKey",String.class);

@@ -46,14 +46,10 @@ export function logout() {
   })
 }
 
-// 获取验证码
-export function getCodeImg() {
+// 查询验证码类型
+export function getCaptchaType() {
   return request({
-    'url': '/captchaImage',
-    headers: {
-      isToken: false
-    },
-    method: 'get',
-    timeout: 20000
+    url: '/captcha/getType',
+    method: 'get'
   })
 }

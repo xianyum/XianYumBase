@@ -160,7 +160,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
      */
     @Override
     public boolean checkNormalStatus(BigDecimal electricityPerKm) {
-        JSONObject electricityPerKmThresholdObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.electricity_per_km_threshold);
+        JSONObject electricityPerKmThresholdObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.ELECTRICITY_PER_KM_THRESHOLD);
         BigDecimal max = electricityPerKmThresholdObject.getBigDecimal("max");
         BigDecimal min = electricityPerKmThresholdObject.getBigDecimal("min");
         if(BigDecimalUtils.gt(electricityPerKm,max) || BigDecimalUtils.lt(electricityPerKm,min)){

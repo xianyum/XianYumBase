@@ -21,4 +21,10 @@ public class CaptchaConstant {
     public static final String RESOURCE_TYPE_CLASSPATH = "classpath";
     /** 资源类型-URL */
     public static final String RESOURCE_TYPE_URL = "url";
+
+    /** 字体路径  */
+    public static final String FONT_PATH = "font/alibaba.ttf";
+
+    /** 字体标识  */
+    public static final String FONT_TAG = "font1";
 }
