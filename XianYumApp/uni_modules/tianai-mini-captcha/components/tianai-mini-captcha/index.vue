@@ -311,7 +311,7 @@ export default {
     },
     // 获取背景图和滑块图片
     getVerifyData() {
-      this.$modal.loading('正在加载验证码')
+      this.$modal.loading('loading...')
       this.clickCount = 0;
       this.captchaData.trackArr = [];
       this.captchaData.startTime = new Date();

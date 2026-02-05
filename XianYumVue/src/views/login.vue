@@ -79,7 +79,7 @@ export default {
         username: "xianyu",
         password: "123456",
         rememberMe: false,
-        code: ""
+        verifyCode: ""
       },
       loginRules: {
         username: [
@@ -164,14 +164,15 @@ export default {
               // 销毁验证码服务
               tac.destroyWindow();
               this.showCaptchaMask=false
-              this.loginForm.code = res.data.id
+              this.loginForm.verifyCode = res.data.id
+              console.log(this.loginForm)
               this.checkSuccess()
             },
             // 关闭按钮回调事件
             btnCloseFun: (el, tac) => {
               tac.destroyWindow();
               this.showCaptchaMask = false
-              this.loginForm.code = null
+              this.loginForm.verifyCode = null
             }
           }
           let style = {

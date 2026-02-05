@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(username, password, code, uuid,captchaVerification) {
+export function login(username, password, verifyCode, uuid,captchaVerification) {
   const data = {
     username,
     password,
-    code,
+    verifyCode,
     uuid,
     captchaVerification
   }

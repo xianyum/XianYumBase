@@ -61,7 +61,7 @@ public class LoginController {
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication;
         try {
-            boolean valid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(request.getCode());
+            boolean valid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(request.getVerifyCode());
             if (!valid) {
                 return Results.error("验证码错误");
             }
