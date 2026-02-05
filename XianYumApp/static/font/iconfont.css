@@ -3,13 +3,24 @@
   src: url('@/static/font/iconfont.ttf') format('truetype');
 }
 
-
 .iconfont {
   font-family: "iconfont" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-QQ:before {
+  content: "\e65e";
+}
+
+.icon-app:before {
+  content: "\e605";
+}
+
+.icon-banbenguanli:before {
+  content: "\e73b";
 }
 
 .icon-cpu1:before {

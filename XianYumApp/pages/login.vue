@@ -160,8 +160,8 @@
           <text class="divider-text">其他登录方式</text>
         </view>
         <view class="third-party-icons">
-          <view class="third-party-item qq" @tap="handleWeixinLogin">
-            <text class="cuIcon-weixin"></text>
+          <view class="third-party-item qq" @tap="handleQqLogin">
+            <uni-icons custom-prefix="iconfont" type="icon-QQ" size="32" color="#fff"></uni-icons>
           </view>
         </view>
       </view>
@@ -193,7 +193,6 @@ export default {
         // 验证接口
         validate: getApp().globalData.config.baseUrl + '/captcha/check'
       },
-      codeUrl: "",
       captchaEnabled: true,
       loginType: 'password', // password, phone, email
       showPassword: false,
@@ -203,7 +202,7 @@ export default {
       emailCountdown: 0,
       timer: null,
       emailTimer: null,
-      agree: false,
+      agree: true,
       passwordForm: {
         username: '',
         password: '',
@@ -220,7 +219,6 @@ export default {
     }
   },
   created() {
-    // 页面创建时读取缓存，自动填充账号密码
     this.loadRememberedInfo()
   },
   onLoad() {
@@ -412,9 +410,9 @@ export default {
         this.verifyType = res.msg
       })
     },
-    handleWeixinLogin() {
+    handleQqLogin() {
       uni.showToast({
-        title: '微信登录功能开发中',
+        title: 'QQ登录功能开发中',
         icon: 'none'
       });
     },
@@ -434,14 +432,14 @@ export default {
 </script>
 
 <style scoped>
-
+/* 根容器：保证满屏无滚动，优化渐变背景 */
 .content {
   min-height: 100vh;
   background: linear-gradient(180deg, #f5f7fa 0%, #e8ecf1 100%);
   background-attachment: fixed;
   position: relative;
   overflow: hidden;
-  padding-top: 25rpx; /* 顶部少量内边距，避免贴边 */
+  padding-top: 30rpx;
 }
 
 .content::before, .content::after {
@@ -451,14 +449,12 @@ export default {
   background: radial-gradient(circle, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
   z-index: 0;
 }
-
 .content::before {
   top: -40%;
   right: -20%;
   width: 500rpx;
   height: 500rpx;
 }
-
 .content::after {
   bottom: -20%;
   left: -10%;
@@ -467,79 +463,71 @@ export default {
   background: radial-gradient(circle, rgba(118, 75, 162, 0.02) 0%, transparent 70%);
 }
 
-/* 主容器：精简内边距，保证内容紧凑 */
+/* 主容器：适中内边距 */
 .login-container {
-  padding: 40rpx 40rpx 30rpx;
+  padding: 40rpx 36rpx 30rpx;
   position: relative;
   z-index: 1;
   box-sizing: border-box;
 }
 
-/* Logo区域：压缩所有间距，缩小头像外框 */
+/* Logo区域：适中大小 */
 .logo-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30rpx 0 40rpx; /* 大幅压缩上下内边距 */
+  padding: 30rpx 0 40rpx;
 }
-
 .logo-avatar {
-  width: 130rpx;
-  height: 130rpx;
-  /* 1. 合并背景图+渐变，用逗号分隔（图片在上、渐变在下） */
-  /* 2. 修正App端路径：去掉@，直接以/static开头（全端通用正确路径） */
+  width: 140rpx;
+  height: 140rpx;
   background: url('/static/logo.png') no-repeat center / 100% 100%,
   linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 35%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
   box-shadow: 0 15rpx 40rpx rgba(102, 126, 234, 0.3);
   border: 3rpx solid #ffffff;
 }
-
 .logo-avatar text {
-  font-size: 65rpx;
+  font-size: 70rpx;
   color: #ffffff;
 }
-
 .logo-text {
-  font-size: 40rpx;
+  font-size: 42rpx;
   font-weight: 700;
   color: #333333;
   letter-spacing: 2rpx;
-  margin-bottom: 8rpx;
+  margin-bottom: 10rpx;
 }
-
 .logo-subtitle {
-  font-size: 24rpx;
+  font-size: 26rpx;
   color: #666666;
   letter-spacing: 1rpx;
 }
 
-/* 登录标签：精简内边距和高度 */
+/* 登录标签：适中高度与间距 */
 .login-tabs {
   display: flex;
   background: #ffffff;
   border-radius: 30rpx;
-  padding: 6rpx; /* 压缩内边距 */
-  margin-bottom: 30rpx; /* 压缩底部间距 */
+  padding: 8rpx;
+  margin-bottom: 40rpx;
   box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.08);
   border: 2rpx solid #e8ecf1;
 }
-
 .tab-item {
   flex: 1;
   text-align: center;
-  padding: 18rpx 0; /* 压缩上下内边距 */
+  padding: 20rpx 0;
   border-radius: 24rpx;
   color: #999999;
-  font-size: 26rpx;
+  font-size: 28rpx;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 500;
 }
-
 .tab-item.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #ffffff;
@@ -548,149 +536,128 @@ export default {
   transform: translateY(-2rpx);
 }
 
-/* 表单区域：精简内边距、项间距，优化输入框高度 */
+/* 表单区域：适中高度与内边距 */
 .login-form {
   background: #ffffff;
   border-radius: 40rpx;
-  padding: 30rpx 30rpx; /* 压缩内边距 */
-  margin-bottom: 30rpx; /* 压缩底部间距 */
+  padding: 40rpx 32rpx;
+  margin-bottom: 40rpx;
   box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.08);
   border: 2rpx solid #e8ecf1;
   box-sizing: border-box;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 20rpx; /* 压缩表单项间距 */
+  gap: 28rpx;
 }
-
 .form-item {
   position: relative;
   display: flex;
   align-items: center;
   background: #f8f9fc;
   border-radius: 24rpx;
-  padding: 0 25rpx; /* 压缩左右内边距 */
+  padding: 0 28rpx;
   transition: all 0.3s;
   border: 2rpx solid transparent;
-  height: 92rpx; /* 固定输入框高度，压缩高度 */
+  height: 96rpx;
 }
-
-/* 验证码项单独样式，避免按钮挤压 */
 .code-form-item {
   height: auto;
-  padding: 14rpx 25rpx;
+  padding: 16rpx 28rpx;
 }
-
 .form-item:focus-within {
   background: #ffffff;
   border-color: #667eea;
   box-shadow: 0 0 0 6rpx rgba(102, 126, 234, 0.08);
 }
-
 .input-icon {
-  width: 40rpx; /* 缩小图标容器 */
+  width: 44rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .input-icon text {
-  font-size: 32rpx; /* 缩小图标 */
+  font-size: 34rpx;
   color: #667eea;
 }
-
 .modern-input {
   flex: 1;
-  height: 100%; /* 自适应父容器高度 */
-  font-size: 28rpx; /* 微调字体大小 */
+  height: 100%;
+  font-size: 29rpx;
   color: #333333;
   border: none;
   outline: none;
 }
-
 .modern-input::placeholder {
   color: #a0a0a0;
 }
-
 .code-input {
   flex: 1;
-  padding-right: 15rpx; /* 压缩右侧间距 */
+  padding-right: 18rpx;
 }
-
 .code-btn {
-  padding: 0 25rpx; /* 压缩按钮内边距 */
-  height: 56rpx; /* 压缩按钮高度 */
-  line-height: 56rpx;
-  font-size: 22rpx; /* 微调按钮字体 */
+  padding: 0 30rpx;
+  height: 62rpx;
+  line-height: 62rpx;
+  font-size: 24rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #ffffff;
-  border-radius: 16rpx;
+  border-radius: 18rpx;
   border: none;
   transition: all 0.3s;
-  margin-left: 8rpx; /* 压缩左侧间距 */
+  margin-left: 10rpx;
   box-shadow: 0 4rpx 15rpx rgba(102, 126, 234, 0.25);
 }
-
 .code-btn:active:not(.disabled) {
   transform: scale(0.95);
   opacity: 0.9;
 }
-
 .code-btn.disabled {
   background: #e0e0e0;
   color: #a0a0a0;
   box-shadow: none;
 }
 
-/* 操作区域：精简所有间距 */
+/* 操作区域：适中宽松 */
 .action-section {
-  margin-bottom: 30rpx; /* 压缩底部间距 */
+  margin-bottom: 40rpx;
 }
-
 .agreement-section {
-  margin-bottom: 20rpx; /* 压缩协议底部间距 */
+  margin-bottom: 28rpx;
 }
-
 .agreement-check {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  font-size: 24rpx; /* 微调协议字体 */
+  font-size: 25rpx;
 }
-
 .checkbox-icon {
-  font-size: 36rpx; /* 缩小复选框 */
-  margin-right: 8rpx; /* 压缩右侧间距 */
+  font-size: 38rpx;
+  margin-right: 10rpx;
   color: #d0d0d0;
   transition: all 0.3s;
 }
-
 .checkbox-icon.checked {
   color: #667eea;
 }
-
 .checkbox-icon text {
-  font-size: 36rpx;
+  font-size: 38rpx;
 }
-
 .agreement-text {
   color: #666666;
 }
-
 .agreement-link {
   color: #667eea;
   font-weight: 600;
-  margin: 0 4rpx; /* 压缩链接间距 */
+  margin: 0 6rpx;
 }
-
-/* 登录按钮：微调高度，精简阴影 */
+/* 登录按钮：适中高度 */
 .login-btn {
   width: 100%;
-  height: 88rpx; /* 压缩按钮高度 */
-  line-height: 88rpx;
-  font-size: 32rpx; /* 微调字体 */
+  height: 92rpx;
+  line-height: 92rpx;
+  font-size: 34rpx;
   font-weight: 600;
   border-radius: 30rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -699,70 +666,60 @@ export default {
   box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.4);
   transition: all 0.3s;
 }
-
 .login-btn:active {
   transform: translateY(2rpx);
   box-shadow: 0 6rpx 20rpx rgba(102, 126, 234, 0.3);
 }
-
 .link-section {
   display: flex;
   justify-content: space-between;
-  margin-top: 20rpx; /* 压缩忘记密码顶部间距 */
+  margin-top: 24rpx;
   padding: 0 10rpx;
 }
-
 .link-text {
   color: #667eea;
-  font-size: 26rpx; /* 微调字体 */
+  font-size: 27rpx;
   font-weight: 600;
 }
 
-/* 第三方登录：大幅压缩间距和图标大小 */
+/* 第三方登录：紧凑但不挤 */
 .third-party-section {
-  padding: 20rpx 0 10rpx; /* 压缩上下内边距 */
+  padding: 20rpx 0 20rpx;
 }
-
 .divider {
   text-align: center;
   position: relative;
-  margin-bottom: 30rpx; /* 压缩分割线底部间距 */
-  height: 20rpx; /* 固定分割线高度 */
+  margin-bottom: 30rpx;
+  height: 20rpx;
   line-height: 20rpx;
 }
-
 .divider::before, .divider::after {
   content: '';
   position: absolute;
   top: 50%;
-  width: 30%; /* 缩短分割线长度 */
+  width: 30%;
   height: 1rpx;
   background: #e8ecf1;
 }
-
 .divider::before {
   left: 0;
 }
-
 .divider::after {
   right: 0;
 }
-
 .divider-text {
   color: #999999;
-  font-size: 22rpx; /* 微调字体 */
-  padding: 0 15rpx; /* 压缩左右内边距 */
+  font-size: 23rpx;
+  padding: 0 16rpx;
   letter-spacing: 1rpx;
   background: transparent;
 }
-
 .third-party-icons {
   display: flex;
   justify-content: center;
 }
-
 .third-party-item {
-  width: 100rpx; /* 缩小第三方图标 */
+  width: 100rpx;
   height: 100rpx;
   background: #ffffff;
   border-radius: 50%;
@@ -773,17 +730,10 @@ export default {
   box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.1);
   border: 3rpx solid #ffffff;
 }
-
-.third-party-item:active {
-  transform: scale(0.95);
-  box-shadow: 0 3rpx 15rpx rgba(0, 0, 0, 0.15);
+.third-party-item.qq {
+  background: #99ccff; /* 低饱和腾讯蓝，柔和不刺眼 */
 }
-
-.third-party-item text {
-  font-size: 56rpx; /* 缩小图标字体 */
-}
-
-.third-party-item.qq text {
-  color: #1dd1a1;
+.third-party-item.qq:active {
+  background: #3399FF; /* 点击加深，保留交互感 */
 }
 </style>
