@@ -115,6 +115,12 @@
       }
     },
     {
+      "path": "pages/mine/share/index",
+      "style": {
+        "navigationBarTitleText": "分享APP"
+      }
+    },
+    {
       "path": "pages/ev-drive/report/index",
       "style": {
         "navigationBarTitleText": "行驶报表",

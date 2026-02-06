@@ -371,7 +371,7 @@ export default {
       }
       if (this.loginType === 'password') {
         if (!this.passwordForm.username) {
-          this.$modal.msg("请输入账号/邮箱号/手机号")
+          this.$modal.msg("请输入账号/手机号/邮箱号")
           return;
         }
         if (!this.passwordForm.password) {

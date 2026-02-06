@@ -13,6 +13,12 @@
           <view>清理缓存</view>
         </view>
       </view>
+      <view class="list-cell list-cell-arrow" @click="shareApp">
+        <view class="menu-item-box">
+          <view class="iconfont icon-clean menu-icon"></view>
+          <view>分享APP</view>
+        </view>
+      </view>
     </view>
     <view class="cu-list menu">
       <view class="cu-item item-box">
@@ -92,7 +98,9 @@
           return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
         }
       },
-
+      shareApp(){
+        this.$tab.navigateTo('/pages/mine/share/index')
+      },
       /**
        * 处理清理缓存逻辑
        */
