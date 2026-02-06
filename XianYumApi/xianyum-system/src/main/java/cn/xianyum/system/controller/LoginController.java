@@ -70,7 +70,7 @@ public class LoginController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
             if (e instanceof BadCredentialsException) {
-                return Results.error("用户不存在或密码错误");
+                return Results.error("密码错误,请重试");
             } else {
                 return Results.error(e.getMessage());
             }
