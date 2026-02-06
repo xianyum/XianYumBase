@@ -79,7 +79,7 @@ public class EmailSender extends AbstractMessageSender {
      * @param context
      */
     public void sendEmailTemplateMessage(MessageSenderEntity messageSender, Context context) {
-        messageSender.setEmailToUser(StringUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getWechatToUser():messageSender.getDefaultToUser());
+        messageSender.setEmailToUser(StringUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getEmailToUser():messageSender.getDefaultToUser());
         MessageConfigEmailEntity messageConfigEmailEntity = this.messageConfigEmailService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if (messageConfigEmailEntity != null){
             if(StringUtil.isNotEmpty(messageSender.getEmailToUser())){

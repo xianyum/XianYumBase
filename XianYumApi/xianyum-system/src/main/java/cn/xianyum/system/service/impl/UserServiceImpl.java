@@ -102,9 +102,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity queryByUserName(String username) {
-        UserEntity user = userMapper.selectOne(
-                new QueryWrapper<UserEntity>().eq("username",username)
-        );
+        LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery();
+        queryWrapper.eq(UserEntity::getUsername, username).or()
+                .eq(UserEntity::getEmail,username).or().eq(UserEntity::getMobile,username)
+                .last("limit 1");
+        UserEntity user = userMapper.selectOne(queryWrapper);
         return user;
     }
 

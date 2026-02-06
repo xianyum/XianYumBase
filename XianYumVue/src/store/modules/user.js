@@ -44,8 +44,8 @@ const user = {
       const captchaVerification = userInfo.captchaVerification
       return new Promise((resolve, reject) => {
         login(username, password, verifyCode, uuid,captchaVerification).then(res => {
-          setToken(res.token)
-          commit('SET_TOKEN', res.token)
+          setToken(res.data.token)
+          commit('SET_TOKEN', res.data.token)
           resolve()
         }).catch(error => {
           reject(error)
@@ -56,8 +56,8 @@ const user = {
     // 三方登录
     ThirdLogin({ commit }, data) {
       return new Promise((resolve, reject) => {
-        setToken(data.token)
-        commit('SET_TOKEN', data.token)
+        setToken(data.data.token)
+        commit('SET_TOKEN', data.data.token)
         resolve()
       })
     },

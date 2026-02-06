@@ -54,11 +54,13 @@ const user = {
       const username = userInfo.username.trim()
       const password = userInfo.password
       const verifyCode = userInfo.verifyCode
+      const loginType = userInfo.loginType
+      const code = userInfo.code
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
-        login(username, password, verifyCode, uuid).then(res => {
-          setToken(res.token)
-          commit('SET_TOKEN', res.token)
+        login(username, password, verifyCode, uuid,loginType,code).then(res => {
+          setToken(res.data.token)
+          commit('SET_TOKEN', res.data.token)
           resolve()
         }).catch(error => {
           reject(error)

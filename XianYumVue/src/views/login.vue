@@ -132,6 +132,7 @@ export default {
       };
     },
     checkSuccess(){
+      this.loading = true;
       if (this.loginForm.rememberMe) {
         Cookies.set("username", this.loginForm.username, { expires: 30 });
         Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
@@ -143,7 +144,7 @@ export default {
       }
       this.$store.dispatch("Login", this.loginForm).then(() => {
         this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-      }).catch(() => {
+      }).finally(() => {
         this.loading = false;
       });
     },

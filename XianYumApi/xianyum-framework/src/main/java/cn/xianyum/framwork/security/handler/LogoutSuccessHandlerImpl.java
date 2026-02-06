@@ -3,6 +3,7 @@ package cn.xianyum.framwork.security.handler;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.HttpContextUtils;
+import cn.xianyum.common.utils.SpringUtils;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.service.LogService;
 import cn.xianyum.system.service.UserTokenService;
@@ -25,9 +26,6 @@ import java.util.Objects;
 public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
 
     @Autowired
-    private UserTokenService userTokenService;
-
-    @Autowired
     private LogService logService;
 
     @Override
@@ -37,14 +35,14 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         LogEntity log = new LogEntity();
         log.setMethod("logout");
         log.setOperation("用户退出操作");
-        LoginUser tokenUserByCache = userTokenService.getLoginUserByHttpRequest();
+        LoginUser tokenUserByCache = SpringUtils.getBean(UserTokenService.class).getLoginUserByHttpRequest();
         if(Objects.nonNull(tokenUserByCache)){
             log.setUsername(tokenUserByCache.getUsername());
         }else{
             log.setUsername("none");
         }
         logService.saveLog(log);
-        userTokenService.logout();
+        SpringUtils.getBean(UserTokenService.class).logout();
         HttpContextUtils.renderString(response, JSONObject.toJSONString(Results.success("退出成功")));
     }
 }

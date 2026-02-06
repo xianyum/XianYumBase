@@ -72,6 +72,7 @@ public class MessageSender {
                 // 发送邮箱消息
                 switch (MessageAccountTypeEnums.getByCode(messageSenderEntity.getMessageAccountType())){
                     case EMAIL:
+                        messageSender.setMessageConfigId(messageSenderEntity.getMessageConfigId());
                         emailSender.sendEmailTemplateMessage(messageSender,context);
                         break;
                 }

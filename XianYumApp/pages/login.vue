@@ -42,7 +42,7 @@
             <input
                 class="modern-input"
                 type="text"
-                placeholder="账号"
+                placeholder="账号 / 手机号 / 邮箱"
                 v-model="passwordForm.username"
             />
           </view>
@@ -104,7 +104,7 @@
                 class="modern-input"
                 type="text"
                 placeholder="请输入邮箱"
-                v-model="emailForm.email"
+                v-model="emailForm.username"
             />
           </view>
           <view class="form-item code-form-item">
@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import {getCaptchaType} from '@/api/login'
+import {getCaptchaType ,sendLoginCredentials } from '@/api/login'
 import {getToken} from '@/utils/auth'
 import verifyCode from "@/uni_modules/tianai-mini-captcha/components/tianai-mini-captcha";
 
@@ -213,8 +213,10 @@ export default {
         code: ''
       },
       emailForm: {
-        email: '',
-        code: ''
+        username: '',
+        code: '',
+        verifyCode: "",
+        loginType: "EMAIL"
       }
     }
   },
@@ -239,15 +241,23 @@ export default {
       if (this.loginType === 'password') {
         this.loginUsernameAndPassword(verifyCode);
       } else if (this.loginType === 'phone') {
-
+        // todo 发送验证码要花钱，以后再说
       } else if (this.loginType === 'email') {
-
+        this.preLoginEmail(verifyCode)
       }
+    },
+    preLoginEmail(verifyCode) {
+      this.emailForm.verifyCode = verifyCode;
+      sendLoginCredentials(this.emailForm).then(res => {
+        if(res.code === 200) {
+          this.startEmailCountdown();
+        }
+      })
     },
     loginUsernameAndPassword(verifyCode) {
       this.passwordForm.verifyCode = verifyCode
       this.$store.dispatch('Login', this.passwordForm).then(() => {
-        this.saveRememberedInfo()
+        this.saveRememberedInfo('password')
         this.loginSuccess()
       })
     },
@@ -265,13 +275,21 @@ export default {
       this.showPassword = !this.showPassword;
     },
     // 新增：保存账号密码到缓存
-    saveRememberedInfo() {
+    saveRememberedInfo(loginType) {
       try {
         if (this.rememberPwd) {
-          uni.setStorageSync('loginInfo', {
-            username: this.passwordForm.username,
-            password: this.passwordForm.password
-          })
+          uni.removeStorageSync('loginInfo')
+          if (loginType === 'password') {
+            uni.setStorageSync('loginInfo', {
+              username: this.passwordForm.username,
+              password: this.passwordForm.password
+            })
+          } else if (loginType === 'phone') {
+          } else if (loginType === 'email') {
+            uni.setStorageSync('loginInfo', {
+              email: this.emailForm.username,
+            })
+          }
         } else {
           // 不记住则清除缓存
           uni.removeStorageSync('loginInfo')
@@ -283,56 +301,37 @@ export default {
     loadRememberedInfo() {
       try {
         const loginCache = uni.getStorageSync('loginInfo') || {}
-        if (loginCache.username) {
-          this.passwordForm.username = loginCache.username
-          this.passwordForm.password = loginCache.password ? loginCache.password : ""
-          this.rememberPwd = true
-        }
+        this.passwordForm.username = loginCache.username ? loginCache.username : ""
+        this.passwordForm.password = loginCache.password ? loginCache.password : ""
+        this.emailForm.username = loginCache.email ? loginCache.email : ""
+        this.rememberPwd = true
       } catch (e) {
         console.error('读取登录缓存失败：', e)
       }
     },
     sendPhoneCode() {
       if (!this.phoneForm.phone) {
-        uni.showToast({
-          title: '请输入手机号',
-          icon: 'none'
-        });
+        this.$modal.msg("请输入手机号")
         return;
       }
       if (!/^1[3-9]\d{9}$/.test(this.phoneForm.phone)) {
-        uni.showToast({
-          title: '手机号格式不正确',
-          icon: 'none'
-        });
+        this.$modal.msg("手机号格式不正确")
         return;
       }
-      uni.showToast({
-        title: '验证码已发送',
-        icon: 'success'
-      });
+      this.$modal.msgSuccess("验证码已发送")
       this.startCountdown();
     },
     sendEmailCode() {
-      if (!this.emailForm.email) {
-        uni.showToast({
-          title: '请输入邮箱',
-          icon: 'none'
-        });
+      if (!this.emailForm.username) {
+        this.$modal.msg("请输入邮箱")
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.emailForm.email)) {
-        uni.showToast({
-          title: '邮箱格式不正确',
-          icon: 'none'
-        });
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.emailForm.username)) {
+        this.$modal.msg("邮箱格式不正确")
         return;
       }
-      uni.showToast({
-        title: '验证码已发送',
-        icon: 'success'
-      });
-      this.startEmailCountdown();
+      this.$modal.msgSuccess("验证码已发送")
+      this.showVerify();
     },
     startCountdown() {
       this.countdown = 60;
@@ -367,37 +366,38 @@ export default {
     handleLogin() {
       // 检查协议勾选
       if (!this.agree) {
-        uni.showToast({
-          title: '请先阅读并同意用户协议和隐私政策',
-          icon: 'none'
-        });
+        this.$modal.msg("请先阅读并同意用户协议和隐私政策")
         return;
       }
       if (this.loginType === 'password') {
-        if (!this.passwordForm.username || !this.passwordForm.password) {
-          uni.showToast({
-            title: '请填写完整信息',
-            icon: 'none'
-          });
+        if (!this.passwordForm.username) {
+          this.$modal.msg("请输入账号/邮箱号/手机号")
+          return;
+        }
+        if (!this.passwordForm.password) {
+          this.$modal.msg("请输入密码")
           return;
         }
         this.showVerify()
       } else if (this.loginType === 'phone') {
         if (!this.phoneForm.phone || !this.phoneForm.code) {
-          uni.showToast({
-            title: '请填写完整信息',
-            icon: 'none'
-          });
+          this.$modal.msg("请输入完整信息")
           return;
         }
       } else if (this.loginType === 'email') {
-        if (!this.emailForm.email || !this.emailForm.code) {
-          uni.showToast({
-            title: '请填写完整信息',
-            icon: 'none'
-          });
+        if (!this.emailForm.username) {
+          this.$modal.msg("请输入邮箱号")
           return;
         }
+        if (!this.emailForm.code) {
+          this.$modal.msg("请输入验证码")
+          return;
+        }
+        // 邮箱账号登录
+        this.$store.dispatch('Login', this.emailForm).then(() => {
+          this.saveRememberedInfo(this.loginType)
+          this.loginSuccess()
+        })
       }
       this.$modal.closeLoading()
     },
@@ -411,10 +411,7 @@ export default {
       })
     },
     handleQqLogin() {
-      uni.showToast({
-        title: 'QQ登录功能开发中',
-        icon: 'none'
-      });
+      this.$modal.msg("QQ登录功能开发中")
     },
     goToForgotPassword() {
       this.$modal.msg("请联系管理员找回")

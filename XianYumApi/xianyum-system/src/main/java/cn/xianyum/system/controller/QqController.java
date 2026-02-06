@@ -4,6 +4,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.ThirdOauthRequest;
+import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,9 +34,9 @@ public class QqController {
     @PostMapping("/login")
     @Operation(summary = "QQ第三方登录")
     @Permission(publicApi = true)
-    public Results<LoginUser> login(@RequestBody ThirdOauthRequest request) {
+    public Results<LoginTokenResponse> login(@RequestBody ThirdOauthRequest request) {
         LoginUser loginUser = userService.getUserByQq(request.getAuthCode());
-        return userTokenService.createToken(loginUser);
+        return Results.success(userTokenService.createToken(loginUser));
     }
 
     @PostMapping("/bindUser")

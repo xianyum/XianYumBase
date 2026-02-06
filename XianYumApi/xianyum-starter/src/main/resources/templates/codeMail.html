@@ -1,29 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>验证码通知</title>
+    <!-- 邮件客户端样式重置，避免默认样式干扰 -->
+    <style type="text/css">
+        body { margin: 0; padding: 0; font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif; color: #333; background-color: #f7f7f7; }
+        table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        a { text-decoration: none; }
+        h2, h3, p { margin: 0; padding: 0; font-weight: normal; }
+        .code-box { letter-spacing: 2px; font-family: "Courier New", monospace; }
+    </style>
 </head>
-<body>
-
-<div style='width:640px;background-image: url("..//static/images/bg.jpg"); border:solid 1px #efefef; margin:0 auto; padding:35px 0 35px 0'>
-    <table  width='560' border='0' align='center' cellpadding='0' cellspacing='0' style=' margin:0 auto; margin-left:30px; margin-right:30px; ' >
-           <tbody>
-          <tr>
-                 <td>
-                    <h2 style='font-weight:normal; font-size:18px'>hello！亲爱的用户:<span style='font-weight:bold; margin-left:5px;' ></span></h2>
-                <p style='margin:5px 0; padding:3px 0;color:#666; font-size:14px'>您的验证码为:</p>
-                 <p style='color:#666; font-size:14px'><h3><a th:text="${emailCode}"></h3>
-                 </p>
-                <p style='margin:0 0 5px 0; padding:0 0 3px 0;'>
-
-                <p style='margin:5px 0; padding:3px 0;color:#666; font-size:14px'>验证码有效期为3分钟！感谢您注册本系统。</p><br>
-                     <a href='https://gitee.com/javzhangwei_admin/events' style='display:inline-block; width:105px; text-align:center; background:#2980b9; color:#fff;  font-size:16px; text-decoration:none; line-height:34px; padding:0;border-radius:5px;' target='_blank'>码云地址</a></p>
-                  <p style='text-align:center'><img src=''></p>
-                </td>
-            </tr>
-           </tbody>
-        </table>
-    </div>
+<!-- 邮件body背景色，提升整体质感 -->
+<body style="margin: 0; padding: 20px 0; font-family: 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; background-color: #f7f7f7;">
+<!-- 外层容器：居中+白色背景+圆角+阴影，更精致 -->
+<div style="width: 100%; max-width: 640px; border: 1px solid #efefef; border-radius: 8px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin: 0 auto; padding: 35px 0;">
+    <!-- 核心内容表格：邮件端推荐用table做布局，兼容性最好 -->
+    <table width="560" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td style="padding: 0 10px;">
+                <!-- 问候语：调整字号、颜色、间距，更友好 -->
+                <h2 style="font-size: 18px; color: #333; margin-bottom: 20px;">您好！亲爱的用户</h2>
+                <!-- 提示文本：优化间距、颜色，层级更清晰 -->
+                <p style="font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 2px;">您的验证码为：</p>
+                <!-- 验证码核心：调整上下间距，让与提示文字更紧凑 -->
+                <p style="margin: 3px 0 10px 0;">
+                <h3 class="code-box" style="font-size: 24px; font-weight: bold; color: #29b9a3; line-height: 1.5;" th:text="${emailCode}"></h3>
+                </p>
+                <!-- 有效期提示：增加行高，优化间距，补充温馨提示 -->
+                <p style="font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 10px;">验证码有效期为1分钟，请在有效期内完成验证！</p>
+                <p style="font-size: 12px; color: #999; line-height: 1.8;">如非本人操作，请忽略本邮件，感谢您使用本系统。</p>
+            </td>
+        </tr>
+        <!-- 底部分隔线+版权信息，提升专业度 -->
+        <tr>
+            <td style="margin-top: 30px; padding: 20px 10px 10px 10px; border-top: 1px solid #efefef; text-align: left;">
+                <p style="font-size: 12px; color: #999; line-height: 1.8; margin: 0;">Copyright &copy; 2026 base.xianyum.cn All Rights Reserved.</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

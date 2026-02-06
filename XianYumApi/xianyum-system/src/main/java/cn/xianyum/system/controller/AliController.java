@@ -4,6 +4,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.ThirdOauthRequest;
+import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
@@ -37,9 +38,9 @@ public class AliController {
     @PostMapping("/login")
     @Operation(summary = "支付宝第三方登录")
     @Permission(publicApi = true)
-    public Results<?> login(@RequestBody ThirdOauthRequest aliRequest) {
+    public Results<LoginTokenResponse> login(@RequestBody ThirdOauthRequest aliRequest) {
         LoginUser loginUser = userService.getUserByAli(aliRequest.getAuthCode());
-        return userTokenService.createToken(loginUser);
+        return Results.success(userTokenService.createToken(loginUser));
     }
 
     @PostMapping("/yunXiao/flowCallBack")

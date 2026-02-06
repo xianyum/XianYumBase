@@ -1,5 +1,6 @@
 package cn.xianyum.system.entity.request;
 
+import cn.xianyum.common.enums.LoginTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -11,15 +12,19 @@ import lombok.Data;
 public class UserLoginRequest {
 
     /** 账号 */
-    @NotBlank(message = "账号不能为空")
+    @NotBlank(message = "账号/邮箱号不能为空")
     private String username;
 
     /** 密码 */
-    @NotBlank(message = "密码不能为空")
     private String password;
 
     /** 验证码 */
-    @NotBlank(message = "验证码不能为空")
     private String verifyCode;
+
+    /** 登录凭证 */
+    private String code;
+
+    /** 登录类型 */
+    private LoginTypeEnum loginType = LoginTypeEnum.USER_PASSWORD;
 }
 

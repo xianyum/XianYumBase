@@ -10,10 +10,11 @@ import java.util.Optional;
  */
 public enum LoginTypeEnum {
 
-    SYSTEM("0","系统用户"),
+    USER_PASSWORD("0","账号密码登录"),
     ZHI_FU_BAO("1","支付宝"),
     QQ("2","QQ"),
-    XIAN_YU("3","咸鱼客户端");
+    XIAN_YU("3","咸鱼客户端"),
+    EMAIL("4","邮箱验证码登录");
 
     private String loginType;
 

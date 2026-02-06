@@ -1,12 +1,14 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(username, password, verifyCode, uuid) {
+export function login(username, password, verifyCode, uuid,loginType,code) {
   const data = {
     username,
     password,
     verifyCode,
-    uuid
+    uuid,
+    loginType,
+    code
   }
   return request({
     'url': '/login',
@@ -53,3 +55,17 @@ export function getCaptchaType() {
     method: 'get'
   })
 }
+
+/**
+ * 发送凭证
+ * @param data
+ * @returns {Promise | Promise<unknown>}
+ */
+export function sendLoginCredentials(data) {
+  return request({
+    url: '/sendLoginCredentials',
+    method: 'post',
+    data: data
+  })
+}
+
