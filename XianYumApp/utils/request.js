@@ -31,7 +31,7 @@ const request = config => {
       }).then(response => {
         let [error, res] = response
         if (error) {
-          showErrorToast('后端接口连接异常')
+          showErrorToast('网络异常,请稍后重试')
           reject('后端接口连接异常')
           return
         }
