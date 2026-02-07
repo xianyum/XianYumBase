@@ -14,7 +14,9 @@
             "autoclose" : true,
             "delay" : 0
         },
-        "modules" : {},
+        "modules" : {
+            "Statistic" : {}
+        },
         "distribute" : {
             "android" : {
                 "permissions" : [
@@ -38,7 +40,16 @@
             "ios" : {
                 "dSYMs" : false
             },
-            "sdkConfigs" : {},
+            "sdkConfigs" : {
+                "statics" : {
+                    "umeng" : {
+                        "appkey_ios" : "",
+                        "channelid_ios" : "",
+                        "appkey_android" : "",
+                        "channelid_android" : ""
+                    }
+                }
+            },
             "icons" : {
                 "android" : {
                     "hdpi" : "unpackage/res/icons/72x72.png",
