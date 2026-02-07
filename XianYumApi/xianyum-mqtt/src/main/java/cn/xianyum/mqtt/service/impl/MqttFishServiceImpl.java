@@ -111,30 +111,19 @@ public class MqttFishServiceImpl implements MqttFishService {
         if(CollectionUtils.isEmpty(mqttFishResponses)){
             return new MqttFishReportResponse();
         }
-        boolean isHour = request.getDateType().equals(0);
-        List<String> dateStrings = isHour?DateUtils.getLast24Hours():DateUtils.minusDate(DateUtils.addDateDays(new Date(),1), DateUtils.DATE_PATTERN, 31);
         MqttFishReportResponse mqttFishReportResponse = new MqttFishReportResponse();
         List<BigDecimal> indoorTempList = new ArrayList<>();
         List<BigDecimal> fishTankTempList = new ArrayList<>();
         List<BigDecimal> indoorHumidityList = new ArrayList<>();
         List<BigDecimal> fishTankTdsList = new ArrayList<>();
         List<String> xAxisDataList = new ArrayList<>();
-        Collections.reverse(dateStrings);
-        for (String dateString : dateStrings) {
-            xAxisDataList.add(dateString);
-            Optional<MqttFishResponse> optionalMqttFishResponse = mqttFishResponses.stream().filter(item -> item.getDateStr().equals(dateString)).findFirst();
-            if(optionalMqttFishResponse.isPresent()){
-                MqttFishResponse mqttFishResponse = optionalMqttFishResponse.get();
-                indoorTempList.add(mqttFishResponse.getIndoorTemp());
-                fishTankTempList.add(mqttFishResponse.getFishTankTemp());
-                fishTankTdsList.add(mqttFishResponse.getFishTankTds());
-                indoorHumidityList.add(mqttFishResponse.getIndoorHumidity());
-            }else{
-                indoorTempList.add(BigDecimal.ZERO);
-                fishTankTempList.add(BigDecimal.ZERO);
-                fishTankTdsList.add(BigDecimal.ZERO);
-                indoorHumidityList.add(BigDecimal.ZERO);
-            }
+        Collections.reverse(mqttFishResponses);
+        for (MqttFishResponse mqttFishResponse : mqttFishResponses) {
+            xAxisDataList.add(mqttFishResponse.getDateStr());
+            indoorTempList.add(Objects.nonNull(mqttFishResponse.getIndoorTemp())?mqttFishResponse.getIndoorTemp():BigDecimal.ZERO);
+            fishTankTempList.add(Objects.nonNull(mqttFishResponse.getFishTankTemp())?mqttFishResponse.getFishTankTemp():BigDecimal.ZERO);
+            fishTankTdsList.add(Objects.nonNull(mqttFishResponse.getFishTankTds())?mqttFishResponse.getFishTankTds():BigDecimal.ZERO);
+            indoorHumidityList.add(Objects.nonNull(mqttFishResponse.getIndoorHumidity())?mqttFishResponse.getIndoorHumidity():BigDecimal.ZERO);
         }
         mqttFishReportResponse.setXAxisDataList(xAxisDataList);
         mqttFishReportResponse.setFishTankTempList(fishTankTempList);

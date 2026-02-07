@@ -35,7 +35,11 @@
           </view>
           <view class="info-row">
             <text class="label">登录地点：</text>
-            <text class="value">{{ item.loginLocation}}({{item.ipaddr}})</text>
+            <uni-tooltip placement="top" :content="`${item.loginLocation}(${item.ipaddr})`">
+              <text class="value text-ellipsis">
+                {{ item.loginLocation}}({{item.ipaddr}})
+              </text>
+            </uni-tooltip>
           </view>
           <view class="info-row">
             <text class="label">登录时间：</text>
@@ -355,6 +359,13 @@ export default {
             &.text-success {
               color: #67c23a;
             }
+
+            &.text-ellipsis {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
             &.bold {
               font-weight: 700 !important;
               color: #409eff;
