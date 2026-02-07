@@ -32,7 +32,7 @@ public class AppVersionControlEntity extends BaseEntity {
     private String version;
 
     /**
-     * 更新包类型：wgt-热更新包，apk-整包安装包
+     * 更新包类型：1-热更新包，2-整包安装包
      */
     private Integer packageType;
 

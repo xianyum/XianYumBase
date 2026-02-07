@@ -34,6 +34,6 @@ public class FileController {
     @Operation(summary = "获取文件访问url")
     @GetMapping(value = "/presignedUrl")
     public Results<FileDetailResponse> presignedUrl(@RequestParam String fileId) {
-        return Results.success(this.fileService.selectFileById(fileId));
+        return Results.success(this.fileService.selectFileById(fileId,true));
     }
 }

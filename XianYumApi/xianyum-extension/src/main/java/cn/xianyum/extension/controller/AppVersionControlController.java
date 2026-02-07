@@ -94,4 +94,10 @@ public class AppVersionControlController {
     public Results<AppVersionControlResponse> getLastAppVersion(@RequestBody AppVersionControlRequest request) {
         return Results.success(appVersionControlService.getLastAppVersion(request));
     }
+
+    @Operation(summary = "查询最新Apk安装包")
+    @GetMapping("/getLastApkApp")
+    public Results<AppVersionControlResponse> getLastApkApp() {
+        return Results.success(appVersionControlService.getLastApkApp());
+    }
 }

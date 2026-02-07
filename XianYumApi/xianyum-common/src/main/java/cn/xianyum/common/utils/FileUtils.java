@@ -61,13 +61,14 @@ public class FileUtils {
         }
     }
 
+
     /**
-     * 反射调用FileService.selectFileById方法
-     * @param fileId 文件ID
-     * @return common包的FileDetailResponse（强类型）
-     * @throws Exception 反射调用异常
+     * 查询文件下载链接
+     * @param fileId
+     * @param isCached true 带缓存 false 不带缓存
+     * @return
      */
-    public static FileDetailResponse selectFileById(String fileId){
+    public static FileDetailResponse selectFileById(String fileId,boolean isCached){
         try {
             // 1. 校验入参
             if (fileId == null || fileId.trim().isEmpty()) {
@@ -84,16 +85,27 @@ public class FileUtils {
             Method selectMethod = getCachedMethod(
                     fileServiceBean.getClass(),
                     SELECT_FILE_BY_ID_METHOD,
-                    String.class
+                    String.class,
+                    boolean.class
             );
 
             // 4. 反射调用并返回强类型
-            Object result = selectMethod.invoke(fileServiceBean, fileId);
+            Object result = selectMethod.invoke(fileServiceBean,fileId,isCached);
             return result == null ? null : (FileDetailResponse) result;
         }catch (Exception e){
             log.error("获取文件信息异常.",e);
             throw new SoException("获取文件信息异常");
         }
+    }
+
+    /**
+     * 反射调用FileService.selectFileById方法
+     * @param fileId 文件ID
+     * @return common包的FileDetailResponse（强类型）
+     * @throws Exception 反射调用异常
+     */
+    public static FileDetailResponse selectFileById(String fileId){
+        return selectFileById(fileId,true);
     }
 
     /**

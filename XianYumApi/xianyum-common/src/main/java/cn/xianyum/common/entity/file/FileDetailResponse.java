@@ -19,4 +19,9 @@ public class FileDetailResponse {
 
     /** 文件名称 */
     private String fileUrl;
+
+    /**
+     * 过期时间，单位s
+     */
+    private Long expireTime;
 }

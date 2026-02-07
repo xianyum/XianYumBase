@@ -56,23 +56,26 @@ public class FileServiceImpl implements FileService {
         FileInfo fileInfo = this.fileStorageService.of(file)
                 .setPath(DateUtils.format(new Date(), DateUtils.DATE_PATTERN) + Constants.SLASH)
                 .upload();
-        return this.selectFileById(fileInfo.getId());
+        return this.selectFileById(fileInfo.getId(),true);
     }
 
     /**
-     * 根据文件id获取响应数据
-     *
+     * 查询文件信息
      * @param fileId
+     * @param isCached true 带缓存 false 不带缓存
      * @return
      */
     @Override
-    public FileDetailResponse selectFileById(String fileId) {
+    public FileDetailResponse selectFileById(String fileId,boolean isCached) {
         if(StringUtil.isEmpty(fileId)){
             return null;
         }
         String redisKey = String.format(presignedUrlPrefix,fileId);
-        if(redisUtils.hasKey(redisKey)){
-            return JSONObject.parseObject(redisUtils.getString(redisKey),FileDetailResponse.class);
+        // 这里带缓存了
+        if(isCached && redisUtils.hasKey(redisKey)){
+            FileDetailResponse response = JSONObject.parseObject(redisUtils.getString(redisKey), FileDetailResponse.class);
+            response.setExpireTime(new Date().getTime() + redisUtils.getExpire(redisKey) * 1000);
+            return response;
         }
         FileInfo fileInfo = fileDetailService.selectFileById(fileId);
         if(Objects.isNull(fileInfo)){
@@ -82,6 +85,7 @@ public class FileServiceImpl implements FileService {
         FileDetailResponse response = BeanUtil.copyProperties(fileInfo,FileDetailResponse.class);
         if(StringUtil.isNotBlank(presignedUrl)){
             response.setFileUrl(presignedUrl);
+            response.setExpireTime(new Date().getTime() + 3600*1000L);
             redisUtils.setMin(redisKey,JSONObject.toJSONString(response),60);
         }
         return response;
@@ -95,7 +99,7 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public String presignedUrl(String fileId) {
-        FileDetailResponse response = this.selectFileById(fileId);
+        FileDetailResponse response = this.selectFileById(fileId,true);
         return Objects.nonNull(response)?response.getFileUrl():null;
     }
 

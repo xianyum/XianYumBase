@@ -98,5 +98,24 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
         }
         return null;
     }
+
+    /**
+     * 获取最新APK 安装包
+     * @return
+     */
+    @Override
+    public AppVersionControlResponse getLastApkApp() {
+        LambdaQueryWrapper<AppVersionControlEntity> queryWrapper = Wrappers.<AppVersionControlEntity>lambdaQuery()
+                .eq(AppVersionControlEntity::getPackageType,2)
+                .orderByDesc(AppVersionControlEntity::getCreateTime)
+                .last("limit 1");
+        AppVersionControlEntity appVersionControlEntity = this.appVersionControlMapper.selectOne(queryWrapper);
+        if(Objects.nonNull(appVersionControlEntity)){
+            AppVersionControlResponse response = BeanUtils.copy(appVersionControlEntity, AppVersionControlResponse.class);
+            response.setFileInfo(FileUtils.selectFileById(response.getPackageFileId()));
+            return response;
+        }
+        return null;
+    }
 }
 

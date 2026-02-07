@@ -20,9 +20,10 @@ public interface FileService {
     /**
      * 根据文件id获取响应数据
      * @param id
+     * @param isCached
      * @return
      */
-    FileDetailResponse selectFileById(String id);
+    FileDetailResponse selectFileById(String id,boolean isCached);
 
     /**
      * 获取预签名url

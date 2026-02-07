@@ -53,6 +53,10 @@
       }
     },
     methods: {
+
+      shareApp(){
+        this.$tab.navigateTo('/pages/mine/share/index')
+      },
       handleToUpgrade() {
         // #ifdef APP-PLUS
         this.$modal.loading('检查更新中...');
@@ -97,9 +101,6 @@
         } else {
           return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
         }
-      },
-      shareApp(){
-        this.$tab.navigateTo('/pages/mine/share/index')
       },
       /**
        * 处理清理缓存逻辑

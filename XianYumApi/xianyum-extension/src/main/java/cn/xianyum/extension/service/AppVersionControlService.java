@@ -23,4 +23,6 @@ public interface AppVersionControlService {
     Integer deleteById(Long[] ids);
 
     AppVersionControlResponse getLastAppVersion(AppVersionControlRequest request);
+
+    AppVersionControlResponse getLastApkApp();
 }
