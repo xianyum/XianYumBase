@@ -2,8 +2,8 @@
     "name" : "XianYumApp",
     "appid" : "__UNI__B40ED08",
     "description" : "",
-    "versionName" : "1.0.4",
-    "versionCode" : 104,
+    "versionName" : "1.0.5",
+    "versionCode" : 105,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,
@@ -43,10 +43,16 @@
             "sdkConfigs" : {
                 "statics" : {
                     "umeng" : {
-                        "appkey_ios" : "",
-                        "channelid_ios" : "",
-                        "appkey_android" : "",
-                        "channelid_android" : ""
+                        "appkey_ios" : "123456",
+                        "channelid_ios" : "123456",
+                        "appkey_android" : "6982a48e9a7f37648851f7ea",
+                        "channelid_android" : "6982a48e9a7f37648851f7ea"
+                    }
+                },
+                "oauth" : {
+                    "qq" : {
+                        "appid" : "",
+                        "UniversalLinks" : ""
                     }
                 }
             },

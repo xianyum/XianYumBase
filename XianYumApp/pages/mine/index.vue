@@ -32,6 +32,14 @@
       </view>
 
       <view class="menu-group">
+
+<!--        <view class="menu-item" @tap="handleHelp">-->
+<!--          <view class="item-left">-->
+<!--            <uni-icons type="help" size="20" color="#e6a23c"></uni-icons>-->
+<!--            <text class="item-text">常见问题</text>-->
+<!--          </view>-->
+<!--          <uni-icons type="right" size="16" color="#999"></uni-icons>-->
+<!--        </view>-->
         <view class="menu-item" @tap="handleToSetting">
           <view class="item-left">
             <uni-icons type="gear" size="20" color="#909399"></uni-icons>
@@ -39,10 +47,10 @@
           </view>
           <uni-icons type="right" size="16" color="#999"></uni-icons>
         </view>
-        <view class="menu-item" @tap="handleHelp">
+        <view class="menu-item" @tap="shareApp">
           <view class="item-left">
-            <uni-icons type="help" size="20" color="#e6a23c"></uni-icons>
-            <text class="item-text">常见问题</text>
+            <uni-icons type="paperplane" size="20" color="#3b82f6"></uni-icons>
+            <text class="item-text">分享APP</text>
           </view>
           <uni-icons type="right" size="16" color="#999"></uni-icons>
         </view>
@@ -85,6 +93,9 @@
       uni.$off('refreshAvatar', this.getUser)
     },
     methods: {
+      shareApp(){
+        this.$tab.navigateTo('/pages/mine/share/index')
+      },
       handleToAvatar() {
         this.$tab.navigateTo('/pages/mine/avatar/index')
       },

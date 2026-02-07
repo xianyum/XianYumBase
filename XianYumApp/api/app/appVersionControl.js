@@ -22,3 +22,10 @@ export function getAppVersionControl(id) {
     method: 'get'
   })
 }
+
+export function getLastApkApp() {
+  return request({
+    url: '/xym-extension/v1/appVersionControl/getLastApkApp',
+    method: 'get'
+  })
+}
