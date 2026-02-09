@@ -15,7 +15,9 @@ import cn.xianyum.system.dao.RoleMapper;
 import cn.xianyum.system.dao.UserThirdRelationMapper;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.dao.UserRoleMapper;
+import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import cn.xianyum.system.entity.po.*;
+import cn.xianyum.system.entity.request.ThirdOauthRequest;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
@@ -24,7 +26,6 @@ import cn.xianyum.system.service.*;
 import com.alibaba.fastjson2.JSONObject;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
@@ -407,7 +408,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         String accessToken = qqNetService.getAccessToken(authCode);
-        QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
+        QqUserInfoDto qqUserEntity = qqNetService.getUserId(accessToken,null);
         String openUserId = qqUserEntity.getUserId();
         if(StringUtil.isBlank(openUserId)){
             return false;
@@ -527,12 +528,17 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public LoginUser getUserByQq(String authCode) {
-        if(StringUtil.isBlank(authCode)){
-            return null;
+    public LoginUser getUserByQq(ThirdOauthRequest request) {
+        if(StringUtil.isBlank(request.getAuthCode()) && StringUtil.isBlank(request.getAccessToken())){
+            throw new SoException("QQ授权失败");
         }
-        String accessToken = qqNetService.getAccessToken(authCode);
-        QqUserEntity qqUserEntity = qqNetService.getUserId(accessToken);
+        String accessToken;
+        if(StringUtil.isNotBlank(request.getAuthCode())){
+            accessToken = qqNetService.getAccessToken(request.getAuthCode());
+        }else {
+            accessToken = request.getAccessToken();
+        }
+        QqUserInfoDto qqUserEntity = qqNetService.getUserId(accessToken,request.getQqUserInfo());
         if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
             LoginUser loginUser = new LoginUser();
             UserThirdRelationEntity qqThirdUserEntity = userThirdRelationMapper.selectOne(Wrappers.<UserThirdRelationEntity>lambdaQuery()
@@ -551,10 +557,10 @@ public class UserServiceImpl implements UserService {
                     loginUser.setSex(0);
                 }
                 // 现在qq返回的是http连接，实际https也是支持的，这里替换下
-                if(StringUtil.isNotEmpty(qqUserEntity.getFigureurl_qq_2())){
-                    loginUser.setAvatarFileId(qqUserEntity.getFigureurl_qq_2().replace("http","https"));
+                if(StringUtil.isNotEmpty(qqUserEntity.getFigureurlQq2())){
+                    loginUser.setAvatarFileId(qqUserEntity.getFigureurlQq2().replace("http","https"));
                 }else{
-                    loginUser.setAvatarFileId(qqUserEntity.getFigureurl_qq_1().replace("http","https"));
+                    loginUser.setAvatarFileId(qqUserEntity.getFigureurlQq1().replace("http","https"));
                 }
                 loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());
                 SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);

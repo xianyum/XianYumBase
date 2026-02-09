@@ -15,7 +15,8 @@
             "delay" : 0
         },
         "modules" : {
-            "Statistic" : {}
+            "Statistic" : {},
+            "OAuth" : {}
         },
         "distribute" : {
             "android" : {
@@ -51,7 +52,7 @@
                 },
                 "oauth" : {
                     "qq" : {
-                        "appid" : "",
+                        "appid" : "102842881",
                         "UniversalLinks" : ""
                     }
                 }

@@ -5,6 +5,7 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.system.entity.po.UserEntity;
+import cn.xianyum.system.entity.request.ThirdOauthRequest;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.UserResponse;
@@ -35,11 +36,11 @@ public interface UserService{
      */
     LoginUser getUserByAli(String authCode);
     /**
-     * 通过QQ authCode获取系统用户信息
-     * @param authCode
+     * 通过QQ取系统用户信息
+     * @param request
      * @return
      */
-    LoginUser getUserByQq(String authCode);
+    LoginUser getUserByQq(ThirdOauthRequest request);
 
     int updateCurrentUser(UserRequest user);
 

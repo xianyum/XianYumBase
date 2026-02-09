@@ -35,7 +35,7 @@ public class QqController {
     @Operation(summary = "QQ第三方登录")
     @Permission(publicApi = true)
     public Results<LoginTokenResponse> login(@RequestBody ThirdOauthRequest request) {
-        LoginUser loginUser = userService.getUserByQq(request.getAuthCode());
+        LoginUser loginUser = userService.getUserByQq(request);
         return Results.success(userTokenService.createToken(loginUser));
     }
 

@@ -69,3 +69,15 @@ export function sendLoginCredentials(data) {
   })
 }
 
+/**
+ * qq授权登录
+ * @param data
+ * @returns {Promise | Promise<unknown>}
+ */
+export function qqLogin(data) {
+  return request({
+    url: '/xym-system/v1/qq/login',
+    method: 'post',
+    data: data
+  })
+}

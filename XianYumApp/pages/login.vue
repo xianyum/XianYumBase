@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import {getCaptchaType ,sendLoginCredentials } from '@/api/login'
+import {getCaptchaType, qqLogin, sendLoginCredentials} from '@/api/login'
 import {getToken} from '@/utils/auth'
 import verifyCode from "@/uni_modules/tianai-mini-captcha/components/tianai-mini-captcha";
 
@@ -411,7 +411,40 @@ export default {
       })
     },
     handleQqLogin() {
-      this.$modal.msg("QQ登录功能开发中")
+      const that = this;
+      uni.login({
+        provider: 'qq',
+        success: function (loginRes) {
+          //登录成功
+          uni.getUserInfo({
+            provider: 'qq',
+            success: function(info) {
+              // 获取用户信息成功, info.authResult保存用户信息
+              if(!info.userInfo || info.userInfo.ret != 0){
+                that.$modal.msg("获取用户信息异常");
+                return;
+              }
+              let loginParams = {
+                accessToken: loginRes.authResult.access_token,
+                openId: loginRes.authResult.openid,
+                qqUserInfo: info.userInfo
+              }
+              that.$modal.loading("正在登录...")
+              qqLogin(loginParams).then(res => {
+                that.$store.dispatch('ThirdLogin', res).then(() => {
+                  that.loginSuccess()
+                })
+              }).finally(() => {
+                this.$modal.closeLoading();
+              });
+            }
+          })
+        },
+        fail: function (err) {
+          this.$modal.closeLoading();
+          that.$modal.msg("QQ授权异常");
+        }
+      });
     },
     goToForgotPassword() {
       this.$modal.msg("请联系管理员找回")

@@ -67,7 +67,14 @@ const user = {
         })
       })
     },
-
+    // 三方登录
+    ThirdLogin({ commit }, res) {
+      return new Promise((resolve, reject) => {
+        setToken(res.data.token)
+        commit('SET_TOKEN', res.data.token)
+        resolve()
+      })
+    },
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
