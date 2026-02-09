@@ -1,5 +1,6 @@
 package cn.xianyum.system.entity.request;
 
+import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import lombok.Data;
 
 /**
@@ -18,4 +19,7 @@ public class ThirdOauthRequest {
 
     /** openId */
     private String openId;
+
+    /** qq用户信息 */
+    private QqUserInfoDto qqUserInfo;
 }

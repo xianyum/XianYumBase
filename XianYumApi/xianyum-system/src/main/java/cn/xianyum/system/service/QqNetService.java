@@ -1,7 +1,7 @@
 package cn.xianyum.system.service;
 
 
-import cn.xianyum.system.entity.po.QqUserEntity;
+import cn.xianyum.system.entity.dto.QqUserInfoDto;
 
 /**
  * @author zhangwei
@@ -17,9 +17,11 @@ public interface QqNetService {
 
     /**
      * 获取QQ用户id
+     *
      * @param accessToken
+     * @param qqUserInfo
      * @return
      */
-    QqUserEntity getUserId(String accessToken);
+    QqUserInfoDto getUserId(String accessToken, QqUserInfoDto qqUserInfo);
 
 }
