@@ -63,10 +63,10 @@ public class QqNetServiceImpl implements QqNetService {
 
     @Override
     public QqUserEntity getUserId(String accessToken) {
-        HttpResult result = HttpUtils.getHttpInstance().sync(OPEN_ID_URL + "?access_token="+accessToken+"&unionid=1").get();
+        HttpResult result = HttpUtils.getHttpInstance().sync(OPEN_ID_URL + "?access_token="+accessToken+"&unionid=1&fmt=json").get();
         String resultResponse = result.getBody().toString();
         log.info("第三方QQ登录,{}",resultResponse);
-        String userId = StringUtil.substringBetween(resultResponse,"\"openid\":\"","\"} )");
+        String userId = JSONObject.parseObject(resultResponse).getString("unionid");
         StringBuilder sb = new StringBuilder();
         sb.append("?access_token="+accessToken);
         sb.append("&oauth_consumer_key="+CLIENT_ID);

@@ -9,6 +9,13 @@ import lombok.Data;
  */
 @Data
 public class ThirdOauthRequest {
-    /** 阿里临时授权码 */
+
+    /** 临时授权码 */
     private String authCode;
+
+    /** token */
+    private String accessToken;
+
+    /** openId */
+    private String openId;
 }
