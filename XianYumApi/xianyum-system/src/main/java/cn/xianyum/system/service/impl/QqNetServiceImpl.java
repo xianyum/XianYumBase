@@ -67,10 +67,11 @@ public class QqNetServiceImpl implements QqNetService {
         String resultResponse = result.getBody().toString();
         log.info("第三方QQ登录,{}",resultResponse);
         String userId = JSONObject.parseObject(resultResponse).getString("unionid");
+        String openId = JSONObject.parseObject(resultResponse).getString("openid");
         StringBuilder sb = new StringBuilder();
         sb.append("?access_token="+accessToken);
         sb.append("&oauth_consumer_key="+CLIENT_ID);
-        sb.append("&openid="+userId);
+        sb.append("&openid="+openId);
         sb.append("&format=json");
         HttpResult userJson = HttpUtils.getHttpInstance().sync(USER_INFO_URL + sb.toString()).get();
         String userJsonResponse = userJson.getBody().toString();
