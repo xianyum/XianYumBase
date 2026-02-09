@@ -22,10 +22,10 @@
             <artifactId>tianai-captcha-springboot-starter</artifactId>
         </dependency>
 
-        <!-- 七牛云-->
+        <!-- amazon-->
         <dependency>
-            <groupId>com.qiniu</groupId>
-            <artifactId>qiniu-java-sdk</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
 
         <!-- 增加x-file-storage-->

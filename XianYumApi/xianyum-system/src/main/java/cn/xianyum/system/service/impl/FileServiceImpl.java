@@ -71,7 +71,7 @@ public class FileServiceImpl implements FileService {
             return null;
         }
         String redisKey = String.format(presignedUrlPrefix,fileId);
-        // 这里带缓存了
+
         if(isCached && redisUtils.hasKey(redisKey)){
             FileDetailResponse response = JSONObject.parseObject(redisUtils.getString(redisKey), FileDetailResponse.class);
             response.setExpireTime(new Date().getTime() + redisUtils.getExpire(redisKey) * 1000);
@@ -81,14 +81,15 @@ public class FileServiceImpl implements FileService {
         if(Objects.isNull(fileInfo)){
             return null;
         }
-        String presignedUrl = fileStorageService.generatePresignedUrl(fileInfo, DateUtil.offsetHour(new Date(), 1));
+//      String presignedUrl = fileStorageService.generatePresignedUrl(fileInfo, DateUtil.offsetHour(new Date(), 1));
         FileDetailResponse response = BeanUtil.copyProperties(fileInfo,FileDetailResponse.class);
-        if(StringUtil.isNotBlank(presignedUrl)){
-            response.setFileUrl(presignedUrl);
-            response.setExpireTime(new Date().getTime() + 3600*1000L);
-            redisUtils.setMin(redisKey,JSONObject.toJSONString(response),60);
-        }
+//        if(StringUtil.isNotBlank(presignedUrl)){
+        response.setFileUrl(fileInfo.getUrl());
+        response.setExpireTime(new Date().getTime() + 3600*1000L);
+        redisUtils.setMin(redisKey,JSONObject.toJSONString(response),60);
+//        }
         return response;
+
     }
 
     /**
