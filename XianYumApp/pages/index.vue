@@ -408,6 +408,8 @@ export default {
       height: 100rpx;
       border-radius: 50%;
       border: 4rpx solid rgba(255,255,255,0.3);
+      will-change: transform; // 提前告知浏览器该元素要变换
+      transform: translateZ(0); // 开启硬件加速
     }
   }
 

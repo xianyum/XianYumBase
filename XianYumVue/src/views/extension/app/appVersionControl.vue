@@ -501,17 +501,18 @@ export default {
       getAppVersionControl(id).then(response => {
         this.form = response.data
         // 回显文件列表（如果有文件ID）
-        if (this.form.packageFileId) {
+        if (this.form.packageFileId && this.form.fileInfo) {
           this.fileList = [{
             name: this.form.fileInfo.originalFilename,
-            url: this.form.fileInfo.fileUrl
+            url: this.form.fileInfo.fileUr
           }]
+        }else{
+          this.fileList = []
         }
         this.open = true
         this.title = '修改APP版本'
       })
     },
-
     /** 提交按钮 */
     submitForm() {
       this.$refs['form'].validate(valid => {

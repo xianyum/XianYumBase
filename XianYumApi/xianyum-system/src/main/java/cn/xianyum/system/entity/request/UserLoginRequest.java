@@ -1,6 +1,7 @@
 package cn.xianyum.system.entity.request;
 
 import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -23,6 +24,18 @@ public class UserLoginRequest {
 
     /** 登录凭证 */
     private String code;
+
+    /** 临时授权码 */
+    private String authCode;
+
+    /** token */
+    private String accessToken;
+
+    /** openId */
+    private String openId;
+
+    /** qq用户信息 */
+    private QqUserInfoDto qqUserInfo;
 
     /** 登录类型 */
     private LoginTypeEnum loginType = LoginTypeEnum.USER_PASSWORD;

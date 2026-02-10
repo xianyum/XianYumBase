@@ -138,6 +138,8 @@ page {
     border-radius: 50%; // 圆形头像
     border: 2px solid #eee;
     margin-bottom: 10rpx;
+    will-change: transform; // 提前告知浏览器该元素要变换
+    transform: translateZ(0); // 开启硬件加速
     // 点击反馈
     &:active {
       opacity: 0.8;

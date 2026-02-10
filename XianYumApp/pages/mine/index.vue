@@ -171,6 +171,8 @@
         border-radius: 60rpx;
         border: 4rpx solid rgba(255,255,255,0.3);
         margin-right: 24rpx;
+        will-change: transform; // 提前告知浏览器该元素要变换
+        transform: translateZ(0); // 开启硬件加速
       }
 
       .info-content {

@@ -15,6 +15,7 @@ import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.service.MenuService;
 import cn.xianyum.system.service.RoleService;
+import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson2.JSONObject;
 import eu.bitwalker.useragentutils.UserAgent;
@@ -160,7 +161,8 @@ public class UserTokenServiceImpl implements UserTokenService {
         LoginUser loginUserEntity = switch(request.getLoginType()){
             case XIAN_YU, USER_PASSWORD -> this.loginPwd(request);
             case EMAIL -> this.loginEmail(request);
-            default -> throw new SoException("不支持的登录类型: " + request.getLoginType());
+            case QQ -> this.loginByQq(request);
+            case ZHI_FU_BAO -> this.loginByZhiFuBao(request);
         };
         return this.createToken(loginUserEntity);
     }
@@ -211,6 +213,43 @@ public class UserTokenServiceImpl implements UserTokenService {
         // 校验登录凭证成功就删除
         redisUtils.del(redisKey);
         UserDetails userDetails = SpringUtils.getBean(UserDetailsService.class).loadUserByUsername(request.getUsername());
+        // 第三步：构建认证信息（密码置空，跳过密码校验）
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        // 设置认证上下文
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        loginUserEntity.setLoginType(request.getLoginType().getAccountType());
+        return loginUserEntity;
+    }
+
+    /**
+     * QQ授权登录
+     *
+     * @return
+     */
+    @Override
+    public LoginUser loginByQq(UserLoginRequest request) {
+        LoginUser user = SpringUtils.getBean(UserService.class).getUserByQq(request);
+        UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
+        // 第三步：构建认证信息（密码置空，跳过密码校验）
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        // 设置认证上下文
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        loginUserEntity.setLoginType(request.getLoginType().getAccountType());
+        return loginUserEntity;
+    }
+
+    /**
+     * 支付宝授权登录
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public LoginUser loginByZhiFuBao(UserLoginRequest request) {
+        LoginUser user = SpringUtils.getBean(UserService.class).getUserByAli(request.getAuthCode());
+        UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
         // 第三步：构建认证信息（密码置空，跳过密码校验）
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         // 设置认证上下文

@@ -19,6 +19,7 @@ import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import cn.xianyum.system.entity.po.*;
 import cn.xianyum.system.entity.request.ThirdOauthRequest;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
+import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.system.entity.response.UserResponse;
@@ -484,7 +485,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginUser getUserByAli(String authCode) {
         if(StringUtil.isBlank(authCode)){
-            return null;
+            throw new SoException("支付宝授权登录失败");
         }
         String accessToken = aliNetService.getAccessToken(authCode);
         AlipayUserInfoShareResponse aLiUserInfo = aliNetService.getALiUserInfo(accessToken);
@@ -528,7 +529,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public LoginUser getUserByQq(ThirdOauthRequest request) {
+    public LoginUser getUserByQq(UserLoginRequest request) {
         if(StringUtil.isBlank(request.getAuthCode()) && StringUtil.isBlank(request.getAccessToken())){
             throw new SoException("QQ授权失败");
         }

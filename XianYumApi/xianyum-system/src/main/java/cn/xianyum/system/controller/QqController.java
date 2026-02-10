@@ -1,9 +1,9 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.system.entity.request.ThirdOauthRequest;
+import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
@@ -34,15 +34,15 @@ public class QqController {
     @PostMapping("/login")
     @Operation(summary = "QQ第三方登录")
     @Permission(publicApi = true)
-    public Results<LoginTokenResponse> login(@RequestBody ThirdOauthRequest request) {
-        LoginUser loginUser = userService.getUserByQq(request);
-        return Results.success(userTokenService.createToken(loginUser));
+    public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
+        request.setLoginType(LoginTypeEnum.QQ);
+        return Results.success(userTokenService.login(request));
     }
 
     @PostMapping("/bindUser")
     @Operation(summary = "QQ绑定用户")
-    public Results<?> bindUser(@RequestBody ThirdOauthRequest aliRequest) {
-        boolean isSuccess = userService.bindQqUser(aliRequest.getAuthCode());
+    public Results<?> bindUser(@RequestBody UserLoginRequest userLoginRequest) {
+        boolean isSuccess = userService.bindQqUser(userLoginRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");
     }
 }

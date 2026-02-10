@@ -70,4 +70,17 @@ public interface UserTokenService {
      * @return
      */
     LoginUser loginEmail(UserLoginRequest request);
+
+    /**
+     * QQ授权登录
+     * @return
+     */
+    LoginUser loginByQq(UserLoginRequest request);
+
+    /**
+     * 支付宝授权登录
+     * @param request
+     * @return
+     */
+    LoginUser loginByZhiFuBao(UserLoginRequest request);
 }

@@ -2,8 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.system.entity.request.ThirdOauthRequest;
+import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.service.AliNetService;
 import cn.xianyum.system.service.UserService;
@@ -38,9 +39,9 @@ public class AliController {
     @PostMapping("/login")
     @Operation(summary = "支付宝第三方登录")
     @Permission(publicApi = true)
-    public Results<LoginTokenResponse> login(@RequestBody ThirdOauthRequest aliRequest) {
-        LoginUser loginUser = userService.getUserByAli(aliRequest.getAuthCode());
-        return Results.success(userTokenService.createToken(loginUser));
+    public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest aliRequest) {
+        aliRequest.setLoginType(LoginTypeEnum.ZHI_FU_BAO);
+        return Results.success(userTokenService.login(aliRequest));
     }
 
     @PostMapping("/yunXiao/flowCallBack")
@@ -54,7 +55,7 @@ public class AliController {
 
     @PostMapping("/bindUser")
     @Operation(summary = "支付宝绑定用户")
-    public Results<?> bindUser(@RequestBody ThirdOauthRequest aliRequest) {
+    public Results<?> bindUser(@RequestBody UserLoginRequest aliRequest) {
         boolean isSuccess = userService.binAliUser(aliRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");
     }
