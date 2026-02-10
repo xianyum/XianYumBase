@@ -11,6 +11,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-zhifubaozhifu:before {
+  content: "\e634";
+}
+
+.icon-zhifupingtai-zhifubao:before {
+  content: "\e613";
+}
+
+.icon-zhifubao:before {
+  content: "\e607";
+}
+
 .icon-QQ:before {
   content: "\e65e";
 }

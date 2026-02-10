@@ -39,3 +39,20 @@ export function uploadAvatar(data) {
     filePath: data.filePath
   })
 }
+
+// 获取绑定的三方用户列表
+export function getCurrentUserThirdRelation() {
+  return request({
+    url: '/xym-system/v1/userThirdRelation/getCurrentUserThirdRelation',
+    method: 'get'
+  })
+}
+
+// 解绑三方用户
+export function unbindUserThirdRelation(id) {
+  return request({
+    url: '/xym-system/v1/userThirdRelation/unbind',
+    method: 'delete',
+    data: id
+  })
+}
