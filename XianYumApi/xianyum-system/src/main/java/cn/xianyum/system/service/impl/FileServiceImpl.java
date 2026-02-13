@@ -13,12 +13,14 @@ import cn.xianyum.system.service.FileService;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.x.file.storage.core.FileInfo;
+import org.dromara.x.file.storage.core.FileStorageProperties;
 import org.dromara.x.file.storage.core.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,6 +43,11 @@ public class FileServiceImpl implements FileService {
 
     @Value("${redis.file.presigned_url}")
     private String presignedUrlPrefix;
+
+    @Value("${dromara.x-file-storage.custom-domain}")
+    private String customDomain;
+
+
 
     /**
      * 上传文件，并返回文件ID
@@ -84,8 +91,10 @@ public class FileServiceImpl implements FileService {
         }
         String presignedUrl = fileStorageService.generatePresignedUrl(fileInfo, DateUtil.offsetHour(new Date(), 1));
         FileDetailResponse response = BeanUtil.copyProperties(fileInfo, FileDetailResponse.class);
+        List<? extends FileStorageProperties.QiniuKodoConfig> qiniuKodo = fileStorageService.getProperties().getQiniuKodo();
         if (StringUtil.isNotBlank(presignedUrl)) {
-            response.setFileUrl(presignedUrl);
+            String domain = qiniuKodo.get(0).getDomain();
+            response.setFileUrl(presignedUrl.replaceAll(domain,customDomain));
             response.setExpireTime(new Date().getTime() + 3600 * 1000L);
             redisUtils.setMin(redisKey, JSONObject.toJSONString(response), 60);
         }
