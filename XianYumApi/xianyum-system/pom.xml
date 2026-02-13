@@ -24,8 +24,8 @@
 
         <!-- amazon-->
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
         </dependency>
 
         <!-- 增加x-file-storage-->

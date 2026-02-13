@@ -56,7 +56,7 @@
         <mybatis.spring.version>3.0.5</mybatis.spring.version>
         <moquette.version>0.17</moquette.version>
         <x.file.storage.version>2.3.0</x.file.storage.version>
-        <amazon.version>2.29.29</amazon.version>
+        <qiniu.version>7.12.1</qiniu.version>
         <tianai.captcha.version>1.5.4</tianai.captcha.version>
     </properties>
 
@@ -71,11 +71,11 @@
                 <version>${tianai.captcha.version}</version>
             </dependency>
 
-            <!-- amazon云存储-->
+            <!-- 七牛云存储-->
             <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>s3</artifactId>
-                <version>${amazon.version}</version>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu.version}</version>
             </dependency>
 
             <!-- 增加x-file-storage-->
