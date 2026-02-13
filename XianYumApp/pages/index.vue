@@ -76,7 +76,7 @@
           <uni-icons type="close" size="20" color="#999" @tap="closeVersionPopup"></uni-icons>
         </view>
         <!-- 修改：新增scroll-view替代普通view，实现独立滚动 -->
-        <scroll-view class="popup-content" scroll-y="true" :style="{ maxHeight: '600rpx' }">
+        <scroll-view class="popup-content" scroll-y="true" :style="{ maxHeight: '600rpx' }"  @scroll="onScroll">
           <view class="detail-item">
             <text class="label">版本号：</text>
             <text class="value">v{{ currentVersion.version }}</text>
@@ -569,13 +569,9 @@ export default {
     }
 
     .popup-content {
-      flex: 1;
-      // 调整底部内边距，确保滚动到底时不与底部横线重叠
-      padding: 30rpx 40rpx 60rpx 40rpx;
+      height: 600rpx !important;
       box-sizing: border-box;
-      height: 100%;
-      // 关键：恢复滚动，去掉overflow: hidden，交给scroll-view处理
-      overflow-y: auto;
+      padding: 30rpx 40rpx 30rpx 40rpx;
 
       .detail-item {
         margin-bottom: 24rpx;
