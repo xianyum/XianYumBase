@@ -408,8 +408,6 @@ export default {
       height: 100rpx;
       border-radius: 50%;
       border: 4rpx solid rgba(255,255,255,0.3);
-      will-change: transform; // 提前告知浏览器该元素要变换
-      transform: translateZ(0); // 开启硬件加速
     }
   }
 
@@ -490,9 +488,11 @@ export default {
     margin: 0;
 
     .version-list {
+      margin-left: 40rpx; // 和快捷功能区标题的左边距一致
+      margin-right: 40rpx;
       background-color: #fff;
       border-radius: 24rpx;
-      padding: 0 40rpx;
+      padding: 0 30rpx;
       box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
 
       .version-item {
