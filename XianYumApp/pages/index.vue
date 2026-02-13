@@ -35,7 +35,7 @@
 
     <!-- 版本列表 -->
     <view class="version-section">
-      <view class="section-title">版本更新说明</view>
+      <view class="section-title">版本动态</view>
       <view class="version-list">
         <!-- 版本列表项 -->
         <view
@@ -487,12 +487,12 @@ export default {
 
   // 版本列表样式
   .version-section {
-    margin: 0 40rpx;
+    margin: 0;
 
     .version-list {
       background-color: #fff;
       border-radius: 24rpx;
-      padding: 0 30rpx;
+      padding: 0 40rpx;
       box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
 
       .version-item {
