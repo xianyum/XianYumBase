@@ -33,10 +33,8 @@
       </view>
     </view>
 
-    <!-- 版本列表 - 左右滑动切换页码，保持垂直5项样式 -->
     <view class="version-section">
       <view class="section-title">版本动态</view>
-      <!-- 横向滑动容器 - 核心修改 -->
       <scroll-view
           class="version-swipe-container"
           scroll-x="true"
@@ -46,10 +44,8 @@
           show-scrollbar="false"
           :style="{ pointerEvents: loading ? 'none' : 'auto' }"
       >
-        <!-- 固定宽度的内容容器，确保滑动判定准确 -->
         <view class="version-swipe-content">
           <view class="version-list">
-            <!-- 版本列表项 - 保持原有垂直样式 -->
             <view
                 class="version-item"
                 v-for="(item, index) in versionList"
