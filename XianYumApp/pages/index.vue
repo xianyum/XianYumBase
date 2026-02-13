@@ -33,39 +33,58 @@
       </view>
     </view>
 
-    <!-- 版本列表 -->
+    <!-- 版本列表 - 左右滑动切换页码，保持垂直5项样式 -->
     <view class="version-section">
       <view class="section-title">版本动态</view>
-      <view class="version-list">
-        <!-- 版本列表项 -->
-        <view
-            class="version-item"
-            v-for="(item, index) in versionList"
-            :key="index"
-            @tap="showVersionDetail(item)"
-        >
-          <view class="version-content">
-            <text class="version-title">{{ item.updateTitle }}</text>
-            <text class="version-time">{{ formatTime(item.createTime) }}</text>
+      <!-- 横向滑动容器 - 核心修改 -->
+      <scroll-view
+          class="version-swipe-container"
+          scroll-x="true"
+          @touchstart="handleTouchStart"
+          @touchend="handleTouchEnd"
+          scroll-with-animation="true"
+          show-scrollbar="false"
+          :style="{ pointerEvents: loading ? 'none' : 'auto' }"
+      >
+        <!-- 固定宽度的内容容器，确保滑动判定准确 -->
+        <view class="version-swipe-content">
+          <view class="version-list">
+            <!-- 版本列表项 - 保持原有垂直样式 -->
+            <view
+                class="version-item"
+                v-for="(item, index) in versionList"
+                :key="index"
+                @tap="showVersionDetail(item)"
+            >
+              <view class="version-content">
+                <text class="version-title">{{ item.updateTitle }}</text>
+                <text class="version-time">{{ formatTime(item.createTime) }}</text>
+              </view>
+              <uni-icons type="right" size="16" color="#999"></uni-icons>
+            </view>
+
+            <!-- 加载状态 -->
+            <view class="load-more" v-if="loading">
+              <uni-load-more status="loading" />
+            </view>
+
+            <!-- 无更多数据 -->
+            <view class="no-more" v-if="!loading && pageNum >= totalPage && versionList.length > 0">
+              <text>已加载全部版本</text>
+            </view>
+
+            <!-- 无数据 -->
+            <view class="no-data" v-if="versionList.length === 0 && !loading">
+              <text>暂无版本更新记录</text>
+            </view>
+
+            <view class="page-indicator" v-if="total > 0 && !loading">
+              第 {{ pageNum }} 页 / 共 {{ totalPage }} 页,左右滑动切换
+            </view>
+
           </view>
-          <uni-icons type="right" size="16" color="#999"></uni-icons>
         </view>
-
-        <!-- 加载状态 -->
-        <view class="load-more" v-if="loading">
-          <uni-load-more status="loading" />
-        </view>
-
-        <!-- 无更多数据 -->
-        <!--        <view class="no-more" v-if="!loading && hasMore === false && versionList.length > 0">-->
-        <!--          <text>-</text>-->
-        <!--        </view>-->
-
-        <!-- 无数据 -->
-        <!--        <view class="no-data" v-if="versionList.length === 0 && !loading">-->
-        <!--          <text>暂无版本更新记录</text>-->
-        <!--        </view>-->
-      </view>
+      </scroll-view>
     </view>
 
     <!-- 版本详情弹窗 -->
@@ -75,7 +94,6 @@
           <text class="popup-title">版本详情</text>
           <uni-icons type="close" size="20" color="#999" @tap="closeVersionPopup"></uni-icons>
         </view>
-        <!-- 修改：新增scroll-view替代普通view，实现独立滚动 -->
         <scroll-view class="popup-content" scroll-y="true">
           <view class="detail-item">
             <text class="label">版本号：</text>
@@ -151,10 +169,14 @@ export default {
       // 版本列表相关
       versionList: [], // 版本列表数据
       pageNum: 1, // 当前页码
-      pageSize: 5, // 每页条数
+      pageSize: 5, // 每页条数（固定5条）
       total: 0, // 总记录数
+      totalPage: 0, // 总页数
       loading: false, // 加载状态
-      hasMore: true, // 是否有更多数据
+      // 滑动相关
+      touchStartX: 0, // 触摸起始X坐标
+      touchEndX: 0, // 触摸结束X坐标
+      swipeThreshold: 50, // 滑动判定阈值（像素）
       currentVersion: {}, // 当前选中的版本详情
     }
   },
@@ -186,20 +208,38 @@ export default {
   onPullDownRefresh() {
     this.refreshData();
   },
-  // 上拉加载更多
-  onReachBottom() {
-    if (this.hasMore && !this.loading) {
-      this.pageNum++
-      this.getVersionList()
-    }
-  },
   methods: {
-    // 新增：处理弹窗触摸事件，阻止冒泡
+    // ========== 滑动核心逻辑 ==========
+    // 记录触摸起始位置
+    handleTouchStart(e) {
+      this.touchStartX = e.changedTouches[0].clientX;
+    },
+    // 处理触摸结束，判断滑动方向
+    handleTouchEnd(e) {
+      this.touchEndX = e.changedTouches[0].clientX;
+      this.judgeSwipeDirection();
+    },
+    // 判断滑动方向并切换页码
+    judgeSwipeDirection() {
+      const diffX = this.touchEndX - this.touchStartX;
+
+      // 左滑（下一页）：结束位置 < 起始位置，且差值超过阈值
+      if (diffX < -this.swipeThreshold && this.pageNum < this.totalPage) {
+        this.pageNum++;
+        this.getVersionList();
+      }
+      // 右滑（上一页）：结束位置 > 起始位置，且差值超过阈值
+      else if (diffX > this.swipeThreshold && this.pageNum > 1) {
+        this.pageNum--;
+        this.getVersionList();
+      }
+    },
+    // ========== 原有逻辑调整 ==========
+    // 处理弹窗触摸事件，阻止冒泡
     handlePopupTouch(e) {
-      // 阻止事件冒泡到页面，避免触发下拉刷新
       e.stopPropagation();
     },
-    // 获取版本列表（使用正确的分页接口）
+    // 获取版本列表（重写分页逻辑）
     async getVersionList() {
       if (this.loading) return
 
@@ -209,64 +249,52 @@ export default {
         const queryParams = {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          appId: systemInfo.appId // 传递appId筛选对应版本
+          appId: systemInfo.appId
         }
 
-        // 调用分页接口
         const response = await getAppVersionControlPage(queryParams)
         if (response.code === 200) {
-          const data = response.data || []
-          const total = response.total || 0
-
-          // 分页拼接数据
-          if (this.pageNum === 1) {
-            this.versionList = data
-          } else {
-            this.versionList = [...this.versionList, ...data]
-          }
-
-          this.total = total
-          // 判断是否还有更多数据
-          this.hasMore = this.versionList.length < total
+          this.versionList = response.data || [];
+          this.total = response.total || 0;
+          // 计算总页数
+          this.totalPage = Math.ceil(this.total / this.pageSize);
         }
       } catch (error) {
-        console.error('获取版本列表失败：', error)
-        this.$modal.msgError('获取版本记录失败')
+        console.error('获取版本列表失败：', error);
+        this.$modal.msgError('获取版本记录失败');
+        this.versionList = [];
       } finally {
-        this.loading = false
-        // 停止下拉刷新
-        uni.stopPullDownRefresh()
+        this.loading = false;
+        uni.stopPullDownRefresh();
       }
     },
-    // 查看版本详情（可选择调用详情接口或直接使用列表数据）
+    // 查看版本详情
     async showVersionDetail(version) {
-      // 方式1：直接使用列表数据（性能更好）
-      this.currentVersion = version
-      this.$refs.versionPopup.open()
+      this.currentVersion = version;
+      this.$refs.versionPopup.open();
     },
-    // 格式化时间（处理接口返回的UTC时间）
+    // 格式化时间
     formatTime(timeStr) {
-      if (!timeStr) return ''
-      // 处理UTC时间格式，转换为本地时间
-      const date = new Date(timeStr)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hour = String(date.getHours()).padStart(2, '0')
-      const minute = String(date.getMinutes()).padStart(2, '0')
-      return `${year}-${month}-${day} ${hour}:${minute}`
+      if (!timeStr) return '';
+      const date = new Date(timeStr);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hour = String(date.getHours()).padStart(2, '0');
+      const minute = String(date.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hour}:${minute}`;
     },
-    // 格式化更新日志（处理换行符）
+    // 格式化更新日志
     formatUpdateLog(log) {
-      if (!log) return ['暂无更新日志']
-      // 按换行符分割日志内容
-      return log.split('\n').filter(line => line.trim())
+      if (!log) return ['暂无更新日志'];
+      return log.split('\n').filter(line => line.trim());
     },
     // 关闭版本详情弹窗
     closeVersionPopup() {
-      this.$refs.versionPopup.close()
-      this.currentVersion = {}
+      this.$refs.versionPopup.close();
+      this.currentVersion = {};
     },
+    // 检查更新
     handleToUpgrade() {
       // #ifdef APP-PLUS
       const systemInfo = uni.getSystemInfoSync();
@@ -279,17 +307,17 @@ export default {
           this.$modal.closeLoading();
           if (response && response.data) {
             this.updateInfo = response.data;
-            this.showUpdatePopup = true
+            this.showUpdatePopup = true;
           }
-        })
+        });
       }catch(error){
         this.$modal.closeLoading();
       }
       // #endif
     },
+    // 获取统计数据
     async getAllLogCounts() {
       try {
-        // 并行发起所有请求
         const [operLogRes, messageLogRes, jobLogRes,mqttRes] = await Promise.all([
           getOperLogCount(),
           getMessageLogCount(),
@@ -303,39 +331,30 @@ export default {
           { label: '消息发送量', value: messageLogRes.data || 0 },
           { label: '任务调度量', value: jobLogRes.data || 0 }
         ];
-
-        return {
-          operLogCount: operLogRes.data || 0,
-          messageLogCount: messageLogRes.data || 0,
-          jobLogCount: jobLogRes.data || 0
-        };
       } catch (error) {
-        this.operLogCount = 0;
-        this.messageLogCount = 0;
-        this.jobLogCount = 0;
+        console.error('获取统计数据失败：', error);
       }
     },
+    // 刷新数据
     refreshData(){
       try {
-        // 重置分页，重新加载版本列表
-        this.pageNum = 1
-        this.hasMore = true
-        this.getVersionList()
-
+        this.pageNum = 1;
+        this.getVersionList();
         this.getUser();
         this.getAllLogCounts();
         this.handleToUpgrade();
-
         uni.stopPullDownRefresh();
-        this.$modal.msgSuccess("刷新成功")
+        this.$modal.msgSuccess("刷新成功");
       }catch (error) {
         uni.stopPullDownRefresh();
-        this.$modal.msgError("刷新失败")
+        this.$modal.msgError("刷新失败");
       }
     },
+    // 跳转到个人信息
     handleToInfo() {
-      this.$tab.navigateTo('/pages/mine/info/index')
+      this.$tab.navigateTo('/pages/mine/info/index');
     },
+    // 获取用户信息
     async getUser() {
       await getUserProfile().then(response => {
         if (response && response.data) {
@@ -343,10 +362,10 @@ export default {
           if (this.user.avatar) {
             uni.getImageInfo({
               src: this.user.avatar,
-              success: (res) => {
+              success: () => {
                 this.avatarSrc = this.user.avatar;
               },
-              fail: (err) => {
+              fail: () => {
                 this.avatarSrc = this.defaultAvatar;
               }
             });
@@ -356,13 +375,14 @@ export default {
         }
       }).catch(error => {
         console.error('获取用户信息失败：', error);
-      })
+      });
     },
+    // 快捷功能跳转
     handleQuickAction(item) {
       if (item.path) {
         uni.navigateTo({
           url: item.path
-        })
+        });
       }
     }
   }
@@ -483,58 +503,86 @@ export default {
     }
   }
 
-  // 版本列表样式
+  // 版本列表样式 - 保持原有垂直样式，仅添加滑动容器
   .version-section {
     margin: 0;
 
-    .version-list {
-      margin-left: 40rpx; // 和快捷功能区标题的左边距一致
-      margin-right: 40rpx;
-      background-color: #fff;
-      border-radius: 24rpx;
-      padding: 0 30rpx;
-      box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+    // 页码指示器
+    .page-indicator {
+      padding: 10rpx 0 20rpx;
+      text-align: center;
+      font-size: 20rpx;
+      color: #c0c4cc;
+      opacity: 0.7;
+      letter-spacing: 0.5rpx;
+    }
 
-      .version-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 30rpx 0;
-        border-bottom: 2rpx solid #f0f2f5;
+    // 滑动提示
+    .swipe-tip {
+      text-align: center;
+      font-size: 22rpx;
+      color: #409eff;
+      margin-top: 10rpx;
+      opacity: 0.8;
+    }
 
-        &:last-child {
-          border-bottom: none;
-        }
+    // 横向滑动容器 - 仅用于捕获滑动事件，不改变内部布局
+    .version-swipe-container {
+      padding: 0 40rpx;
 
-        .version-content {
-          flex: 1;
-          margin-right: 20rpx;
+      // 固定宽度，确保滑动判定准确
+      .version-swipe-content {
+        width: 100%;
 
-          .version-title {
-            font-size: 28rpx;
-            color: #2c3e50;
-            margin-bottom: 8rpx;
-            display: block;
+        // 版本列表 - 保持原有样式不变
+        .version-list {
+          background-color: #fff;
+          border-radius: 24rpx;
+          padding: 0 30rpx;
+          box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+
+          .version-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 30rpx 0;
+            border-bottom: 2rpx solid #f0f2f5;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .version-content {
+              flex: 1;
+              margin-right: 20rpx;
+
+              .version-title {
+                font-size: 28rpx;
+                color: #2c3e50;
+                margin-bottom: 8rpx;
+                display: block;
+              }
+
+              .version-time {
+                font-size: 24rpx;
+                color: #909399;
+                margin-right: 16rpx;
+              }
+            }
           }
 
-          .version-time {
+          .load-more {
+            padding: 20rpx 0;
+            text-align: center;
+          }
+
+          .no-more, .no-data {
+            padding: 30rpx 0;
+            text-align: center;
             font-size: 24rpx;
             color: #909399;
-            margin-right: 16rpx;
           }
         }
-      }
-
-      .load-more {
-        padding: 20rpx 0;
-        text-align: center;
-      }
-
-      .no-more, .no-data {
-        padding: 30rpx 0;
-        text-align: center;
-        font-size: 24rpx;
-        color: #909399;
       }
     }
   }
