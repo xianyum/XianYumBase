@@ -76,7 +76,7 @@
           <uni-icons type="close" size="20" color="#999" @tap="closeVersionPopup"></uni-icons>
         </view>
         <!-- 修改：新增scroll-view替代普通view，实现独立滚动 -->
-        <scroll-view class="popup-content" scroll-y="true" :style="{ maxHeight: '600rpx' }"  @scroll="onScroll">
+        <scroll-view class="popup-content" scroll-y="true">
           <view class="detail-item">
             <text class="label">版本号：</text>
             <text class="value">v{{ currentVersion.version }}</text>
