@@ -147,7 +147,6 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
      */
     @Override
     public List<Map<String, Object>> getReportLineData(EvDriveRecordsRequest request) {
-        request.setStatus(YesOrNoEnum.YES.getStatus());
         List<Map<String, Object>> resultMap =  this.evDriveRecordsMapper.selectReportLineData(request);
         return resultMap;
     }
