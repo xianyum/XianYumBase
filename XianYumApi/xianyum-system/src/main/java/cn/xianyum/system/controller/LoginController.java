@@ -12,16 +12,15 @@ import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.request.CheckCaptchaRequest;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
+import cn.xianyum.system.entity.response.QrLoginTicketResponse;
 import cn.xianyum.system.service.UserTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
 
 /**
@@ -78,6 +77,50 @@ public class LoginController {
         return response;
     }
 
+
+    /**
+     * 获取二维码登录凭证
+     * @return 获取二维码登录凭证
+     */
+    @GetMapping("/login/qrcode/generate")
+    @Permission(publicApi = true)
+    @Operation(summary = "获取二维码登录凭证")
+    public Results<QrLoginTicketResponse> generateQrCode() {
+        return Results.success(userTokenService.generateQrCode());
+    }
+
+    /**
+     * 扫描二维码
+     * @return 扫描二维码
+     */
+    @GetMapping("/login/qrcode/scan")
+    @Operation(summary = "扫描二维码")
+    public Results<Void> scanQrCode(@RequestParam String ticket) {
+        userTokenService.scanQrCode(ticket);
+        return Results.success();
+    }
+
+    /**
+     * 二维码确认登录
+     * @return 扫描二维码
+     */
+    @GetMapping("/login/qrcode/confirm")
+    @Operation(summary = "二维码确认登录")
+    public Results<Void> confirmQrCode(@RequestParam String ticket) {
+        userTokenService.confirmQrCode(ticket);
+        return Results.success();
+    }
+
+    /**
+     * 二维码状态
+     * @return 二维码状态
+     */
+    @GetMapping("/login/qrcode/status")
+    @Operation(summary = "二维码状态")
+    @Permission(publicApi = true)
+    public Results<QrLoginTicketResponse> getQrCodeStatus(@RequestParam String ticket) {
+        return Results.success(userTokenService.getQrCodeStatus(ticket));
+    }
 
     /**
      * 生成验证码

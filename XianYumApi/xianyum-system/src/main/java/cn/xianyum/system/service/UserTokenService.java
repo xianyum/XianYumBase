@@ -3,6 +3,7 @@ package cn.xianyum.system.service;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
+import cn.xianyum.system.entity.response.QrLoginTicketResponse;
 
 public interface UserTokenService {
 
@@ -83,4 +84,36 @@ public interface UserTokenService {
      * @return
      */
     LoginUser loginByZhiFuBao(UserLoginRequest request);
+
+    /**
+     * 生成二维码登录凭证
+     * @return
+     */
+    QrLoginTicketResponse generateQrCode();
+
+    /**
+     * 扫描二维码
+     *
+     * @return
+     */
+    void scanQrCode(String ticket);
+
+    /**
+     * 二维码确认登录
+     * @param ticket
+     */
+    void confirmQrCode(String ticket);
+
+    /**
+     * 获取二维码状态
+     * @param ticket
+     */
+    QrLoginTicketResponse getQrCodeStatus(String ticket);
+
+    /**
+     * 二维码登录
+     * @param request
+     * @return
+     */
+    LoginUser loginByQr(UserLoginRequest request);
 }

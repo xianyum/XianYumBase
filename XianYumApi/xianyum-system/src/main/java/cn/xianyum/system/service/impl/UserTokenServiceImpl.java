@@ -2,8 +2,10 @@ package cn.xianyum.system.service.impl;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
+import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.common.enums.QrCodeLoginStatus;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -13,6 +15,7 @@ import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
+import cn.xianyum.system.entity.response.QrLoginTicketResponse;
 import cn.xianyum.system.service.MenuService;
 import cn.xianyum.system.service.RoleService;
 import cn.xianyum.system.service.UserService;
@@ -46,6 +49,9 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Value("${redis.token.credentials_prefix:credentials_prefix}")
     private String credentialsPrefix;
+
+    @Value("${redis.token.qr_ticket}")
+    private String qrTicketPrefix;
 
     @Resource
     private RedisUtils redisUtils;
@@ -163,6 +169,7 @@ public class UserTokenServiceImpl implements UserTokenService {
             case EMAIL -> this.loginEmail(request);
             case QQ -> this.loginByQq(request);
             case ZHI_FU_BAO -> this.loginByZhiFuBao(request);
+            case QR -> this.loginByQr(request);
         };
         return this.createToken(loginUserEntity);
     }
@@ -250,6 +257,104 @@ public class UserTokenServiceImpl implements UserTokenService {
     public LoginUser loginByZhiFuBao(UserLoginRequest request) {
         LoginUser user = SpringUtils.getBean(UserService.class).getUserByAli(request.getAuthCode());
         UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
+        // 第三步：构建认证信息（密码置空，跳过密码校验）
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        // 设置认证上下文
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        loginUserEntity.setLoginType(request.getLoginType().getAccountType());
+        return loginUserEntity;
+    }
+
+    /**
+     * 生成二维码登录凭证
+     *
+     * @return
+     */
+    @Override
+    public QrLoginTicketResponse generateQrCode() {
+        QrLoginTicketResponse qrLoginTicketResponse = new QrLoginTicketResponse();
+        String qrTicket = IdUtil.getSnowflakeNextIdStr();
+        qrLoginTicketResponse.setLoginStatus(QrCodeLoginStatus.UNSCANNED);
+        qrLoginTicketResponse.setTicket(qrTicket);
+        String redisKey = String.format(qrTicketPrefix, qrTicket);
+        redisUtils.setMin(redisKey,JSONObject.toJSONString(qrLoginTicketResponse),2);
+        return qrLoginTicketResponse;
+    }
+
+    /**
+     * 扫描二维码
+     *
+     * @return
+     */
+    @Override
+    public void scanQrCode(String ticket) {
+        String redisKey = String.format(qrTicketPrefix, ticket);
+        if(!redisUtils.hasKey(redisKey)){
+            throw new SoException("二维码过期，请刷新");
+        }
+        QrLoginTicketResponse qrLoginTicketResponse = JSONObject.parseObject(redisUtils.getString(redisKey), QrLoginTicketResponse.class);
+        if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.UNSCANNED)){
+            throw new SoException("二维码已被使用，请刷新");
+        }
+        qrLoginTicketResponse.setLoginStatus(QrCodeLoginStatus.SCANNED);
+        redisUtils.setMin(redisKey,JSONObject.toJSONString(qrLoginTicketResponse),2);
+    }
+
+    /**
+     * 二维码确认登录
+     *
+     * @param ticket
+     */
+    @Override
+    public void confirmQrCode(String ticket) {
+        String redisKey = String.format(qrTicketPrefix, ticket);
+        if(!redisUtils.hasKey(redisKey)){
+            throw new SoException("二维码过期，请刷新");
+        }
+        QrLoginTicketResponse qrLoginTicketResponse = JSONObject.parseObject(redisUtils.getString(redisKey), QrLoginTicketResponse.class);
+        if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.SCANNED)){
+            throw new SoException("二维码已被使用，请刷新");
+        }
+        qrLoginTicketResponse.setUserName(SecurityUtils.getLoginUser().getUsername());
+        qrLoginTicketResponse.setLoginStatus(QrCodeLoginStatus.CONFIRMED);
+        redisUtils.setMin(redisKey,JSONObject.toJSONString(qrLoginTicketResponse),2);
+    }
+
+    /**
+     * 二维码确认登录
+     *
+     * @param ticket
+     */
+    @Override
+    public QrLoginTicketResponse getQrCodeStatus(String ticket) {
+        String redisKey = String.format(qrTicketPrefix, ticket);
+        QrLoginTicketResponse response = new QrLoginTicketResponse();
+        if(!redisUtils.hasKey(redisKey)){
+            response.setLoginStatus(QrCodeLoginStatus.EXPIRED);
+            return response;
+        }
+        response = JSONObject.parseObject(redisUtils.getString(redisKey), QrLoginTicketResponse.class);
+        return response;
+    }
+
+    /**
+     * 二维码登录
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public LoginUser loginByQr(UserLoginRequest request) {
+        String redisKey = String.format(qrTicketPrefix, request.getAuthCode());
+        if(!redisUtils.hasKey(redisKey)){
+            throw new SoException("二维码过期，请刷新");
+        }
+        QrLoginTicketResponse qrLoginTicketResponse = JSONObject.parseObject(redisUtils.getString(redisKey), QrLoginTicketResponse.class);
+        if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.CONFIRMED) || StringUtil.isBlank(qrLoginTicketResponse.getUserName())){
+            throw new SoException("二维码过期，请刷新");
+        }
+        UserDetails userDetails = SpringUtils.getBean(UserDetailsService.class).loadUserByUsername(qrLoginTicketResponse.getUserName());
         // 第三步：构建认证信息（密码置空，跳过密码校验）
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         // 设置认证上下文

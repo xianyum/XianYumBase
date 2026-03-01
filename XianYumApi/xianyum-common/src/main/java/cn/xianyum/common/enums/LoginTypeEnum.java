@@ -14,7 +14,8 @@ public enum LoginTypeEnum {
     ZHI_FU_BAO("1","支付宝"),
     QQ("2","QQ"),
     XIAN_YU("3","咸鱼客户端"),
-    EMAIL("4","邮箱验证码登录");
+    EMAIL("4","邮箱验证码登录"),
+    QR("5","二维码登录");
 
     private String loginType;
 
