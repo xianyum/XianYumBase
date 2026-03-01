@@ -1,10 +1,5 @@
 <template>
   <view class="container">
-    <!-- 页面标题 -->
-    <view class="page-header">
-      <text class="title">服务器监控</text>
-    </view>
-
     <!-- CPU信息卡片 -->
     <view class="card">
       <view class="card-header">
@@ -268,17 +263,6 @@ $color-card: #fff;
   padding: $base-padding;
   background: $color-bg;
   min-height: 100vh;
-
-  // 页面标题
-  .page-header {
-    margin-bottom: 30rpx;
-    text-align: center;
-    .title {
-      font-size: $font-xl;
-      font-weight: bold;
-      color: $color-text;
-    }
-  }
 
   // 并排卡片容器
   .card-row {

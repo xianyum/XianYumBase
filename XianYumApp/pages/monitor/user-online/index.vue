@@ -31,7 +31,11 @@
         <view class="user-online-info">
           <view class="info-row">
             <text class="label">登录账号：</text>
-            <text class="value">{{ item.username}}</text>
+            <!-- 使用公共方法翻译登录类型 -->
+            <text class="value">
+              {{ item.username }}
+              <text v-if="item.loginType" class="login-type-tag">({{ getDictLabel('sys_user_login_type', item.loginType) }})</text>
+            </text>
           </view>
           <view class="info-row">
             <text class="label">登录地点：</text>
@@ -76,9 +80,10 @@
 </template>
 
 <script>
-
 import { queryUserOnlinePage, forceLogout } from '@/api/monitor/user-online'
 import { checkPermi } from '@/utils/permission'
+// 导入公共字典工具
+import { getDictData, getDictLabel } from '@/utils/dict';
 
 export default {
   data() {
@@ -101,9 +106,17 @@ export default {
     }
   },
   onLoad() {
+    // 初始化获取登录类型字典（会自动缓存）
+    this.initDictData();
     this.getList()
   },
   methods: {
+    // 初始化字典数据（可同时加载多个字典）
+    async initDictData() {
+      await getDictData('sys_user_login_type');
+    },
+    // 直接使用公共方法（无需在当前页面定义）
+    getDictLabel,
     checkPermi,
     async handleDelete(item) {
       const res = await this.$modal.confirm(`确定踢出【${item.username}】吗？`)
@@ -117,9 +130,7 @@ export default {
       }
     },
     isCurrentDevice(item) {
-      // 先判空，避免null/undefined对比出错
       if (!item?.token || !this.$store.getters.token) return false;
-      // 严格对比token
       return item.token === this.$store.getters.token;
     },
     // 获取列表数据
@@ -127,22 +138,20 @@ export default {
       if (this.loading) return
       this.loading = true
       try {
-        queryUserOnlinePage(this.queryParams).then(response => {
-          if (response.code === 200) {
-            const list = response.data
-            const total = response.total
+        const response = await queryUserOnlinePage(this.queryParams);
+        if (response.code === 200) {
+          const list = response.data
+          const total = response.total
 
-            if (type === 'refresh' || this.queryParams.pageNum === 1) {
-              this.userOnlineList = list
-            } else {
-              this.userOnlineList = [...this.userOnlineList, ...list]
-            }
-            this.total = total
-            this.hasMore = this.userOnlineList.length < total
-            this.loadMoreStatus = this.hasMore ? 'more' : 'noMore'
+          if (type === 'refresh' || this.queryParams.pageNum === 1) {
+            this.userOnlineList = list
+          } else {
+            this.userOnlineList = [...this.userOnlineList, ...list]
           }
-        });
-
+          this.total = total
+          this.hasMore = this.userOnlineList.length < total
+          this.loadMoreStatus = this.hasMore ? 'more' : 'noMore'
+        }
       } catch (error) {
         this.loadMoreStatus = 'more'
         uni.showToast({
@@ -164,7 +173,6 @@ export default {
       this.loadMoreStatus = 'more'
       this.getList('refresh')
     },
-
     // 重置
     resetQuery() {
       this.queryParams = {
@@ -174,7 +182,6 @@ export default {
       }
       this.handleQuery()
     },
-
     // 下拉刷新
     onPullDownRefresh() {
       this.queryParams.pageNum = 1
@@ -182,7 +189,6 @@ export default {
       this.hasMore = true
       this.getList('refresh')
     },
-
     // 上拉加载更多
     onReachBottom() {
       if (this.hasMore && !this.loading) {
@@ -195,6 +201,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// 样式部分不变，保留原有样式
+.login-type-tag {
+  color: #909399;
+  font-size: 24rpx;
+  font-weight: normal;
+  margin-left: 8rpx;
+}
+
 .user-online-container {
   padding: 20rpx;
   background-color: #f5f5f5;
@@ -328,13 +342,13 @@ export default {
       box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
 
       .user-online-info {
-        padding-right: 100rpx; // 为操作按钮预留空间
+        padding-right: 100rpx;
 
         .info-row {
           display: flex;
-          align-items: center; // 核心：让label和value垂直居中
+          align-items: center;
           margin-bottom: 16rpx;
-          line-height: 1.5; // 统一行高，避免文字行高不一致导致错位
+          line-height: 1.5;
 
           &:last-child {
             margin-bottom: 0;
@@ -344,8 +358,8 @@ export default {
             width: 140rpx;
             font-size: 28rpx;
             color: #606266;
-            flex-shrink: 0; // 防止label宽度被压缩
-            text-align: justify; // 让label文字对齐更整齐（可选）
+            flex-shrink: 0;
+            text-align: justify;
           }
 
           .value {
@@ -353,7 +367,6 @@ export default {
             font-size: 28rpx;
             color: #2c3e50;
             font-weight: 500;
-            // 可选：如果value文字过长，自动换行并对齐
             word-break: break-all;
 
             &.text-success {
@@ -439,4 +452,3 @@ export default {
   }
 }
 </style>
-
