@@ -81,3 +81,31 @@ export function qqLogin(data) {
     data: data
   })
 }
+
+
+/**
+ * 二维码扫描操作
+ * @param query
+ * @returns {Promise | Promise<unknown>}
+ */
+export function scanQrCode(query) {
+  return request({
+    url: '/login/qrcode/scan',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
+ * 二维码确认登录
+ * @param query
+ * @returns {Promise | Promise<unknown>}
+ */
+export function confirmQrCode(query) {
+  return request({
+    url: '/login/qrcode/confirm',
+    method: 'get',
+    params: query
+  })
+}
+

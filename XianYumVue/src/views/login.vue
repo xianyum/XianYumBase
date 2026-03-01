@@ -235,6 +235,7 @@ export default {
 
     // 刷新二维码
     refreshQrcode() {
+      this.qrcodeStatus = '';
       this.qrcodeSrc = '';
       this.clearQrcodeCheckTimer();
       this.generateQrcode();

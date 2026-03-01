@@ -2,7 +2,6 @@ package cn.xianyum.system.entity.request;
 
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.system.entity.dto.QqUserInfoDto;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -13,7 +12,6 @@ import lombok.Data;
 public class UserLoginRequest {
 
     /** 账号 */
-    @NotBlank(message = "账号/邮箱号不能为空")
     private String username;
 
     /** 密码 */

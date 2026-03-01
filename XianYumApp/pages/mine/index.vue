@@ -106,6 +106,7 @@
 <script>
 import defaultAvatar from '@/static/images/profile.jpg'
 import { getUserProfile } from "@/api/system/user";
+import {confirmQrCode, scanQrCode} from "@/api/login";
 
 export default {
   name: 'mine-page',
@@ -129,29 +130,36 @@ export default {
       uni.scanCode({
         scanType: ['barCode', 'qrCode'],
         success: (res) => {
-          // 新增：弹窗展示扫码内容
-          uni.showModal({
-            title: '扫码结果',
-            content: `码类型：${res.scanType}\n内容：${res.result}`,
-            showCancel: true,
-            cancelText: '关闭',
-            confirmText: '复制内容',
-            success: (modalRes) => {
-              if (modalRes.confirm) {
-                // 点击确认按钮，复制扫码内容到剪贴板
-                uni.setClipboardData({
-                  data: res.result,
-                  success: () => {
-                    uni.showToast({
-                      title: '内容已复制',
-                      icon: 'success',
-                      duration: 2000
-                    })
-                  }
-                })
+          const scanResult = res.result || '';
+          // 判断是否包含登录ticket
+          if (scanResult.includes('login?ticket=')) {
+            const ticket = this.extractTicket(scanResult);
+            this.showLoginConfirm(ticket);
+          } else {
+            // 原有逻辑：展示扫码结果
+            uni.showModal({
+              title: '扫码结果',
+              content: `码类型：${res.scanType}\n内容：${scanResult}`,
+              showCancel: true,
+              cancelText: '关闭',
+              confirmText: '复制内容',
+              success: (modalRes) => {
+                if (modalRes.confirm) {
+                  // 点击确认按钮，复制扫码内容到剪贴板
+                  uni.setClipboardData({
+                    data: scanResult,
+                    success: () => {
+                      uni.showToast({
+                        title: '内容已复制',
+                        icon: 'success',
+                        duration: 2000
+                      })
+                    }
+                  })
+                }
               }
-            }
-          })
+            })
+          }
         },
         fail: (err) => {
           // 区分取消扫码和扫码失败
@@ -162,6 +170,34 @@ export default {
               duration: 2000
             })
           }
+        }
+      })
+    },
+    // 提取ticket参数的辅助方法
+    extractTicket(url) {
+      if (!url) return '';
+      const regex = /ticket=([^&]*)/;
+      const match = url.match(regex);
+      return match ? match[1] : '';
+    },
+    // 展示确认登录弹窗
+    showLoginConfirm(ticket) {
+      const requestData = {
+        "ticket": ticket
+      }
+      const userName = this.$store.getters.name || '当前用户';
+      scanQrCode(requestData).then((res) => {
+        this.$modal.confirm(`是否确认[${userName}]在PC端登录?`, "确认登录").then(() => {
+          // 点击确认登录后的逻辑
+          this.handleQrLogin(requestData);
+        })
+      });
+    },
+    // 处理二维码登录逻辑
+    async handleQrLogin(requestData) {
+      confirmQrCode(requestData).then((res) => {
+        if (res.code === 200){
+          this.$modal.msgSuccess("登录成功")
         }
       })
     },

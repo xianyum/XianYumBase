@@ -6,6 +6,8 @@ import { showErrorToast, showConfirm, tansParams } from '@/utils/common'
 
 let timeout = 10000
 const baseUrl = config.baseUrl
+// 新增：全局锁，标记是否已经弹出登录过期确认框
+let isShowingLoginExpireConfirm = false
 
 const request = config => {
   // 是否需要设置 token
@@ -22,51 +24,57 @@ const request = config => {
   }
   return new Promise((resolve, reject) => {
     uni.request({
-        method: config.method || 'get',
-        timeout: config.timeout ||  timeout,
-        url: config.baseUrl || baseUrl + config.url,
-        data: config.data,
-        header: config.header,
-        dataType: 'json'
-      }).then(response => {
-        let [error, res] = response
-        if (error) {
-          showErrorToast('网络异常,请稍后重试')
-          reject('后端接口连接异常')
-          return
-        }
-        const code = res.data.code || 200
-        const msg = errorCode[code] || res.data.msg || errorCode['default']
-        if (code === 401) {
+      method: config.method || 'get',
+      timeout: config.timeout ||  timeout,
+      url: config.baseUrl || baseUrl + config.url,
+      data: config.data,
+      header: config.header,
+      dataType: 'json'
+    }).then(response => {
+      let [error, res] = response
+      if (error) {
+        showErrorToast('网络异常,请稍后重试')
+        reject('后端接口连接异常')
+        return
+      }
+      const code = res.data.code || 200
+      const msg = errorCode[code] || res.data.msg || errorCode['default']
+      if (code === 401) {
+        if (!isShowingLoginExpireConfirm) {
+          isShowingLoginExpireConfirm = true
           showConfirm('登录状态已过期，您可以继续留在该页面，或者重新登录?').then(res => {
+            isShowingLoginExpireConfirm = false
             if (res.confirm) {
               store.dispatch('LogOut').then(res => {
                 uni.reLaunch({ url: '/pages/login' })
               })
             }
+          }).catch(() => {
+            isShowingLoginExpireConfirm = false
           })
-          reject('无效的会话，或者会话已过期，请重新登录。')
-        } else if (code === 500) {
-          showErrorToast(msg)
-          reject('500')
-        } else if (code !== 200) {
-          showErrorToast(msg)
-          reject(code)
         }
-        resolve(res.data)
-      })
-      .catch(error => {
-        let { message } = error
-        if (message === 'Network Error') {
-          message = '后端接口连接异常'
-        } else if (message.includes('timeout')) {
-          message = '系统接口请求超时'
-        } else if (message.includes('Request failed with status code')) {
-          message = '系统接口' + message.substr(message.length - 3) + '异常'
-        }
-        showErrorToast(message)
-        reject(error)
-      })
+        reject('无效的会话，或者会话已过期，请重新登录。')
+      } else if (code === 500) {
+        showErrorToast(msg)
+        reject('500')
+      } else if (code !== 200) {
+        showErrorToast(msg)
+        reject(code)
+      }
+      resolve(res.data)
+    })
+        .catch(error => {
+          let { message } = error
+          if (message === 'Network Error') {
+            message = '后端接口连接异常'
+          } else if (message.includes('timeout')) {
+            message = '系统接口请求超时'
+          } else if (message.includes('Request failed with status code')) {
+            message = '系统接口' + message.substr(message.length - 3) + '异常'
+          }
+          showErrorToast(message)
+          reject(error)
+        })
   })
 }
 
