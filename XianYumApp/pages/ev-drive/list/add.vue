@@ -63,7 +63,7 @@ export default {
   data() {
     return {
       value: [0,2],
-      range: [{"value": 0,"text": "篮球"	},{"value": 1,"text": "足球"},{"value": 2,"text": "游泳"}],
+      range: [],
       // 表单核心数据
       formData: {
         driveDate: '',
@@ -104,7 +104,8 @@ export default {
   },
   onLoad() {
     // 初始化当前日期，确保格式为yyyy-MM-dd
-    this.endDate = formatTime(new Date(), '{y}-{m}-{d}');
+    const oneDayMs = 24 * 60 * 60 * 1000; // 一天的毫秒数
+    this.endDate = formatTime(new Date() - oneDayMs, '{y}-{m}-{d}');
     this.driveDateValue = this.endDate;
     // 初始化默认选中当天日期
     this.formData.driveDate = this.endDate;
