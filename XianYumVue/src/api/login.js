@@ -1,13 +1,15 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(username, password, verifyCode, uuid,captchaVerification) {
+export function login(username, password, verifyCode, uuid,captchaVerification,authCode,loginType) {
   const data = {
     username,
     password,
     verifyCode,
     uuid,
-    captchaVerification
+    captchaVerification,
+    authCode,
+    loginType
   }
   return request({
     url: '/login',
@@ -78,3 +80,21 @@ export function qqLogin(data) {
     data: data
   })
 }
+
+
+export function getQrcodeTicket() {
+  return request({
+    url: '/login/qrcode/generate',
+    method: 'get'
+  })
+}
+
+export function checkQrcodeStatus(query) {
+  return request({
+    url: '/login/qrcode/status',
+    method: 'get',
+    params: query
+  })
+}
+
+

@@ -42,8 +42,10 @@ const user = {
       const verifyCode = userInfo.verifyCode
       const uuid = userInfo.uuid
       const captchaVerification = userInfo.captchaVerification
+      const authCode = userInfo.authCode
+      const loginType = userInfo.loginType
       return new Promise((resolve, reject) => {
-        login(username, password, verifyCode, uuid,captchaVerification).then(res => {
+        login(username, password, verifyCode, uuid,captchaVerification,authCode,loginType).then(res => {
           setToken(res.data.token)
           commit('SET_TOKEN', res.data.token)
           resolve()
