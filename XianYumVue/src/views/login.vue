@@ -51,7 +51,7 @@
               <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
             </el-input>
           </el-form-item>
-          <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+          <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 20px 0px;">记住密码</el-checkbox>
 
           <div id="captcha-mask" v-show="showCaptchaMask">
             <div id="captcha-box"></div>
@@ -94,7 +94,7 @@
           </div>
           <!-- 加载中状态 -->
           <div v-else class="qrcode-loading">
-            <i class="el-icon-loading" style="font-size: 30px; margin-bottom: 10px;"></i>
+            <i class="el-icon-loading" style="font-size: 24px; margin-bottom: 8px;"></i>
             <p>正在生成二维码...</p>
           </div>
           <p class="qrcode-tip">请使用XianYum App扫码登录</p>
@@ -370,45 +370,53 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
   background-image: url("https://api.kdcc.cn/img/");
   background-size: cover;
+  background-position: center;
 
   .login-container {
-    width: 400px;
+    width: 350px; /* 缩小登录框宽度，从400px改为350px */
     background: #ffffff;
-    border-radius: 6px;
+    border-radius: 12px; /* 增大圆角，更精致 */
     padding: 0;
     overflow: hidden;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08); /* 优化阴影，更柔和 */
+    transition: all 0.3s ease; /* 添加过渡效果 */
+
+    &:hover {
+      box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.12); /* 悬浮阴影增强 */
+    }
   }
 
   // 顶部标题样式
   .main-title {
     text-align: center;
-    color: #707070;
-    margin: 30px 0;
-    font-size: 20px;
+    color: #333; /* 加深标题颜色 */
+    margin: 24px 0 16px 0; /* 调整间距，更紧凑 */
+    font-size: 18px; /* 缩小字体 */
     font-weight: 600;
+    letter-spacing: 0.5px; /* 增加字间距，更精致 */
   }
 
   // 登录Tab样式
   .login-tabs {
     display: flex;
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid #f0f0f0; /* 更浅的边框色 */
 
     .login-tab-item {
       flex: 1;
       text-align: center;
-      padding: 15px 0;
+      padding: 12px 0; /* 缩小内边距 */
       cursor: pointer;
       position: relative;
-      font-size: 16px;
-      color: #606266;
-      transition: color 0.2s;
+      font-size: 15px; /* 缩小字体 */
+      color: #666;
+      transition: all 0.2s ease; /* 过渡效果 */
 
       &:hover {
         color: #1890ff;
+        background-color: #f8f9fa; /* 悬浮背景色 */
       }
 
       &.active {
@@ -423,6 +431,7 @@ export default {
           width: 100%;
           height: 2px;
           background-color: #1890ff;
+          border-radius: 1px; /* 下划线圆角 */
         }
       }
     }
@@ -430,34 +439,45 @@ export default {
 
   // 密码登录表单容器
   .login-form {
-    padding: 25px 25px 5px 25px;
+    padding: 20px 24px 10px 24px; /* 调整内边距 */
 
     .el-input {
-      height: 38px;
+      height: 36px; /* 缩小输入框高度 */
       input {
-        height: 38px;
+        height: 36px;
+        font-size: 14px; /* 输入框字体大小 */
+      }
+
+      &:focus-within {
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1); /* 聚焦阴影 */
+        border-radius: 4px;
       }
     }
 
     .input-icon {
-      height: 39px;
+      height: 37px;
       width: 14px;
       margin-left: 2px;
+      color: #999; /* 图标颜色 */
     }
   }
 
   // 扫码登录面板样式
   .qrcode-login-panel {
     text-align: center;
-    padding: 25px 25px 5px 25px;
+    padding: 20px 24px 10px 24px; /* 调整内边距 */
 
     .qrcode-container {
-      padding: 20px 0;
+      padding: 16px 0; /* 调整内边距 */
 
       .qrcode-img {
         margin: 0 auto;
-        width: 200px;
-        height: 200px;
+        width: 160px; /* 缩小二维码尺寸 */
+        height: 160px;
+        padding: 8px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
         img {
           width: 100%;
@@ -466,30 +486,36 @@ export default {
       }
 
       .qrcode-loading {
-        height: 200px;
+        height: 160px; /* 对应二维码高度 */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         color: #666;
+        font-size: 13px;
       }
 
       .qrcode-tip {
-        margin: 10px 0;
+        margin: 8px 0; /* 调整间距 */
         color: #666;
-        font-size: 14px;
+        font-size: 13px; /* 缩小字体 */
       }
 
       .refresh-qrcode-btn {
         color: #1890ff;
         font-size: 13px;
+        margin-top: 4px;
+
+        &:hover {
+          color: #096dd9; /* 加深hover颜色 */
+        }
       }
     }
 
     .qrcode-status {
-      margin-top: 10px;
+      margin-top: 8px; /* 调整间距 */
       color: #666;
-      font-size: 14px;
+      font-size: 13px; /* 缩小字体 */
     }
   }
 
@@ -500,14 +526,14 @@ export default {
 }
 
 .login-tip {
-  font-size: 13px;
+  font-size: 12px; /* 缩小字体 */
   text-align: center;
-  color: #bfbfbf;
+  color: #999; /* 调整颜色 */
 }
 
 .login-code {
   width: 33%;
-  height: 38px;
+  height: 36px; /* 对应输入框高度 */
   float: right;
 
   img {
@@ -517,55 +543,66 @@ export default {
 }
 
 .el-login-footer {
-  height: 40px;
-  line-height: 40px;
+  height: 36px; /* 缩小高度 */
+  line-height: 36px;
   position: fixed;
   bottom: 0;
   width: 100%;
   text-align: center;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.8); /* 调整透明度 */
   font-family: Arial;
-  font-size: 12px;
-  letter-spacing: 1px;
+  font-size: 11px; /* 缩小字体 */
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.1); /* 底部背景 */
 }
 
 .login-code-img {
-  height: 38px;
+  height: 36px; /* 对应输入框高度 */
 }
 
 .other_info {
-  height: 60px;
+  height: 50px; /* 缩小高度 */
   width: 100%;
-  line-height: 60px;
+  line-height: 50px;
   text-align: center;
+  margin-top: 8px;
 }
 
 .other_info .other_line {
-  color: #8c92a4;
+  color: #eee; /* 调整分割线颜色 */
   display: inline-block;
-  width: 100px;
-  border-top: 1px solid #ccc;
+  width: 80px; /* 缩短分割线 */
+  border-top: 1px solid #eee;
+  margin: 0 8px; /* 调整间距 */
 }
 
 .other_info .other_login {
-  color: #686868;
+  color: #999; /* 调整颜色 */
   vertical-align: -4px;
+  font-size: 13px; /* 缩小字体 */
 }
 
 .icon_style {
-  font-size: 40px;
+  font-size: 32px; /* 缩小图标尺寸 */
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.08); /* 悬浮放大 */
+    color: #1890ff; /* 悬浮变色 */
+  }
 }
 
 .other_login_info {
   display: inline-block;
-  width: 90px;
+  width: 70px; /* 调整宽度 */
   height: 2px;
   line-height: 40px;
   text-align: center;
   padding-top: 1px;
   border-radius: 4px;
-  margin-bottom: 20px;
-  margin-left: 18px;
+  margin-bottom: 16px; /* 调整间距 */
+  margin-left: 14px; /* 调整间距 */
+  color: #666; /* 图标默认颜色 */
 }
 
 #captcha-mask {
@@ -576,8 +613,9 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.53);
+  background-color: rgba(0, 0, 0, 0.5); /* 调整透明度 */
   justify-content: center;
   align-items: center;
+  border-radius: 12px; /* 适配登录框圆角 */
 }
 </style>
