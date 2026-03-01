@@ -182,6 +182,12 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginPwd(UserLoginRequest request) {
+        if(StringUtil.isBlank(request.getUsername()) || StringUtil.isBlank(request.getPassword())){
+            throw new SoException("账号密码不能为空");
+        }
+        if(StringUtil.isBlank(request.getVerifyCode())){
+            throw new SoException("未通过验证码校验");
+        }
         Authentication authentication;
         try {
             boolean valid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(request.getVerifyCode());
@@ -210,6 +216,9 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginEmail(UserLoginRequest request) {
+        if(StringUtil.isBlank(request.getUsername())){
+            throw new SoException("邮箱账号不能为空");
+        }
         String redisKey = String.format(credentialsPrefix,request.getUsername());
         if(!redisUtils.hasKey(redisKey)){
             throw new SoException("验证码已过期");

@@ -42,7 +42,7 @@ public class RequestLogInterceptor {
     @Autowired
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
-    public static final List<String> FILTER_URLS = Arrays.asList("/xym-extension/v1/ip/getIpInfo");
+    public static final List<String> IGNORE_FILTER_URLS = Arrays.asList("/xym-extension/v1/ip/getIpInfo","/login/qrcode/status");
 
     @Pointcut("execution(* cn.xianyum.*.controller.*.*(..))")
     private void executeRequestLog() {
@@ -58,7 +58,7 @@ public class RequestLogInterceptor {
         String requestUri = HttpContextUtils.getHttpServletRequest().getRequestURI();
         String requestParam = getMethodArgs(joinPoint);
         LoginUser loginUser = Optional.ofNullable(SecurityUtils.getLoginUser()).orElse(new LoginUser());
-        if(!FILTER_URLS.contains(requestUri)){
+        if(!IGNORE_FILTER_URLS.contains(requestUri)){
             log.info("requestUri:{},cost:{}ms,userId:{},requestParam:{}", requestUri, time,loginUser.getId(),requestParam);
         }
         //保存日志

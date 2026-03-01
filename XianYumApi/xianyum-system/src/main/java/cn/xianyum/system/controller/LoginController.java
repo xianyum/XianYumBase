@@ -43,7 +43,7 @@ public class LoginController {
     @PostMapping("/login")
     @Operation(summary = "登录系统")
     @Permission(publicApi = true)
-    public Results<LoginTokenResponse> login(@RequestBody @Valid UserLoginRequest request) {
+    public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
         return Results.success(this.userTokenService.login(request));
     }
 
