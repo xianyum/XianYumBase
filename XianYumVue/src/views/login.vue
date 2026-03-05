@@ -101,6 +101,10 @@
           <!-- 二维码显示区域 -->
           <div v-if="qrcodeSrc" class="qrcode-img">
             <img :src="qrcodeSrc" alt="扫码登录二维码" />
+            <div v-if="isLoginLoading" class="login-loading-mask">
+              <i class="el-icon-loading"></i>
+              <span>登录中...</span>
+            </div>
           </div>
           <!-- 加载中状态 -->
           <div v-else class="qrcode-loading">
@@ -150,7 +154,7 @@ export default {
       qrcodeTicket: '',
       qrcodeStatus: '',
       qrcodeCheckTimer: null,
-
+      isLoginLoading: false,
       loginForm: {
         username: "xianyu",
         password: "123456",
@@ -263,6 +267,7 @@ export default {
                 this.qrcodeStatus = '已扫码，请在手机上确认登录';
                 break;
               case 'CONFIRMED':
+                this.isLoginLoading = true;
                 this.qrcodeStatus = '登录成功，正在跳转...';
                 this.clearQrcodeCheckTimer();
                 // 登录成功，获取token并跳转
@@ -272,7 +277,9 @@ export default {
                 }
                 this.$store.dispatch("Login", loginData).then(() => {
                   this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-                }).finally(() => {});
+                }).finally(() => {
+                  this.isLoginLoading = false;
+                });
                 break;
               case 'EXPIRED':
                 this.qrcodeStatus = '二维码已过期，请刷新';
@@ -494,6 +501,35 @@ export default {
           width: 100%;
           height: 100%;
         }
+
+        position: relative; // 新增：让遮罩相对二维码定位
+
+        .login-loading-mask {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.8);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          border-radius: 8px;
+          z-index: 10;
+
+          .el-icon-loading {
+            font-size: 24px;
+            margin-bottom: 8px;
+            animation: rotate 1s linear infinite;
+            color: #1890ff;
+          }
+
+          span {
+            font-size: 12px;
+            color: #666;
+          }
+        }
       }
 
       .qrcode-loading {
@@ -651,5 +687,10 @@ export default {
   justify-content: center;
   align-items: center;
   border-radius: 12px;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
