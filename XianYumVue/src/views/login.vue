@@ -95,7 +95,7 @@
         </div>
       </div>
 
-      <!-- 扫码登录面板 -->
+      <!-- 扫码登录面板（仅修改此处结构+样式） -->
       <div v-show="activeTab === 'qrcode'" class="qrcode-login-panel">
         <div class="qrcode-container">
           <!-- 二维码显示区域 -->
@@ -112,18 +112,21 @@
             <p>正在生成二维码...</p>
           </div>
           <p class="qrcode-tip">请使用XianYum App扫码登录</p>
-          <!-- 刷新二维码按钮 -->
-          <el-button
-            type="text"
-            @click="refreshQrcode"
-            class="refresh-qrcode-btn"
-          >
-            刷新二维码
-          </el-button>
-        </div>
-        <!-- 登录状态提示 -->
-        <div v-if="qrcodeStatus" class="qrcode-status">
-          {{ qrcodeStatus }}
+          
+          <div class="qrcode-actions">
+            <el-button
+              type="text"
+              @click="refreshQrcode"
+              class="refresh-qrcode-btn"
+            >
+              刷新二维码
+            </el-button>
+            <!-- 登录状态提示 -->
+            <div v-if="qrcodeStatusText" class="qrcode-status" :class="getStatusClass()">
+              <i class="status-icon" :class="getStatusIcon()"></i>
+              <span class="status-text">{{ qrcodeStatusText }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -152,7 +155,7 @@ export default {
       // 二维码相关
       qrcodeSrc: '', // 前端生成的二维码base64地址
       qrcodeTicket: '',
-      qrcodeStatus: '',
+      qrcodeStatusText: '',
       qrcodeCheckTimer: null,
       isLoginLoading: false,
       loginForm: {
@@ -175,7 +178,8 @@ export default {
       // 注册开关
       register: false,
       redirect: undefined,
-      showCaptchaMask: false
+      showCaptchaMask: false,
+      qrcodeRawStatus: ''
     };
   },
   watch: {
@@ -188,7 +192,8 @@ export default {
     // 监听Tab切换，切换到扫码登录时生成二维码
     activeTab(newVal) {
       if (newVal === 'qrcode') {
-        this.qrcodeStatus = ''
+        this.qrcodeStatusText  = ''
+        this.qrcodeRawStatus = '';
         this.generateQrcode();
       } else {
         this.clearQrcodeCheckTimer();
@@ -203,6 +208,30 @@ export default {
     this.clearQrcodeCheckTimer();
   },
   methods: {
+    getStatusClass() {
+      switch (this.qrcodeRawStatus) {
+        case 'SCANNED':
+          return 'status-scanned';
+        case 'CONFIRMED':
+          return 'status-success';
+        case 'EXPIRED':
+          return 'status-expired';
+        default:
+          return '';
+      }
+    },
+    getStatusIcon() {
+      switch (this.qrcodeRawStatus) {
+        case 'SCANNED':
+          return 'el-icon-full-screen';
+        case 'CONFIRMED':
+          return 'el-icon-success';
+        case 'EXPIRED':
+          return 'el-icon-time';
+        default:
+          return '';
+      }
+    },
     // 切换登录Tab
     switchTab(tab) {
       this.activeTab = tab;
@@ -239,7 +268,8 @@ export default {
 
     // 刷新二维码
     refreshQrcode() {
-      this.qrcodeStatus = '';
+      this.qrcodeRawStatus = '';
+      this.qrcodeStatusText  = '';
       this.qrcodeSrc = '';
       this.clearQrcodeCheckTimer();
       this.generateQrcode();
@@ -257,18 +287,19 @@ export default {
           const res = await checkQrcodeStatus(requestData);
           if (res.code === 200) {
             const status = res.data.loginStatus;
+            this.qrcodeRawStatus = status;
             // 状态说明：
             // UNSCANNED: 未扫码 SCANNED: 已扫码待确认 CONFIRMED: 已确认登录 EXPIRED: 二维码过期
             switch (status) {
               case 'UNSCANNED':
-                this.qrcodeStatus = '';
+                this.qrcodeStatusText  = '';
                 break;
               case 'SCANNED':
-                this.qrcodeStatus = '已扫码，请在手机上确认登录';
+                this.qrcodeStatusText  = '已扫码，请在手机上确认登录';
                 break;
               case 'CONFIRMED':
                 this.isLoginLoading = true;
-                this.qrcodeStatus = '登录成功，正在跳转...';
+                this.qrcodeStatusText  = '登录成功，正在跳转...';
                 this.clearQrcodeCheckTimer();
                 // 登录成功，获取token并跳转
                 const loginData = {
@@ -282,7 +313,7 @@ export default {
                 });
                 break;
               case 'EXPIRED':
-                this.qrcodeStatus = '二维码已过期，请刷新';
+                this.qrcodeStatusText  = '二维码已过期，请刷新';
                 this.clearQrcodeCheckTimer();
                 this.qrcodeSrc = ''; // 清空二维码
                 // this.generateQrcode()
@@ -457,7 +488,7 @@ export default {
 
   // 密码登录表单容器
   .login-form {
-    padding: 20px 24px 0 24px; /* 移除底部padding，交给三方登录区域控制 */
+    padding: 20px 24px 0 24px;
 
     .el-input {
       height: 36px;
@@ -502,7 +533,7 @@ export default {
           height: 100%;
         }
 
-        position: relative; // 新增：让遮罩相对二维码定位
+        position: relative;
 
         .login-loading-mask {
           position: absolute;
@@ -548,10 +579,19 @@ export default {
         font-size: 13px;
       }
 
+      .qrcode-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        margin-top: 0;
+      }
+
       .refresh-qrcode-btn {
         color: #1890ff;
         font-size: 13px;
-        margin-top: 4px;
+        margin: 0; // 清空原有margin
+        display: inline-block;
 
         &:hover {
           color: #096dd9;
@@ -560,24 +600,63 @@ export default {
     }
 
     .qrcode-status {
-      margin-top: 8px;
-      color: #666;
-      font-size: 13px;
+      margin: 0;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f7fa;
+      transition: all 0.2s ease;
+
+      .status-icon {
+        margin-right: 6px;
+        font-size: 14px;
+      }
+
+      .status-text {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      &.status-scanned {
+        background-color: #e6f7ff;
+        color: #1890ff;
+
+        .status-icon {
+          color: #1890ff;
+        }
+      }
+
+      &.status-success {
+        background-color: #f0f9ff;
+        color: #52c41a;
+
+        .status-icon {
+          color: #52c41a;
+        }
+      }
+
+      &.status-expired {
+        background-color: #fff1f0;
+        color: #ff4d4f;
+
+        .status-icon {
+          color: #ff4d4f;
+        }
+      }
     }
   }
 
-  // 隐藏原来的title样式
   .title {
     display: none;
   }
 }
 
-// 独立的三方登录区域样式（核心优化：紧凑+居中）
 .third-login-area {
-  padding: 0 24px 16px 24px; /* 仅保留必要的内边距 */
+  padding: 0 24px 16px 24px;
 }
 
-// 分割线样式（极致紧凑）
 .other_info {
   height: 24px;
   width: 100%;
@@ -601,7 +680,6 @@ export default {
   font-size: 12px; /* 小字体 */
 }
 
-// 三方登录图标容器（居中+紧凑）
 .third-login-wrapper {
   display: flex;
   justify-content: center;
@@ -621,22 +699,21 @@ export default {
   }
 }
 
-// 图标容器样式（调大尺寸，保持圆形背景）
 .other_login_info {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 48px;   // 从40px调大到48px
-  height: 48px;  // 从40px调大到48px
-  margin: 0 12px; // 从8px调大到12px，间距更舒适
+  width: 48px;
+  height: 48px;
+  margin: 0 12px;
   color: #666;
   cursor: pointer;
-  border-radius: 50%; // 圆形背景
+  border-radius: 50%;
   background-color: #f5f7fa;
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #e6f7ff; // 悬浮背景色
+    background-color: #e6f7ff;
   }
 }
 
