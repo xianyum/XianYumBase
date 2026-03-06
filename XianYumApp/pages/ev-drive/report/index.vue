@@ -79,26 +79,33 @@
               近一周
             </view>
             <view class="switch-btn" :class="{active: dateType === 'month'}" @click="switchChartType('month')">
-              近半年
+              近一年
             </view>
           </view>
         </view>
       </view>
       <view class="charts-box">
-        <!-- 修复1：key绑定组合值，确保切换必触发重绘，无闪烁 -->
+        <!-- 里程&电量折线图 - 新增触摸事件和ref引用 -->
         <qiun-data-charts
             v-if="chartDataType === 'mileagePower'"
             type="line"
             :opts="mileagePowerOpts"
             :chartData="mileagePowerChartData"
             :key="`mileage-${dateType}-${JSON.stringify(mileagePowerOpts.yAxis.data[0])}`"
+            :ontouch="true"
+            @touchstart.stop="handleChartTouch"
+            ref="mileagePowerChartRef"
         />
+        <!-- 平均电耗折线图 - 新增触摸事件和ref引用 -->
         <qiun-data-charts
             v-if="chartDataType === 'avgPower'"
             type="line"
             :opts="avgPowerOpts"
             :chartData="avgPowerChartData"
             :key="`power-${dateType}-${JSON.stringify(avgPowerOpts.yAxis.data[0])}`"
+            :ontouch="true"
+            @touchstart.stop="handleChartTouch"
+            ref="avgPowerChartRef"
         />
       </view>
     </view>
@@ -121,13 +128,29 @@ export default {
       dateType: 'day',
       mileagePowerChartData: {},
       avgPowerChartData: {},
+      // 里程&电量图表配置 - 开启X轴滚动
       mileagePowerOpts: {
         color: ["#1890FF", "#EE6666"],
         padding: [15, 0, 0, 0],
-        enableScroll: false,
-        legend: {},
+        enableScroll: true, // 核心：开启滚动功能
+        legend: {
+          orient: "horizontal",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          itemGap: 8,
+          textStyle: {
+            fontSize: 11,
+            color: "#666"
+          }
+        },
         xAxis: {
-          disableGrid: true
+          disableGrid: true,
+          scrollShow: true, // 显示滚动条
+          itemCount: 7, // 一屏显示7个数据点
+          scrollAlign: 'right', // 滚动对齐到右侧（最新数据）
+          scrollable: true, // 开启X轴滚动
+          bounce: false // 关闭回弹效果
         },
         yAxis: {
           gridType: "dash",
@@ -135,16 +158,37 @@ export default {
           data: [{min: 0, max: 0, step: 0, precision: 0}]
         },
         extra: {
-          line: {type: "straight", width: 2, activeType: "hollow"}
+          line: {type: "straight", width: 2, activeType: "hollow"},
+          scroll: {
+            type: 'horizontal', // 横向滚动
+            threshold: 10 // 滚动触发阈值
+          }
         }
       },
+      // 平均电耗图表配置 - 开启X轴滚动
       avgPowerOpts: {
         color: ["#52c41a"],
         padding: [15, 0, 0, 0],
-        enableScroll: false,
-        legend: {},
+        enableScroll: true, // 核心：开启滚动功能
+        legend: {
+          orient: "horizontal",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          itemGap: 8,
+          textStyle: {
+            fontSize: 11,
+            color: "#666"
+          }
+        },
         xAxis: {
-          disableGrid: true
+          disableGrid: true,
+          scrollShow: true, // 显示滚动条
+          itemCount: 7, // 一屏显示7个数据点
+          scrollAlign: 'right', // 滚动对齐到右侧（最新数据）
+          scrollable: true, // 开启X轴滚动
+          bounce: false // 关闭回弹效果
+          // ,format: 'xAxisDemo1'
         },
         yAxis: {
           gridType: "dash",
@@ -152,10 +196,19 @@ export default {
           data: [{min: 0, max: 0, step: 0, precision: 2}]
         },
         extra: {
-          line: {type: "straight", width: 2, activeType: "hollow"}
+          line: {type: "straight", width: 2, activeType: "hollow"},
+          scroll: {
+            type: 'horizontal', // 横向滚动
+            threshold: 10 // 滚动触发阈值
+          }
         }
       }
     };
+  },
+  // 图表ref引用
+  refs: {
+    mileagePowerChartRef: null,
+    avgPowerChartRef: null
   },
   onReady() {
     this.getAppSummaryData();
@@ -165,6 +218,39 @@ export default {
     this.refreshData();
   },
   methods: {
+    /**
+     * 处理图表触摸事件，阻止事件穿透
+     */
+    handleChartTouch() {
+      return false;
+    },
+
+    /**
+     * 滚动图表到最新数据位置
+     */
+    scrollToLatestData() {
+      this.$nextTick(() => {
+        const categoryLength = this.mileagePowerChartData.categories?.length || 0;
+        // 根据当前选中的图表类型滚动对应图表
+        if (this.chartDataType === 'mileagePower' && this.$refs.mileagePowerChartRef && this.$refs.mileagePowerChartRef.scrollTo) {
+          this.$refs.mileagePowerChartRef.scrollTo({
+            x: categoryLength - 8,
+            y: 0,
+            animate: false
+          });
+        } else if (this.chartDataType === 'avgPower' && this.$refs.avgPowerChartRef && this.$refs.avgPowerChartRef.scrollTo) {
+          this.$refs.avgPowerChartRef.scrollTo({
+            x: categoryLength - 8,
+            y: 0,
+            animate: false
+          });
+        }
+      });
+    },
+
+    /**
+     * 刷新页面数据
+     */
     async refreshData() {
       try {
         await Promise.all([this.getAppSummaryData(), this.getEvDriveChartData()]);
@@ -175,21 +261,34 @@ export default {
         this.$modal.msgError("刷新失败");
       }
     },
+
+    /**
+     * 获取统计数据
+     */
     async getAppSummaryData() {
-      const response = await getAppSummaryData();
-      if (response.code === 200) {
-        this.stats = {
-          currentMonthResponse: typeof response.data.currentMonthResponse === 'object' && response.data.currentMonthResponse !== null
-              ? response.data.currentMonthResponse
-              : {},
-          lastMonthResponse: typeof response.data.lastMonthResponse === 'object' && response.data.lastMonthResponse !== null
-              ? response.data.lastMonthResponse
-              : {},
-          lastYearResponse: typeof response.data.lastYearResponse === 'object' && response.data.lastYearResponse !== null
-              ? response.data.lastYearResponse
-              : {}
-        };
-      }else{
+      try {
+        const response = await getAppSummaryData();
+        if (response.code === 200) {
+          this.stats = {
+            currentMonthResponse: typeof response.data.currentMonthResponse === 'object' && response.data.currentMonthResponse !== null
+                ? response.data.currentMonthResponse
+                : {},
+            lastMonthResponse: typeof response.data.lastMonthResponse === 'object' && response.data.lastMonthResponse !== null
+                ? response.data.lastMonthResponse
+                : {},
+            lastYearResponse: typeof response.data.lastYearResponse === 'object' && response.data.lastYearResponse !== null
+                ? response.data.lastYearResponse
+                : {}
+          };
+        } else {
+          this.stats = {
+            currentMonthResponse: {},
+            lastMonthResponse: {},
+            lastYearResponse: {}
+          };
+        }
+      } catch (error) {
+        console.error('获取统计数据失败：', error);
         this.stats = {
           currentMonthResponse: {},
           lastMonthResponse: {},
@@ -197,79 +296,101 @@ export default {
         };
       }
     },
+
+    /**
+     * 切换图表数据类型（里程&电量/平均电耗）
+     */
     switchChartDataType(type) {
       if (this.chartDataType === type) return;
       this.chartDataType = type;
+      // 切换后滚动到最新数据
+      this.$nextTick(() => {
+        this.scrollToLatestData();
+      });
     },
+
+    /**
+     * 切换时间范围（近一周/近半年）
+     */
     switchChartType(type) {
       if (this.dateType === type) return;
       this.dateType = type;
       this.getEvDriveChartData();
     },
+
+    /**
+     * 获取图表数据
+     */
     async getEvDriveChartData() {
-      let queryParams = {'dateType': this.dateType === 'day' ? 0 : 1};
-      const response = await getEvDriveRecordsReportLineData(queryParams);
-      if (response.code === 200) {
-        const categories = [];
-        const mileageData = [];
-        const powerData = [];
-        const avgPowerData = [];
+      try {
+        let queryParams = {'dateType': this.dateType === 'day' ? 0 : 1};
+        const response = await getEvDriveRecordsReportLineData(queryParams);
+        if (response.code === 200) {
+          const categories = [];
+          const mileageData = [];
+          const powerData = [];
+          const avgPowerData = [];
 
-        let filteredData = [...response.data];
-        filteredData = this.dateType === 'day' ? filteredData.slice(-9) : filteredData.slice(-6);
+          // 保留完整数据用于滚动（移除原有的数据截取）
+          let filteredData = [...response.data];
+          filteredData = this.dateType === 'day' ? filteredData.slice(-7) : filteredData.slice(-12);
 
-        filteredData.forEach(item => {
-          let dateLabel = '';
-          if (this.dateType === 'day') {
-            const date = new Date(item.driveDate);
-            dateLabel = `${date.getMonth() + 1}/${date.getDate()}`;
-          } else {
-            const dateParts = item.driveDate.split('-');
-            const year = dateParts[0].slice(-2);
-            const month = dateParts[1].padStart(2, '0');
-            dateLabel = `${year}/${month}`;
-          }
-          categories.push(dateLabel);
-          mileageData.push(Number(item.totalDistanceKm) || 0);
-          powerData.push(Number(item.totalElectricityConsumed) || 0);
-          avgPowerData.push(Number(item.electricityPerKm) || 0);
-        });
+          filteredData.forEach(item => {
+            let dateLabel = '';
+            if (this.dateType === 'day') {
+              const date = new Date(item.driveDate);
+              dateLabel = `${date.getMonth() + 1}/${date.getDate()}`;
+            } else {
+              const dateParts = item.driveDate.split('-');
+              const year = dateParts[0].slice(-2);
+              const month = dateParts[1].padStart(2, '0');
+              dateLabel = `${year}/${month}`;
+            }
+            categories.push(dateLabel);
+            mileageData.push(Number(item.totalDistanceKm) || 0);
+            powerData.push(Number(item.totalElectricityConsumed) || 0);
+            avgPowerData.push(Number(item.electricityPerKm) || 0);
+          });
 
-        // 修复2：深拷贝重构Y轴配置，触发Vue响应式+图表重绘
-        // 里程&电量Y轴计算
-        const maxMileagePower = Math.max(...mileageData, ...powerData);
-        const finalMaxMileage = maxMileagePower === 0 ? 10 : maxMileagePower * 1.2;
-        const mileageStep = finalMaxMileage / 5;
-        // 深拷贝重构，替代直接修改属性
-        this.mileagePowerOpts.yAxis.data = [{
-          min: 0,
-          max: finalMaxMileage,
-          step: mileageStep,
-          precision: 0
-        }];
+          // 计算里程&电量Y轴范围
+          const maxMileagePower = Math.max(...mileageData, ...powerData);
+          const finalMaxMileage = maxMileagePower === 0 ? 10 : maxMileagePower * 1.2;
+          const mileageStep = finalMaxMileage / 5;
+          this.mileagePowerOpts.yAxis.data = [{
+            min: 0,
+            max: finalMaxMileage,
+            step: mileageStep,
+            precision: 0
+          }];
 
-        // 平均电耗Y轴计算
-        const maxAvgPower = Math.max(...avgPowerData);
-        const finalMaxAvg = maxAvgPower === 0 ? 0.1 : maxAvgPower * 1.2;
-        let avgStep = finalMaxAvg / 5;
-        avgStep = avgStep < 0.01 ? 0.01 : avgStep;
-        // 深拷贝重构，替代直接修改属性
-        this.avgPowerOpts.yAxis.data = [{
-          min: 0,
-          max: finalMaxAvg,
-          step: avgStep,
-          precision: 2
-        }];
+          // 计算平均电耗Y轴范围
+          const maxAvgPower = Math.max(...avgPowerData);
+          const finalMaxAvg = maxAvgPower === 0 ? 0.1 : maxAvgPower * 1.2;
+          let avgStep = finalMaxAvg / 5;
+          avgStep = avgStep < 0.01 ? 0.01 : avgStep;
+          this.avgPowerOpts.yAxis.data = [{
+            min: 0,
+            max: finalMaxAvg,
+            step: avgStep,
+            precision: 2
+            // unit: '度/公里'
+          }];
 
-        // 组装图表数据
-        this.mileagePowerChartData = {
-          categories,
-          series: [{name: "行驶公里数", data: mileageData}, {name: "消耗电量", data: powerData}]
-        };
-        this.avgPowerChartData = {
-          categories,
-          series: [{name: "平均电耗", data: avgPowerData}]
-        };
+          // 组装图表数据
+          this.mileagePowerChartData = {
+            categories,
+            series: [{name: "行驶公里数", data: mileageData}, {name: "消耗电量", data: powerData}]
+          };
+          this.avgPowerChartData = {
+            categories,
+            series: [{name: "平均电耗", data: avgPowerData}]
+          };
+
+          // 数据加载完成后滚动到最新数据
+          this.scrollToLatestData();
+        }
+      } catch (error) {
+        console.error('获取图表数据失败：', error);
       }
     }
   }
@@ -372,19 +493,19 @@ export default {
   display: flex;
   gap: 4px;
   background: #f5f5f5;
-  border-radius: 16px; /* 按比例缩小容器圆角 */
+  border-radius: 16px;
   padding: 2px;
   white-space: nowrap;
 }
 .switch-btn {
-  padding: 2px 8px; /* 减少内边距，缩小按钮 */
-  font-size: 10px; /* 缩小字体 */
+  padding: 2px 8px;
+  font-size: 10px;
   color: #666;
-  border-radius: 14px; /* 按比例缩小按钮圆角 */
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  line-height: 20px; /* 降低行高，整体缩小按钮高度 */
+  line-height: 20px;
 }
 .switch-btn.active {
   color: #fff;
@@ -394,8 +515,9 @@ export default {
 .charts-box {
   width: 100%;
   height: 260px;
-  /* 修复3：添加背景和最小高度，防止重绘时空白闪烁 */
   background: #fff;
   min-height: 260px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 </style>
