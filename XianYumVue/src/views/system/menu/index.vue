@@ -59,7 +59,12 @@
       <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="180"></el-table-column>
       <el-table-column prop="icon" label="图标" align="center" >
         <template v-slot="scope">
-          <svg-icon :icon-class="scope.row.icon" />
+          <template v-if="scope.row.platformType !== '1'">
+            <svg-icon :icon-class="scope.row.icon" />
+          </template>
+          <template v-else>
+            <svg-icon icon-class="uniapp" />
+          </template>
         </template>
       </el-table-column>
       <el-table-column prop="platformType" label="平台类型">
@@ -166,7 +171,7 @@
                 @show="$refs['iconSelect'].reset()"
               >
                 <IconSelect ref="iconSelect" @selected="selected" :active-icon="form.icon" />
-                <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" readonly>
+                <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标">
                   <svg-icon
                     v-if="form.icon"
                     slot="prefix"

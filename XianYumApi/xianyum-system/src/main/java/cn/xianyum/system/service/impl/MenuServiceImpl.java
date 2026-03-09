@@ -155,6 +155,14 @@ public class MenuServiceImpl implements MenuService {
         if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !StringUtil.ishttp(menuEntity.getPath())) {
             throw new SoException("新增菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
+
+        // 如果不是顶级，那么就需要判断平台类型是否一致
+        if(menuEntity.getParentId() != 0L){
+            MenuEntity parentMenuEntity = menuMapper.selectById(menuEntity.getParentId());
+            if(Objects.nonNull(parentMenuEntity) && !parentMenuEntity.getPlatformType().equals(menuEntity.getPlatformType())){
+                throw new SoException("平台类型必须和上级菜单类型保持一致");
+            }
+        }
         return menuMapper.insert(menuEntity);
     }
 
@@ -166,6 +174,14 @@ public class MenuServiceImpl implements MenuService {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
         } else if (menuEntity.getMenuId().equals(menuEntity.getParentId())) {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，上级菜单不能选择自己");
+        }
+
+        // 如果不是顶级，那么就需要判断平台类型是否一致
+        if(menuEntity.getParentId() != 0L){
+            MenuEntity parentMenuEntity = menuMapper.selectById(menuEntity.getParentId());
+            if(Objects.nonNull(parentMenuEntity) && !parentMenuEntity.getPlatformType().equals(menuEntity.getPlatformType())){
+                throw new SoException("平台类型必须和上级菜单类型保持一致");
+            }
         }
         return menuMapper.updateById(menuEntity);
     }
