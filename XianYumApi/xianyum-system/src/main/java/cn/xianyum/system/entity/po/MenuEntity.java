@@ -69,4 +69,9 @@ public class MenuEntity extends BaseEntity {
     @TableField(exist=false)
     private List<MenuEntity> children = new ArrayList<>();
 
+    /**
+     * 端类型（区分PC/Uniapp）
+     * 0-pc 1-uniapp
+     */
+    private String platformType;
 }

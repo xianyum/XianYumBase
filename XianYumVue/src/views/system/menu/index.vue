@@ -62,7 +62,12 @@
           <svg-icon :icon-class="scope.row.icon" />
         </template>
       </el-table-column>
-      <el-table-column prop="menuType" label="类型">
+      <el-table-column prop="platformType" label="平台类型">
+        <template v-slot="scope">
+          <dict-tag :options="dict.type.platform_type" :value="scope.row.platformType"/>
+        </template>
+      </el-table-column>
+      <el-table-column prop="menuType" label="菜单类型">
         <template v-slot="scope">
           <div v-if="scope.row.menuType === 'M'" size="small" type="danger">目录</div>
           <div v-else-if="scope.row.menuType === 'C'" size="small">菜单</div>
@@ -110,7 +115,7 @@
     </el-table>
 
     <!-- 添加或修改菜单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="680px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="24">
@@ -124,13 +129,30 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="菜单类型" prop="menuType">
               <el-radio-group v-model="form.menuType">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
                 <el-radio label="F">按钮</el-radio>
               </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="平台类型" prop="platformType">
+              <el-select
+                v-model="form.platformType"
+                placeholder="请选择平台类型"
+                collapse-tags
+                style="width:100%"
+              >
+                <el-option
+                  v-for="dict in dict.type.platform_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24" v-if="form.menuType != 'F'">
@@ -288,7 +310,7 @@ import IconSelect from "@/components/IconSelect";
 
 export default {
   name: "Menu",
-  dicts: ['sys_show_hide', 'sys_normal_disable'],
+  dicts: ['sys_show_hide', 'sys_normal_disable','platform_type'],
   components: { Treeselect, IconSelect },
   data() {
     return {
@@ -314,7 +336,8 @@ export default {
         visible: undefined
       },
       // 表单参数
-      form: {},
+      form: {
+      },
       // 表单校验
       rules: {
         menuName: [
@@ -325,6 +348,9 @@ export default {
         ],
         path: [
           { required: true, message: "路由地址不能为空", trigger: "blur" }
+        ],
+        platformType: [
+          { required: true, message: "平台类型不能为空", trigger: "change" }
         ]
       }
     };
@@ -383,7 +409,8 @@ export default {
         isFrame: "1",
         isCache: "0",
         visible: "0",
-        status: "0"
+        status: "0",
+        platformType: "0"
       };
       this.resetForm("form");
     },

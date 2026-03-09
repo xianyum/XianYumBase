@@ -60,4 +60,10 @@ public class MenuResponse {
      * 子路由
      */
     private List<MenuResponse> children;
+
+    /**
+     * 平台类型（区分PC/Uniapp）
+     * 0-pc 1-uniapp
+     */
+    private String platformType;
 }
