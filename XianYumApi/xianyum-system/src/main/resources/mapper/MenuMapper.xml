@@ -5,7 +5,7 @@
 <mapper namespace="cn.xianyum.system.dao.MenuMapper">
 
 	<sql id="selectMenuVo">
-		select menu_id, menu_name, parent_id, order_num, path, component, `query`, is_frame, is_cache, menu_type, visible, status, ifnull(perms,'') as perms, icon, create_time ,platform_type
+		select menu_id, menu_name, parent_id, order_num, path, component, `query`, is_frame, is_cache, menu_type, visible, status, ifnull(perms,'') as perms, icon, create_time ,platform_type,icon_bg_color
 		from menu
 	</sql>
 
@@ -26,7 +26,8 @@
 		         m.icon,
 		         m.order_num,
 		         m.create_time,
-		         m.platform_type
+		         m.platform_type,
+		         m.icon_bg_color
 		from menu m
 		<if test="userId != null and userId != ''">
 			left join role_menu rm on m.menu_id = rm.menu_id

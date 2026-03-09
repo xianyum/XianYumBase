@@ -304,6 +304,16 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
+
+          <el-col :span="12" v-if="form.platformType === '1' && form.menuType === 'C'">
+            <el-form-item label="图标背景色" prop="bgColor">
+              <el-color-picker
+                v-model="form.iconBgColor"
+                format="hex"
+                placeholder="选择APP图标背景色"
+              ></el-color-picker>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -422,7 +432,8 @@ export default {
         isCache: "0",
         visible: "0",
         status: "0",
-        platformType: "0"
+        platformType: "0",
+        iconBgColor: ''
       };
       this.resetForm("form");
     },

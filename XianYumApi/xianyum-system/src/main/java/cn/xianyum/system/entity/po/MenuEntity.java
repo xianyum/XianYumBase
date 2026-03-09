@@ -74,4 +74,9 @@ public class MenuEntity extends BaseEntity {
      * 0-pc 1-uniapp
      */
     private String platformType;
+
+    /**
+     * 图标背景色，目前只针对app生效
+     */
+    private String iconBgColor;
 }
