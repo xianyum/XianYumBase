@@ -138,6 +138,7 @@ import {getOperLogCount} from "@/api/monitor/operlog"
 import { queryMqttTotalCount} from '@/api/iot/fish'
 import UpdatePopup from '@/components/update-popup/update-popup.vue';
 import {getLastAppVersion, getAppVersionControlPage} from "@/api/app/appVersionControl";
+import {getMenuClickRank, reportMenuClick} from "@/api/system/menu/menu";
 
 export default {
   components: {
@@ -156,12 +157,9 @@ export default {
         { label: '消息发送量', value: 0 },
         { label: '任务调度量', value: 0 }
       ],
-      quickActions: [
-        { name: '智能鱼缸', icon: 'icon-yugang', bgColor: '#607d8b', path: '/pages/iot/fish/index' },
-        { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/ev-drive/report/index' },
-        { name: '在线用户', icon: 'icon-zaixianyonghu', bgColor: '#b08927', path: '/pages/monitor/user-online/index' },
-        { name: '服务监控', icon: 'icon-zaixianyonghujiankong', bgColor: '#795548', path: '/pages/monitor/server/index' }
-      ],
+      quickActions: [],
+      // 默认背景色（可根据需要修改）
+      defaultBgColor: '#607d8b',
       // 版本列表相关
       versionList: [], // 版本列表数据
       pageNum: 1, // 当前页码
@@ -194,6 +192,8 @@ export default {
     this.getVersionList()
     // 获取更新
     this.handleToUpgrade()
+    // 加载快捷功能
+    this.getQuickActions()
   },
   async onShow() {
     // 获取状态栏高度
@@ -230,10 +230,21 @@ export default {
         this.getVersionList();
       }
     },
-    // ========== 原有逻辑调整 ==========
     // 处理弹窗触摸事件，阻止冒泡
     handlePopupTouch(e) {
       e.stopPropagation();
+    },
+    async getQuickActions() {
+      const res = await getMenuClickRank();
+      if (res.code === 200 && res.data) {
+        this.quickActions = res.data.map(item => ({
+          name: item.menuName,
+          icon: item.icon,
+          bgColor: item.iconBgColor || this.defaultBgColor,
+          path: item.component,
+          menuId: item.menuId
+        }));
+      }
     },
     // 获取版本列表（重写分页逻辑）
     async getVersionList() {
@@ -339,6 +350,7 @@ export default {
         this.getUser();
         this.getAllLogCounts();
         this.handleToUpgrade();
+        this.getQuickActions();
         uni.stopPullDownRefresh();
         this.$modal.msgSuccess("刷新成功");
       }catch (error) {
@@ -374,12 +386,18 @@ export default {
       });
     },
     // 快捷功能跳转
-    handleQuickAction(item) {
-      if (item.path) {
-        uni.navigateTo({
-          url: item.path
-        });
+    async handleQuickAction(item) {
+      if (!item.path) {
+        return;
       }
+      try {
+        await reportMenuClick(item);
+      } catch (error) {
+        console.error('菜单埋点上报失败:', error);
+      }
+      uni.navigateTo({
+        url: item.path
+      });
     }
   }
 }
