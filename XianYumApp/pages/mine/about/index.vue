@@ -23,7 +23,7 @@
         <view class="list-cell list-cell-arrow">
           <view class="menu-item-box">
             <view>联系我们</view>
-            <view class="text-right">Wchat:80616059</view>
+            <view class="text-right">Wechat:80616059</view>
           </view>
         </view>
         <view class="list-cell list-cell-arrow">

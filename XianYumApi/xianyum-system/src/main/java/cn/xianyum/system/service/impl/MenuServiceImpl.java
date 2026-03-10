@@ -1,6 +1,9 @@
 package cn.xianyum.system.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.xianyum.common.constant.Constants;
+import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -11,10 +14,13 @@ import cn.xianyum.system.entity.response.MenuMetaResponse;
 import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.entity.response.MenuTreeSelect;
 import cn.xianyum.system.service.MenuService;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,29 +30,39 @@ import java.util.stream.Collectors;
  * @email 80616059@qq.com
  */
 @Service
+@Slf4j
 public class MenuServiceImpl implements MenuService {
 
-    @Autowired
+    @Resource
     private MenuMapper menuMapper;
+
+    @Resource
+    private StringRedisTemplate redisTemplate;
+
+    @Value("${redis.menu.click_key}")
+    private String menuClickKey;
+
+    @Value("${redis.menu.click_rank}")
+    private String menuClickRank;
 
     /**
      * 获取用户菜单列表
      */
     @Override
-    public List<MenuResponse> getUserMenuList() {
+    public List<MenuResponse> getUserMenuList(String platformType) {
         String userId = SecurityUtils.getLoginUser().getId();
         if(SecurityUtils.isSupperAdminAuth()){
             userId = null;
         }
         //用户菜单列表
-        List<MenuEntity> menus = menuMapper.selectMenuTreeByUserId(userId);
+        List<MenuEntity> menus = menuMapper.selectMenuTreeByUserId(userId,platformType);
         List<MenuEntity> menuChildList = this.getChildPerms(menus, 0);
         return this.buildMenus(menuChildList);
     }
 
     @Override
     public List<MenuEntity> getChildPerms(List<MenuEntity> menus, int parentId) {
-        List<MenuEntity> returnList = new ArrayList<MenuEntity>();
+        List<MenuEntity> returnList = new ArrayList<>();
         for (Iterator<MenuEntity> iterator = menus.iterator(); iterator.hasNext(); ) {
             MenuEntity t = iterator.next();
             // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
@@ -93,11 +109,13 @@ public class MenuServiceImpl implements MenuService {
         List<MenuResponse> routers = new LinkedList();
         for (MenuEntity menu : menuChildList) {
             MenuResponse router = new MenuResponse();
+            router.setMenuId(menu.getMenuId());
             router.setHidden("1".equals(menu.getVisible()));
             router.setName(getRouteName(menu));
             router.setPath(getRouterPath(menu));
             router.setComponent(getComponent(menu));
             router.setQuery(menu.getQuery());
+            router.setIconBgColor(menu.getIconBgColor());
             router.setMeta(new MenuMetaResponse(menu.getMenuName(), menu.getIcon(), Objects.equals("1", menu.getIsCache()), menu.getPath()));
             List<MenuEntity> cMenus = menu.getChildren();
             if (StringUtil.isNotEmpty(cMenus) && Constants.TYPE_DIR.equals(menu.getMenuType())) {
@@ -189,7 +207,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public boolean checkMenuNameUnique(MenuEntity menuEntity) {
         Long menuId = Objects.isNull(menuEntity.getMenuId()) ? -1L : menuEntity.getMenuId();
-        MenuEntity info = menuMapper.checkMenuNameUnique(menuEntity.getMenuName(), menuEntity.getParentId());
+        MenuEntity info = menuMapper.checkMenuNameUnique(menuEntity.getMenuName(),menuEntity.getPlatformType(),menuEntity.getParentId());
         if (Objects.nonNull(info) && info.getMenuId().longValue() != menuId.longValue()) {
             return false;
         }
@@ -262,6 +280,87 @@ public class MenuServiceImpl implements MenuService {
             resultPermissions = this.menuMapper.selectMenuPermsByUserId(userId);
         }
         return resultPermissions;
+    }
+
+    /**
+     * 菜单埋点上报
+     *
+     * @param menuRequest
+     */
+    @Override
+    public void reportMenuClick(MenuEntity menuRequest) {
+        if(Objects.isNull(menuRequest.getMenuId())){
+            return;
+        }
+        try {
+            // 1. 递增菜单点击次数（每个菜单独立计数）
+            String menuKey = String.format(menuClickKey,SecurityUtils.getLoginUser().getId(),menuRequest.getMenuId());
+            Long clickCount = redisTemplate.opsForValue().increment(menuKey, 1);
+            // 2. 更新排行榜（zset有序集合，score为点击次数）
+            String menuRankKey = String.format(menuClickRank,SecurityUtils.getLoginUser().getId());
+            redisTemplate.opsForZSet().add(menuRankKey, String.valueOf(menuRequest.getMenuId()),clickCount);
+        } catch (Exception e) {
+            log.error("菜单埋点上报失败", e);
+            throw e;
+        }
+    }
+
+    /**
+     * 获取菜单点击排名前N名
+     *
+     * @return
+     */
+    @Override
+    public List<MenuResponse> getMenuClickRank() {
+        // 取排名前4个的
+        Integer topN = 4;
+        List<MenuEntity> menus = menuMapper.selectMenuTreeByUserId(SecurityUtils.isSupperAdminAuth()?null:SecurityUtils.getLoginUser().getId(), PlatformTypeEnum.APP.getCode());
+        List<MenuResponse> allMenuResponse = menus.stream()
+                // 1. 过滤条件：平台类型为APP + 类型为菜单级别的
+                .filter(item -> PlatformTypeEnum.APP.getCode().equals(item.getPlatformType())
+                        && "C".equals(item.getMenuType()))
+                // 2. 转换为MenuResponse
+                .map(item -> BeanUtil.copyProperties(item, MenuResponse.class))
+                .toList();
+        if(CollUtil.isEmpty(allMenuResponse)){
+            return List.of();
+        }
+        String menuRankKey = String.format(menuClickRank,SecurityUtils.getLoginUser().getId());
+        Set<ZSetOperations.TypedTuple<String>> menuRankSet = redisTemplate.opsForZSet()
+                .reverseRangeWithScores(menuRankKey, 0, -1);
+        if(menuRankSet.isEmpty()){
+            // 无排名数据，直接取前topN个
+            return allMenuResponse.stream().limit(topN).collect(Collectors.toList());
+        }
+        // 定义最终返回的列表（指定初始容量为topN，减少扩容开销）
+        List<MenuResponse> finalMenuList = new ArrayList<>(topN);
+
+        // 先从排名中取菜单，直到凑够topN个或排名取完
+        for (ZSetOperations.TypedTuple<String> tuple : menuRankSet) {
+            if (finalMenuList.size() >= topN) {
+                break; // 已凑够topN个，终止循环
+            }
+            Long menuId = Optional.ofNullable(tuple.getValue())
+                    .map(Long::valueOf)
+                    .orElse(0L);
+            if (menuId == 0L) {
+                continue; // 无效ID跳过
+            }
+            // 查找并添加对应菜单
+            allMenuResponse.stream()
+                    .filter(menu -> menuId.equals(menu.getMenuId()))
+                    .findFirst()
+                    .ifPresent(finalMenuList::add);
+        }
+
+        // 若排名数据不足topN个，从allMenuResponse中补充（排除已加入的）
+        if (finalMenuList.size() < topN) {
+            long needSupplement = topN - finalMenuList.size();
+            allMenuResponse.stream().filter(menu -> finalMenuList.stream().noneMatch(m -> m.getMenuId().equals(menu.getMenuId()))).limit(needSupplement).forEach(finalMenuList::add);
+        }
+
+        // 返回最终凑够的topN个菜单
+        return finalMenuList.stream().limit(topN).toList();
     }
 
 

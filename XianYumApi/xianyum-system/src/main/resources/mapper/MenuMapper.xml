@@ -37,7 +37,7 @@
 		</if>
 		where
 		    m.menu_type in ('M', 'C')
-		  	and m.platform_type = '0'
+		  	and m.platform_type = #{platformType}
 		  	and m.status = 0
 		<if test="userId != null and userId != ''">
 			and u.id = #{userId}
@@ -65,7 +65,7 @@
 
 	<select id="checkMenuNameUnique" resultType="cn.xianyum.system.entity.po.MenuEntity">
 		<include refid="selectMenuVo"/>
-		where menu_name=#{menuName} and parent_id = #{parentId} limit 1
+		where menu_name=#{menuName} and parent_id = #{parentId} and platform_type = #{platformType} limit 1
 	</select>
 
 	<select id="hasChildByMenuId" resultType="Integer">

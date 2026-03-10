@@ -1,57 +1,17 @@
 <template>
   <view class="work-container">
-<!--    &lt;!&ndash; 基础模块 &ndash;&gt;-->
-<!--    <view class="module-section">-->
-<!--      <view class="module-header">-->
-<!--        <text class="module-title">基础模块</text>-->
-<!--      </view>-->
-<!--      <view class="grid-section">-->
-<!--        <view class="grid-item" v-for="(item, index) in systemMenus" :key="index" @tap="handleMenu(item)">-->
-<!--          <view class="icon-box" :style="{ backgroundColor: item.bgColor }">-->
-<!--            <uni-icons :type="item.icon" size="24" color="#fff"></uni-icons>-->
-<!--          </view>-->
-<!--          <text class="menu-name">{{ item.name }}</text>-->
-<!--        </view>-->
-<!--      </view>-->
-<!--    </view>-->
-
-    <!-- 新能源车辆 -->
-    <view class="module-section">
+    <!-- 动态渲染菜单模块 -->
+    <view class="module-section" v-for="(module, moduleIndex) in dynamicMenuModules" :key="moduleIndex">
       <view class="module-header">
-        <text class="module-title">新能源车辆</text>
+        <text class="module-title">{{ module.moduleTitle }}</text>
       </view>
       <view class="grid-section">
-        <view class="grid-item" v-for="(item, index) in newEnergyMenus" :key="index" @tap="handleMenu(item)">
-          <view class="icon-box" :style="{ backgroundColor: item.bgColor }">
-            <uni-icons custom-prefix="iconfont" :type="item.icon" size="24" color="#fff"></uni-icons>
-          </view>
-          <text class="menu-name">{{ item.name }}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 物联网模块 -->
-    <view class="module-section">
-      <view class="module-header">
-        <text class="module-title">物联网</text>
-      </view>
-      <view class="grid-section">
-        <view class="grid-item" v-for="(item, index) in toolMenus" :key="index" @tap="handleMenu(item)">
-          <view class="icon-box" :style="{ backgroundColor: item.bgColor }">
-            <uni-icons custom-prefix="iconfont" :type="item.icon" size="24" color="#fff"></uni-icons>
-          </view>
-          <text class="menu-name">{{ item.name }}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 系统监控 -->
-    <view class="module-section">
-      <view class="module-header">
-        <text class="module-title">系统监控</text>
-      </view>
-      <view class="grid-section">
-        <view class="grid-item" v-for="(item, index) in monitorMenus" :key="index" @tap="handleMenu(item)">
+        <view
+            class="grid-item"
+            v-for="(item, index) in module.children"
+            :key="index"
+            @tap="handleMenu(item)"
+        >
           <view class="icon-box" :style="{ backgroundColor: item.bgColor }">
             <uni-icons custom-prefix="iconfont" :type="item.icon" size="24" color="#fff"></uni-icons>
           </view>
@@ -63,37 +23,74 @@
 </template>
 
 <script>
+import { getRouters,reportMenuClick} from "@/api/system/menu/menu";
+
 export default {
   data() {
     return {
-      // 系统管理菜单
-      systemMenus: [
-        { name: '用户管理', icon: 'person', bgColor: '#409eff', path: '/pages/system/user/index' },
-        { name: '角色管理', icon: 'staff', bgColor: '#67c23a', path: '/pages/system/role/index' },
-        { name: '菜单管理', icon: 'list', bgColor: '#e6a23c', path: '/pages/system/menu/index' },
-        { name: '部门管理', icon: 'home', bgColor: '#f56c6c', path: '/pages/system/dept/index' },
-        { name: '字典管理', icon: 'paperplane', bgColor: '#909399', path: '/pages/system/dict/index' }
-      ],
-      newEnergyMenus: [
-        { name: '行驶记录', icon: 'icon-hangshijilu', bgColor: '#9c27b0', path: '/pages/ev-drive/list/index' },
-        { name: '行驶报表', icon: 'icon-BIshujuzhongxin', bgColor: '#27b0a5', path: '/pages/ev-drive/report/index' }
-      ],
-      // 系统监控菜单
-      monitorMenus: [
-        { name: '在线用户', icon: 'icon-zaixianyonghu', bgColor: '#b08927', path: '/pages/monitor/user-online/index' },
-        { name: '服务监控', icon: 'icon-zaixianyonghujiankong', bgColor: '#795548', path: '/pages/monitor/server/index' }
-      ],
-      // 物联网菜单
-      toolMenus: [
-        { name: '智能鱼缸', icon: 'icon-yugang', bgColor: '#607d8b', path: '/pages/iot/fish/index' }
-      ]
+      // 存储从后端获取的动态菜单模块
+      dynamicMenuModules: [],
+      // 默认背景色（可根据需要修改）
+      defaultBgColor: '#8227b0'
     }
   },
+  onLoad() {
+    this.getMenus();
+  },
   methods: {
-    handleMenu(item) {
+    // 从后端获取菜单数据并格式化
+    async getMenus() {
+      const queryParams = { "platformType": "APP" };
+      const res = await getRouters(queryParams);
+      if (res.code === 200 && res.data ) {
+        // 格式化菜单数据
+        this.formatMenuData(res.data);
+      }
+    },
+
+    // 格式化后端返回的菜单数据
+    formatMenuData(rawData) {
+      const formattedModules = [];
+
+      rawData.forEach((module) => {
+        // 过滤掉隐藏的模块
+        if (module.hidden) return;
+        // 格式化子菜单
+        const formattedChildren = module.children?.map((child) => {
+          // 过滤掉隐藏的子菜单
+          if (child.hidden) return null;
+          return {
+            menuId: child.menuId,
+            name: child.meta?.title || '',        // 菜单名称
+            icon: child.meta?.icon || '',         // 图标类名
+            path: child.component || '',          // 跳转路径
+            // 使用后端返回的背景色，没有则使用默认色
+            bgColor: child.iconBgColor || this.defaultBgColor
+          };
+        }).filter(Boolean);
+        if (formattedChildren.length > 0) {
+          formattedModules.push({
+            moduleTitle: module.meta?.title || '未命名模块',
+            children: formattedChildren
+          });
+        }
+      });
+
+      this.dynamicMenuModules = formattedModules;
+    },
+    // 菜单点击跳转
+    async handleMenu(item) {
+      if (!item.path) {
+        return;
+      }
+      try {
+        await reportMenuClick(item);
+      } catch (error) {
+        console.error('菜单埋点上报失败:', error);
+      }
       uni.navigateTo({
         url: item.path
-      })
+      });
     }
   }
 }

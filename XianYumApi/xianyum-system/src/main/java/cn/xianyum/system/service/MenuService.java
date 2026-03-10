@@ -19,7 +19,7 @@ public interface MenuService{
     /**
      * 获取用户菜单列表
      */
-    List<MenuResponse> getUserMenuList();
+    List<MenuResponse> getUserMenuList(String platformType);
 
     List<MenuEntity> getChildPerms(List<MenuEntity> menus, int i);
 
@@ -60,4 +60,16 @@ public interface MenuService{
     List<Long>  selectMenuListByRoleId(Long roleId);
 
     Set<String> getMenuPermission(String userId);
+
+    /**
+     * 菜单埋点上报
+     * @param menuRequest
+     */
+    void reportMenuClick(MenuEntity menuRequest);
+
+    /**
+     * 获取菜单点击排名前N名
+     * @return
+     */
+    List<MenuResponse> getMenuClickRank();
 }

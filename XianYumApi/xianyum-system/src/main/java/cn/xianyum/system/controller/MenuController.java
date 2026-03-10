@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
@@ -32,8 +33,8 @@ public class MenuController {
      */
     @GetMapping("/nav")
     @Operation(summary = "获取导航菜单以及权限")
-    public Results<List<MenuResponse>> nav(){
-        List<MenuResponse> menuResponses = menuService.getUserMenuList();
+    public Results<List<MenuResponse>> nav(@RequestParam PlatformTypeEnum platformType) {
+        List<MenuResponse> menuResponses = menuService.getUserMenuList(platformType.getCode());
         return Results.success(menuResponses);
     }
 
@@ -110,5 +111,24 @@ public class MenuController {
     public Results<?> treeSelectByRoleId(@RequestParam Long roleId) {
         Map<String,Object> resultMap = menuService.treeSelectByRoleId(roleId);
         return Results.success(resultMap);
+    }
+
+    /**
+     * 保存菜单信息
+     */
+    @PostMapping(value = "/click")
+    @Operation(summary = "前端菜单埋点上报")
+    public Results<?> reportMenuClick(@RequestBody MenuEntity menuRequest) {
+       menuService.reportMenuClick(menuRequest);
+        return Results.success();
+    }
+
+    /**
+     * 保存菜单信息
+     */
+    @GetMapping(value = "/rank")
+    @Operation(summary = "获取菜单点击排名（前N名）")
+    public Results<List<MenuResponse>> getMenuClickRank() {
+        return Results.success(menuService.getMenuClickRank());
     }
 }

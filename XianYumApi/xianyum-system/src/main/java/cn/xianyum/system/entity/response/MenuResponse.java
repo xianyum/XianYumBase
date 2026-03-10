@@ -12,6 +12,10 @@ import java.util.List;
 public class MenuResponse {
 
     /**
+     * 菜单ID
+     */
+    private Long menuId;
+    /**
      * 路由名字
      */
     private String name;
@@ -71,4 +75,12 @@ public class MenuResponse {
      * 图标背景色，目前只针对app生效
      */
     private String iconBgColor;
+
+    /**
+     * 菜单名称
+     */
+    private String menuName;
+
+    /** 菜单图标 */
+    private String icon;
 }

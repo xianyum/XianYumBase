@@ -3,10 +3,7 @@ package cn.xianyum.system.dao;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +15,7 @@ import java.util.Set;
 
 public interface MenuMapper extends BaseMapper<MenuEntity> {
 
-    List<MenuEntity> selectMenuTreeByUserId(@RequestParam("userId") String userId);
+    List<MenuEntity> selectMenuTreeByUserId(@Param("userId") String userId,@Param("platformType") String platformType);
 
     List<MenuEntity> selectMenuList(MenuRequest menuRequest);
 
@@ -26,10 +23,11 @@ public interface MenuMapper extends BaseMapper<MenuEntity> {
      * 校验菜单名称是否唯一
      *
      * @param menuName 菜单名称
+     * @param platformType 平台类型
      * @param parentId 父菜单ID
      * @return 结果
      */
-    MenuEntity checkMenuNameUnique(@Param("menuName") String menuName, @Param("parentId") Long parentId);
+    MenuEntity checkMenuNameUnique(@Param("menuName") String menuName,@Param("platformType") String platformType, @Param("parentId") Long parentId);
 
     int hasChildByMenuId(Long menuId);
 
