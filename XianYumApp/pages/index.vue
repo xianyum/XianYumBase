@@ -192,14 +192,14 @@ export default {
     this.getVersionList()
     // 获取更新
     this.handleToUpgrade()
-    // 加载快捷功能
-    this.getQuickActions()
   },
   async onShow() {
     // 获取状态栏高度
     const systemInfo = uni.getSystemInfoSync()
     this.statusBarHeight = systemInfo.statusBarHeight
     await this.getUser()
+    // 加载快捷功能
+    this.getQuickActions()
   },
   onPullDownRefresh() {
     this.refreshData();

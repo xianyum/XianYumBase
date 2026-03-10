@@ -226,10 +226,7 @@ export default {
       try {
         const res = await getServer()
         this.server = res.data || {}
-      } catch (e) {
-        uni.showToast({ title: '数据加载失败', icon: 'none' })
-        console.error('服务器监控数据加载失败：', e)
-      } finally {
+      }finally {
         uni.hideLoading()
       }
     }

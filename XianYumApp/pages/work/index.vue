@@ -34,7 +34,7 @@ export default {
       defaultBgColor: '#8227b0'
     }
   },
-  onLoad() {
+  onShow() {
     this.getMenus();
   },
   methods: {

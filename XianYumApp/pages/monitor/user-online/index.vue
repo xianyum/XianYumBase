@@ -154,10 +154,6 @@ export default {
         }
       } catch (error) {
         this.loadMoreStatus = 'more'
-        uni.showToast({
-          title: '获取在线用户列表错误',
-          icon: 'none'
-        })
       } finally {
         this.loading = false
         if (type === 'refresh') {
