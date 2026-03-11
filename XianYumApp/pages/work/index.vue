@@ -19,11 +19,16 @@
         </view>
       </view>
     </view>
+
+    <!-- 暂无菜单权限提示 -->
+    <view v-if="dynamicMenuModules.length === 0" class="empty-tip">
+      <text class="empty-text">暂无菜单权限</text>
+    </view>
   </view>
 </template>
 
 <script>
-import { getRouters,reportMenuClick} from "@/api/system/menu/menu";
+import { getRouters, reportMenuClick } from "@/api/system/menu/menu";
 
 export default {
   data() {
@@ -41,10 +46,17 @@ export default {
     // 从后端获取菜单数据并格式化
     async getMenus() {
       const queryParams = { "platformType": "APP" };
-      const res = await getRouters(queryParams);
-      if (res.code === 200 && res.data ) {
-        // 格式化菜单数据
-        this.formatMenuData(res.data);
+      try { // 增加错误处理
+        const res = await getRouters(queryParams);
+        if (res.code === 200 && res.data) {
+          // 格式化菜单数据
+          this.formatMenuData(res.data);
+        } else {
+          this.dynamicMenuModules = []; // 接口返回异常时清空
+        }
+      } catch (error) {
+        console.error('获取菜单数据失败:', error);
+        this.dynamicMenuModules = []; // 请求失败时清空
       }
     },
 
@@ -53,21 +65,25 @@ export default {
       const formattedModules = [];
 
       rawData.forEach((module) => {
-        // 过滤掉隐藏的模块
+        // 1. 过滤掉隐藏的模块
         if (module.hidden) return;
-        // 格式化子菜单
+
+        // 2. 过滤掉没有子菜单的顶级模块
+        if (!module.children || module.children.length === 0) return;
+
+        // 3. 格式化子菜单并过滤隐藏项
         const formattedChildren = module.children?.map((child) => {
-          // 过滤掉隐藏的子菜单
           if (child.hidden) return null;
           return {
             menuId: child.menuId,
             name: child.meta?.title || '',        // 菜单名称
             icon: child.meta?.icon || '',         // 图标类名
             path: child.component || '',          // 跳转路径
-            // 使用后端返回的背景色，没有则使用默认色
-            bgColor: child.iconBgColor || this.defaultBgColor
+            bgColor: child.iconBgColor || this.defaultBgColor // 背景色
           };
-        }).filter(Boolean);
+        }).filter(Boolean); // 过滤掉null项
+
+        // 4. 只保留有有效子菜单的模块
         if (formattedChildren.length > 0) {
           formattedModules.push({
             moduleTitle: module.meta?.title || '未命名模块',
@@ -78,6 +94,7 @@ export default {
 
       this.dynamicMenuModules = formattedModules;
     },
+
     // 菜单点击跳转
     async handleMenu(item) {
       if (!item.path) {
@@ -101,6 +118,18 @@ export default {
   min-height: 100vh;
   background-color: #f5f7fa;
   padding: 20rpx;
+
+  // 暂无菜单权限样式
+  .empty-tip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400rpx;
+    .empty-text {
+      font-size: 30rpx;
+      color: #909399;
+    }
+  }
 
   .module-section {
     margin-bottom: 30rpx;
