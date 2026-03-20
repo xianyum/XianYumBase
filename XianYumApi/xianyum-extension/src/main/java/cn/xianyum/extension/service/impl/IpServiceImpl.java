@@ -23,7 +23,7 @@ public class IpServiceImpl implements IpService {
             ip = IPUtils.getIpAddr(HttpContextUtils.getHttpServletRequest());
         }
         IpInfoEntity ipInfoEntity = JSONObject.parseObject(JSONObject.toJSONString(IPUtils.getIpInfoMap(ip)),IpInfoEntity.class);
-        ipInfoEntity.setSupport("https://xiaoyaxiaokeai.gitee.io/base/20201224/thanks.jpg");
+        ipInfoEntity.setSupport("https://free.boltp.com/2026/03/12/69b20a75b3ee2.webp");
         ipInfoEntity.setEmail("80616059@qq.com");
         ipInfoEntity.setIp(ip);
         return ipInfoEntity;
