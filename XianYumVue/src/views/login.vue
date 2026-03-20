@@ -36,6 +36,7 @@
               type="text"
               auto-complete="off"
               placeholder="账号"
+              @keyup.enter.native="handleLogin"
             >
               <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
             </el-input>
@@ -112,12 +113,13 @@
             <p>正在生成二维码...</p>
           </div>
           <p class="qrcode-tip">请使用XianYum App扫码登录</p>
-          
+
           <div class="qrcode-actions">
             <el-button
               type="text"
               @click="refreshQrcode"
               class="refresh-qrcode-btn"
+              :loading="isRefreshing"
             >
               刷新二维码
             </el-button>
@@ -158,6 +160,7 @@ export default {
       qrcodeStatusText: '',
       qrcodeCheckTimer: null,
       isLoginLoading: false,
+      isRefreshing: false,
       loginForm: {
         username: "xianyu",
         password: "123456",
@@ -166,10 +169,12 @@ export default {
       },
       loginRules: {
         username: [
-          { required: true, trigger: "blur", message: "请输入您的账号" }
+          { required: true, trigger: "blur", message: "请输入您的账号" },
+          { min: 3, max: 20, trigger: "blur", message: "账号长度应在3-20个字符之间" }
         ],
         password: [
-          { required: true, trigger: "blur", message: "请输入您的密码" }
+          { required: true, trigger: "blur", message: "请输入您的密码" },
+          { min: 6, max: 20, trigger: "blur", message: "密码长度应在6-20个字符之间" }
         ]
       },
       loading: false,
@@ -209,28 +214,20 @@ export default {
   },
   methods: {
     getStatusClass() {
-      switch (this.qrcodeRawStatus) {
-        case 'SCANNED':
-          return 'status-scanned';
-        case 'CONFIRMED':
-          return 'status-success';
-        case 'EXPIRED':
-          return 'status-expired';
-        default:
-          return '';
-      }
+      const statusMap = {
+        'SCANNED': 'status-scanned',
+        'CONFIRMED': 'status-success',
+        'EXPIRED': 'status-expired'
+      };
+      return statusMap[this.qrcodeRawStatus] || '';
     },
     getStatusIcon() {
-      switch (this.qrcodeRawStatus) {
-        case 'SCANNED':
-          return 'el-icon-full-screen';
-        case 'CONFIRMED':
-          return 'el-icon-success';
-        case 'EXPIRED':
-          return 'el-icon-time';
-        default:
-          return '';
-      }
+      const iconMap = {
+        'SCANNED': 'el-icon-full-screen',
+        'CONFIRMED': 'el-icon-success',
+        'EXPIRED': 'el-icon-time'
+      };
+      return iconMap[this.qrcodeRawStatus] || '';
     },
     // 切换登录Tab
     switchTab(tab) {
@@ -267,12 +264,17 @@ export default {
     },
 
     // 刷新二维码
-    refreshQrcode() {
-      this.qrcodeRawStatus = '';
-      this.qrcodeStatusText  = '';
-      this.qrcodeSrc = '';
-      this.clearQrcodeCheckTimer();
-      this.generateQrcode();
+    async refreshQrcode() {
+      this.isRefreshing = true;
+      try {
+        this.qrcodeRawStatus = '';
+        this.qrcodeStatusText = '';
+        this.qrcodeSrc = '';
+        this.clearQrcodeCheckTimer();
+        await this.generateQrcode();
+      } finally {
+        this.isRefreshing = false;
+      }
     },
 
     // 启动检查扫码状态定时器
@@ -299,18 +301,19 @@ export default {
                 break;
               case 'CONFIRMED':
                 this.isLoginLoading = true;
-                this.qrcodeStatusText  = '登录成功，正在跳转...';
+                this.qrcodeStatusText = '登录成功，正在跳转...';
                 this.clearQrcodeCheckTimer();
                 // 登录成功，获取token并跳转
                 const loginData = {
                   "authCode": this.qrcodeTicket,
                   "loginType": "QR"
-                }
-                this.$store.dispatch("Login", loginData).then(() => {
+                };
+                try {
+                  await this.$store.dispatch("Login", loginData);
                   this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-                }).finally(() => {
+                } finally {
                   this.isLoginLoading = false;
-                });
+                }
                 break;
               case 'EXPIRED':
                 this.qrcodeStatusText  = '二维码已过期，请刷新';
@@ -355,27 +358,28 @@ export default {
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
     },
-    checkSuccess(){
+    async checkSuccess(){
       this.loading = true;
-      if (this.loginForm.rememberMe) {
-        Cookies.set("username", this.loginForm.username, { expires: 30 });
-        Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
-        Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
-      } else {
-        Cookies.remove("username");
-        Cookies.remove("password");
-        Cookies.remove('rememberMe');
-      }
-      this.$store.dispatch("Login", this.loginForm).then(() => {
+      try {
+        if (this.loginForm.rememberMe) {
+          Cookies.set("username", this.loginForm.username, { expires: 30 });
+          Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
+          Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
+        } else {
+          Cookies.remove("username");
+          Cookies.remove("password");
+          Cookies.remove('rememberMe');
+        }
+        await this.$store.dispatch("Login", this.loginForm);
         this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-      }).finally(() => {
+      } finally {
         this.loading = false;
-      });
+      }
     },
     handleLogin() {
-      this.showCaptchaMask = true;
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          this.showCaptchaMask = true;
           // config 对象为TAC验证码的一些配置和验证的回调
           const config = {
             // 生成接口 (必选项,必须配置)
@@ -419,22 +423,25 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-image: url("https://api.kdcc.cn/img/");
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
 
   .login-container {
-    width: 400px; /* 登录框宽度 */
+    width: 400px;
     background: #ffffff;
-    border-radius: 12px; /* 圆角 */
+    border-radius: 12px;
     padding: 0;
     overflow: hidden;
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-in-out;
 
     &:hover {
       box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
     }
   }
 
@@ -481,6 +488,7 @@ export default {
           height: 2px;
           background-color: #1890ff;
           border-radius: 1px;
+          animation: slideIn 0.3s ease;
         }
       }
     }
@@ -527,6 +535,11 @@ export default {
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
         img {
           width: 100%;
@@ -583,8 +596,8 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 2px;
-        margin-top: 0;
+        gap: 12px;
+        margin-top: 8px;
       }
 
       .refresh-qrcode-btn {
@@ -714,6 +727,7 @@ export default {
 
   &:hover {
     background-color: #e6f7ff;
+    transform: translateY(-2px);
   }
 }
 
@@ -769,5 +783,15 @@ export default {
 @keyframes rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { width: 0; left: 50%; }
+  to { width: 100%; left: 0; }
 }
 </style>
