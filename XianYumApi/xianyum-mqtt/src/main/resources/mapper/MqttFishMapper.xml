@@ -6,10 +6,10 @@
 
     <select id="getReportLineData" resultType="cn.xianyum.mqtt.entity.response.MqttFishResponse" parameterType="cn.xianyum.mqtt.entity.request.MqttFishRequest">
         SELECT
-        <if test="request.dateType != null and request.dateType == 0">
+        <if test="params.dateType != null and params.dateType == 0">
             DATE_FORMAT(mf.create_time, '%Y-%m-%d %H' ) as dateStr,
         </if>
-        <if test="request.dateType != null and request.dateType == 1">
+        <if test="params.dateType != null and params.dateType == 1">
             DATE_FORMAT(mf.create_time, '%Y-%m-%d' ) as dateStr,
         </if>
         ROUND(AVG(mf.indoor_temp), 1) as indoor_temp,
@@ -18,19 +18,37 @@
         ROUND(AVG(mf.fish_tank_temp), 1) as fish_tank_temp
         FROM
         mqtt_fish mf
-        <if test="request.dateType != null and request.dateType == 0">
+        <where>
+            <if test="params.dateType != null and params.dateType == 0">
+                mf.create_time >= DATE_SUB(NOW(), INTERVAL 30 HOUR)
+            </if>
+            <if test="params.dateType != null and params.dateType == 1">
+                mf.create_time >= DATE_SUB(NOW(), INTERVAL 34 DAY)
+            </if>
             GROUP BY
-            DATE_FORMAT(mf.create_time,'%Y-%m-%d %H')
-            ORDER BY DATE_FORMAT(mf.create_time,'%Y-%m-%d %H') DESC
-            LIMIT 24
-        </if>
-        <if test="request.dateType != null and request.dateType == 1">
-            GROUP BY
-            DATE_FORMAT(mf.create_time,'%Y-%m-%d')
-            ORDER BY DATE_FORMAT(mf.create_time,'%Y-%m-%d') DESC
-            LIMIT 31
-        </if>
+            <if test="params.dateType != null and params.dateType == 0">
+                DATE_FORMAT(mf.create_time,'%Y-%m-%d %H')
+            </if>
+            <if test="params.dateType != null and params.dateType == 1">
+                DATE_FORMAT(mf.create_time,'%Y-%m-%d')
+            </if>
+            ORDER BY
+            <if test="params.dateType != null and params.dateType == 0">
+                MAX(mf.create_time) DESC
+            </if>
+            <if test="params.dateType != null and params.dateType == 1">
+                MAX(mf.create_time) DESC
+            </if>
+            LIMIT
+            <if test="params.dateType != null and params.dateType == 0">
+                24
+            </if>
+            <if test="params.dateType != null and params.dateType == 1">
+                31
+            </if>
+        </where>
     </select>
+
 
     <select id="queryTotalCount" resultType="java.lang.Long">
         SELECT
