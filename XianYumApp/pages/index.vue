@@ -15,7 +15,7 @@
     <!-- 数据概览 -->
     <view class="overview">
       <view class="overview-item" v-for="(item, index) in overviewData" :key="index">
-        <view class="item-value">{{ item.value }}</view>
+        <view class="item-value">{{ (item.value / 1000).toFixed(1) }}K</view>
         <view class="item-label">{{ item.label }}</view>
       </view>
     </view>
@@ -154,8 +154,9 @@ export default {
       updateInfo: {},
       overviewData: [
         { label: '操作日志量', value: 0 },
+        { label: 'IOT上报量', value: 0 },
         { label: '消息发送量', value: 0 },
-        { label: '任务调度量', value: 0 }
+        { label: '任务调度量', value: 0 },
       ],
       quickActions: [],
       // 默认背景色（可根据需要修改）
@@ -267,8 +268,6 @@ export default {
           this.totalPage = Math.ceil(this.total / this.pageSize);
         }
       } catch (error) {
-        console.error('获取版本列表失败：', error);
-        this.$modal.msgError('获取版本记录失败');
         this.versionList = [];
       } finally {
         this.loading = false;
