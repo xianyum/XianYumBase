@@ -147,6 +147,12 @@
         // 下拉刷新区域背景色（建议与页面背景一致）
         "backgroundTextStyle": "dark"
       }
+    },
+    {
+      "path": "pages/tools/otp/index",
+      "style": {
+        "navigationBarTitleText": "OTP验证器"
+      }
     }
   ],
   "tabBar": {
