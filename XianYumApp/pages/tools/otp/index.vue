@@ -37,31 +37,57 @@
 </template>
 
 <script>
-import { generateTOTP, generateTOTPSync, getRemainingTime, getProgress } from '@/utils/otpUtil.js';
+import * as OTPAuth from "@/uni_modules/otpauth/index.js";
+import { saveOtpNetworkAuth, getOtpNetworkAuthList, deleteOtpNetworkAuthList } from '@/api/tools/otp/otpApi.js';
 
 export default {
   data() {
     return {
-      otpList: [
-        {
-          issuer: 'GitHub',
-          account: 'zhang.wei',
-          code: '654321',
-          expiryTime: 15,
-          progress: 25,
-          secret: 'ABCDEFGHIJKLMNOP',
-          algorithm: 'SHA1',
-          period: 30,
-          digits: 6
-        }
-      ]
+      otpList: [],
+      otpTimer: null // 保存定时器 ID
     };
   },
+  beforeUnmount() {
+    // 清除定时器，避免内存泄漏
+    if (this.otpTimer) {
+      clearInterval(this.otpTimer);
+      this.otpTimer = null;
+    }
+  },
   mounted() {
+    // 加载 OTP 列表
+    this.loadOTPList();
     // 启动定时器更新OTP
     this.startOTPTimer();
   },
   methods: {
+    // 加载 OTP 列表
+    async loadOTPList() {
+      const res = await getOtpNetworkAuthList();
+      if (res.code === 200 && res.data) {
+        this.otpList = res.data.map(item => {
+          try {
+            // 解析 otpAuthUri
+            const otpInfo = OTPAuth.URI.parse(item.otpAuthUri);
+            return {
+              id: item.id,
+              issuer: otpInfo.issuer,
+              account: otpInfo.label,
+              code: otpInfo.generate(),
+              expiryTime: otpInfo.remaining() / 1000,
+              progress: (otpInfo.remaining() / 1000 / otpInfo.period) * 100,
+              totp: otpInfo,
+              secret: otpInfo.secret,
+              algorithm: otpInfo.algorithm,
+              period: otpInfo.period,
+              digits: otpInfo.digits
+            };
+          } catch (parseError) {
+            return null;
+          }
+        }).filter(Boolean);
+      }
+    },
     // 扫描二维码
     scanQRCode() {
       uni.scanCode({
@@ -69,20 +95,19 @@ export default {
         success: (res) => {
           const scanResult = res.result || '';
           // 解析otpauth URL
-          const otpInfo = this.parseOtpAuthUrl(scanResult);
-          // 检查解析是否成功
-          if (!otpInfo.secret) {
-            this.$modal.msg('请扫描有效的OTP二维码');
+          try {
+            const otpInfo = OTPAuth.URI.parse(scanResult);
+            // 显示确认保存弹窗
+            this.$modal.confirm(`是否保存【${otpInfo.issuer}】信息？`, '确认保存').then((confirm) => {
+              if (confirm) {
+                // 保存OTP
+                this.saveOTP(otpInfo);
+              }
+            });
+          }catch (error) {
+            this.$modal.msg('请扫描有效的二维码');
             return;
           }
-          
-          // 显示确认保存弹窗
-          this.$modal.confirm(`是否保存【${otpInfo.issuer}】信息？`, '确认保存').then((confirm) => {
-            if (confirm) {
-              // 保存OTP
-              this.saveOTP(otpInfo);
-            }
-          });
         },
         fail: (err) => {
           // 区分取消扫码和扫码失败
@@ -92,126 +117,67 @@ export default {
         }
       });
     },
-    
-    // 解析otpauth URL
-    parseOtpAuthUrl(url) {
-      try {
-        let issuer = '';
-        let account = '';
-        let secret = '';
-        let algorithm = 'SHA1';
-        let digits = 6;
-        let period = 30;
-        
-        // 提取路径部分（issuer和account）
-        const pathMatch = url.match(/otpauth:\/\/totp\/([^?]+)/);
-        if (pathMatch && pathMatch[1]) {
-          const pathParts = pathMatch[1].split(':');
-          if (pathParts.length > 1) {
-            issuer = pathParts[0];
-            account = pathParts.slice(1).join(':');
-          } else {
-            issuer = pathParts[0];
-          }
-        }
-        
-        // 提取查询参数
-        const paramsMatch = url.match(/\?(.*)$/);
-        if (paramsMatch && paramsMatch[1]) {
-          const params = paramsMatch[1].split('&');
-          params.forEach(param => {
-            const [key, value] = param.split('=');
-            if (key === 'issuer') {
-              issuer = decodeURIComponent(value || '');
-            } else if (key === 'secret') {
-              secret = decodeURIComponent(value || '');
-            } else if (key === 'algorithm') {
-              algorithm = decodeURIComponent(value || 'SHA1');
-            } else if (key === 'digits') {
-              digits = parseInt(value || '6');
-            } else if (key === 'period') {
-              period = parseInt(value || '30');
-            }
-          });
-        }
-
-        return {
-          issuer,
-          account,
-          secret,
-          algorithm,
-          digits,
-          period
-        };
-      } catch (error) {
-        console.error('解析OTP URL失败:', error);
-        return {
-          issuer: '',
-          account: '',
-          secret: '',
-          algorithm: 'SHA1',
-          digits: 6,
-          period: 30
-        };
-      }
-    },
-    
     // 保存OTP
-    saveOTP(otpInfo) {
-      // 生成初始OTP
-      const newOTP = {
-        issuer: otpInfo.issuer,
-        account: otpInfo.account,
-        code: this.generateOTP(otpInfo.secret, otpInfo.digits, otpInfo.period),
-        expiryTime: getRemainingTime(otpInfo.period),
-        progress: getProgress(otpInfo.period),
-        secret: otpInfo.secret,
-        algorithm: otpInfo.algorithm,
-        period: otpInfo.period,
-        digits: otpInfo.digits
+    async saveOTP(otpInfo) {
+      // 生成 otpAuthUri
+      const otpAuthUri = OTPAuth.URI.stringify(otpInfo);
+
+      // 准备保存数据
+      const saveData = {
+        otpAuthUri: otpAuthUri
       };
-      
-      this.otpList.push(newOTP);
-      this.$modal.msgSuccess('保存成功');
+
+      // 调用后端 API 保存
+      const res = await saveOtpNetworkAuth(saveData);
+      if (res.code === 200) {
+        this.$modal.msgSuccess('保存成功');
+        await this.loadOTPList();
+      }
     },
     
     // 删除OTP
     async deleteOTP(item) {
       const confirm = await this.$modal.confirm(`确定要删除【${item.issuer}】吗？`, '确认删除');
       if (confirm) {
-        this.otpList.splice(this.otpList.indexOf(item), 1);
-        this.$modal.msgSuccess('删除成功');
+        // 调用后端 API 删除
+        const res = await deleteOtpNetworkAuthList(item.id);
+        if (res.code === 200) {
+          await this.loadOTPList();
+          this.$modal.msgSuccess('删除成功');
+        }
       }
     },
-
-    // 生成OTP
-    generateOTP(secret, digits = 6, period = 30) {
-      try {
-        return generateTOTP(secret, digits, period);
-      } catch (error) {
-        this.$modal.msgError('生成验证码失败');
-        return '---';
-      }
-    },
-    
     // 启动OTP定时器
     startOTPTimer() {
+      // 清除之前的定时器，避免重复创建
+      if (this.otpTimer) {
+        clearInterval(this.otpTimer);
+        this.otpTimer = null;
+      }
       // 立即更新一次
-      this.updateOTPList();
-      
+      this.refreshOTPCodes();
       // 每秒更新一次
-      setInterval(() => {
-        this.updateOTPList();
+      this.otpTimer = setInterval(() => {
+        this.refreshOTPCodes();
       }, 1000);
     },
 
-    // 更新OTP列表
-    updateOTPList() {
+    // 刷新OTP验证码和倒计时
+    refreshOTPCodes() {
+      // 只在有 OTP 项时更新
+      if (this.otpList.length === 0) return;
+      
       this.otpList.forEach(item => {
-        // 更新剩余时间和进度
-        item.expiryTime = getRemainingTime(item.period);
-        item.progress = getProgress(item.period);
-        item.code = this.generateOTP(item.secret, item.digits, item.period);
+        // 使用保存的 TOTP 对象更新信息
+        if (item.totp) {
+          try {
+            item.code = item.totp.generate();
+            item.expiryTime = item.totp.remaining() / 1000;
+            item.progress = (item.totp.remaining() / 1000 / item.period) * 100;
+          } catch (error) {
+            console.error('刷新 OTP 验证码失败:', error);
+          }
+        }
       });
     }
   }
@@ -229,7 +195,7 @@ export default {
 
 .otp-list {
   padding: 30rpx;
-  padding-bottom: 150rpx; /* 为底部按钮留出空间 */
+  padding-bottom: 150rpx;
 }
 
 .empty-state {
@@ -322,15 +288,9 @@ export default {
   border: 1rpx solid #e8e8e8;
   background-color: #f5f5f5;
   opacity: 0.7;
-  transition: all 0.3s ease;
   margin-left: 20rpx;
-}
-
-.delete-btn:hover {
-  opacity: 1;
-  background-color: #ff4d4f;
-  border-color: #ff4d4f;
-  transform: scale(1.1);
+  /* 修复app端点击效果 */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .delete-icon {
@@ -338,11 +298,6 @@ export default {
   color: #999;
   line-height: 1;
   font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.delete-btn:hover .delete-icon {
-  color: #fff;
 }
 
 .otp-item-content {

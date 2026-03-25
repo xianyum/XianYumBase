@@ -1,0 +1,8 @@
+{
+  "id": "otpauth",
+  "name": "otpauth",
+  "version": "9.5.0",
+  "description": "OTP离线验证模块（TOTP/HOTP）",
+  "main": "index.js",
+  "uni_modules": true
+}
