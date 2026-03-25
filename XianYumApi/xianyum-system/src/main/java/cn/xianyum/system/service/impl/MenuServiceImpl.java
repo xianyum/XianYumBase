@@ -295,14 +295,62 @@ public class MenuServiceImpl implements MenuService {
         try {
             // 1. 递增菜单点击次数（每个菜单独立计数）
             String menuKey = String.format(menuClickKey,SecurityUtils.getLoginUser().getId(),menuRequest.getMenuId());
-            Long clickCount = redisTemplate.opsForValue().increment(menuKey, 1);
-            // 2. 更新排行榜（zset有序集合，score为点击次数）
+        
+            // 2. 记录点击时间到时间序列
+            String timeSeriesKey = String.format(menuClickKey, SecurityUtils.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
+            long currentTime = System.currentTimeMillis();
+            redisTemplate.opsForList().rightPush(timeSeriesKey, String.valueOf(currentTime));
+
+            // 3. 设置过期时间，自动清理24小时前的数据
+            redisTemplate.expire(timeSeriesKey, java.time.Duration.ofHours(24));
+
+            // 4. 计算滑动窗口活跃度分数
+            double activityScore = calculateActivityScore(menuRequest.getMenuId());
+
+            // 5. 更新排行榜（zset有序集合，score为活跃度分数）
             String menuRankKey = String.format(menuClickRank,SecurityUtils.getLoginUser().getId());
-            redisTemplate.opsForZSet().add(menuRankKey, String.valueOf(menuRequest.getMenuId()),clickCount);
+            redisTemplate.opsForZSet().add(menuRankKey, String.valueOf(menuRequest.getMenuId()), activityScore);
         } catch (Exception e) {
             log.error("菜单埋点上报失败", e);
             throw e;
         }
+    }
+
+    /**
+     * 计算滑动窗口活跃度分数
+     * @param menuId 菜单ID
+     * @return 活跃度分数
+     */
+    private double calculateActivityScore(Long menuId) {
+        String timeSeriesKey = String.format(menuClickKey, SecurityUtils.getLoginUser().getId(), menuId) + ":timeseries";
+        List<String> clickTimes = redisTemplate.opsForList().range(timeSeriesKey, 0, -1);
+
+        if (CollUtil.isEmpty(clickTimes)) {
+            return 0;
+        }
+
+        double score = 0;
+        long currentTime = System.currentTimeMillis();
+        long twentyFourHoursAgo = currentTime - (24 * 60 * 60 * 1000);
+
+        // 计算最近24小时内的点击，越近的点击权重越高
+        for (String clickTimeStr : clickTimes) {
+            try {
+                long clickTime = Long.parseLong(clickTimeStr);
+
+                // 只考虑24小时内的点击
+                if (clickTime >= twentyFourHoursAgo) {
+                    long timeDiff = currentTime - clickTime;
+                    // 时间衰减因子，越近的点击权重越高
+                    double weight = 1.0 / (1 + timeDiff / (60 * 60 * 1000.0)); // 每小时衰减
+                    score += weight;
+                }
+            } catch (NumberFormatException e) {
+                log.error("解析点击时间失败", e);
+            }
+        }
+
+        return score;
     }
 
     /**
