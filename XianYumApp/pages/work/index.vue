@@ -186,6 +186,11 @@ export default {
         .menu-name {
           font-size: 26rpx;
           color: #606266;
+          text-align: center;
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }

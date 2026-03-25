@@ -151,7 +151,7 @@
     {
       "path": "pages/tools/otp/index",
       "style": {
-        "navigationBarTitleText": "OTP验证器"
+        "navigationBarTitleText": "网络验证器"
       }
     }
   ],
