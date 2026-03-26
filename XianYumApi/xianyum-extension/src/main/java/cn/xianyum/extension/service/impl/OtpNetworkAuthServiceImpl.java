@@ -38,6 +38,7 @@ public class OtpNetworkAuthServiceImpl implements OtpNetworkAuthService {
     public List<OtpNetworkAuthResponse> getList() {
         LambdaQueryWrapper<OtpNetworkAuthEntity> queryWrapper = Wrappers.<OtpNetworkAuthEntity>lambdaQuery()
                 .eq(OtpNetworkAuthEntity::getCreateBy, SecurityUtils.getLoginUser().getId())
+                .eq(OtpNetworkAuthEntity::getStatus, YesOrNoEnum.YES.getStatus())
                 .orderByDesc(OtpNetworkAuthEntity::getCreateTime);
         return BeanUtil.copyToList(otpNetworkAuthMapper.selectList(queryWrapper), OtpNetworkAuthResponse.class);
     }
@@ -50,7 +51,10 @@ public class OtpNetworkAuthServiceImpl implements OtpNetworkAuthService {
      */
     @Override
     public boolean deleteById(String id) {
-        return otpNetworkAuthMapper.deleteById(id) > 0;
+        LambdaUpdateWrapper<OtpNetworkAuthEntity> lambdaUpdateWrapper = Wrappers.<OtpNetworkAuthEntity>lambdaUpdate()
+                .eq(OtpNetworkAuthEntity::getId, id)
+                .eq(OtpNetworkAuthEntity::getStatus, YesOrNoEnum.NO.getStatus());
+        return otpNetworkAuthMapper.update(null, lambdaUpdateWrapper) > 0;
     }
 
     /**
