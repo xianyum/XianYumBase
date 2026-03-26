@@ -10,7 +10,7 @@
       <view v-else class="otp-item" v-for="(item, index) in otpList" :key="index">
         <view class="otp-item-header">
           <view class="otp-issuer-info">
-            <text class="otp-issuer">{{ item.issuer }}</text>
+            <text class="otp-issuer">{{ item.systemName }}</text>
             <text v-if="item.account" class="otp-account">{{ item.account }}</text>
           </view>
           <button type="default" @click="deleteOTP(item)" class="delete-btn">
@@ -80,7 +80,8 @@ export default {
               secret: otpInfo.secret,
               algorithm: otpInfo.algorithm,
               period: otpInfo.period,
-              digits: otpInfo.digits
+              digits: otpInfo.digits,
+              systemName: item.systemName || otpInfo.issuer
             };
           } catch (parseError) {
             return null;
@@ -124,7 +125,8 @@ export default {
 
       // 准备保存数据
       const saveData = {
-        otpAuthUri: otpAuthUri
+        otpAuthUri: otpAuthUri,
+        systemName: otpInfo.issuer
       };
 
       // 调用后端 API 保存
