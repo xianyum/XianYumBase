@@ -29,4 +29,11 @@ public interface OtpNetworkAuthService{
      * @return 是否成功
      */
     boolean deleteById(String id);
+
+    /**
+     * 更新OTP网络验证
+     * @param request 请求参数
+     * @return 是否成功
+     */
+    boolean update(OtpNetworkAuthRequest request);
 }

@@ -1,5 +1,6 @@
 package cn.xianyum.extension.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.OtpNetworkAuthRequest;
 import cn.xianyum.extension.entity.response.OtpNetworkAuthResponse;
@@ -32,6 +33,18 @@ public class OtpNetworkAuthController {
     @PostMapping("/save")
     public Results<Boolean> save(@RequestBody OtpNetworkAuthRequest request) {
         boolean result = otpNetworkAuthService.save(request);
+        return Results.success(result);
+    }
+
+    /**
+     * 更新系统名称
+     * @param request 请求参数
+     * @return 保存结果
+     */
+    @Operation(summary = "更新系统名称")
+    @PostMapping("/update")
+    public Results<Boolean> update(@RequestBody OtpNetworkAuthRequest request) {
+        boolean result = otpNetworkAuthService.update(request);
         return Results.success(result);
     }
 

@@ -24,4 +24,14 @@ public class OtpNetworkAuthEntity extends BaseEntity {
      */
     private String otpAuthUri;
 
+    /**
+     * 系统名称
+     */
+    private String systemName;
+
+    /**
+     * 状态0-启用1-禁用
+     */
+    private Integer status;
+
 }
