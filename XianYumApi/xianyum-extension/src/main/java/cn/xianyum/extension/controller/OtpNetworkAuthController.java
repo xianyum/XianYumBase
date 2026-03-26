@@ -42,7 +42,7 @@ public class OtpNetworkAuthController {
      * @return 保存结果
      */
     @Operation(summary = "更新系统名称")
-    @PostMapping("/update")
+    @PutMapping("/update")
     public Results<Boolean> update(@RequestBody OtpNetworkAuthRequest request) {
         boolean result = otpNetworkAuthService.update(request);
         return Results.success(result);
