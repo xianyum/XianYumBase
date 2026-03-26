@@ -51,9 +51,9 @@ public class OtpNetworkAuthServiceImpl implements OtpNetworkAuthService {
      */
     @Override
     public boolean deleteById(String id) {
-        LambdaUpdateWrapper<OtpNetworkAuthEntity> lambdaUpdateWrapper = Wrappers.<OtpNetworkAuthEntity>lambdaUpdate()
-                .eq(OtpNetworkAuthEntity::getId, id)
-                .eq(OtpNetworkAuthEntity::getStatus, YesOrNoEnum.NO.getStatus());
+        LambdaUpdateWrapper<OtpNetworkAuthEntity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(OtpNetworkAuthEntity::getId, id);
+        lambdaUpdateWrapper.set(OtpNetworkAuthEntity::getStatus, YesOrNoEnum.NO.getStatus());
         return otpNetworkAuthMapper.update(null, lambdaUpdateWrapper) > 0;
     }
 

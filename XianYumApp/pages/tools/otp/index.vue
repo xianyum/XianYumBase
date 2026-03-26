@@ -7,13 +7,13 @@
         <text class="empty-title">暂无记录</text>
         <text class="empty-hint">点击右下角按钮扫描二维码添加</text>
       </view>
-      <view v-else class="otp-item" v-for="(item, index) in otpList" :key="index">
+      <view v-else class="otp-item" v-for="(item, index) in otpList" :key="index" @click="editOTP(item)">
         <view class="otp-item-header">
           <view class="otp-issuer-info">
             <text class="otp-issuer">{{ item.systemName }}</text>
             <text v-if="item.account" class="otp-account">{{ item.account }}</text>
           </view>
-          <button type="default" @click="deleteOTP(item)" class="delete-btn">
+          <button type="default" @click.stop="deleteOTP(item)" class="delete-btn">
             <text class="delete-icon">×</text>
           </button>
         </view>
@@ -38,7 +38,7 @@
 
 <script>
 import * as OTPAuth from "@/uni_modules/otpauth/index.js";
-import { saveOtpNetworkAuth, getOtpNetworkAuthList, deleteOtpNetworkAuthList } from '@/api/tools/otp/otpApi.js';
+import { saveOtpNetworkAuth, getOtpNetworkAuthList, deleteOtpNetworkAuthList, updateOtpNetworkAuth } from '@/api/tools/otp/otpApi.js';
 
 export default {
   data() {
@@ -99,21 +99,31 @@ export default {
           try {
             const otpInfo = OTPAuth.URI.parse(scanResult);
             // 显示确认保存弹窗
-            this.$modal.confirm(`是否保存【${otpInfo.issuer}】信息？`, '确认保存').then((confirm) => {
-              if (confirm) {
+          uni.showModal({
+            title: '确认保存',
+            content: `是否保存【${otpInfo.issuer}】信息？`,
+            success: (res) => {
+              if (res.confirm) {
                 // 保存OTP
                 this.saveOTP(otpInfo);
               }
-            });
+            }
+          });
           }catch (error) {
-            this.$modal.msg('请扫描有效的二维码');
+            uni.showToast({
+              title: '请扫描有效的二维码',
+              icon: 'none'
+            });
             return;
           }
         },
         fail: (err) => {
           // 区分取消扫码和扫码失败
           if (err.errMsg !== 'scanCode:fail cancel') {
-            this.$modal.msg('扫码失败，请重试');
+            uni.showToast({
+              title: '扫码失败，请重试',
+              icon: 'none'
+            });
           }
         }
       });
@@ -132,21 +142,65 @@ export default {
       // 调用后端 API 保存
       const res = await saveOtpNetworkAuth(saveData);
       if (res.code === 200) {
-        this.$modal.msgSuccess('保存成功');
+        uni.showToast({
+          title: '保存成功',
+          icon: 'success'
+        });
         await this.loadOTPList();
       }
     },
     
     // 删除OTP
     async deleteOTP(item) {
-      const confirm = await this.$modal.confirm(`确定要删除【${item.issuer}】吗？`, '确认删除');
-      if (confirm) {
-        // 调用后端 API 删除
-        const res = await deleteOtpNetworkAuthList(item.id);
-        if (res.code === 200) {
-          await this.loadOTPList();
-          this.$modal.msgSuccess('删除成功');
+      uni.showModal({
+        title: '确认删除',
+        content: `确定要删除【${item.issuer}】吗？`,
+        success: async (res) => {
+          if (res.confirm) {
+            // 调用后端 API 删除
+            const result = await deleteOtpNetworkAuthList(item.id);
+            if (result.code === 200) {
+              await this.loadOTPList();
+              uni.showToast({
+                title: '删除成功',
+                icon: 'success'
+              });
+            }
+          }
         }
+      });
+    },
+    
+    // 编辑OTP
+    editOTP(item) {
+      uni.showModal({
+        title: '修改系统备注',
+        editable: true,
+        placeholderText: '请输入系统备注',
+        defaultText: item.systemName,
+        success: (res) => {
+          if (res.confirm) {
+            const newSystemName = res.content.trim();
+            if (newSystemName) {
+              this.updateOTP(item.id, newSystemName);
+            } else {
+              this.$modal.msg("系统备注不能为空");
+            }
+          }
+        }
+      });
+    },
+    
+    // 更新OTP
+    async updateOTP(id, systemName) {
+      const updateData = {
+        id: id,
+        systemName: systemName
+      };
+      const res = await updateOtpNetworkAuth(updateData);
+      if (res.code === 200) {
+        this.$modal.msgSuccess("修改成功");
+        await this.loadOTPList();
       }
     },
     // 启动OTP定时器
@@ -238,11 +292,13 @@ export default {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .otp-item:hover {
   box-shadow: 0 12rpx 30rpx rgba(0, 0, 0, 0.15);
   transform: translateY(-4rpx);
+  background-color: #f8f9fa;
 }
 
 .otp-item-header {

@@ -25,3 +25,11 @@ export function deleteOtpNetworkAuthList(id) {
         }
     })
 }
+
+export function updateOtpNetworkAuth(data) {
+    return request({
+        url: '/xym-extension/v1/otp-network-auth/update',
+        method: 'put',
+        data: data
+    })
+}
