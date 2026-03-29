@@ -32,6 +32,17 @@
       <text class="scan-text">添加</text>
     </button>
 
+    <!-- 编辑弹框 -->
+    <uni-popup ref="editPopup" type="center" :mask-click="false">
+      <view class="popup-content">
+        <view class="popup-title">修改系统备注</view>
+        <uni-easyinput v-model="editForm.systemName" placeholder="请输入系统备注" @input="handleInput" />
+        <view class="popup-buttons">
+          <button type="default" @click="closePopup" class="cancel-btn">取消</button>
+          <button type="primary" @click="saveEdit" class="save-btn">保存</button>
+        </view>
+      </view>
+    </uni-popup>
 
   </view>
 </template>
@@ -44,7 +55,11 @@ export default {
   data() {
     return {
       otpList: [],
-      otpTimer: null // 保存定时器 ID
+      otpTimer: null, // 保存定时器 ID
+      editForm: {
+        systemName: '',
+        id: ''
+      }
     };
   },
   beforeUnmount() {
@@ -171,24 +186,34 @@ export default {
       });
     },
     
+    // 处理输入
+    handleInput() {
+      if (this.editForm.systemName) {
+        this.editForm.systemName = this.editForm.systemName.trim();
+      }
+    },
+    
     // 编辑OTP
     editOTP(item) {
-      uni.showModal({
-        title: '修改系统备注',
-        editable: true,
-        placeholderText: '请输入系统备注',
-        defaultText: item.systemName,
-        success: (res) => {
-          if (res.confirm) {
-            const newSystemName = res.content.trim();
-            if (newSystemName) {
-              this.updateOTP(item.id, newSystemName);
-            } else {
-              this.$modal.msg("系统备注不能为空");
-            }
-          }
-        }
-      });
+      this.editForm.id = item.id;
+      this.editForm.systemName = item.systemName;
+      this.$refs.editPopup.open();
+    },
+    
+    // 关闭弹框
+    closePopup() {
+      this.$refs.editPopup.close();
+    },
+    
+    // 保存编辑
+    saveEdit() {
+      const systemName = this.editForm.systemName.trim();
+      if (systemName) {
+        this.updateOTP(this.editForm.id, systemName);
+        this.$refs.editPopup.close();
+      } else {
+        this.$modal.msg("系统备注不能为空");
+      }
     },
     
     // 更新OTP
@@ -471,6 +496,67 @@ export default {
   }
 }
 
+/* 弹框样式 */
+.popup-content {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  width: 500rpx;
+  max-width: 95%;
+}
+
+.popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 24rpx;
+  color: #333;
+}
+
+.popup-content .uni-easyinput {
+  margin-bottom: 32rpx;
+}
+
+.popup-content .uni-easyinput__content {
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  height: 80rpx;
+  padding: 0 24rpx;
+
+  input {
+    font-size: 28rpx;
+    color: #2c3e50;
+    &::placeholder {
+      color: #909399;
+    }
+  }
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 16rpx;
+}
+
+.popup-buttons button {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+}
+
+.cancel-btn {
+  background-color: #f5f7fa;
+  color: #606266;
+  border: 2rpx solid #dcdfe6;
+}
+
+.save-btn {
+  background-color: #409eff;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(64,158,255,0.2);
+}
+
 /* 响应式设计 */
 @media screen and (max-width: 375px) {
   .otp-list {
@@ -499,6 +585,25 @@ export default {
   
   .scan-text {
     font-size: 20rpx;
+  }
+  
+  .popup-content {
+    width: 95%;
+    padding: 24rpx;
+  }
+  
+  .popup-title {
+    font-size: 28rpx;
+  }
+  
+  .popup-content .uni-easyinput__content {
+    height: 72rpx;
+  }
+  
+  .popup-buttons button {
+    height: 72rpx;
+    line-height: 72rpx;
+    font-size: 26rpx;
   }
 }
 </style>
