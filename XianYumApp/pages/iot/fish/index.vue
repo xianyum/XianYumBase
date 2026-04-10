@@ -120,7 +120,7 @@
 
     <liu-drag-button
         @clickBtn="goToAiReport"
-        :bottomPx="5"
+        :bottomPx="155"
         :canDocking="true"
         class="ai-drag-btn"
     >AI分析
@@ -442,17 +442,12 @@ export default {
       });
     },
     async goToAiReport() {
-      this.$modal.loading( 'AI分析中...')
-      try {
-        const response = await doAiAnalysis();
-        const title = "鱼缸AI近期分析报告";
-        const content = response.msg || "";
-        uni.navigateTo({
-          url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`
-        });
-      }finally {
-        this.$modal.closeLoading();
-      }
+      const response = await doAiAnalysis();
+      const title = "AI鱼缸近24小时分析报告";
+      const content = response.msg || "";
+      uni.navigateTo({
+        url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`
+      });
     }
   }
 };
