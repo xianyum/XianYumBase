@@ -153,6 +153,13 @@
       "style": {
         "navigationBarTitleText": "网络验证器"
       }
+    },
+    {
+      "path": "pages/common/markdown/markdown-view",
+      "style": {
+        "navigationBarTitleText": "Markdown浏览",
+        "backgroundTextStyle": "dark"
+      }
     }
   ],
   "tabBar": {

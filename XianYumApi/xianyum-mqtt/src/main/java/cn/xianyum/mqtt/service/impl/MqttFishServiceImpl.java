@@ -1,6 +1,7 @@
 package cn.xianyum.mqtt.service.impl;
 
 import cn.xianyum.common.enums.TrendEnum;
+import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -18,11 +19,14 @@ import cn.xianyum.mqtt.service.MqttFishService;
 import cn.xianyum.mqtt.dao.MqttFishMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * (MqttFish)service层实现
@@ -42,6 +46,9 @@ public class MqttFishServiceImpl implements MqttFishService {
 
     @Resource
     private ChatClient chatClient;
+
+    @Autowired
+    private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     // 最新缓存数据
     @Value("${redis.mqtt.fish_latest_data}")
@@ -156,30 +163,55 @@ public class MqttFishServiceImpl implements MqttFishService {
      */
     @Override
     public String aiAnalysis() {
-        // 获取近30条的数据
-        List<MqttFishEntity> mqttFishEntities = this.mqttFishMapper.getHourlyLatestData();
-        StringBuilder prompt = new StringBuilder();
-        prompt.append("# 你是一位专业鱼缸水族分析师。我会提供最近一段时间的鱼缸监测数据进行分析\n");
-        prompt.append("最近的鱼缸数据如下：\n\n");
-        // 格式化数据
-        for (MqttFishEntity data : mqttFishEntities) {
-            prompt.append("- 时间：").append(DateUtils.format(data.getCreateTime())).append("\n");
-            prompt.append("- 室内温度：").append(data.getIndoorTemp()).append("°C\n");
-            prompt.append("- 室内湿度：").append(data.getIndoorHumidity()).append("%\n");
-            prompt.append("- 鱼缸温度：").append(data.getFishTankTemp()).append("°C\n");
-            prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
+        // 缓存键
+        String cacheKey = "XianYumApi:xianyum-mqtt:fish-ai:analysis";
+        String processingKey = "XianYumApi:xianyum-mqtt:fish-ai:processing";
+
+        // 尝试从Redis读取缓存
+        String cachedAnalysis = redisUtils.getString(cacheKey);
+        if (StringUtil.isNotBlank(cachedAnalysis)) {
+            return cachedAnalysis;
         }
 
-        prompt.append("## 分析背景\n");
-        prompt.append("当前地点：中国西安新城区。\n");
-        prompt.append("## 分析要求\n");
-        prompt.append("1. 分析温度、TDS 的变化趋势，判断是否存在异常波动。\n");
-        prompt.append("2. 结合鱼缸水温、TDS 值，综合评估水质健康等级。\n");
-        prompt.append("3. 根据 TDS 趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
-        prompt.append("4. 结合西安干燥、温差大的气候特点，给出针对性的鱼缸维护建议。\n");
-        prompt.append("5. 全部内容严格使用清晰整洁的 Markdown 格式输出\n");
-        String content = chatClient.prompt().user(prompt.toString()).call().content();
-        return content;
+        // 检查是否正在处理中
+        if (redisUtils.hasKey(processingKey)) {
+            throw new SoException("AI正在分析中，请稍后查看结果");
+        }
+
+        // 设置处理中标志
+        redisUtils.setMin(processingKey, true, 10);
+        CompletableFuture.runAsync(() -> {
+            // 获取近30条的数据
+            List<MqttFishEntity> mqttFishEntities = this.mqttFishMapper.getHourlyLatestData();
+            StringBuilder prompt = new StringBuilder();
+            prompt.append("# 你是一位专业鱼缸水族分析师。我会提供最近一段时间的鱼缸监测数据进行分析\n");
+            prompt.append("最近的鱼缸数据如下：\n\n");
+            // 格式化数据
+            for (MqttFishEntity data : mqttFishEntities) {
+                prompt.append("- 时间：").append(DateUtils.format(data.getCreateTime())).append("\n");
+                prompt.append("- 室内温度：").append(data.getIndoorTemp()).append("°C\n");
+                prompt.append("- 室内湿度：").append(data.getIndoorHumidity()).append("%\n");
+                prompt.append("- 鱼缸温度：").append(data.getFishTankTemp()).append("°C\n");
+                prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
+            }
+
+            prompt.append("## 分析背景\n");
+            prompt.append("当前地点：中国西安新城区。\n");
+            prompt.append("## 分析要求\n");
+            prompt.append("1. 分析温度、TDS 的变化趋势，判断是否存在异常波动。\n");
+            prompt.append("2. 结合鱼缸水温、TDS 值，综合评估水质健康等级。\n");
+            prompt.append("3. 根据 TDS 趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
+            prompt.append("4. 结合西安干燥、温差大的气候特点，给出针对性的鱼缸维护建议。\n");
+            prompt.append("5. 全部内容严格使用清晰整洁的 Markdown 格式输出\n");
+            String content = chatClient.prompt().user(prompt.toString()).call().content();
+
+            // 缓存结果到Redis，设置30分钟过期
+            redisUtils.setMin(cacheKey, content, 30);
+            // 清除处理中标志
+            redisUtils.del(processingKey);
+        },xianYumTaskExecutor);
+
+        throw new SoException("AI正在分析中，请稍后查看结果");
     }
 
 }
