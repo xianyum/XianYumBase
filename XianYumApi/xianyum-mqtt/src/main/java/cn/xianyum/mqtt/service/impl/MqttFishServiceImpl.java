@@ -156,10 +156,8 @@ public class MqttFishServiceImpl implements MqttFishService {
      */
     @Override
     public String aiAnalysis() {
-        LambdaQueryWrapper<MqttFishEntity> queryWrapper = Wrappers.<MqttFishEntity>lambdaQuery()
-                .orderByDesc(MqttFishEntity::getId).last("limit 30");
         // 获取近30条的数据
-        List<MqttFishEntity> mqttFishEntities = this.mqttFishMapper.selectList(queryWrapper);
+        List<MqttFishEntity> mqttFishEntities = this.mqttFishMapper.getHourlyLatestData();
         StringBuilder prompt = new StringBuilder();
         prompt.append("# 你是一位专业鱼缸水族分析师。我会提供最近一段时间的鱼缸监测数据进行分析\n");
         prompt.append("最近的鱼缸数据如下：\n\n");
@@ -180,8 +178,8 @@ public class MqttFishServiceImpl implements MqttFishService {
         prompt.append("3. 根据 TDS 趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
         prompt.append("4. 结合西安干燥、温差大的气候特点，给出针对性的鱼缸维护建议。\n");
         prompt.append("5. 全部内容严格使用清晰整洁的 Markdown 格式输出\n");
-        log.info("AI鱼缸提示词:{}",prompt);
-        return chatClient.prompt().user(prompt.toString()).call().content();
+        String content = chatClient.prompt().user(prompt.toString()).call().content();
+        return content;
     }
 
 }

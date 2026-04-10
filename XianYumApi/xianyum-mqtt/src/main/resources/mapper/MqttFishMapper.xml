@@ -56,4 +56,23 @@
         FROM
         mqtt_fish mf
     </select>
+
+    <select id="getHourlyLatestData" resultType="cn.xianyum.mqtt.entity.po.MqttFishEntity">
+        SELECT
+            mf.*
+        FROM
+            mqtt_fish mf
+        INNER JOIN (
+            SELECT
+                MAX(id) AS max_id
+            FROM
+                mqtt_fish
+            WHERE
+                create_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+            GROUP BY
+                FLOOR(UNIX_TIMESTAMP(create_time) / 3600)
+        ) t ON mf.id = t.max_id
+        ORDER BY
+            mf.create_time DESC
+    </select>
 </mapper>

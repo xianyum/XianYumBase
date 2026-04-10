@@ -1,5 +1,6 @@
 package cn.xianyum.mqtt.controller;
 
+import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.mqtt.entity.request.MqttFishRequest;
 import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
@@ -48,6 +49,7 @@ public class MqttFishController{
     }
     @GetMapping("/aiAnalysis")
     @Operation(summary = "AI预测分析")
+    @Permission("@ps.hasPerm('mqtt-fish:ai:analysis')")
     public Results<String> aiAnalysis() {
         return Results.success(mqttFishService.aiAnalysis());
     }

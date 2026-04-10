@@ -19,5 +19,6 @@ public interface MqttFishMapper extends BaseMapper<MqttFishEntity> {
     List<MqttFishResponse> getReportLineData(@Param("params") MqttFishRequest request);
 
     Long queryTotalCount();
-}
 
+    List<MqttFishEntity> getHourlyLatestData();
+}
