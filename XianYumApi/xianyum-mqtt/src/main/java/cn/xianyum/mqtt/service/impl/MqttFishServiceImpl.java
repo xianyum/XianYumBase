@@ -9,11 +9,15 @@ import cn.xianyum.mqtt.entity.request.MqttFishRequest;
 import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
 import cn.xianyum.mqtt.entity.response.MqttFishResponse;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.mqtt.service.MqttFishService;
 import cn.xianyum.mqtt.dao.MqttFishMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +34,14 @@ import java.util.*;
 @Slf4j
 public class MqttFishServiceImpl implements MqttFishService {
 
-
 	@Resource
 	private MqttFishMapper mqttFishMapper;
 
     @Resource
     private RedisUtils redisUtils;
+
+    @Resource
+    private ChatClient chatClient;
 
     // 最新缓存数据
     @Value("${redis.mqtt.fish_latest_data}")
@@ -141,6 +147,41 @@ public class MqttFishServiceImpl implements MqttFishService {
     @Override
     public Long queryTotalCount() {
         return this.mqttFishMapper.queryTotalCount();
+    }
+
+    /**
+     * 鱼缸AI预测分析
+     *
+     * @return
+     */
+    @Override
+    public String aiAnalysis() {
+        LambdaQueryWrapper<MqttFishEntity> queryWrapper = Wrappers.<MqttFishEntity>lambdaQuery()
+                .orderByDesc(MqttFishEntity::getId).last("limit 30");
+        // 获取近30条的数据
+        List<MqttFishEntity> mqttFishEntities = this.mqttFishMapper.selectList(queryWrapper);
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("# 你是一位专业鱼缸水族分析师。我会提供最近一段时间的鱼缸监测数据进行分析\n");
+        prompt.append("最近的鱼缸数据如下：\n\n");
+        // 格式化数据
+        for (MqttFishEntity data : mqttFishEntities) {
+            prompt.append("- 时间：").append(DateUtils.format(data.getCreateTime())).append("\n");
+            prompt.append("- 室内温度：").append(data.getIndoorTemp()).append("°C\n");
+            prompt.append("- 室内湿度：").append(data.getIndoorHumidity()).append("%\n");
+            prompt.append("- 鱼缸温度：").append(data.getFishTankTemp()).append("°C\n");
+            prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
+        }
+
+        prompt.append("## 分析背景\n");
+        prompt.append("当前地点：中国西安新城区。\n");
+        prompt.append("## 分析要求\n");
+        prompt.append("1. 分析温度、TDS 的变化趋势，判断是否存在异常波动。\n");
+        prompt.append("2. 结合鱼缸水温、TDS 值，综合评估水质健康等级。\n");
+        prompt.append("3. 根据 TDS 趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
+        prompt.append("4. 结合西安干燥、温差大的气候特点，给出针对性的鱼缸维护建议。\n");
+        prompt.append("5. 全部内容严格使用清晰整洁的 Markdown 格式输出\n");
+        log.info("AI鱼缸提示词:{}",prompt);
+        return chatClient.prompt().user(prompt.toString()).call().content();
     }
 
 }

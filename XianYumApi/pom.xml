@@ -58,11 +58,19 @@
         <x.file.storage.version>2.3.0</x.file.storage.version>
         <qiniu.version>7.12.1</qiniu.version>
         <tianai.captcha.version>1.5.4</tianai.captcha.version>
+        <spring-ai.version>1.0.0-M6</spring-ai.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+
+            <!-- Spring AI OpenAI Starter -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
 
             <!-- 验证码 -->
             <dependency>

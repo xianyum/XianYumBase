@@ -46,5 +46,11 @@ public class MqttFishController{
         MqttFishReportResponse response = mqttFishService.getReportLineData(request);
         return Results.success(response);
     }
+    @GetMapping("/aiAnalysis")
+    @Operation(summary = "AI预测分析")
+    public Results<String> aiAnalysis() {
+        return Results.success(mqttFishService.aiAnalysis());
+    }
+
 
 }

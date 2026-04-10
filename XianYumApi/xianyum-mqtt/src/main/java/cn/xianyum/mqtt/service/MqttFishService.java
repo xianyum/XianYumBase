@@ -38,4 +38,10 @@ public interface MqttFishService{
      * @return
      */
     Long queryTotalCount();
+
+    /**
+     * 鱼缸AI预测分析
+     * @return
+     */
+    String aiAnalysis();
 }
