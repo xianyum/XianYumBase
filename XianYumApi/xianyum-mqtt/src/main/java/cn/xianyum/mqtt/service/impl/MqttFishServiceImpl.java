@@ -10,9 +10,6 @@ import cn.xianyum.mqtt.entity.request.MqttFishRequest;
 import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
 import cn.xianyum.mqtt.entity.response.MqttFishResponse;
 import com.alibaba.fastjson2.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.mqtt.service.MqttFishService;
@@ -23,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -196,12 +192,12 @@ public class MqttFishServiceImpl implements MqttFishService {
             }
 
             prompt.append("## 分析背景\n");
-            prompt.append("当前地点：中国西安新城区。\n");
+            prompt.append("当前地点：中国西安新城区。鱼缸没有加热棒\n");
             prompt.append("## 分析要求\n");
             prompt.append("1. 分析温度、TDS 的变化趋势，判断是否存在异常波动。\n");
             prompt.append("2. 结合鱼缸水温、TDS 值，综合评估水质健康等级。\n");
-            prompt.append("3. 根据 TDS 趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
-            prompt.append("4. 结合西安干燥、温差大的气候特点，给出针对性的鱼缸维护建议。\n");
+            prompt.append("3. 根据TDS趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
+            prompt.append("4. 结合西安目前的气候特点，给出针对性的鱼缸维护建议。\n");
             prompt.append("5. 全部内容严格使用清晰整洁的 Markdown 格式输出\n");
             String content = chatClient.prompt().user(prompt.toString()).call().content();
 
@@ -210,7 +206,6 @@ public class MqttFishServiceImpl implements MqttFishService {
             // 清除处理中标志
             redisUtils.del(processingKey);
         },xianYumTaskExecutor);
-
         throw new SoException("AI正在分析中，请稍后查看结果");
     }
 
