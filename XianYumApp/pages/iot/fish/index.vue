@@ -443,7 +443,7 @@ export default {
     },
     async goToAiReport() {
       const response = await doAiAnalysis();
-      const title = "AI鱼缸近24小时分析报告";
+      const title = "鱼缸近24小时AI分析报告";
       const content = response.msg || "";
       uni.navigateTo({
         url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`

@@ -59,3 +59,10 @@ export function getAppSummaryData() {
   })
 }
 
+
+export function evDriveRecordsDoAiAnalysis() {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/aiAnalysis',
+    method: 'get'
+  })
+}

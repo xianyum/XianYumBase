@@ -27,8 +27,7 @@ export function getReportLineData(data){
 export function doAiAnalysis() {
   return request({
     url: '/xianyum-mqtt/v1/mqttFish/aiAnalysis',
-    method: 'get',
-    timeout: 60000
+    method: 'get'
   })
 }
 
