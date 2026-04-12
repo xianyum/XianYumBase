@@ -1,5 +1,6 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
@@ -264,8 +265,9 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 prompt.append("6. 全部内容使用清晰整洁的 Markdown 格式输出\n");
 
                 String content = chatClient.prompt().user(prompt.toString()).call().content();
-                // 缓存结果到Redis，设置30分钟过期
-                redisUtils.setMin(cacheKey, content, 30);
+                // 计算当前时间到今天结束的毫秒差,再转成秒
+                long expireSeconds = (DateUtil.endOfDay(new Date()).getTime() - System.currentTimeMillis()) / 1000;
+                redisUtils.set(cacheKey, content, Math.max(expireSeconds, 1));
             } finally {
                 // 清除处理中标志
                 redisUtils.del(processingKey);
