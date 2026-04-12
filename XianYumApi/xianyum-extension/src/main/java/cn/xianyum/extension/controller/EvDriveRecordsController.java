@@ -112,4 +112,12 @@ public class EvDriveRecordsController {
         EvDriveRecordsAppReportResponse result = this.evDriveRecordsService.getAppSummaryData();
         return Results.success(result);
     }
+
+    @GetMapping(value = "/aiAnalysis")
+    @Operation(summary = "行驶记录AI预测分析")
+    @Permission("@ps.hasPerm('ev-drive-records:ai:analysis')")
+    public Results<String> aiAnalysis() {
+        String result = this.evDriveRecordsService.aiAnalysis();
+        return Results.success(result);
+    }
 }

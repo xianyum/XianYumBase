@@ -65,4 +65,10 @@ public interface EvDriveRecordsService {
      * @return
      */
     EvDriveRecordsSummaryResponse queryEvDriveRecordsSummary(String startTime, String endTime);
+
+    /**
+     * 行驶记录AI分析
+     * @return
+     */
+    String aiAnalysis();
 }

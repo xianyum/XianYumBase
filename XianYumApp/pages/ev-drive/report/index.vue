@@ -109,11 +109,21 @@
         />
       </view>
     </view>
+
+    <liu-drag-button
+        @clickBtn="goToAiReport"
+        :bottomPx="345"
+        :canDocking="true"
+        class="ai-drag-btn"
+    >AI分析
+    </liu-drag-button>
+
   </view>
 </template>
 
 <script>
-import {getAppSummaryData, getEvDriveRecordsReportLineData} from "@/api/ev-drive/list";
+import {getAppSummaryData, getEvDriveRecordsReportLineData, evDriveRecordsDoAiAnalysis} from "@/api/ev-drive/list";
+
 
 export default {
   name: 'DrivingRecord',
@@ -392,6 +402,14 @@ export default {
       } catch (error) {
         console.error('获取图表数据失败：', error);
       }
+    },
+    async goToAiReport() {
+      const response = await evDriveRecordsDoAiAnalysis();
+      const title = "行驶数据近24小时AI分析报告";
+      const content = response.msg || "";
+      uni.navigateTo({
+        url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`
+      });
     }
   }
 };
@@ -519,5 +537,19 @@ export default {
   min-height: 260px;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* 只当前页面生效的AI悬浮按钮样式 */
+::v-deep .ai-drag-btn .movable-view {
+  width: 100rpx !important;
+  height: 100rpx !important;
+  background: linear-gradient(360deg, #cb28f8 0%, #6EA8FF 100%) !important;
+  box-shadow: 0px 4rpx 12rpx 0px #ADC3F8 !important;
+  border-radius: 50rpx !important;
+  color: #FFFFFF !important;
+  font-size: 26rpx !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 </style>

@@ -10,7 +10,9 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -23,6 +25,7 @@ import cn.xianyum.extension.dao.EvDriveRecordsMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 新能源车行驶记录(EvDriveRecords)service层实现
@@ -36,6 +39,12 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
 
     @Autowired
     private EvDriveRecordsMapper evDriveRecordsMapper;
+
+    @Resource
+    private RedisUtils redisUtils;
+
+    @Resource
+    private ChatClient chatClient;
 
     @Override
     public PageResponse<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
@@ -200,6 +209,69 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         request.setParams(params);
         EvDriveRecordsSummaryResponse evDriveRecordsSummaryResponse = evDriveRecordsMapper.selectSummaryData(request);
         return Objects.nonNull(evDriveRecordsSummaryResponse) ? evDriveRecordsSummaryResponse : null;
+    }
+
+    /**
+     * 行驶记录AI分析
+     *
+     * @return
+     */
+    @Override
+    public String aiAnalysis() {
+        // 缓存键
+        String cacheKey = "XianYumApi:xianyum-extension:ev-drive:ai-analysis";
+        String processingKey = "XianYumApi:xianyum-extension:ev-drive:processing";
+        // 尝试从Redis读取缓存
+        String cachedAnalysis = redisUtils.getString(cacheKey);
+        if (StringUtil.isNotBlank(cachedAnalysis)) {
+            return cachedAnalysis;
+        }
+        // 检查是否正在处理中
+        Boolean isProcessing = redisUtils.hasKey(processingKey);
+        if (Boolean.TRUE.equals(isProcessing)) {
+            throw new SoException("AI正在分析中，请稍后查看结果");
+        }
+        // 设置处理中标志
+        redisUtils.setMin(processingKey, true, 10); // 10分钟过期
+        // 异步生成AI分析
+        CompletableFuture.runAsync(() -> {
+            try {
+                LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
+                        .orderByDesc(EvDriveRecordsEntity::getDriveDate).last("limit 31");
+                // 获取近30天的数据
+                List<EvDriveRecordsEntity> records = this.evDriveRecordsMapper.selectList(queryWrapper);
+                StringBuilder prompt = new StringBuilder();
+                prompt.append("# 新能源车行驶记录分析报告\n\n");
+                prompt.append("## 分析背景\n");
+                prompt.append("分析车型：海豹EV550款2022款\n");
+                prompt.append("地点：陕西省西安市\n");
+                prompt.append("分析时间范围：最近30天\n\n");
+                prompt.append("## 行驶数据\n");
+
+                // 格式化数据
+                for (EvDriveRecordsEntity record : records) {
+                    prompt.append("- 日期：").append(DateUtils.format(record.getDriveDate())).append("\n");
+                    prompt.append("  - 行驶里程：").append(record.getDistanceKm()).append("公里\n");
+                    prompt.append("  - 消耗电量：").append(record.getElectricityConsumed()).append("度\n");
+                    prompt.append("  - 电耗：").append(record.getElectricityPerKm()).append("度/公里\n");
+                }
+                prompt.append("## 分析要求\n");
+                prompt.append("1. 分析近30天的行驶里程趋势\n");
+                prompt.append("2. 分析电耗变化趋势，识别异常数据\n");
+                prompt.append("3. 计算平均电耗，评估车辆能效\n");
+                prompt.append("4. 基于历史数据，给出节能驾驶建议\n");
+                prompt.append("5. 预测未来的电耗变化以及行驶里程趋势，需要考虑周内上班通勤，以及节假日的驾驶习惯\n");
+                prompt.append("6. 全部内容使用清晰整洁的 Markdown 格式输出\n");
+
+                String content = chatClient.prompt().user(prompt.toString()).call().content();
+                // 缓存结果到Redis，设置30分钟过期
+                redisUtils.setMin(cacheKey, content, 30);
+            } finally {
+                // 清除处理中标志
+                redisUtils.del(processingKey);
+            }
+        });
+        throw new SoException("AI正在分析中，请稍后查看结果");
     }
 }
 
