@@ -6,6 +6,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -17,7 +18,6 @@ import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.dao.UserRoleMapper;
 import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import cn.xianyum.system.entity.po.*;
-import cn.xianyum.system.entity.request.ThirdOauthRequest;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.request.UserRequest;
@@ -31,7 +31,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,8 +79,7 @@ public class UserServiceImpl implements UserService {
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
 
-    @Value("${redis.user.data}")
-    private String redisUserDataPrefix;
+
 
     @Autowired
     private FileService fileService;
@@ -386,13 +384,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public int userToRedis() {
-        redisUtils.del(redisUserDataPrefix);
+        redisUtils.del(RedisKeyEnum.USER_DATA.getKey());
         LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
                 .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
                 .eq(UserEntity::getStatus, YesOrNoEnum.YES.getStatus());
         List<UserEntity> userEntities = userMapper.selectList(queryWrapper);
         for(UserEntity item : userEntities){
-            redisUtils.hSet(redisUserDataPrefix,item.getId(), JSONObject.toJSONString(item));
+            redisUtils.hSet(RedisKeyEnum.USER_DATA.getKey(),item.getId(), JSONObject.toJSONString(item));
         }
         return userEntities.size();
     }

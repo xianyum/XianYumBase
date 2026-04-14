@@ -1,6 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -14,7 +15,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
@@ -37,9 +37,6 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Autowired
     private RedisUtils redisUtils;
-
-    @Value("${redis.system_constant.prefix}")
-    private String systemConstantPrefix;
 
     @Override
     public SystemConstantEntity getPublicConstant(String key) {
@@ -104,7 +101,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
             systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
         }
         if(systemConstantEntity != null){
-            String redisKey = systemConstantPrefix+systemConstantEntity.getConstantKey();
+            String redisKey = RedisKeyEnum.SYSTEM_CONSTANT_PREFIX.getKey() +systemConstantEntity.getConstantKey();
             return redisUtils.set(redisKey,systemConstantEntity);
         }
         return false;
@@ -117,7 +114,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
      */
     @Override
     public SystemConstantEntity getByKeyFromRedis(String key) {
-        String redisKey = systemConstantPrefix + key;
+        String redisKey = RedisKeyEnum.SYSTEM_CONSTANT_PREFIX.getKey() + key;
         SystemConstantEntity systemConstantEntity = (SystemConstantEntity)redisUtils.get(redisKey);
         return systemConstantEntity;
     }
@@ -141,7 +138,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         }
         QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>().eq("constant_key",key);
         systemConstantMapper.delete(queryWrapper);
-        String redisKey = systemConstantPrefix + key;
+        String redisKey = RedisKeyEnum.SYSTEM_CONSTANT_PREFIX.getKey() + key;
         redisUtils.del(redisKey);
     }
 
@@ -150,13 +147,13 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         if(StringUtil.isEmpty(key)){
             throw new SoException("key不能为空");
         }
-        String redisKey = systemConstantPrefix + key;
+        String redisKey = RedisKeyEnum.SYSTEM_CONSTANT_PREFIX.getKey() + key;
         redisUtils.del(redisKey);
     }
 
     @Override
     public void refreshCache() {
-        Collection<String> keys = redisUtils.keys(systemConstantPrefix + "*");
+        Collection<String> keys = redisUtils.keys(RedisKeyEnum.SYSTEM_CONSTANT_PREFIX.getKey() + "*");
         redisUtils.deleteObject(keys);
 
     }

@@ -1,6 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -11,7 +12,6 @@ import cn.xianyum.message.entity.response.MessageConfigWechatResponse;
 import cn.xianyum.message.service.MessageConfigWechatService;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -27,9 +27,6 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 
 	@Autowired
 	private RedisUtils redisUtils;
-
-	@Value("${redis.message.config.prefix:xianyum-message:config:}")
-	private String messageConfigPrefix;
 
 	@Override
 	public PageResponse<MessageConfigWechatResponse> getPage(MessageConfigWechatRequest request) {
@@ -108,7 +105,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 
 	@Override
 	public String getMessageConfigKey(String messageConfigId) {
-		String redisPrefix = messageConfigPrefix+messageConfigId;
+		String redisPrefix = RedisKeyEnum.MESSAGE_CONFIG_PREFIX.getKey()+ messageConfigId;
 		return redisPrefix;
 	}
 

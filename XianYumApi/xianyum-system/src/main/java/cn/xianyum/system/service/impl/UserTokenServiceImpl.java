@@ -6,6 +6,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.QrCodeLoginStatus;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -43,15 +44,6 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Value("${redis.token.expire:30}")
     private Integer expire;
-
-    @Value("${redis.token.prefix:token}")
-    private String prefix;
-
-    @Value("${redis.token.credentials_prefix:credentials_prefix}")
-    private String credentialsPrefix;
-
-    @Value("${redis.token.qr_ticket}")
-    private String qrTicketPrefix;
 
     @Resource
     private RedisUtils redisUtils;
@@ -109,7 +101,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public LoginUser getLoginUserByHttpRequest() {
         String token = HttpContextUtils.getRequestToken();
-        String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(prefix+token);
+        String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
         LoginUser loginUser = JSONObject.parseObject(userEntityJson, LoginUser.class);
         return loginUser;
     }
@@ -136,7 +128,7 @@ public class UserTokenServiceImpl implements UserTokenService {
             default -> throw new SoException("目前只支持发送邮箱验证码");
         }
         // 缓存redis,设置为1分钟
-        redisUtils.setMin(String.format(credentialsPrefix,request.getUsername()),code,3);
+        redisUtils.setMin(String.format(RedisKeyEnum.TOKEN_CREDENTIALS_PREFIX.getKey(),request.getUsername()),code,3);
     }
 
     /**
@@ -219,7 +211,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(StringUtil.isBlank(request.getUsername())){
             throw new SoException("邮箱账号不能为空");
         }
-        String redisKey = String.format(credentialsPrefix,request.getUsername());
+        String redisKey = String.format(RedisKeyEnum.TOKEN_CREDENTIALS_PREFIX.getKey(),request.getUsername());
         if(!redisUtils.hasKey(redisKey)){
             throw new SoException("验证码已过期");
         }
@@ -286,7 +278,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         String qrTicket = IdUtil.getSnowflakeNextIdStr();
         qrLoginTicketResponse.setLoginStatus(QrCodeLoginStatus.UNSCANNED);
         qrLoginTicketResponse.setTicket(qrTicket);
-        String redisKey = String.format(qrTicketPrefix, qrTicket);
+        String redisKey = String.format(RedisKeyEnum.TOKEN_QR_TICKET.getKey(), qrTicket);
         redisUtils.setMin(redisKey,JSONObject.toJSONString(qrLoginTicketResponse),2);
         return qrLoginTicketResponse;
     }
@@ -298,7 +290,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public void scanQrCode(String ticket) {
-        String redisKey = String.format(qrTicketPrefix, ticket);
+        String redisKey = String.format(RedisKeyEnum.TOKEN_QR_TICKET.getKey(), ticket);
         if(!redisUtils.hasKey(redisKey)){
             throw new SoException("二维码过期，请刷新");
         }
@@ -317,7 +309,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public void confirmQrCode(String ticket) {
-        String redisKey = String.format(qrTicketPrefix, ticket);
+        String redisKey = String.format(RedisKeyEnum.TOKEN_QR_TICKET.getKey(), ticket);
         if(!redisUtils.hasKey(redisKey)){
             throw new SoException("二维码过期，请刷新");
         }
@@ -337,7 +329,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public QrLoginTicketResponse getQrCodeStatus(String ticket) {
-        String redisKey = String.format(qrTicketPrefix, ticket);
+        String redisKey = String.format(RedisKeyEnum.TOKEN_QR_TICKET.getKey(), ticket);
         QrLoginTicketResponse response = new QrLoginTicketResponse();
         if(!redisUtils.hasKey(redisKey)){
             response.setLoginStatus(QrCodeLoginStatus.EXPIRED);
@@ -355,7 +347,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginByQr(UserLoginRequest request) {
-        String redisKey = String.format(qrTicketPrefix, request.getAuthCode());
+        String redisKey = String.format(RedisKeyEnum.TOKEN_QR_TICKET.getKey(), request.getAuthCode());
         if(!redisUtils.hasKey(redisKey)){
             throw new SoException("二维码过期，请刷新");
         }
@@ -383,7 +375,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         Date expireTime = new Date(now.getTime() + expire * 86400L * 1000L);
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
-        redisUtils.setDay(prefix+token,JSONObject.toJSONString(loginUser),expire);
+        redisUtils.setDay(RedisKeyEnum.TOKEN_PREFIX.getKey()+token,JSONObject.toJSONString(loginUser),expire);
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
         loginTokenResponse.setToken(token);
         loginTokenResponse.setExpireTime(expireTime);
@@ -393,7 +385,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public void logout() {
         String token =  HttpContextUtils.getRequestToken();
-        redisUtils.del(prefix+token);
+        redisUtils.del(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
     }
 
     @Override
@@ -406,6 +398,6 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setLoginType(SecurityUtils.getLoginUser().getLoginType());
 
         this.setExtraUserInfo(loginUser);
-        redisUtils.setDay(prefix+token,JSONObject.toJSONString(loginUser),expire);
+        redisUtils.setDay(RedisKeyEnum.TOKEN_PREFIX.getKey()+token,JSONObject.toJSONString(loginUser),expire);
     }
 }

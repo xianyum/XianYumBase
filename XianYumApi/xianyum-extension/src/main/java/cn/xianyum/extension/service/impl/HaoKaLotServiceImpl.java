@@ -1,5 +1,6 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.extension.entity.po.HaoKaLotArticleEntity;
 import cn.xianyum.extension.entity.request.HaoKaLotProductRequest;
@@ -53,19 +54,14 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
     @Autowired
     private MessageSender messageSender;
 
-    @Value("${redis.analysis.hao_kao_lot.token}")
-    private String haoKaLotTokenPrefix;
 
-    // 记录推送的起始位置
-    @Value("${redis.analysis.hao_kao_lot.article_index}")
-    private String haoKaLotArticleIndexPrefix;
 
     @Override
     public ReturnT pushArticleMessage(Map<String, String> jobMapParams, SchedulerTool tool) {
         List<HaoKaLotArticleEntity> haoKaLotArticleEntities = this.getHaoKaLotArticleList();
         Long articleIndex;
-        if(redisUtils.hasKey(haoKaLotArticleIndexPrefix)){
-            articleIndex = Long.valueOf(redisUtils.getString(haoKaLotArticleIndexPrefix));
+        if(redisUtils.hasKey(RedisKeyEnum.ANALYSIS_HAO_KAO_LOT_ARTICLE_INDEX.getKey())){
+            articleIndex = Long.valueOf(redisUtils.getString(RedisKeyEnum.ANALYSIS_HAO_KAO_LOT_ARTICLE_INDEX.getKey()));
         } else {
             articleIndex = 0L;
         }
@@ -84,7 +80,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
             messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
             messageSender.sendAsyncMessage(MessageCodeEnums.HAO_KA_LOT_ARTICLE_NOTIFY.getMessageCode(),messageSenderEntity);
         }
-        redisUtils.set(haoKaLotArticleIndexPrefix,String.valueOf(articleIndex));
+        redisUtils.set(RedisKeyEnum.ANALYSIS_HAO_KAO_LOT_ARTICLE_INDEX.getKey(),String.valueOf(articleIndex));
         return ReturnT.SUCCESS;
     }
 
@@ -98,7 +94,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
         JSONObject systemConstantObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.HAO_KA_LOT_LOGIN_INFO);
         String userName = systemConstantObject.getString("userName");
         String password = systemConstantObject.getString("password");
-        String redisKey = haoKaLotTokenPrefix+userName;
+        String redisKey = RedisKeyEnum.ANALYSIS_HAO_KAO_LOT_TOKEN.getKey()+userName;
         if(redisUtils.hasKey(redisKey)){
             return redisUtils.getString(redisKey);
         }

@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.enums.PlatformTypeEnum;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -17,7 +18,6 @@ import cn.xianyum.system.service.MenuService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
@@ -39,11 +39,6 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private StringRedisTemplate redisTemplate;
 
-    @Value("${redis.menu.click_key}")
-    private String menuClickKey;
-
-    @Value("${redis.menu.click_rank}")
-    private String menuClickRank;
 
     /**
      * 获取用户菜单列表
@@ -294,10 +289,10 @@ public class MenuServiceImpl implements MenuService {
         }
         try {
             // 1. 递增菜单点击次数（每个菜单独立计数）
-            String menuKey = String.format(menuClickKey,SecurityUtils.getLoginUser().getId(),menuRequest.getMenuId());
-        
+            String menuKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(),SecurityUtils.getLoginUser().getId(),menuRequest.getMenuId());
+
             // 2. 记录点击时间到时间序列
-            String timeSeriesKey = String.format(menuClickKey, SecurityUtils.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
+            String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
             long currentTime = System.currentTimeMillis();
             redisTemplate.opsForList().rightPush(timeSeriesKey, String.valueOf(currentTime));
 
@@ -308,7 +303,7 @@ public class MenuServiceImpl implements MenuService {
             double activityScore = calculateActivityScore(menuRequest.getMenuId());
 
             // 5. 更新排行榜（zset有序集合，score为活跃度分数）
-            String menuRankKey = String.format(menuClickRank,SecurityUtils.getLoginUser().getId());
+            String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(),SecurityUtils.getLoginUser().getId());
             redisTemplate.opsForZSet().add(menuRankKey, String.valueOf(menuRequest.getMenuId()), activityScore);
         } catch (Exception e) {
             log.error("菜单埋点上报失败", e);
@@ -322,7 +317,7 @@ public class MenuServiceImpl implements MenuService {
      * @return 活跃度分数
      */
     private double calculateActivityScore(Long menuId) {
-        String timeSeriesKey = String.format(menuClickKey, SecurityUtils.getLoginUser().getId(), menuId) + ":timeseries";
+        String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuId) + ":timeseries";
         List<String> clickTimes = redisTemplate.opsForList().range(timeSeriesKey, 0, -1);
 
         if (CollUtil.isEmpty(clickTimes)) {
@@ -373,7 +368,7 @@ public class MenuServiceImpl implements MenuService {
         if(CollUtil.isEmpty(allMenuResponse)){
             return List.of();
         }
-        String menuRankKey = String.format(menuClickRank,SecurityUtils.getLoginUser().getId());
+        String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(),SecurityUtils.getLoginUser().getId());
         Set<ZSetOperations.TypedTuple<String>> menuRankSet = redisTemplate.opsForZSet()
                 .reverseRangeWithScores(menuRankKey, 0, -1);
         if(menuRankSet.isEmpty()){

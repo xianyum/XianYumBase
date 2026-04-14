@@ -1,6 +1,7 @@
 package cn.xianyum.proxy.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
@@ -17,7 +18,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -36,9 +36,6 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 
 	@Autowired
 	private ProxyMapper proxyMapper;
-
-	@Value("${redis.proxy.proxy_details.lan_info}")
-	private String proxyDetailsLanInfoRedisKey;
 
 	@Override
 	public PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
@@ -103,7 +100,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		ProxyDetailsEntity bean = BeanUtils.copy(request,ProxyDetailsEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		// 删除缓存,后续在重新缓存
-		String redisKey = proxyDetailsLanInfoRedisKey.concat(request.getInetPort().toString());
+		String redisKey = RedisKeyEnum.PROXY_PROXY_DETAILS_LAN_INFO.getKey().concat(request.getInetPort().toString());
 		redisUtils.del(redisKey);
 
 		return proxyDetailsMapper.insert(bean);
@@ -134,7 +131,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		bean.setWriteBytes(null);
 
 		// 删除缓存,后续在重新缓存
-		String redisKey = proxyDetailsLanInfoRedisKey.concat(request.getInetPort().toString());
+		String redisKey = RedisKeyEnum.PROXY_PROXY_DETAILS_LAN_INFO.getKey().concat(request.getInetPort().toString());
 		redisUtils.del(redisKey);
 		return proxyDetailsMapper.updateById(bean);
 
@@ -180,7 +177,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		if(Objects.isNull(port)){
 			return null;
 		}
-		String redisKey = proxyDetailsLanInfoRedisKey.concat(port.toString());
+		String redisKey = RedisKeyEnum.PROXY_PROXY_DETAILS_LAN_INFO.getKey().concat(port.toString());
 		if(redisUtils.hasKey(redisKey)){
 			return redisUtils.getString(redisKey);
 		}

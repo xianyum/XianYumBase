@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils.ai;
 
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
@@ -10,7 +11,6 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.net.URLEncoder;
 import java.util.Objects;
@@ -26,9 +26,6 @@ public class BaiDuAiUtils {
 
     @Autowired
     private RedisUtils redisUtils;
-
-    @Value("${redis.baidu-ai.access_token}")
-    private String baiduAiAccessTokenPrefix;
 
     /** ocr识别-标准版 */
     public static final String OCR_GENERAL_BASIC_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic";
@@ -46,7 +43,7 @@ public class BaiDuAiUtils {
             clientId = systemConstantObject.getString("clientId");
             clientSecret = systemConstantObject.getString("clientSecret");
         }
-        String redisKey = baiduAiAccessTokenPrefix+clientId;
+        String redisKey = RedisKeyEnum.BAIDU_AI_ACCESS_TOKEN.getKey() +clientId;
         if(redisUtils.hasKey(redisKey)){
             return redisUtils.getString(redisKey);
         }

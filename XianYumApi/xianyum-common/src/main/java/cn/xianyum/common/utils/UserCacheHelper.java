@@ -1,9 +1,9 @@
 package cn.xianyum.common.utils;
 
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.*;
 
@@ -18,10 +18,6 @@ public class UserCacheHelper {
     @Autowired
     private RedisUtils redisUtils;
 
-    @Value("${redis.user.data}")
-    private String redisUserDataPrefix;
-
-
     /**
      * 根据用户ID获取redis缓存中数据
      * @param userId
@@ -31,7 +27,7 @@ public class UserCacheHelper {
         if(StringUtil.isEmpty(userId)){
             return null;
         }
-        String userRedisStr = (String)redisUtils.hGet(redisUserDataPrefix, userId);
+        String userRedisStr = (String)redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
         if(StringUtil.isNotEmpty(userRedisStr)){
             return JSONObject.parseObject(userRedisStr,LoginUser.class);
         }
@@ -45,7 +41,7 @@ public class UserCacheHelper {
      * @return
      */
     public String getUserJsonByIdFromRedis(String userId){
-        String userRedisStr = (String)redisUtils.hGet(redisUserDataPrefix, userId);
+        String userRedisStr = (String)redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
         return userRedisStr;
     }
 
@@ -56,7 +52,7 @@ public class UserCacheHelper {
     public List<LoginUser> getUserListFromRedis(){
         List<LoginUser> loginUserList = new ArrayList<>();
         // key-->userId  value-->用户json
-        Map<String, String> userMap = (Map<String, String>)redisUtils.hGetAll(redisUserDataPrefix);
+        Map<String, String> userMap = (Map<String, String>)redisUtils.hGetAll(RedisKeyEnum.USER_DATA.getKey());
         if(Objects.isNull(userMap)){
             return loginUserList;
         }
@@ -76,7 +72,7 @@ public class UserCacheHelper {
     public String getUserJsonArrayFromRedis(){
         List<String> loginUserJson = new ArrayList<>();
         // key-->userId  value-->用户json
-        Map<String, String> userMap = (Map<String, String>)redisUtils.hGetAll(redisUserDataPrefix);
+        Map<String, String> userMap = (Map<String, String>)redisUtils.hGetAll(RedisKeyEnum.USER_DATA.getKey());
         if(Objects.isNull(userMap)){
             return null;
         }

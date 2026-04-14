@@ -2,6 +2,7 @@ package cn.xianyum.proxy.service.impl;
 
 import cn.xianyum.common.entity.base.BaseEntity;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.BeanUtils;
 import cn.xianyum.common.utils.RedisUtils;
@@ -18,12 +19,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -33,12 +32,6 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Autowired
 	private ProxyLogMapper proxyLogMapper;
-
-	@Value("${redis.proxy.proxy_log.ignore_save}")
-	private String ignoreSaveFlagRedisKey;
-
-	@Value("${redis.proxy.proxy_log.log_data}")
-	private String logDataRedisKey;
 
 	@Autowired
 	private RedisUtils redisUtils;
@@ -67,7 +60,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 		if(StringUtil.isEmpty(proxyId)){
 			throw new SoException("客户端未上传授权码");
 		}
-		String redisKey = logDataRedisKey+proxyId;
+		String redisKey = RedisKeyEnum.PROXY_PROXY_LOG_LOG_DATA.getKey()+proxyId;
 		redisUtils.set(redisKey, JSONObject.toJSONString(request),120);
 		return 1;
 	}
@@ -101,8 +94,8 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 	@Override
 	public ProxyLogEntity saveLog(String clientKey) {
 		ProxyLogEntity proxyLogEntity = new ProxyLogEntity();
-		if(!redisUtils.hasKey(ignoreSaveFlagRedisKey)){
-			String redisKey = logDataRedisKey+clientKey;
+		if(!redisUtils.hasKey(RedisKeyEnum.PROXY_PROXY_LOG_IGNORE_SAVE.getKey())){
+			String redisKey = RedisKeyEnum.PROXY_PROXY_LOG_LOG_DATA.getKey()+clientKey;
 			if(redisUtils.hasKey(redisKey)){
 				String result = redisUtils.getString(redisKey);
 				proxyLogEntity = JSONObject.parseObject(result,ProxyLogEntity.class);
@@ -116,7 +109,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Override
 	public void setIgnoreSaveFlag() {
-		redisUtils.setMin(ignoreSaveFlagRedisKey,"1",10);
+		redisUtils.setMin(RedisKeyEnum.PROXY_PROXY_LOG_IGNORE_SAVE.getKey(),"1",10);
 	}
 
 	@Override

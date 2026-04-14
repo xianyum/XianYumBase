@@ -1,6 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
@@ -14,7 +15,6 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,12 +30,10 @@ public class UserOnlineServiceImpl implements UserOnlineService {
     @Autowired
     private RedisUtils redisUtils;
 
-    @Value("${redis.token.prefix:token}")
-    private String prefix;
 
     @Override
     public PageResponse<UserOnlineResponse> queryPage(UserOnlineRequest request) {
-        Collection<String> keys = redisUtils.keys(prefix + "*");
+        Collection<String> keys = redisUtils.keys(RedisKeyEnum.TOKEN_PREFIX.getKey() + "*");
         List<UserOnlineEntity> userOnlineList = new ArrayList<>();
         for(String key : keys){
             String userJson = (String)redisUtils.get(key);
@@ -70,7 +68,7 @@ public class UserOnlineServiceImpl implements UserOnlineService {
             throw new SoException("踢出失败");
         }
         for(String token : tokenIds){
-            redisUtils.del(prefix+token);
+            redisUtils.del(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
         }
     }
 }

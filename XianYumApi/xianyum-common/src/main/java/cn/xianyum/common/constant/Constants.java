@@ -97,4 +97,10 @@ public class Constants {
     public static final String MQTT_HOST_FIELD = "host";
 
     public static final String SLASH = "/";
+
+    /**
+     * 默认Redis Key前缀
+     */
+    public static final String DEFAULT_REDIS_KEY_PREFIX = "XianYumApi:";
+
 }

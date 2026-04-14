@@ -1,5 +1,6 @@
 package cn.xianyum.message.infra.supporter;
 
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -12,7 +13,6 @@ import cn.zhxu.okhttps.HttpResult;
 import cn.zhxu.okhttps.OkHttps;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
@@ -27,9 +27,6 @@ public class WechatSupporter {
     @Autowired
     private RedisUtils redisUtils;
 
-    @Value("${redis.message.wechat.token:xianyum-message}")
-    private String accessTokenPrefix;
-
     /**
      * 获取企业微信token
      * @param messageConfigWechatEntity
@@ -38,7 +35,7 @@ public class WechatSupporter {
     public String getWxTokenWithCache(MessageConfigWechatEntity messageConfigWechatEntity){
         String cropId = messageConfigWechatEntity.getCorpId();
         String cropSecret = messageConfigWechatEntity.getCorpSecret();
-        String redisKey = accessTokenPrefix+cropId+cropSecret;
+        String redisKey = RedisKeyEnum.MESSAGE_WECHAT_TOKEN.getKey() +cropId+cropSecret;
         if(redisUtils.hasKey(redisKey)){
             return (String) redisUtils.get(redisKey);
         }

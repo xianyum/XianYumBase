@@ -1,7 +1,7 @@
 package cn.xianyum.system.service.impl;
 
-
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletRequest;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
@@ -40,8 +39,7 @@ public class LogServiceImpl implements LogService {
     @Autowired
     private RedisUtils redisUtils;
 
-    @Value("${redis.log.count:logCount}")
-    private String logCountPrefix;
+
 
     /**
      * 保存系统日志
@@ -156,7 +154,7 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public int getLogCountWithCache(String time) {
-        String redisKey = logCountPrefix + time;
+        String redisKey = RedisKeyEnum.LOG_COUNT.getKey() + time;
         int count = 0;
         if(redisUtils.hasKey(redisKey)){
             count = (int) redisUtils.get(redisKey);

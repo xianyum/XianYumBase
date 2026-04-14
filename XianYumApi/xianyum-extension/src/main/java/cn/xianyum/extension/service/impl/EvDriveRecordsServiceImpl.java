@@ -262,7 +262,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 prompt.append("3. 计算平均电耗，评估车辆能效\n");
                 prompt.append("4. 基于历史数据，给出节能驾驶建议\n");
                 prompt.append("5. 预测未来的电耗变化以及行驶里程趋势，需要考虑周内上班通勤，以及节假日的驾驶习惯\n");
-                prompt.append("6. 全部内容使用清晰整洁的 Markdown 格式输出\n");
+                prompt.append("6. 全部内容使用清晰整洁的Markdown 格式输出，分析报告开头必须要有分析时间范围，车型，地点，报告生成时间等基本信息\n");
 
                 String content = chatClient.prompt().user(prompt.toString()).call().content();
                 // 计算当前时间到今天结束的毫秒差,再转成秒

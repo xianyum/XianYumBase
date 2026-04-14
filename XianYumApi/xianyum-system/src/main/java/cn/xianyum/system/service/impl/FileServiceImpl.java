@@ -3,6 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.constant.Constants;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
@@ -41,8 +42,7 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private RedisUtils redisUtils;
 
-    @Value("${redis.file.presigned_url}")
-    private String presignedUrlPrefix;
+
 
     @Value("${dromara.x-file-storage.custom-domain}")
     private String customDomain;
@@ -78,7 +78,7 @@ public class FileServiceImpl implements FileService {
         if (StringUtil.isEmpty(fileId)) {
             return null;
         }
-        String redisKey = String.format(presignedUrlPrefix, fileId);
+        String redisKey = String.format(RedisKeyEnum.FILE_PRESIGNED_URL.getKey(), fileId);
 
         if (isCached && redisUtils.hasKey(redisKey)) {
             FileDetailResponse response = JSONObject.parseObject(redisUtils.getString(redisKey), FileDetailResponse.class);
