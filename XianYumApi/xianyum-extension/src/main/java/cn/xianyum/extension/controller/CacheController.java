@@ -1,6 +1,7 @@
 package cn.xianyum.extension.controller;
 
 import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,9 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 /**
@@ -47,5 +47,30 @@ public class CacheController {
         });
         result.put("commandStats", pieList);
         return Results.success(result);
+    }
+
+    @DeleteMapping("/deleteByKey")
+    @Operation(summary = "根据Redis Key删除缓存")
+    @Permission("@ps.hasPerm('monitor:cache:delete')")
+    public Results<Void> deleteByKey(@RequestParam String redisKey) {
+        Set<String> keys = new HashSet<>();
+        String redisProcessKey = Constants.DEFAULT_REDIS_KEY_PREFIX.concat(redisKey);
+        if (redisProcessKey.contains("*")) {
+            // 使用scan命令遍历匹配的key
+            redisTemplate.execute((RedisCallback<Void>) connection -> {
+                try (var cursor = connection.scan(ScanOptions.scanOptions().match(redisProcessKey).count(100).build())) {
+                    while (cursor.hasNext()) {
+                        keys.add(new String(cursor.next()));
+                    }
+                }
+                return null;
+            });
+        } else {
+            keys.add(redisProcessKey);
+        }
+        if (!keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+        return Results.success();
     }
 }
