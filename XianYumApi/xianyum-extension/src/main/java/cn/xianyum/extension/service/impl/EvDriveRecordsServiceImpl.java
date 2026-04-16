@@ -1,6 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
@@ -224,8 +225,8 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     @Override
     public String aiAnalysis() {
         // 缓存键
-        String cacheKey = "XianYumApi:xianyum-extension:ev-drive:ai-analysis";
-        String processingKey = "XianYumApi:xianyum-extension:ev-drive:processing";
+        String cacheKey = RedisKeyEnum.EV_DRIVE_AI_ANALYSIS.getKey();
+        String processingKey = RedisKeyEnum.EV_DRIVE_AI_PROCESSING.getKey();
         // 尝试从Redis读取缓存
         String cachedAnalysis = redisUtils.getString(cacheKey);
         if (StringUtil.isNotBlank(cachedAnalysis)) {
@@ -281,4 +282,3 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         throw new SoException("AI正在分析中，请稍后查看结果");
     }
 }
-

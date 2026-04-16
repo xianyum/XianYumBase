@@ -35,7 +35,13 @@ public enum RedisKeyEnum {
 
     // ======================== xianyum-mqtt模块 ========================
     MQTT_FISH_LATEST_DATA("xianyum-mqtt:fish:latest"),
-    MQTT_FISH_PREVIOUS_DATA("xianyum-mqtt:fish:previous");
+    MQTT_FISH_PREVIOUS_DATA("xianyum-mqtt:fish:previous"),
+    MQTT_FISH_AI_ANALYSIS("xianyum-mqtt:fish-ai:analysis"),
+    MQTT_FISH_AI_PROCESSING("xianyum-mqtt:fish-ai:processing"),
+
+    // ======================== xianyum-extension模块 ========================
+    EV_DRIVE_AI_ANALYSIS("xianyum-extension:ev-drive:ai-analysis"),
+    EV_DRIVE_AI_PROCESSING("xianyum-extension:ev-drive:processing");
 
 
     private final String key;

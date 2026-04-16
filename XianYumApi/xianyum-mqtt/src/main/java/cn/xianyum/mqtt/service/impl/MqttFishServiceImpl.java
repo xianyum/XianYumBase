@@ -1,6 +1,7 @@
 package cn.xianyum.mqtt.service.impl;
 
 import cn.xianyum.common.enums.RedisKeyEnum;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.TrendEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
@@ -156,8 +157,8 @@ public class MqttFishServiceImpl implements MqttFishService {
     @Override
     public String aiAnalysis() {
         // 缓存键
-        String cacheKey = "XianYumApi:xianyum-mqtt:fish-ai:analysis";
-        String processingKey = "XianYumApi:xianyum-mqtt:fish-ai:processing";
+        String cacheKey = RedisKeyEnum.MQTT_FISH_AI_ANALYSIS.getKey();
+        String processingKey = RedisKeyEnum.MQTT_FISH_AI_PROCESSING.getKey();
 
         // 尝试从Redis读取缓存
         String cachedAnalysis = redisUtils.getString(cacheKey);
