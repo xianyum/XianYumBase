@@ -18,6 +18,7 @@ import cn.xianyum.mqtt.dao.MqttFishMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -46,6 +47,8 @@ public class MqttFishServiceImpl implements MqttFishService {
     @Autowired
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
+    @Value("${spring.ai.openai.chat.options.model}")
+    private String aiModel;
 
     /**
      * 同步设备上报的iot数据
@@ -173,8 +176,12 @@ public class MqttFishServiceImpl implements MqttFishService {
             // 获取近30条的数据
             List<MqttFishEntity> mqttFishEntities = this.mqttFishMapper.getHourlyLatestData();
             StringBuilder prompt = new StringBuilder();
-            prompt.append("# 你是一位专业鱼缸水族分析师。我会提供最近一段时间的鱼缸监测数据进行分析\n");
-            prompt.append("最近的鱼缸数据如下：\n");
+            prompt.append("# 你是一位资深水族环境分析师，精通鱼缸水质监测、水温管理、TDS评估、换水方案与鱼缸维护指导，分析专业、严谨、通俗易懂。我会提供最近一段时间的鱼缸监测数据进行分析\n");
+            prompt.append("## 分析基础信息\n");
+            prompt.append("- 监测地点：中国 陕西省 西安市 新城区\n");
+            prompt.append("- 设备状态：无加热棒\n\n");
+            prompt.append("- 设备状态：3条金鱼8条天使鱼2条蝶翼斑马鱼\n\n");
+            prompt.append("## 近期鱼缸监测数据\n");
             // 格式化数据
             for (MqttFishEntity data : mqttFishEntities) {
                 prompt.append("- 时间：").append(DateUtils.format(data.getCreateTime())).append("\n");
@@ -183,15 +190,13 @@ public class MqttFishServiceImpl implements MqttFishService {
                 prompt.append("- 鱼缸温度：").append(data.getFishTankTemp()).append("°C\n");
                 prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
             }
-
-            prompt.append("## 分析背景\n");
-            prompt.append("当前地点：中国西安新城区。\n");
             prompt.append("## 分析要求\n");
-            prompt.append("1. 分析温度、TDS的变化趋势，判断是否存在异常波动。\n");
-            prompt.append("2. 结合鱼缸水温、TDS值，综合评估水质健康等级，注意鱼缸没有加热棒\n");
-            prompt.append("3. 根据TDS趋势给出科学换水建议：换水量、换水时间、注意事项。\n");
-            prompt.append("4. 结合西安目前的气候特点，给出针对性的鱼缸维护建议。\n");
-            prompt.append("5. 全部内容严格使用清晰整洁的Markdown格式输出，分析报告开头必须要有分析时间范围，采集周期，鱼缸状态，报告生成时间等基本信息(不要提示数据条数)。\n");
+            prompt.append("1. 报告开头必须包含：分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel+",数据采集周期每隔5分钟上报一次。\n\n");
+            prompt.append("2. 分析室内温度、鱼缸水温、TDS的变化趋势图，判断是否存在异常波动、骤升骤降。\n");
+            prompt.append("3. 结合无加热棒的环境，综合评估水质健康等级（优秀/良好/一般/较差）。\n");
+            prompt.append("4. 根据TDS变化趋势，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
+            prompt.append("5. 结合西安新城区当前气候特点（温差、干燥、室温波动），给出针对性鱼缸维护建议。\n");
+            prompt.append("6. 输出格式规范：全程使用标准Markdown格式，优先使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
             String content = chatClient.prompt().user(prompt.toString()).call().content();
 
             // 缓存结果到Redis，设置30分钟过期

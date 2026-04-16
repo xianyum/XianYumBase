@@ -23,6 +23,7 @@ import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.extension.service.EvDriveRecordsService;
 import cn.xianyum.extension.dao.EvDriveRecordsMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
@@ -46,6 +47,9 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
 
     @Resource
     private ChatClient chatClient;
+
+    @Value("${spring.ai.openai.chat.options.model}")
+    private String aiModel;
 
     @Override
     public PageResponse<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
@@ -242,7 +246,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 // 获取近30天的数据
                 List<EvDriveRecordsEntity> records = this.evDriveRecordsMapper.selectList(queryWrapper);
                 StringBuilder prompt = new StringBuilder();
-                prompt.append("# 新能源车行驶记录分析报告\n\n");
+                prompt.append("# 你是一位专业的新能源汽车数据分析师，擅长车辆能耗分析、驾驶行为评估、趋势预测与用车建议。请根据以下数据，生成一份新能源车行驶记录分析报告\n\n");
                 prompt.append("## 分析背景\n");
                 prompt.append("分析车型：海豹EV550款2022款\n");
                 prompt.append("地点：陕西省西安市\n");
@@ -256,13 +260,14 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                     prompt.append("  - 消耗电量：").append(record.getElectricityConsumed()).append("度\n");
                     prompt.append("  - 电耗：").append(record.getElectricityPerKm()).append("度/公里\n");
                 }
-                prompt.append("## 分析要求\n");
-                prompt.append("1. 分析近30天的行驶里程趋势\n");
-                prompt.append("2. 分析电耗变化趋势，识别异常数据\n");
-                prompt.append("3. 计算平均电耗，评估车辆能效\n");
-                prompt.append("4. 基于历史数据，给出节能驾驶建议\n");
-                prompt.append("5. 预测未来的电耗变化以及行驶里程趋势，需要考虑周内上班通勤，以及节假日的驾驶习惯\n");
-                prompt.append("6. 全部内容使用清晰整洁的Markdown 格式输出，分析报告开头必须要有分析时间范围，车型，地点，报告生成时间等基本信息\n");
+                prompt.append("## 车辆能耗与行驶行为智能分析要求\n");
+                prompt.append("1. 基础信息展示：报告开头必须包含 当前使用的AI模型、分析时间范围、车辆型号、使用地点、报告生成时间，格式清晰醒目。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel);
+                prompt.append("2. 行驶行为分析：统计每日行驶里程图，输出趋势变化，区分工作日/节假日出行特征\n");
+                prompt.append("3. 电耗数据分析：输出电耗变化图，自动识别偏高/偏低/突变等异常电耗数据并标注原因\n");
+                prompt.append("4. 能效指标计算：精准计算平均电耗，对比正常能效区间，评估车辆当前能耗水平。\n");
+                prompt.append("5. 个性化驾驶建议：基于历史行驶与电耗数据，针对性给出节能驾驶、用车习惯优化建议\n");
+                prompt.append("6. 趋势智能预测：结合上班通勤规律、节假日出行习惯，预测未来7-15天电耗与行驶里程趋势\n");
+                prompt.append("7. 输出格式规范：全程使用标准Markdown格式，优先使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
 
                 String content = chatClient.prompt().user(prompt.toString()).call().content();
                 // 计算当前时间到今天结束的毫秒差,再转成秒
