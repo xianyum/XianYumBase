@@ -174,7 +174,12 @@ export default {
       tempDate: {}
     }
   },
-  onLoad() {
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
     // 初始化默认日期范围（当月）
     this.initDefaultDateRange();
     this.getEnergyConsumeList();

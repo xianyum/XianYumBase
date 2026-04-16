@@ -220,6 +220,13 @@ export default {
     mileagePowerChartRef: null,
     avgPowerChartRef: null
   },
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
+  },
   onReady() {
     this.getAppSummaryData();
     this.getEvDriveChartData();
@@ -405,7 +412,7 @@ export default {
     },
     async goToAiReport() {
       const response = await evDriveRecordsDoAiAnalysis();
-      const title = "行驶数据近24小时AI分析报告";
+      const title = "行驶数据AI分析报告";
       const content = response.msg || "";
       uni.navigateTo({
         url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`

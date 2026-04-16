@@ -207,7 +207,12 @@ export default {
   onPullDownRefresh() {
     this.refreshData();
   },
-  onLoad() {
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
     this.getServerInfo()
   },
   methods: {

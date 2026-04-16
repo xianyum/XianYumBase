@@ -273,6 +273,13 @@ export default {
       this.timer = null;
     }
   },
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
+  },
   methods: {
     handleChartTouch() {
       return false;
@@ -443,7 +450,7 @@ export default {
     },
     async goToAiReport() {
       const response = await doAiAnalysis();
-      const title = "鱼缸近24小时AI分析报告";
+      const title = "智能鱼缸AI分析报告";
       const content = response.msg || "";
       uni.navigateTo({
         url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`

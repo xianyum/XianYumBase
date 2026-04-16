@@ -394,8 +394,15 @@ export default {
       } catch (error) {
         console.error('菜单埋点上报失败:', error);
       }
+      // 构建带标题参数的URL
+      let url = item.path;
+      if (item.name) {
+        // 如果URL已经有参数，使用&，否则使用?
+        const separator = url.includes('?') ? '&' : '?';
+        url += `${separator}pageTitle=${encodeURIComponent(item.name)}`;
+      }
       uni.navigateTo({
-        url: item.path
+        url: url
       });
     }
   }

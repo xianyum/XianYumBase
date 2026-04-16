@@ -105,7 +105,12 @@ export default {
       }
     }
   },
-  onLoad() {
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
     // 初始化获取登录类型字典（会自动缓存）
     this.initDictData();
     this.getList()

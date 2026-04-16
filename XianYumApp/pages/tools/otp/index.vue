@@ -75,6 +75,13 @@ export default {
     // 启动定时器更新OTP
     this.startOTPTimer();
   },
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
+  },
   methods: {
     // 加载 OTP 列表
     async loadOTPList() {
