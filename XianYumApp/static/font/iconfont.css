@@ -12,6 +12,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-xingzhuang:before {
+  content: "\e664";
+}
+
+.icon-Redis:before {
+  content: "\e788";
+}
+
 .icon-gugeyanzhengqi:before {
   content: "\e61d";
 }

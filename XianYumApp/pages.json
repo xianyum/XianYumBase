@@ -155,6 +155,12 @@
       }
     },
     {
+      "path": "pages/tools/cache/index",
+      "style": {
+        "navigationBarTitleText": "缓存管理"
+      }
+    },
+    {
       "path": "pages/common/markdown/markdown-view",
       "style": {
         "navigationBarTitleText": "Markdown浏览",
