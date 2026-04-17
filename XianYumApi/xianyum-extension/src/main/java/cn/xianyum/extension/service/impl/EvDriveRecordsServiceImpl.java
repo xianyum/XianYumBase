@@ -263,8 +263,8 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 }
                 prompt.append("## 车辆能耗与行驶行为智能分析要求\n");
                 prompt.append("1. 基础信息展示：报告开头必须按顺序包含 AI模型、分析时间范围、车辆型号、使用地点、报告生成时间，格式清晰醒目。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel);
-                prompt.append("2. 行驶行为分析：分析行驶里程图，只汇总里程程趋势(不用展示所有的里程数据)，区分工作日/节假日出行特征\n");
-                prompt.append("3. 电耗数据分析：分析电耗数据，输出汇总电耗变化趋势(不用展示所有的电耗数据)，自动识别偏高/偏低/突变等异常电耗数据并标注原因\n");
+                prompt.append("2. 行驶行为分析：对行驶里程进行趋势分析，区分工作日与节假日的出行特征。\n");
+                prompt.append("3. 电耗数据分析：对电耗数据进行趋势分析，自动识别电耗偏高异常数据并标注可能原因。\n");
                 prompt.append("4. 能效指标计算：精准计算平均电耗，对比正常能效区间，评估车辆当前能耗水平。\n");
                 prompt.append("5. 个性化驾驶建议：基于历史行驶与电耗数据，针对性给出节能驾驶、用车习惯优化建议\n");
                 prompt.append("6. 趋势智能预测：结合上班通勤规律、节假日出行习惯，预测未来7-15天电耗与行驶里程趋势\n");
