@@ -192,7 +192,7 @@ public class MqttFishServiceImpl implements MqttFishService {
                 prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
             }
             prompt.append("## 分析要求\n");
-            prompt.append("1. 报告开头必须包含：分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel+",数据采集周期每隔5分钟上报一次。\n\n");
+            prompt.append("1. 基础信息展示，报告开头必须按顺序包含：AI模型，分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel+",数据采集周期每隔5分钟上报一次。\n\n");
             prompt.append("2. 分析室内温度、鱼缸水温、TDS的变化趋势图，判断是否存在异常波动、骤升骤降。\n");
             prompt.append("3. 结合无加热棒的环境，综合评估水质健康等级（优秀/良好/一般/较差）。\n");
             prompt.append("4. 根据TDS变化趋势，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
