@@ -31,3 +31,11 @@ export function doAiAnalysis() {
   })
 }
 
+
+export function recordWaterChange(){
+  return request({
+    url: '/xianyum-mqtt/v1/mqttFish/recordWaterChange',
+    method: 'post'
+  })
+}
+

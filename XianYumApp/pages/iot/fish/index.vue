@@ -2,11 +2,12 @@
   <view class="env-monitor-page">
     <!-- 顶部标题 -->
     <view class="page-header">
-      <text class="header-title">环境监测中心</text>
-      <text class="update-time">数据更新于：{{ updateTime }}</text>
-      <text class="water-change-time" v-if="waterChangeLastTime">最近换水：{{ waterChangeLastTime }}</text>
+      <text class="header-title" @click="recordWaterChange">环境监测中心</text>
+      <view class="header-info-row">
+        <text class="update-time">数据更新于 · {{ updateTime }}</text>
+        <text class="water-change-time" v-if="waterChangeLastTime">最近换水 · {{ waterChangeLastTime }}</text>
+      </view>
     </view>
-
     <!-- 实时数据卡片 -->
     <uni-row :gutter="15">
       <uni-col :span="12" v-for="(item, index) in realTimeData" :key="index">
@@ -132,7 +133,7 @@
 
 <script>
 import { formatTime } from '@/utils/dateFormat'
-import { queryLatestData, getReportLineData,doAiAnalysis } from '@/api/iot/fish'
+import { queryLatestData, getReportLineData,doAiAnalysis,recordWaterChange } from '@/api/iot/fish'
 
 export default {
   data() {
@@ -283,6 +284,15 @@ export default {
     }
   },
   methods: {
+    async recordWaterChange(){
+      this.$modal.confirm('确认记录换水吗？').then(async () => {
+        const response = await recordWaterChange();
+        if (response.code === 200) {
+          this.$modal.msgSuccess('记录换水成功');
+          this.fetchEnvData();
+        }
+      })
+    },
     handleChartTouch() {
       return false;
     },
@@ -351,8 +361,7 @@ export default {
             { label: '鱼缸水温', value: data.fishTankTemp, unit: '℃', trend: data.fishTankTempTrend },
             { label: 'TDS值', value: data.fishTankTds, unit: 'ppm', trend: data.fishTankTdsTrend }
           ];
-          // this.waterChangeLastTime = data.waterChangeLastTime
-          this.waterChangeLastTime = '2026-4-21 21:53:49'
+          this.waterChangeLastTime = data.waterChangeLastTime
           const createTime = new Date(data.createTime);
           this.updateTime = formatTime(createTime);
           this.updateArcbarData();
@@ -477,20 +486,28 @@ export default {
 
 .page-header {
   margin-bottom: 15rpx;
+
   .header-title {
     font-size: 32rpx;
     font-weight: 600;
     color: #303133;
   }
+
+  .header-info-row {
+    margin-top: 8rpx;
+    display: flex;
+    align-items: center;
+    gap: 30rpx;
+  }
+
   .update-time {
     font-size: 20rpx;
     color: #909399;
-    display: block;
-    margin-top: 5rpx;
   }
+
   .water-change-time {
     font-size: 20rpx;
-    color: #3a9ec2;
+    color: #909399;
   }
 }
 
