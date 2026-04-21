@@ -38,6 +38,7 @@ public enum RedisKeyEnum {
     MQTT_FISH_PREVIOUS_DATA("xianyum-mqtt:fish:previous"),
     MQTT_FISH_AI_ANALYSIS("xianyum-mqtt:fish-ai:analysis"),
     MQTT_FISH_AI_PROCESSING("xianyum-mqtt:fish-ai:processing"),
+    MQTT_FISH_WATER_CHANGE_TIME("xianyum-mqtt:fish:water_change_time"),
 
     // ======================== xianyum-extension模块 ========================
     EV_DRIVE_AI_ANALYSIS("xianyum-extension:ev-drive:ai-analysis"),

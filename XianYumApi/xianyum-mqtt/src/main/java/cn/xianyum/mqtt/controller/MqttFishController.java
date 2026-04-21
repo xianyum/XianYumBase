@@ -55,4 +55,12 @@ public class MqttFishController{
     }
 
 
+    @PostMapping("/recordWaterChange")
+    @Operation(summary = "记录换水时间")
+    public Results<?> recordWaterChange() {
+        mqttFishService.recordWaterChangeTime();
+        return Results.success();
+    }
+
+
 }

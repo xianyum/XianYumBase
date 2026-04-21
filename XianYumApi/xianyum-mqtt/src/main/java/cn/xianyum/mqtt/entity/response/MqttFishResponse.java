@@ -59,4 +59,9 @@ public class MqttFishResponse extends BaseResponse {
      * 时间字符串
      */
     private String dateStr;
+
+    /**
+     * 最近一次换水时间
+     */
+    private String waterChangeLastTime;
 }

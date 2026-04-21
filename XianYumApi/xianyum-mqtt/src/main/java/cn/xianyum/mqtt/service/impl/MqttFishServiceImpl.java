@@ -92,6 +92,8 @@ public class MqttFishServiceImpl implements MqttFishService {
         if(Objects.isNull(mqttFishResponse)){
             return null;
         }
+        // 最近一次换水时间
+        mqttFishResponse.setWaterChangeLastTime(redisUtils.getString(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey()));
         if(isHaveHourFirstData){
             MqttFishResponse perViousMqttFishResponse = JSONObject.parseObject(redisUtils.getString(RedisKeyEnum.MQTT_FISH_PREVIOUS_DATA.getKey()+":"+previousNowHourStr), MqttFishResponse.class);
             mqttFishResponse.setFishTankTdsTrend(TrendEnum.judgeTrend(mqttFishResponse.getFishTankTds(),perViousMqttFishResponse.getFishTankTds()).getCode());
@@ -193,6 +195,9 @@ public class MqttFishServiceImpl implements MqttFishService {
             }
             prompt.append("## 分析要求\n");
             prompt.append("1. 基础信息展示，报告开头必须按顺序包含：AI模型，分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel+",数据采集周期每隔5分钟上报一次。\n\n");
+            if(redisUtils.hasKey(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())){
+                prompt.append("   - 最近一次换水时间："+redisUtils.getString(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())+"\n");
+            }
             prompt.append("2. 分析室内温度、鱼缸水温、TDS的变化趋势图，判断是否存在异常波动、骤升骤降。\n");
             prompt.append("3. 结合无加热棒的环境，综合评估水质健康等级（优秀/良好/一般/较差）。\n");
             prompt.append("4. 根据TDS变化趋势，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
@@ -206,6 +211,15 @@ public class MqttFishServiceImpl implements MqttFishService {
             redisUtils.del(processingKey);
         },xianYumTaskExecutor);
         throw new SoException("AI正在分析中，请稍后查看结果");
+    }
+
+    /**
+     * 记录换水时间
+     */
+    @Override
+    public void recordWaterChangeTime() {
+        // 记录当前时间到Redis
+        redisUtils.set(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey(), DateUtils.format(new Date()));
     }
 
 }

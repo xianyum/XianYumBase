@@ -44,4 +44,9 @@ public interface MqttFishService{
      * @return
      */
     String aiAnalysis();
+
+    /**
+     * 记录换水时间
+     */
+    void recordWaterChangeTime();
 }
