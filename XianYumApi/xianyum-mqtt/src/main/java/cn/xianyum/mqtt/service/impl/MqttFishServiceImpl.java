@@ -200,7 +200,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             }
             prompt.append("2. 分析室内温度、鱼缸水温、TDS的变化趋势图，判断是否存在异常波动、骤升骤降。\n");
             prompt.append("3. 结合无加热棒的环境，综合评估水质健康等级（优秀/良好/一般/较差）。\n");
-            prompt.append("4. 根据TDS变化趋势，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
+            prompt.append("4. 根据TDS变化趋势，以及最近一次换水时间，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
             prompt.append("5. 结合西安新城区当前气候特点（温差、干燥、室温波动），给出针对性鱼缸维护建议。\n");
             prompt.append("6. 输出格式规范：全程使用标准Markdown格式，优先使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
             String content = chatClient.prompt().user(prompt.toString()).call().content();
