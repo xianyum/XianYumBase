@@ -3,7 +3,8 @@
     <!-- 顶部标题 -->
     <view class="page-header">
       <text class="header-title">环境监测中心</text>
-      <text class="update-time">更新于：{{ updateTime }}</text>
+      <text class="update-time">数据更新于：{{ updateTime }}</text>
+      <text class="water-change-time" v-if="waterChangeLastTime">最近换水：{{ waterChangeLastTime }}</text>
     </view>
 
     <!-- 实时数据卡片 -->
@@ -255,6 +256,7 @@ export default {
           }
         }
       },
+      waterChangeLastTime: "",
       updateTime: "",
       timer: null
     };
@@ -349,6 +351,8 @@ export default {
             { label: '鱼缸水温', value: data.fishTankTemp, unit: '℃', trend: data.fishTankTempTrend },
             { label: 'TDS值', value: data.fishTankTds, unit: 'ppm', trend: data.fishTankTdsTrend }
           ];
+          // this.waterChangeLastTime = data.waterChangeLastTime
+          this.waterChangeLastTime = '2026-4-21 21:53:49'
           const createTime = new Date(data.createTime);
           this.updateTime = formatTime(createTime);
           this.updateArcbarData();
@@ -483,6 +487,10 @@ export default {
     color: #909399;
     display: block;
     margin-top: 5rpx;
+  }
+  .water-change-time {
+    font-size: 20rpx;
+    color: #3a9ec2;
   }
 }
 
@@ -643,4 +651,5 @@ export default {
   align-items: center !important;
   justify-content: center !important;
 }
+
 </style>
