@@ -258,7 +258,7 @@
 							uploadAvatar(data).then(response => {
 								store.commit('SET_AVATAR', response.msg)
                 uni.hideLoading()
-								uni.showToast({ title: "修改成功", icon: 'success' })
+								this.$modal.msgSuccess('修改成功');
                 // 通知刷新图像
                 uni.$emit('refreshAvatar')
                 uni.navigateBack()

@@ -59,16 +59,16 @@ export default {
           this.avatarSrc = this.defaultAvatar;
         }
       }).catch(error => {
-        console.error('获取用户信息失败:', error)
-        uni.showToast({ title: '获取信息失败', icon: 'none' })
-      })
+        console.error('获取用户信息失败:', error);
+        this.$modal.msg('获取信息失败');
+      });
     },
     // 预览头像
     previewAvatar() {
       // 校验头像是否存在
       if (!this.user.avatar) {
-        uni.showToast({ title: '暂无头像可预览', icon: 'none' })
-        return
+        this.$modal.msg('暂无头像可预览');
+        return;
       }
       // 调用uni-app预览图片API
       uni.previewImage({
@@ -95,18 +95,18 @@ export default {
               filePath: res.tempFilePath,
               success: () => {
                 uni.hideLoading()
-                uni.showToast({ title: '保存成功', icon: 'success' })
+                this.$modal.msgSuccess('保存成功');
               },
               fail: () => {
                 uni.hideLoading()
-                uni.showToast({ title: '保存失败，请授权相册权限', icon: 'none' })
+                this.$modal.msg('保存失败，请授权相册权限');
               }
             })
           }
         },
         fail: () => {
           uni.hideLoading()
-          uni.showToast({ title: '下载图片失败', icon: 'none' })
+          this.$modal.msg('下载图片失败');
         }
       })
     }

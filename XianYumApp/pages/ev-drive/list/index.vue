@@ -294,10 +294,7 @@ export default {
         }
       } catch (error) {
         this.loadMoreStatus = 'more';
-        uni.showToast({
-          title: "获取能耗数据错误",
-          icon: 'none'
-        });
+        this.$modal.msg('获取能耗数据错误');
       } finally {
         this.loading = false;
         if (type === 'refresh') {

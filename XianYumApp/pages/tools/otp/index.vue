@@ -121,31 +121,18 @@ export default {
           try {
             const otpInfo = OTPAuth.URI.parse(scanResult);
             // 显示确认保存弹窗
-          uni.showModal({
-            title: '确认保存',
-            content: `是否保存【${otpInfo.issuer}】信息？`,
-            success: (res) => {
-              if (res.confirm) {
-                // 保存OTP
-                this.saveOTP(otpInfo);
-              }
-            }
-          });
-          }catch (error) {
-            uni.showToast({
-              title: '请扫描有效的二维码',
-              icon: 'none'
+            this.$modal.confirm(`是否保存【${otpInfo.issuer}】信息？`).then(() => {
+              this.saveOTP(otpInfo);
             });
+          }catch (error) {
+            this.$modal.msg('请扫描有效的二维码');
             return;
           }
         },
         fail: (err) => {
           // 区分取消扫码和扫码失败
           if (err.errMsg !== 'scanCode:fail cancel') {
-            uni.showToast({
-              title: '扫码失败，请重试',
-              icon: 'none'
-            });
+            this.$modal.msg('扫码失败，请重试');
           }
         }
       });
@@ -164,31 +151,18 @@ export default {
       // 调用后端 API 保存
       const res = await saveOtpNetworkAuth(saveData);
       if (res.code === 200) {
-        uni.showToast({
-          title: '保存成功',
-          icon: 'success'
-        });
+        this.$modal.msgSuccess('保存成功');
         await this.loadOTPList();
       }
     },
     
     // 删除OTP
     async deleteOTP(item) {
-      uni.showModal({
-        title: '确认删除',
-        content: `确定要删除【${item.issuer}】吗？`,
-        success: async (res) => {
-          if (res.confirm) {
-            // 调用后端 API 删除
-            const result = await deleteOtpNetworkAuthList(item.id);
-            if (result.code === 200) {
-              await this.loadOTPList();
-              uni.showToast({
-                title: '删除成功',
-                icon: 'success'
-              });
-            }
-          }
+      this.$modal.confirm(`确定要删除【${item.issuer}】吗？`).then(async () => {
+        const result = await deleteOtpNetworkAuthList(item.id);
+        if (result.code === 200) {
+          await this.loadOTPList();
+          this.$modal.msgSuccess('删除成功');
         }
       });
     },

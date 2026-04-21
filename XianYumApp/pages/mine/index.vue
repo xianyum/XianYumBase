@@ -137,38 +137,24 @@ export default {
             this.showLoginConfirm(ticket);
           } else {
             // 原有逻辑：展示扫码结果
-            uni.showModal({
-              title: '扫码结果',
-              content: `码类型：${res.scanType}\n内容：${scanResult}`,
-              showCancel: true,
-              cancelText: '关闭',
+            this.$modal.confirm(`码类型：${res.scanType}\n内容：${scanResult}`, '扫码结果', {
               confirmText: '复制内容',
-              success: (modalRes) => {
-                if (modalRes.confirm) {
-                  // 点击确认按钮，复制扫码内容到剪贴板
-                  uni.setClipboardData({
-                    data: scanResult,
-                    success: () => {
-                      uni.showToast({
-                        title: '内容已复制',
-                        icon: 'success',
-                        duration: 2000
-                      })
-                    }
-                  })
+              showCancel: true,
+              cancelText: '关闭'
+            }).then(() => {
+              uni.setClipboardData({
+                data: scanResult,
+                success: () => {
+                  this.$modal.msgSuccess('内容已复制');
                 }
-              }
-            })
+              })
+            });
           }
         },
         fail: (err) => {
           // 区分取消扫码和扫码失败
           if (err.errMsg !== 'scanCode:fail cancel') {
-            uni.showToast({
-              title: '扫码失败，请重试',
-              icon: 'none',
-              duration: 2000
-            })
+            this.$modal.msg('扫码失败，请重试');
           }
         }
       })

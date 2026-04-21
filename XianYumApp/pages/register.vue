@@ -92,15 +92,9 @@
       async register() {
         register(this.registerForm).then(res => {
           this.$modal.closeLoading()
-          uni.showModal({
-          	title: "系统提示",
-          	content: "恭喜你，您的账号 " + this.registerForm.username + " 注册成功！",
-          	success: function (res) {
-          		if (res.confirm) {
-                uni.redirectTo({ url: `/pages/login` });
-          		}
-          	}
-          })
+          this.$modal.alert('恭喜你，您的账号 ' + this.registerForm.username + ' 注册成功！', '系统提示').then(() => {
+            uni.redirectTo({ url: '/pages/login' });
+          });
         }).catch(() => {
           if (this.captchaEnabled) {
             this.getCode()

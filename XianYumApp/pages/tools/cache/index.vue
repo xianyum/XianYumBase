@@ -48,16 +48,8 @@ export default {
      * 处理清空缓存
      */
     handleClear(item) {
-      uni.showModal({
-        title: '清空确认',
-        content: `确定要清空缓存 "${item.name}" 吗？`,
-        confirmText: '确定',
-        cancelText: '取消',
-        success: (res) => {
-          if (res.confirm) {
-            this.clearCache(item);
-          }
-        }
+      this.$modal.confirm('确认清空缓存吗？').then(() => {
+        this.clearCache(item);
       });
     },
 
@@ -68,11 +60,7 @@ export default {
       // 调用清空接口
       const response = await deleteCacheByKey(item.key);
       if (response.code === 200) {
-        uni.showToast({
-          title: '清空成功',
-          icon: 'success',
-          duration: 2000
-        });
+        this.$modal.msgSuccess('清空成功');
       }
     }
   }
