@@ -4,12 +4,12 @@
     <view class="cache-list">
       <view
           v-for="item in cacheList"
-          :key="item.key"
+          :key="item.dictValue"
           class="cache-item"
       >
         <view class="cache-info">
-          <text class="cache-name">{{ item.name }}</text>
-          <text class="cache-key">{{ item.key }}</text>
+          <text class="cache-name">{{ item.dictLabel }}</text>
+          <text class="cache-key">{{ item.dictValue }}</text>
         </view>
         <view class="cache-actions">
           <button
@@ -33,17 +33,27 @@
 
 <script>
 import {deleteCacheByKey} from '@/api/tools/cache/cacheApi'
+import { getDictData } from '@/utils/dict';
 
 export default {
   data() {
     return {
-      cacheList: [
-        {key: 'xianyum-mqtt:fish-ai:analysis', name: '鱼缸AI分析报告'},
-        {key: 'xianyum-extension:ev-drive:ai-analysis', name: '行驶记录AI分析报告'}
-      ]
+      cacheList: []
     }
   },
+  onLoad(options) {
+    if (options.pageTitle) {
+      uni.setNavigationBarTitle({
+        title: options.pageTitle
+      });
+    }
+    this.initCacheList();
+  },
   methods: {
+    async initCacheList() {
+      const result = await getDictData('cache_manage');
+      this.cacheList = result;
+    },
     /**
      * 处理清空缓存
      */
@@ -58,7 +68,7 @@ export default {
      */
     async clearCache(item) {
       // 调用清空接口
-      const response = await deleteCacheByKey(item.key);
+      const response = await deleteCacheByKey(item.dictValue);
       if (response.code === 200) {
         this.$modal.msgSuccess('清空成功');
       }
