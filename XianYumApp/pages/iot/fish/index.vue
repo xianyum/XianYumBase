@@ -5,7 +5,7 @@
       <text class="header-title" @click="recordWaterChange">环境监测中心</text>
       <view class="header-info-row">
         <text class="update-time">数据更新于 · {{ updateTime }}</text>
-        <text class="water-change-time" v-if="waterChangeLastTime">最近换水 · {{ waterChangeLastTime }}</text>
+        <text class="water-change-time" v-if="waterChangeLastTime">最近换水 · {{ formatRelativeTime(waterChangeLastTime) }}</text>
       </view>
     </view>
     <!-- 实时数据卡片 -->
@@ -284,6 +284,26 @@ export default {
     }
   },
   methods: {
+    formatRelativeTime(timestamp) {
+      if (!timestamp) return '';
+
+      const now = new Date();
+      const targetTime = new Date(timestamp);
+      const diffMs = now - targetTime;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffMins < 1) {
+        return '刚刚';
+      } else if (diffMins < 60) {
+        return `${diffMins}分钟前`;
+      } else if (diffHours < 24) {
+        return `${diffHours}小时前`;
+      } else {
+        return `${diffDays}天前`;
+      }
+    },
     async recordWaterChange(){
       this.$modal.confirm('确认记录换水吗？').then(async () => {
         const response = await recordWaterChange();
