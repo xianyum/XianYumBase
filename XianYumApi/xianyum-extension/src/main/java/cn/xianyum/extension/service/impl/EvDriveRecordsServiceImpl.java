@@ -268,7 +268,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 prompt.append("4. 能效指标计算：精准计算平均电耗，对比正常能效区间，评估车辆当前能耗水平。\n");
                 prompt.append("5. 个性化驾驶建议：基于历史行驶与电耗数据，针对性给出节能驾驶、用车习惯优化建议\n");
                 prompt.append("6. 趋势智能预测：结合上班通勤规律、节假日出行习惯，预测未来7-15天电耗与行驶里程趋势\n");
-                prompt.append("7. 整体总结要求：报告末尾单独增设【整体综合总结】板块，汇总全维度分析结论、核心问题、关键能效评价与优化重点，内容凝练全面。");
+                prompt.append("7. 整体总结要求：报告末尾单独增设【整体总结】板块，汇总全维度分析结论、核心问题、关键能效评价与优化重点，内容凝练全面。\n");
                 prompt.append("8. 输出格式规范：全程使用标准Markdown格式，必须使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
 
                 String content = chatClient.prompt().user(prompt.toString()).call().content();
