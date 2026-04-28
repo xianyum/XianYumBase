@@ -194,7 +194,7 @@ public class MqttFishServiceImpl implements MqttFishService {
                 prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
             }
             prompt.append("## 分析要求\n");
-            prompt.append("1. 基础信息展示，报告开头必须按顺序包含：AI模型，分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+"，AI模型请你直接填写你自身的模型名称，数据采集周期每隔5分钟上报一次。\n\n");
+            prompt.append("1. 基础信息展示，报告开头必须按顺序包含：AI模型，分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+"，AI模型请你直接填写你自身的模型名称，数据采集周期每隔30秒上报一次。\n\n");
 			if(redisUtils.hasKey(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())){
                 prompt.append("   - 最近一次换水时间："+redisUtils.getString(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())+"\n");
             }
