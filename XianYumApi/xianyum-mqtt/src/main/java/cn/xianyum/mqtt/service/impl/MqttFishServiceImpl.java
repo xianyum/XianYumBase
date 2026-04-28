@@ -194,15 +194,16 @@ public class MqttFishServiceImpl implements MqttFishService {
                 prompt.append("- 鱼缸TDS：").append(data.getFishTankTds()).append("\n\n");
             }
             prompt.append("## 分析要求\n");
-            prompt.append("1. 基础信息展示，报告开头必须按顺序包含：AI模型，分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型取："+aiModel+",数据采集周期每隔5分钟上报一次。\n\n");
-            if(redisUtils.hasKey(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())){
+            prompt.append("1. 基础信息展示，报告开头必须按顺序包含：AI模型，分析时间范围、数据采集周期、鱼缸当前状态、报告生成时间，格式清晰。其中报告生成时间取："+DateUtils.format(new Date())+"，AI模型请你直接填写你自身的模型名称，数据采集周期每隔5分钟上报一次。\n\n");
+			if(redisUtils.hasKey(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())){
                 prompt.append("   - 最近一次换水时间："+redisUtils.getString(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey())+"\n");
             }
             prompt.append("2. 分析室内温度、鱼缸水温、TDS的变化趋势图，判断是否存在异常波动、骤升骤降。\n");
             prompt.append("3. 结合无加热棒的环境，综合评估水质健康等级（优秀/良好/一般/较差）。\n");
             prompt.append("4. 根据TDS变化趋势，以及最近一次换水时间，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
             prompt.append("5. 结合西安新城区当前气候特点（温差、干燥、室温波动），给出针对性鱼缸维护建议。\n");
-            prompt.append("6. 输出格式规范：全程使用标准Markdown格式，优先使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
+			prompt.append("6. 整体总结：报告末尾必须输出【整体总结】板块，凝练总结水质状态、风险点、核心建议与后续维护重点。\n");
+            prompt.append("7. 输出格式规范：全程使用标准Markdown格式，优先使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
             String content = chatClient.prompt().user(prompt.toString()).call().content();
 
             // 缓存结果到Redis，设置30分钟过期
