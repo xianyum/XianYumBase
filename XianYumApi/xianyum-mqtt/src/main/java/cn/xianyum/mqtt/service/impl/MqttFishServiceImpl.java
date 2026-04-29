@@ -203,7 +203,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             prompt.append("4. 根据TDS变化趋势，以及最近一次换水时间，给出科学换水建议：建议换水量、最佳换水时间、换水注意事项。\n");
             prompt.append("5. 结合西安新城区当前气候特点（温差、干燥、室温波动），给出针对性鱼缸维护建议。\n");
 			prompt.append("6. 报告末尾必须输出：整体总结，凝练总结水质状态、风险点、核心建议与后续维护重点。\n");
-            prompt.append("7. 输出格式规范：全程使用标准Markdown格式，必须使用表格/趋势图呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
+            prompt.append("7. 输出格式规范：全程使用标准Markdown格式，合理使用表格(但不要大量展示许多数据)/趋势图呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
             String content = chatClient.prompt().user(prompt.toString()).call().content();
 
             // 缓存结果到Redis，设置30分钟过期
