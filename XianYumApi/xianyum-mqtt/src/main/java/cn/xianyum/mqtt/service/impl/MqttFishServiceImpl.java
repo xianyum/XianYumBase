@@ -183,7 +183,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             prompt.append("## 分析基础信息\n");
             prompt.append("- 监测地点：中国 陕西省 西安市 新城区\n");
             prompt.append("- 设备状态：无加热棒\n\n");
-            prompt.append("- 设备状态：3条金鱼8条天使鱼2条蝶翼斑马鱼\n\n");
+            prompt.append("- 鱼缸鱼类：3条金鱼8条天使鱼2条蝶翼斑马鱼\n\n");
             prompt.append("## 近期鱼缸监测数据\n");
             // 格式化数据
             for (MqttFishEntity data : mqttFishEntities) {
