@@ -9,7 +9,11 @@
       >
         <view class="cache-info">
           <text class="cache-name">{{ item.dictLabel }}</text>
-          <text class="cache-key">{{ item.dictValue }}</text>
+          <view class="cache-key">
+            <text v-for="(key, index) in item.dictValue.split(',')" :key="index" class="cache-key-item">
+              {{ key.trim() }}
+            </text>
+          </view>
         </view>
         <view class="cache-actions">
           <button
@@ -127,6 +131,10 @@ export default {
       display: block;
       line-height: 1.4;
       word-break: break-all;
+      .cache-key-item {
+        display: block;
+        margin-bottom: 4rpx;
+      }
     }
   }
 
