@@ -6,6 +6,7 @@ import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.xianyum.common.utils.ai.OpenAiUtils;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
 import com.alibaba.fastjson2.JSONObject;
@@ -14,7 +15,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -45,9 +45,6 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
 
     @Resource
     private RedisUtils redisUtils;
-
-    @Resource
-    private ChatClient chatClient;
 
     @Value("${spring.ai.openai.chat.options.model}")
     private String aiModel;
@@ -271,10 +268,12 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 prompt.append("7. 整体总结要求：报告末尾单独增设：整体总结，汇总全维度分析结论、核心问题、关键能效评价与优化重点，内容凝练全面。\n");
                 prompt.append("8. 输出格式规范：全程使用标准Markdown格式，必须使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
 
-                String content = chatClient.prompt().user(prompt.toString()).call().content();
-                // 计算当前时间到今天结束的毫秒差,再转成秒
-                long expireSeconds = (DateUtil.endOfDay(new Date()).getTime() - System.currentTimeMillis()) / 1000;
-                redisUtils.set(cacheKey, content, Math.max(expireSeconds, 1));
+                String content = OpenAiUtils.chat(prompt.toString());
+                if(StringUtil.isNotBlank(content)){
+                    // 计算当前时间到今天结束的毫秒差,再转成秒
+                    long expireSeconds = (DateUtil.endOfDay(new Date()).getTime() - System.currentTimeMillis()) / 1000;
+                    redisUtils.set(cacheKey, content, Math.max(expireSeconds, 1));
+                }
             } finally {
                 // 清除处理中标志
                 redisUtils.del(processingKey);

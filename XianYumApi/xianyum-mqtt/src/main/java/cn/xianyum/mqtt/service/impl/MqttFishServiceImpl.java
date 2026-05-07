@@ -1,12 +1,12 @@
 package cn.xianyum.mqtt.service.impl;
 
 import cn.xianyum.common.enums.RedisKeyEnum;
-import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.TrendEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.ai.OpenAiUtils;
 import cn.xianyum.mqtt.entity.po.MqttFishEntity;
 import cn.xianyum.mqtt.entity.request.MqttFishRequest;
 import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.mqtt.service.MqttFishService;
 import cn.xianyum.mqtt.dao.MqttFishMapper;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -41,9 +40,6 @@ public class MqttFishServiceImpl implements MqttFishService {
 
     @Resource
     private RedisUtils redisUtils;
-
-    @Resource
-    private ChatClient chatClient;
 
     @Autowired
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
@@ -204,10 +200,11 @@ public class MqttFishServiceImpl implements MqttFishService {
             prompt.append("5. 结合西安新城区当前气候特点（温差、干燥、室温波动），给出针对性鱼缸维护建议。\n");
 			prompt.append("6. 报告末尾必须输出：整体总结，凝练总结水质状态、风险点、核心建议与后续维护重点。\n");
             prompt.append("7. 输出格式规范：全程使用标准Markdown格式，合理使用表格/趋势图呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
-            String content = chatClient.prompt().user(prompt.toString()).call().content();
-
-            // 缓存结果到Redis，设置30分钟过期
-            redisUtils.setMin(cacheKey, content, 30);
+            String content = OpenAiUtils.chat(prompt.toString());
+            if(StringUtil.isNotBlank(content)){
+                // 缓存结果到Redis，设置30分钟过期
+                redisUtils.setMin(cacheKey, content, 30);
+            }
             // 清除处理中标志
             redisUtils.del(processingKey);
         },xianYumTaskExecutor);

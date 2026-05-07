@@ -132,4 +132,17 @@ public final class SpringUtils implements BeanFactoryPostProcessor, ApplicationC
         return applicationContext.getEnvironment().getActiveProfiles();
     }
 
+    /**
+     * 获取配置文件中的属性值
+     *
+     * @param key 属性键
+     * @return 属性值，如果不存在返回null
+     */
+    public static String getProperty(String key) {
+        if (applicationContext == null) {
+            return null;
+        }
+        return applicationContext.getEnvironment().getProperty(key);
+    }
+
 }
