@@ -1,5 +1,6 @@
 package cn.xianyum.extension.controller;
 
+import cn.hutool.core.text.StrPool;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.utils.Results;
@@ -54,19 +55,25 @@ public class CacheController {
     @Permission("@ps.hasPerm('monitor:cache:delete')")
     public Results<Void> deleteByKey(@RequestParam String redisKey) {
         Set<String> keys = new HashSet<>();
-        String redisProcessKey = Constants.DEFAULT_REDIS_KEY_PREFIX.concat(redisKey);
-        if (redisProcessKey.contains("*")) {
-            // 使用scan命令遍历匹配的key
-            redisTemplate.execute((RedisCallback<Void>) connection -> {
-                try (var cursor = connection.scan(ScanOptions.scanOptions().match(redisProcessKey).count(100).build())) {
-                    while (cursor.hasNext()) {
-                        keys.add(new String(cursor.next()));
-                    }
+        String[] keyArray = StringUtils.split(redisKey, StrPool.COMMA);
+        for (String key : keyArray) {
+            String trimKey = StringUtils.trim(key);
+            if (StringUtils.isNotEmpty(trimKey)) {
+                String redisProcessKey = Constants.DEFAULT_REDIS_KEY_PREFIX.concat(trimKey);
+                if (redisProcessKey.contains("*")) {
+                    // 使用scan命令遍历匹配的key
+                    redisTemplate.execute((RedisCallback<Void>) connection -> {
+                        try (var cursor = connection.scan(ScanOptions.scanOptions().match(redisProcessKey).count(100).build())) {
+                            while (cursor.hasNext()) {
+                                keys.add(new String(cursor.next()));
+                            }
+                        }
+                        return null;
+                    });
+                } else {
+                    keys.add(redisProcessKey);
                 }
-                return null;
-            });
-        } else {
-            keys.add(redisProcessKey);
+            }
         }
         if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
