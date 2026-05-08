@@ -240,15 +240,15 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         CompletableFuture.runAsync(() -> {
             try {
                 LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
-                        .orderByDesc(EvDriveRecordsEntity::getDriveDate).last("limit 90");
-                // 获取近一季度的数据
+                        .orderByDesc(EvDriveRecordsEntity::getDriveDate).last("limit 31");
+                // 获取近一个月的数据
                 List<EvDriveRecordsEntity> records = this.evDriveRecordsMapper.selectList(queryWrapper);
                 StringBuilder prompt = new StringBuilder();
                 prompt.append("# 你是一位专业的新能源汽车数据分析师，擅长车辆能耗分析、驾驶行为评估、趋势预测与用车建议。请根据以下数据，生成一份新能源车行驶记录分析报告\n\n");
                 prompt.append("## 分析背景\n");
                 prompt.append("分析车型：海豹EV550款2022款\n");
                 prompt.append("地点：陕西省西安市\n");
-                prompt.append("分析时间范围：最近90天\n\n");
+                prompt.append("分析时间范围：最近31天\n\n");
                 prompt.append("## 行驶数据\n");
 
                 // 格式化数据
