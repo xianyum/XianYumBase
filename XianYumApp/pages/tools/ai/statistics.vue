@@ -16,7 +16,12 @@
       </view>
 
       <view class="charts-box">
+        <view class="loading-wrap" v-if="!isLoaded">
+          <view class="loading-spinner"></view>
+          <text class="loading-text">加载中...</text>
+        </view>
         <qiun-data-charts
+            v-else
             type="arcbar"
             :opts="opts"
             :chartData="chartData"
@@ -72,7 +77,7 @@
         <view class="log-row cost-text">
           花费：${{ (item.quota / 500000).toFixed(6) }}
         </view>
-        
+
       </view>
 
       <view class="empty" v-if="logList.length === 0">暂无使用日志</view>
@@ -90,6 +95,7 @@ export default {
       currentModel: 'auto-model',
       currModelUsage: {},
       chartData: {},
+      isLoaded: false,
       opts: {
         color: ["#18ff52","#91CB74","#FAC858","#EE6666","#73C0DE","#3CA272","#FC8452","#9A60B4","#ea7ccc"],
         padding: undefined,
@@ -102,7 +108,7 @@ export default {
       logList: []
     };
   },
-  onReady() { this.initModelUsage() },
+  onReady() {},
   onLoad(options) {
     if (options.pageTitle) uni.setNavigationBarTitle({ title: options.pageTitle });
     this.initData();
@@ -118,12 +124,8 @@ export default {
         if (modelRes.code === 200 && modelRes.data) {
           this.modelList = modelRes.data.map(item => item.id);
         }
-
-        await this.sleep(500);
         // 加载用量
         await this.loadTokenUsage();
-
-        await this.sleep(500);
         // 加载日志
         await this.loadTokenLog();
       } finally {
@@ -131,10 +133,13 @@ export default {
         uni.stopPullDownRefresh();
       }
     },
-    sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) },
     async loadTokenUsage() {
       const res = await getAiTokenUsage();
-      if (res.code === 200) { this.currModelUsage = res.data; this.updateArcChart() }
+      if (res.code === 200) {
+        this.currModelUsage = res.data;
+        this.updateArcChart();
+        this.isLoaded = true;
+      }
     },
     async loadTokenLog() {
       const res = await getAiTokenLog();
@@ -210,6 +215,36 @@ export default {
   width: 100%;
   height: 200px;
   margin: 0 auto;
+  position: relative;
+}
+.loading-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+.loading-spinner {
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #1890FF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.loading-text {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 16rpx;
 }
 .usage-row {
   display: flex;
