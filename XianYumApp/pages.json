@@ -161,6 +161,15 @@
       }
     },
     {
+      "path": "pages/tools/ai/statistics",
+      "style": {
+        "navigationBarTitleText": "AI统计",
+        "enablePullDownRefresh": true,
+        "backgroundColor": "#f5f7fa",
+        "backgroundTextStyle": "dark"
+      }
+    },
+    {
       "path": "pages/common/markdown/markdown-view",
       "style": {
         "navigationBarTitleText": "Markdown浏览",

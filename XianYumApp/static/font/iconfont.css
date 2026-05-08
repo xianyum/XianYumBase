@@ -12,6 +12,22 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-AIdamoxing:before {
+  content: "\e689";
+}
+
+.icon-cp_AIdamoxing:before {
+  content: "\e97d";
+}
+
+.icon-AIdamoxingicon:before {
+  content: "\e667";
+}
+
+.icon-AIdamoxing1:before {
+  content: "\eba3";
+}
+
 .icon-xingzhuang:before {
   content: "\e664";
 }
