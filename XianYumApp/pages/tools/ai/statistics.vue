@@ -70,8 +70,9 @@
         </view>
 
         <view class="log-row cost-text">
-          花费：${{ (getUpstreamModel(item.other).model_price || 0).toFixed(6) }}
+          花费：${{ (item.quota / 500000).toFixed(6) }}
         </view>
+        
       </view>
 
       <view class="empty" v-if="logList.length === 0">暂无使用日志</view>

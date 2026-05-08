@@ -11,6 +11,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.openai.OpenAiChatOptions;
 
 import java.util.List;
 
@@ -55,6 +56,9 @@ public class OpenAiUtils {
             ChatClient chatClient = SpringUtils.getBean(ChatClient.class);
             return chatClient.prompt()
                     .user(prompt)
+                    .options(new OpenAiChatOptions() {{
+                        setModel(model);
+                    }})
                     .call()
                     .content();
         } catch (Exception e) {
