@@ -108,7 +108,6 @@ export default {
       logList: []
     };
   },
-  onReady() {},
   onLoad(options) {
     if (options.pageTitle) uni.setNavigationBarTitle({ title: options.pageTitle });
     this.initData();
