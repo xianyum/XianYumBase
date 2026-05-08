@@ -44,6 +44,28 @@ public class OpenAiUtils {
     }
 
     /**
+     * 向 OpenAI 发送消息并获取响应内容（支持指定模型）
+     *
+     * @param prompt 用户输入的提示词
+     * @param model  要使用的模型名称
+     * @return OpenAI 返回的响应内容
+     */
+    public static String chat(String prompt, String model) {
+        try {
+            ChatClient chatClient = SpringUtils.getBean(ChatClient.class);
+            return chatClient.prompt()
+                    .modelName(model)
+                    .user(prompt)
+                    .call()
+                    .content();
+        } catch (Exception e) {
+            log.error("OpenAI 请求失败", e);
+            throw new SoException("AI请求失败,失败原因："+e.getMessage());
+        }
+    }
+
+
+    /**
      * 获取 OpenAI 模型列表
      * 通过 HTTP 请求调用 OpenAI 的 models API 获取所有可用模型
      *

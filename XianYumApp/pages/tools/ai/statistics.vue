@@ -45,7 +45,6 @@
       <view class="section-title">AI 使用日志</view>
 
       <view class="log-item" v-for="item in logList" :key="item.id">
-        <!-- 头部：模型 + 流式/非流 + 时间 -->
         <view class="log-header">
           <view class="header-left">
             <text class="model-tag">
@@ -62,17 +61,14 @@
           <text class="content-text">{{ item.content }}</text>
         </view>
 
-        <!-- 1. 输入 输出 耗时 同一行 -->
         <view class="log-row">
           <text>输入：{{ item.promptTokens }} ｜ 输出：{{ item.completionTokens }} ｜ 耗时：{{ item.useTime }}s</text>
         </view>
 
-        <!-- 2. 实际模型 单独一行 -->
         <view class="log-row real-model" v-if="getUpstreamModel(item.other).upstream_model_name">
           实际模型：{{ getUpstreamModel(item.other).upstream_model_name }}
         </view>
 
-        <!-- 3. 花费 单独一行 -->
         <view class="log-row cost-text">
           花费：${{ (getUpstreamModel(item.other).model_price || 0).toFixed(6) }}
         </view>
@@ -115,14 +111,24 @@ export default {
   },
   methods: {
     async initData() {
-      const modelRes = await getAiModels();
-      if (modelRes.code === 200 && modelRes.data) this.modelList = modelRes.data.map(item => item.id);
+      try {
+        // 加载模型列表
+        const modelRes = await getAiModels();
+        if (modelRes.code === 200 && modelRes.data) {
+          this.modelList = modelRes.data.map(item => item.id);
+        }
 
-      await this.sleep(500);
-      await this.loadTokenUsage();
+        await this.sleep(500);
+        // 加载用量
+        await this.loadTokenUsage();
 
-      await this.sleep(500);
-      await this.loadTokenLog();
+        await this.sleep(500);
+        // 加载日志
+        await this.loadTokenLog();
+      } finally {
+        // 无论成功失败，都关闭下拉刷新
+        uni.stopPullDownRefresh();
+      }
     },
     sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) },
     async loadTokenUsage() {
