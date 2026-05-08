@@ -54,7 +54,6 @@ public class OpenAiUtils {
         try {
             ChatClient chatClient = SpringUtils.getBean(ChatClient.class);
             return chatClient.prompt()
-                    .modelName(model)
                     .user(prompt)
                     .call()
                     .content();
