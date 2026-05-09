@@ -3,11 +3,12 @@ package cn.xianyum.extension.service.impl;
 import cn.xianyum.common.entity.ai.OpenAiLogResponse;
 import cn.xianyum.common.entity.ai.OpenAiModelResponse;
 import cn.xianyum.common.entity.ai.OpenAiTokenUsageResponse;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
+import cn.xianyum.common.utils.SystemConstantUtils;
 import cn.xianyum.common.utils.ai.OpenAiUtils;
 import cn.xianyum.extension.service.OpenAiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,5 +52,26 @@ public class OpenAiServiceImpl implements OpenAiService {
             return new ArrayList<>();
         }
         return logList.stream().limit(20).toList();
+    }
+
+    /**
+     * 获取当前模型
+     *
+     * @return
+     */
+    @Override
+    public String getCurrentModel() {
+        return OpenAiUtils.getCurrentModel();
+    }
+
+    /**
+     * 更新当前系统模型
+     *
+     * @param modelName
+     * @return
+     */
+    @Override
+    public boolean updateCurrentModel(String modelName) {
+        return SystemConstantUtils.saveSystemConstant(SystemConstantKeyEnum.OPEN_AI_MODEL,modelName,0);
     }
 }

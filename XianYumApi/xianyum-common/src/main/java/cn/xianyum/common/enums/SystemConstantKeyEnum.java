@@ -14,8 +14,8 @@ public enum SystemConstantKeyEnum {
     GOLD_CONFIG("gold_config","金价接口配置"),
     HOLIDAY_CN("holiday_cn","中国法定节假日"),
     ELECTRICITY_PER_KM_THRESHOLD("electricity_per_km_threshold","百公里电耗阀值"),
-    CAPTCHA_TYPE("captcha_type","验证码类型")
-    ;
+    CAPTCHA_TYPE("captcha_type","验证码类型"),
+    OPEN_AI_MODEL("open_ai_model","OpenAi模型");
 
     private String key;
     private String desc;

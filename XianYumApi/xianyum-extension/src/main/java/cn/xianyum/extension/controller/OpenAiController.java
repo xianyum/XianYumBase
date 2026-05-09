@@ -7,9 +7,8 @@ import cn.xianyum.common.entity.ai.OpenAiTokenUsageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.service.OpenAiService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -50,5 +49,23 @@ public class OpenAiController {
     @GetMapping("/token/log")
     public Results<List<OpenAiLogResponse>> getTokenLog() {
         return Results.success(openAiService.getTokenLog());
+    }
+
+    /**
+     * 获取当前模型
+     * @return 当前模型
+     */
+    @GetMapping("/getCurrentModel")
+    public Results<String> getCurrentModel() {
+        return Results.success(openAiService.getCurrentModel());
+    }
+
+    /**
+     * 设置当前模型
+     * @return 是否设置成功
+     */
+    @PutMapping("/setCurrentModel")
+    public Results<?> setCurrentModel(@RequestParam String modelName) {
+        return Results.success(openAiService.updateCurrentModel(modelName));
     }
 }

@@ -4,12 +4,15 @@ import cn.xianyum.common.entity.ai.OpenAiLogResponse;
 import cn.xianyum.common.entity.ai.OpenAiModelResponse;
 import cn.xianyum.common.entity.ai.OpenAiResponse;
 import cn.xianyum.common.entity.ai.OpenAiTokenUsageResponse;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.SpringUtils;
+import cn.xianyum.common.utils.SystemConstantUtils;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;
 
@@ -35,13 +38,7 @@ public class OpenAiUtils {
      * @return OpenAI 返回的响应内容
      */
     public static String chat(String prompt) {
-        try {
-            ChatClient chatClient = SpringUtils.getBean(ChatClient.class);
-            return chatClient.prompt().user(prompt).call().content();
-        } catch (Exception e) {
-            log.error("OpenAI 请求失败", e);
-            throw new SoException("AI请求失败,失败原因："+e.getMessage());
-        }
+        return chat(prompt, getCurrentModel());
     }
 
     /**
@@ -175,6 +172,14 @@ public class OpenAiUtils {
         if (apiKey == null || apiKey.isEmpty()) {
             throw new SoException("未配置 OpenAI api-key");
         }
+    }
+
+    /**
+     * 获取当前配置的 OpenAI 模型
+     * @return 当前配置的 OpenAI 模型
+     */
+    public static String getCurrentModel() {
+        return StringUtils.defaultIfBlank(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.OPEN_AI_MODEL), SpringUtils.getProperty("spring.ai.openai.chat.options.model"));
     }
 
 }

@@ -32,15 +32,15 @@
       <view class="usage-row">
         <view class="usage-item">
           <text class="label">总额度</text>
-          <text class="value">{{ currModelUsage.totalGranted }}</text>
+          <text class="value">${{ (currModelUsage.totalGranted / 500000).toFixed(2) }}</text>
         </view>
         <view class="usage-item">
           <text class="label">已使用</text>
-          <text class="value text-used">{{ currModelUsage.totalUsed }}</text>
+          <text class="value text-used">${{ (currModelUsage.totalUsed / 500000).toFixed(2) }}</text>
         </view>
         <view class="usage-item">
           <text class="label">剩余</text>
-          <text class="value text-available">{{ currModelUsage.totalAvailable }}</text>
+          <text class="value text-available">${{ (currModelUsage.totalAvailable / 500000).toFixed(2) }}</text>
         </view>
       </view>
     </view>
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { getAiModels, getAiTokenUsage, getAiTokenLog } from '@/api/tools/ai/aiStatistics.js'
+import {getAiModels, getAiTokenUsage, getAiTokenLog, setAiCurrentModel,getAiCurrentModel} from '@/api/tools/ai/aiStatistics.js'
 import { formatTime } from '@/utils/dateFormat.js'
 export default {
   data() {
@@ -122,6 +122,8 @@ export default {
         const modelRes = await getAiModels();
         if (modelRes.code === 200 && modelRes.data) {
           this.modelList = modelRes.data.map(item => item.id);
+          const currentModelName = await getAiCurrentModel();
+          this.currentModel = currentModelName.msg;
         }
         // 加载用量
         await this.loadTokenUsage();
@@ -144,10 +146,15 @@ export default {
       const res = await getAiTokenLog();
       if (res.code === 200) this.logList = res.data;
     },
-    initModelUsage() { this.updateArcChart() },
     changeModel(e) {
-      this.currentModel = this.modelList[e.detail.value];
-      this.updateArcChart();
+      // 获取选中的新模型
+      const newModel = this.modelList[e.detail.value];
+      // 如果和当前模型一样，不处理
+      if (newModel === this.currentModel) return;
+      this.$modal.confirm(`是否从模型：${this.currentModel}变更为：${newModel}`).then(async () => {
+        await setAiCurrentModel(newModel);
+        this.currentModel = newModel;
+      });
     },
     updateArcChart() {
       const used = this.currModelUsage.totalUsed || 0;

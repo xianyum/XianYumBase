@@ -29,4 +29,17 @@ public interface OpenAiService {
      * @return
      */
     List<OpenAiLogResponse> getTokenLog();
+
+    /**
+     * 获取当前模型
+     * @return
+     */
+    String getCurrentModel();
+
+    /**
+     * 更新当前系统模型
+     * @param modelName
+     * @return
+     */
+    boolean updateCurrentModel(String modelName);
 }
