@@ -114,6 +114,7 @@ export default {
   },
   onPullDownRefresh() {
     this.initData();
+    this.$modal.msgSuccess("刷新成功");
   },
   methods: {
     async initData() {
@@ -152,8 +153,11 @@ export default {
       // 如果和当前模型一样，不处理
       if (newModel === this.currentModel) return;
       this.$modal.confirm(`是否从模型：${this.currentModel}变更为：${newModel}`).then(async () => {
-        await setAiCurrentModel(newModel);
-        this.currentModel = newModel;
+        const res = await setAiCurrentModel(newModel);
+        if (res.code === 200) {
+          this.$modal.msgSuccess('切换成功');
+          this.currentModel = newModel;
+        }
       });
     },
     updateArcChart() {
