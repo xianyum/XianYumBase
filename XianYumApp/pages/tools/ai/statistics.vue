@@ -321,7 +321,7 @@ export default {
   padding: 6rpx 14rpx;
   border-radius: 20rpx;
   font-size: 22rpx;
-  max-width: 300rpx; /* 最大宽度 */
+  max-width: 250rpx; /* 最大宽度 */
   overflow: hidden; /* 隐藏超出部分 */
   text-overflow: ellipsis; /* 显示省略号 */
   white-space: nowrap; /* 不换行 */
