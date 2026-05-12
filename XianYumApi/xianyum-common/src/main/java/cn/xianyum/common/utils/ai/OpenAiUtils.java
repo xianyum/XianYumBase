@@ -60,7 +60,7 @@ public class OpenAiUtils {
                     .content();
         } catch (Exception e) {
             log.error("OpenAI 请求失败", e);
-            throw new SoException("AI请求失败,失败原因："+e.getMessage());
+            return e.getMessage();
         }
     }
 
