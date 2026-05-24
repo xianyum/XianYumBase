@@ -15,7 +15,8 @@ public enum SystemConstantKeyEnum {
     HOLIDAY_CN("holiday_cn","中国法定节假日"),
     ELECTRICITY_PER_KM_THRESHOLD("electricity_per_km_threshold","百公里电耗阀值"),
     CAPTCHA_TYPE("captcha_type","验证码类型"),
-    OPEN_AI_MODEL("open_ai_model","OpenAi模型");
+    OPEN_AI_MODEL("open_ai_model","OpenAi模型"),
+    FN_OS_MESSAGE_CODE("fn_os_message_code","飞牛消息推送编码");
 
     private String key;
     private String desc;

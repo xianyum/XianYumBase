@@ -1,5 +1,6 @@
 package cn.xianyum.message.service;
 
+import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
 import cn.xianyum.message.entity.request.MessageSenderRequest;
 
 /**
@@ -21,4 +22,10 @@ public interface MessageService {
      * @param messageSenderRequest
      */
     void sendStandardMessage(MessageSenderRequest messageSenderRequest);
+
+    /**
+     * 接收飞牛推送的消息
+     * @param request
+     */
+    void receiveFnOsPushMessage(FnOsPushMessageRequest request);
 }
