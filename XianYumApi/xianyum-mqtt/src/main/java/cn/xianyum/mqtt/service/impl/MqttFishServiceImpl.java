@@ -1,5 +1,7 @@
 package cn.xianyum.mqtt.service.impl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.TrendEnum;
 import cn.xianyum.common.exception.SoException;
@@ -43,6 +45,7 @@ public class MqttFishServiceImpl implements MqttFishService {
 
     @Autowired
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
+
 
     @Value("${spring.ai.openai.chat.options.model}")
     private String aiModel;
@@ -218,6 +221,44 @@ public class MqttFishServiceImpl implements MqttFishService {
     public void recordWaterChangeTime() {
         // 记录当前时间到Redis
         redisUtils.set(RedisKeyEnum.MQTT_FISH_WATER_CHANGE_TIME.getKey(), DateUtils.format(new Date()));
+    }
+
+    /**
+     * 提供给普罗米斯拉取接口
+     *
+     * @return
+     */
+    @Override
+    public String metrics() {
+        // 1. 直接从 Redis 获取最新数据 ✅ 你要的就是这个！
+        String json = redisUtils.getString(RedisKeyEnum.MQTT_FISH_LATEST_DATA.getKey());
+        MqttFishResponse data = JSONObject.parseObject(json, MqttFishResponse.class);
+
+        if (data == null) {
+            return "";
+        }
+        long timestamp = data.getCreateTime().getTime() / 1000;
+
+        // ====================== 带时间戳 + 4个指标  ======================
+        return "# HELP fishtank_indoor_temperature 室内温度\n"
+                + "# TYPE fishtank_indoor_temperature gauge\n"
+                + "fishtank_indoor_temperature " + data.getIndoorTemp() + "\n"
+                + "\n"
+                + "# HELP fishtank_temperature 鱼缸温度\n"
+                + "# TYPE fishtank_temperature gauge\n"
+                + "fishtank_temperature " + data.getFishTankTemp() + "\n"
+                + "\n"
+                + "# HELP fishtank_tds 鱼缸TDS\n"
+                + "# TYPE fishtank_tds gauge\n"
+                + "fishtank_tds " + data.getFishTankTds() + "\n"
+                + "\n"
+                + "# HELP fishtank_indoor_humidity 室内湿度\n"
+                + "# TYPE fishtank_indoor_humidity gauge\n"
+                + "fishtank_indoor_humidity " + data.getIndoorHumidity() + "\n"
+                + "\n"
+                + "# HELP fishtank_create_time_seconds 数据创建时间（时间戳）\n"
+                + "# TYPE fishtank_create_time_seconds gauge\n"
+                + "fishtank_data_timestamp  " +  timestamp  + "\n";
     }
 
 }

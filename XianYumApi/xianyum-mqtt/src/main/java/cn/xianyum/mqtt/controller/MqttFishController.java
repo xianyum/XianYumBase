@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import cn.xianyum.mqtt.service.MqttFishService;
 
+
 /**
  * (MqttFish)Controller
  *
@@ -62,5 +63,9 @@ public class MqttFishController{
         return Results.success();
     }
 
-
+    @GetMapping(value = "/metrics", produces = "text/plain; version=0.0.4")
+    @Permission(publicApi = true)
+    public String metrics(){
+        return mqttFishService.metrics();
+    }
 }

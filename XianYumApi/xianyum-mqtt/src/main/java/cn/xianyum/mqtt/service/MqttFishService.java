@@ -49,4 +49,11 @@ public interface MqttFishService{
      * 记录换水时间
      */
     void recordWaterChangeTime();
+
+    /**
+     * 提供给普罗米斯拉取接口
+     * @return
+     */
+    String metrics();
+
 }
