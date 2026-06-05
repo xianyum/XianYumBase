@@ -7,6 +7,7 @@ import cn.xianyum.common.utils.SystemConstantUtils;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
+import cn.xianyum.message.entity.request.GrafanaAlertWebhookRequest;
 import cn.xianyum.message.entity.request.MessageSenderRequest;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.service.MessageService;
@@ -88,6 +89,38 @@ public class MessageServiceImpl implements MessageService {
         messageSenderEntity.setTitle(request.getTitle());
         messageSenderEntity.setMessageContents(messageContents);
         messageSender.sendAsyncMessage(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.FN_OS_MESSAGE_CODE),messageSenderEntity);
+    }
+
+    /**
+     * 接受GrafanaAlert发送消息
+     *
+     * @param request
+     */
+    @Override
+    public void receiveGrafanaAlert(GrafanaAlertWebhookRequest request) {
+        String status = request.getStatus();
+        String statusEmoji;
+        String statusText;
+        if ("firing".equals(status)) {
+            statusEmoji = "🚨";
+            statusText = "告警";
+        } else{
+            statusEmoji = "✅";
+            statusText = "已恢复";
+        }
+        String summary = request.getCommonAnnotations().getSummary();
+        String title = String.format("%s 【%s】%s", statusEmoji, statusText, summary);
+        String content = request.getCommonAnnotations().getDescription();
+        List<MessageContent> messageContents = new ArrayList<>();
+        MessageContent messageContent = new MessageContent();
+        messageContent.setLabel(MESSAGE_CONTENT_PREFIX);
+        messageContent.setValue(content);
+        messageContents.add(messageContent);
+
+        MessageSenderEntity messageSenderEntity =new MessageSenderEntity();
+        messageSenderEntity.setTitle(title);
+        messageSenderEntity.setMessageContents(messageContents);
+        messageSender.sendAsyncMessage(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.GRAFANA_MESSAGE_CODE),messageSenderEntity);
     }
 
 }

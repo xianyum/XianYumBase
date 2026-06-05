@@ -3,6 +3,7 @@ package cn.xianyum.message.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
+import cn.xianyum.message.entity.request.GrafanaAlertWebhookRequest;
 import cn.xianyum.message.entity.request.MessageSenderRequest;
 import cn.xianyum.message.service.MessageService;
 import com.alibaba.fastjson2.JSONObject;
@@ -65,9 +66,8 @@ public class MessageController {
 
     @Permission(publicApi = true)
     @PostMapping("/grafana/alert")
-    public Results<?> receiveGrafanaAlert(@RequestBody String grafanaBody) {
-        log.info("===== 收到 Grafana 告警请求 =====");
-        log.info("Grafana 原始报文：{}", grafanaBody);
+    public Results<?> receiveGrafanaAlert(@RequestBody GrafanaAlertWebhookRequest request) {
+        messageService.receiveGrafanaAlert(request);
         return Results.success();
     }
 }

@@ -1,6 +1,7 @@
 package cn.xianyum.message.service;
 
 import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
+import cn.xianyum.message.entity.request.GrafanaAlertWebhookRequest;
 import cn.xianyum.message.entity.request.MessageSenderRequest;
 
 /**
@@ -28,4 +29,10 @@ public interface MessageService {
      * @param request
      */
     void receiveFnOsPushMessage(FnOsPushMessageRequest request);
+
+    /**
+     * 接受GrafanaAlert发送消息
+     * @param request
+     */
+    void receiveGrafanaAlert(GrafanaAlertWebhookRequest request);
 }
