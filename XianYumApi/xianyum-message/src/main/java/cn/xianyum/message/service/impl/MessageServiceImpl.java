@@ -109,7 +109,7 @@ public class MessageServiceImpl implements MessageService {
             statusText = "已恢复";
         }
         String summary = request.getCommonAnnotations().getSummary();
-        String title = String.format("%s 【%s】%s", statusEmoji, statusText, summary);
+        String title = String.format("%s%s-%s", statusEmoji,summary,statusText);
         String content = request.getCommonAnnotations().getDescription();
         List<MessageContent> messageContents = new ArrayList<>();
         MessageContent messageContent = new MessageContent();
