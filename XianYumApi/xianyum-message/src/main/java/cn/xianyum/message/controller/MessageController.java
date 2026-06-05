@@ -62,4 +62,12 @@ public class MessageController {
         messageService.receiveFnOsPushMessage(request);
         return Results.success();
     }
+
+    @Permission(publicApi = true)
+    @PostMapping("/grafana/alert")
+    public Results<?> receiveGrafanaAlert(@RequestBody String grafanaBody) {
+        log.info("===== 收到 Grafana 告警请求 =====");
+        log.info("Grafana 原始报文：{}", grafanaBody);
+        return Results.success();
+    }
 }
