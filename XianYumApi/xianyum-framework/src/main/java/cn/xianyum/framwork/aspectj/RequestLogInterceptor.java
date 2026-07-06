@@ -42,7 +42,9 @@ public class RequestLogInterceptor {
     @Autowired
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
-    public static final List<String> IGNORE_FILTER_URLS = Arrays.asList("/xym-extension/v1/ip/getIpInfo","/login/qrcode/status");
+    public static final List<String> IGNORE_FILTER_URLS = Arrays.asList("/xym-extension/v1/ip/getIpInfo"
+            ,"/login/qrcode/status"
+            ,"/xianyum-mqtt/v1/mqttFish/metrics");
 
     @Pointcut("execution(* cn.xianyum.*.controller.*.*(..))")
     private void executeRequestLog() {

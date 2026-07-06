@@ -125,12 +125,13 @@ public class MessageServiceImpl implements MessageService {
         List<GrafanaAlertWebhookRequest.GrafanaAlerts> alerts = request.getAlerts();
         if(!CollectionUtils.isEmpty(alerts) && Objects.nonNull(alerts.get(0).getEndsAt()) && Objects.nonNull(alerts.get(0).getStartsAt())){
             long diffSecond = (alerts.get(0).getEndsAt().getTime() - alerts.get(0).getStartsAt().getTime()) / 1000;
-            MessageContent diffSecondContent = new MessageContent();
-            diffSecondContent.setLabel("持续时间：");
-            diffSecondContent.setValue(DateUtils.getDatePoor(diffSecond));
-            messageContents.add(diffSecondContent);
+            if(diffSecond > 0){
+                MessageContent diffSecondContent = new MessageContent();
+                diffSecondContent.setLabel("持续时间：");
+                diffSecondContent.setValue(DateUtils.getDatePoor(diffSecond));
+                messageContents.add(diffSecondContent);
+            }
         }
-
         MessageSenderEntity messageSenderEntity =new MessageSenderEntity();
         messageSenderEntity.setTitle(title);
         messageSenderEntity.setMessageContents(messageContents);
