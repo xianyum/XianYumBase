@@ -66,7 +66,9 @@ public class MessageController {
 
     @Permission(publicApi = true)
     @PostMapping("/grafana/alert")
-    public Results<?> receiveGrafanaAlert(@RequestBody GrafanaAlertWebhookRequest request) {
+    public Results<?> receiveGrafanaAlert(@RequestBody String json) {
+        log.info("Grafana请求的日志,{}",json);
+        GrafanaAlertWebhookRequest request =  JSONObject.parseObject(json, GrafanaAlertWebhookRequest.class);
         messageService.receiveGrafanaAlert(request);
         return Results.success();
     }
