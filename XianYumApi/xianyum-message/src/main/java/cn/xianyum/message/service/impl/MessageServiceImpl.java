@@ -2,6 +2,7 @@ package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.utils.BeanUtils;
+import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
 import cn.xianyum.message.entity.po.MessageContent;
@@ -14,9 +15,12 @@ import cn.xianyum.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wei.zhang@onecontract-cloud.com
@@ -116,6 +120,16 @@ public class MessageServiceImpl implements MessageService {
         messageContent.setLabel(MESSAGE_CONTENT_PREFIX);
         messageContent.setValue(content);
         messageContents.add(messageContent);
+
+        // 判断恢复时间
+        List<GrafanaAlertWebhookRequest.GrafanaAlerts> alerts = request.getAlerts();
+        if(!CollectionUtils.isEmpty(alerts) && Objects.nonNull(alerts.get(0).getEndsAt()) && Objects.nonNull(alerts.get(0).getStartsAt())){
+            long diffSecond = (alerts.get(0).getEndsAt().getTime() - alerts.get(0).getStartsAt().getTime()) / 1000;
+            MessageContent diffSecondContent = new MessageContent();
+            diffSecondContent.setLabel("持续时间：");
+            diffSecondContent.setValue(DateUtils.getDatePoor(diffSecond));
+            messageContents.add(diffSecondContent);
+        }
 
         MessageSenderEntity messageSenderEntity =new MessageSenderEntity();
         messageSenderEntity.setTitle(title);
