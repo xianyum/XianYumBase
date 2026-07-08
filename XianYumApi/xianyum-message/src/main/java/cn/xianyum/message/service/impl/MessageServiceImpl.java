@@ -106,7 +106,7 @@ public class MessageServiceImpl implements MessageService {
         String statusEmoji;
         String statusText;
         if ("firing".equals(status)) {
-            statusEmoji = "🚨";
+            statusEmoji = "\uD83D\uDD25";
             statusText = "告警";
         } else{
             statusEmoji = "✅";
@@ -125,7 +125,7 @@ public class MessageServiceImpl implements MessageService {
         List<GrafanaAlertWebhookRequest.GrafanaAlerts> alerts = request.getAlerts();
         if(!CollectionUtils.isEmpty(alerts) && Objects.nonNull(alerts.get(0).getEndsAt()) && Objects.nonNull(alerts.get(0).getStartsAt())){
             long diffSecond = (alerts.get(0).getEndsAt().getTime() - alerts.get(0).getStartsAt().getTime()) / 1000;
-            if(diffSecond > 0){
+            if("resolved".equals(status)){
                 MessageContent diffSecondContent = new MessageContent();
                 diffSecondContent.setLabel("持续时间：");
                 diffSecondContent.setValue(DateUtils.getDatePoor(diffSecond));
