@@ -239,6 +239,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         // 异步生成AI分析
         CompletableFuture.runAsync(() -> {
             try {
+                BigDecimal chargingUnitPrice = new BigDecimal("0.55");
                 LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
                         .orderByDesc(EvDriveRecordsEntity::getDriveDate).last("limit 31");
                 // 获取近一个月的数据
@@ -248,25 +249,29 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 prompt.append("## 分析背景\n");
                 prompt.append("分析车型：海豹EV550款2022款\n");
                 prompt.append("地点：陕西省西安市\n");
+                prompt.append("当前充电单价：").append(chargingUnitPrice).append(" 元/度\n");
                 prompt.append("分析时间范围：最近31天\n\n");
                 prompt.append("## 行驶数据\n");
 
-                // 格式化数据
                 for (EvDriveRecordsEntity record : records) {
                     prompt.append("- 日期：").append(DateUtils.format(record.getDriveDate())).append("\n");
-                    prompt.append("  - 行驶里程：").append(record.getDistanceKm()).append("公里\n");
-                    prompt.append("  - 消耗电量：").append(record.getElectricityConsumed()).append("度\n");
-                    prompt.append("  - 电耗：").append(record.getElectricityPerKm()).append("度/公里\n");
+                    prompt.append("- 行驶里程：").append(record.getDistanceKm()).append("公里\n");
+                    prompt.append("- 消耗电量：").append(record.getElectricityConsumed()).append("度\n");
+                    prompt.append("- 电耗：").append(record.getElectricityPerKm()).append("度/公里\n");
                 }
+
                 prompt.append("## 车辆能耗与行驶行为智能分析要求\n");
-                prompt.append("1. 基础信息展示：报告开头必须按顺序包含 AI模型、分析时间范围、车辆型号、使用地点、报告生成时间，格式清晰醒目。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型请你直接在报告里写出你自己的模型名称");
+                prompt.append("1. 基础信息展示：报告开头必须按顺序包含 AI模型、分析时间范围、车辆型号、使用地点、充电单价、报告生成时间，格式清晰醒目。其中报告生成时间取："+DateUtils.format(new Date())+",AI模型请你直接在报告里写出你自己的模型名称\n");
                 prompt.append("2. 行驶行为分析：对行驶里程进行趋势分析，区分工作日与节假日的出行特征。\n");
                 prompt.append("3. 电耗数据分析：对电耗数据进行趋势分析，自动识别电耗偏高异常数据并标注可能原因。\n");
                 prompt.append("4. 能效指标计算：精准计算平均电耗，对比正常能效区间，评估车辆当前能耗水平。\n");
-                prompt.append("5. 个性化驾驶建议：基于历史行驶与电耗数据，针对性给出节能驾驶、用车习惯优化建议\n");
-                prompt.append("6. 趋势智能预测：结合上班通勤规律、节假日出行习惯，预测未来7-15天电耗与行驶里程趋势\n");
-                prompt.append("7. 整体总结要求：报告末尾单独增设：整体总结，汇总全维度分析结论、核心问题、关键能效评价与优化重点，内容凝练全面。\n");
-                prompt.append("8. 输出格式规范：全程使用标准Markdown格式，必须使用表格呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
+                prompt.append("5. 用车成本分析：\n");
+                prompt.append("6. 计算总的充电费用、以及每公里平均用车成本（元/公里）\n");
+                prompt.append("7. 分析费用波动规律，结合出行里程、季节温度解释费用高低；\n");
+                prompt.append("8. 个性化驾驶&充电建议：基于历史行驶与电耗数据，针对性给出节能驾驶、用车习惯优化、错峰充电降低成本建议\n");
+                prompt.append("9. 趋势智能预测：结合上班通勤规律、节假日出行习惯，预测未来7-15天电耗、行驶里程与预估充电费用趋势\n");
+                prompt.append("10. 整体总结要求：报告末尾单独增设：整体总结，汇总全维度分析结论、核心问题、关键能效评价、用车成本与优化重点，内容凝练全面。\n");
+                prompt.append("11. 输出格式规范：全程使用标准Markdown格式，必须使用表格呈现【日期、里程、耗电量、电耗、充电费用】，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
 
                 String content = OpenAiUtils.chat(prompt.toString());
                 if(StringUtil.isNotBlank(content)){

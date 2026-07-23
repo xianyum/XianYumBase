@@ -19,6 +19,11 @@
             <view class="item-label">平均电耗</view>
             <view class="item-value">{{ stats.currentMonthResponse.electricityPerKm || 0 }}<span class="unit">度/公里</span></view>
           </view>
+          <view class="split-line"></view>
+          <view class="data-item">
+            <view class="item-label">花费</view>
+            <view class="item-value expense">¥{{ calculateExpense(stats.currentMonthResponse.totalElectricityConsumed) }}<span class="unit">元</span></view>
+          </view>
         </view>
       </view>
       <view class="stats-card">
@@ -38,6 +43,11 @@
             <view class="item-label">平均电耗</view>
             <view class="item-value">{{ stats.lastMonthResponse.electricityPerKm || 0 }}<span class="unit">度/公里</span></view>
           </view>
+          <view class="split-line"></view>
+          <view class="data-item">
+            <view class="item-label">花费</view>
+            <view class="item-value expense">¥{{ calculateExpense(stats.lastMonthResponse.totalElectricityConsumed) }}<span class="unit">元</span></view>
+          </view>
         </view>
       </view>
       <view class="stats-card">
@@ -56,6 +66,11 @@
           <view class="data-item">
             <view class="item-label">平均电耗</view>
             <view class="item-value">{{ stats.lastYearResponse.electricityPerKm || 0 }}<span class="unit">度/公里</span></view>
+          </view>
+          <view class="split-line"></view>
+          <view class="data-item">
+            <view class="item-label">花费</view>
+            <view class="item-value expense">¥{{ calculateExpense(stats.lastYearResponse.totalElectricityConsumed) }}<span class="unit">元</span></view>
           </view>
         </view>
       </view>
@@ -123,6 +138,7 @@
 
 <script>
 import {getAppSummaryData, getEvDriveRecordsReportLineData, evDriveRecordsDoAiAnalysis} from "@/api/ev-drive/list";
+import { getPublicSystemConstant} from "@/api/system/config";
 
 
 export default {
@@ -136,6 +152,7 @@ export default {
       },
       chartDataType: 'mileagePower',
       dateType: 'day',
+      electricityPrice: 1, // 每度电价（元）
       mileagePowerChartData: {},
       avgPowerChartData: {},
       // 里程&电量图表配置 - 开启X轴滚动
@@ -226,6 +243,7 @@ export default {
         title: options.pageTitle
       });
     }
+    this.getElectricityPrice();
   },
   onReady() {
     this.getAppSummaryData();
@@ -235,6 +253,22 @@ export default {
     this.refreshData();
   },
   methods: {
+    getElectricityPrice() {
+      // 获取系统配置的电价参数
+      getPublicSystemConstant('vehicle_charging_unit_price').then(response => {
+        if (response.code === 200) {
+          this.electricityPrice = response.data.constantValue;
+        }
+      });
+    },
+    /**
+     * 计算花费：电耗总量 × 电价
+     */
+    calculateExpense(electricity) {
+      if (!electricity || !this.electricityPrice) return '0.00';
+      return (electricity * this.electricityPrice).toFixed(2);
+    },
+
     /**
      * 处理图表触摸事件，阻止事件穿透
      */
