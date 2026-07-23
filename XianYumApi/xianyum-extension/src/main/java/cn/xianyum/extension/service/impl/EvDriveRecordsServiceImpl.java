@@ -239,7 +239,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         // 异步生成AI分析
         CompletableFuture.runAsync(() -> {
             try {
-                BigDecimal chargingUnitPrice = new BigDecimal("0.55");
+                String chargingUnitPrice = SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.VEHICLE_CHARGING_UNIT_PRICE);
                 LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
                         .orderByDesc(EvDriveRecordsEntity::getDriveDate).last("limit 31");
                 // 获取近一个月的数据

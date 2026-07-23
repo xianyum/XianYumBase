@@ -17,7 +17,8 @@ public enum SystemConstantKeyEnum {
     CAPTCHA_TYPE("captcha_type","验证码类型"),
     OPEN_AI_MODEL("open_ai_model","OpenAi模型"),
     FN_OS_MESSAGE_CODE("fn_os_message_code","飞牛消息推送编码"),
-    GRAFANA_MESSAGE_CODE("grafana_message_code","grafana消息推送编码");
+    GRAFANA_MESSAGE_CODE("grafana_message_code","grafana消息推送编码"),
+    VEHICLE_CHARGING_UNIT_PRICE("vehicle_charging_unit_price","车辆充电单价");
 
     private String key;
     private String desc;
