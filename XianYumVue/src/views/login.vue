@@ -135,7 +135,10 @@
 
     <!-- 底部 -->
     <div class="el-login-footer">
-      <span>Copyright © 2023-2026 xianyum.cn All Rights Reserved.</span>
+      <div>Copyright © 2023-2026 xianyum.cn All Rights Reserved.</div>
+      <div class="icp-full-info">
+        <a href="https://beian.miit.gov.cn/" target="_blank">陕ICP备19022769号-1</a>
+      </div>
     </div>
   </div>
 </template>
@@ -749,8 +752,9 @@ export default {
 }
 
 .el-login-footer {
-  height: 36px;
-  line-height: 36px;
+  height: auto;
+  padding: 8px 0;
+  line-height: 1.6;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -760,6 +764,23 @@ export default {
   font-size: 11px;
   letter-spacing: 0.5px;
   background: rgba(0, 0, 0, 0.1);
+
+  .icp-info, .icp-full-info {
+    margin-top: 4px;
+  }
+
+  a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    &:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
+
+  span {
+    margin-left: 10px;
+  }
 }
 
 .login-code-img {
