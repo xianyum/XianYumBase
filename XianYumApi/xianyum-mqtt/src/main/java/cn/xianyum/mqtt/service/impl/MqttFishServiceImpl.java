@@ -1,13 +1,13 @@
 package cn.xianyum.mqtt.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
+import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.TrendEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.SystemConstantUtils;
 import cn.xianyum.common.utils.ai.OpenAiUtils;
 import cn.xianyum.mqtt.entity.po.MqttFishEntity;
 import cn.xianyum.mqtt.entity.request.MqttFishRequest;
@@ -182,7 +182,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             prompt.append("## 分析基础信息\n");
             prompt.append("- 监测地点：中国 陕西省 西安市 新城区\n");
             prompt.append("- 设备状态：无加热棒\n\n");
-            prompt.append("- 鱼缸鱼类：3条金鱼8条天使鱼2条蝶翼斑马鱼\n\n");
+            prompt.append("- 鱼缸配置："+ SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.FISH_TANK_CONFIG) +"\n\n");
             prompt.append("## 近期鱼缸监测数据\n");
             // 格式化数据
             for (MqttFishEntity data : mqttFishEntities) {
