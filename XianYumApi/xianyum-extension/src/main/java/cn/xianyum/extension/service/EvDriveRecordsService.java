@@ -1,5 +1,6 @@
 package cn.xianyum.extension.service;
 
+import cn.xianyum.extension.entity.request.EvAutoReportRequest;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
@@ -71,4 +72,10 @@ public interface EvDriveRecordsService {
      * @return
      */
     String aiAnalysis();
+
+    /**
+     * 保存自动上报数据
+     * @param request
+     */
+    void saveAutoReportData(EvAutoReportRequest request);
 }

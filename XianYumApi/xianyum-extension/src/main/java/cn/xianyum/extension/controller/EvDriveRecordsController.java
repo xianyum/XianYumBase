@@ -3,6 +3,7 @@ package cn.xianyum.extension.controller;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
+import cn.xianyum.extension.entity.request.EvAutoReportRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -123,11 +124,11 @@ public class EvDriveRecordsController {
         return Results.success(result);
     }
 
-    @Operation(summary = "车机系统自动上报")
+    @Operation(summary = "上报车机遥感数据")
     @PostMapping(value = "/autoReport")
     @Permission(publicApi = true)
-    public Results<String> autoReport(@RequestBody String jsonStr) {
-        log.info("receiveRawJson 收到原始json报文：{}", jsonStr);
-        return Results.success("接收成功");
+    public Results<String> autoReport(@RequestBody EvAutoReportRequest request) {
+        this.evDriveRecordsService.saveAutoReportData(request);
+        return Results.success();
     }
 }

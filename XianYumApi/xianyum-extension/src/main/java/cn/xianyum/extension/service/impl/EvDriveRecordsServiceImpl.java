@@ -1,5 +1,6 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
@@ -7,6 +8,9 @@ import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.common.utils.ai.OpenAiUtils;
+import cn.xianyum.extension.dao.EvAutoReportMapper;
+import cn.xianyum.extension.entity.po.EvAutoReportEntity;
+import cn.xianyum.extension.entity.request.EvAutoReportRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsSummaryResponse;
 import com.alibaba.fastjson2.JSONObject;
@@ -45,6 +49,9 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
 
     @Resource
     private RedisUtils redisUtils;
+
+    @Resource
+    private EvAutoReportMapper evAutoReportMapper;
 
     @Value("${spring.ai.openai.chat.options.model}")
     private String aiModel;
@@ -285,5 +292,16 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
             }
         });
         throw new SoException("AI正在分析中，请稍后查看结果");
+    }
+
+    /**
+     * 保存自动上报数据
+     *
+     * @param request
+     */
+    @Override
+    public void saveAutoReportData(EvAutoReportRequest request) {
+        EvAutoReportEntity evAutoReportEntity = BeanUtil.copyProperties(request, EvAutoReportEntity.class);
+        evAutoReportMapper.insert(evAutoReportEntity);
     }
 }
