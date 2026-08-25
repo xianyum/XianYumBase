@@ -13,6 +13,7 @@ import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.extension.service.EvDriveRecordsService;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 新能源车行驶记录(EvDriveRecords)Controller
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author zhangwei
  * @since 2025-03-06 20:43:40
  */
+@Slf4j
 @RestController
 @RequestMapping("xym-extension/v1/evDriveRecords")
 @Tag(name = "新能源车行驶记录接口")
@@ -119,5 +121,13 @@ public class EvDriveRecordsController {
     public Results<String> aiAnalysis() {
         String result = this.evDriveRecordsService.aiAnalysis();
         return Results.success(result);
+    }
+
+    @Operation(summary = "车机系统自动上报")
+    @PostMapping(value = "/autoReport")
+    @Permission(publicApi = true)
+    public Results<String> autoReport(@RequestBody String jsonStr) {
+        log.info("receiveRawJson 收到原始json报文：{}", jsonStr);
+        return Results.success("接收成功");
     }
 }
