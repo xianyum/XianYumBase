@@ -13,7 +13,6 @@ import cn.xianyum.extension.entity.po.EvTripEntity;
 import cn.xianyum.extension.infra.amap.AmapService;
 import cn.xianyum.extension.service.EvTripService;
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
@@ -62,18 +61,18 @@ public class EvTripServiceImpl implements EvTripService {
      */
     @Override
     public ReturnT doSummaryEvTrip() {
+        LocalDateTime maxTime = LocalDateTime.of(1970, 1, 1, 0, 0);
         try {
             // 1. 获取上次处理的时间
-            LocalDateTime lastProcessedTime = LocalDateTime.of(1970, 1, 1, 0, 0);
             String lastProcessedTimeStr = redisUtils.getString(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey());
             if (StringUtil.isNotBlank(lastProcessedTimeStr)) {
-                lastProcessedTime = LocalDateTime.parse(lastProcessedTimeStr);
+                maxTime = LocalDateTime.parse(lastProcessedTimeStr);
             }
 
             // 2. 查询 is_parked=0 且 reportTime > lastProcessedTime 的行驶数据
             LambdaQueryWrapper<EvAutoReportEntity> queryWrapper = Wrappers.<EvAutoReportEntity>lambdaQuery()
                     .eq(EvAutoReportEntity::getIsCharging, 0)
-                    .gt(EvAutoReportEntity::getReportTime, lastProcessedTime)
+                    .gt(EvAutoReportEntity::getReportTime, maxTime)
                     .orderByAsc(EvAutoReportEntity::getReportTime);
             List<EvAutoReportEntity> reportList = evAutoReportMapper.selectList(queryWrapper);
 
@@ -89,7 +88,6 @@ public class EvTripServiceImpl implements EvTripService {
             boolean lastTripOngoing = isLastTripOngoing();
 
             int savedTripCount = 0;
-            LocalDateTime maxTime = lastProcessedTime;
 
             // 5. 处理每个行程（最后一个行程如果还在执行中则不记录）
             for (int i = 0; i < trips.size(); i++) {
@@ -110,16 +108,18 @@ public class EvTripServiceImpl implements EvTripService {
                 }
 
                 EvTripEntity tripEntity = buildTripEntity(tripData);
-//                evTripMapper.insert(tripEntity);
+                evTripMapper.insert(tripEntity);
                 savedTripCount++;
-                log.info("Saved trip: startTime={}, endTime={}, 行驶里程={}km,行驶soc:{}%-{}%, startAddress={}, endAddress={}",
-                        DateUtil.formatLocalDateTime(tripEntity.getTripStartTime()), DateUtil.formatLocalDateTime(tripEntity.getTripEndTime()),
-                        tripEntity.getEndOdometer().subtract(tripEntity.getStartOdometer()),tripEntity.getStartSoc(),tripEntity.getEndSoc(),
-                        tripEntity.getStartAddress(),tripEntity.getEndAddress());
+                log.info("保存行程：开始时间={}，结束时间={}，行驶里程={}公里，行驶SOC：{}%‑{}%，起点地址={}，终点地址={}",
+                        DateUtil.formatLocalDateTime(tripEntity.getTripStartTime()),
+                        DateUtil.formatLocalDateTime(tripEntity.getTripEndTime()),
+                        tripEntity.getEndOdometer().subtract(tripEntity.getStartOdometer()),
+                        tripEntity.getStartSoc(),
+                        tripEntity.getEndSoc(),
+                        tripEntity.getStartAddress(),
+                        tripEntity.getEndAddress());
             }
 
-            // 6. 更新上次处理的时间到Redis
-//            redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
 
             log.info("Trip summary completed. Saved {} trips. Last processed time: {}", savedTripCount, maxTime);
             return ReturnT.SUCCESS;
@@ -127,6 +127,9 @@ public class EvTripServiceImpl implements EvTripService {
         } catch (Exception e) {
             log.error("Error during trip summary job", e);
             return ReturnT.FAILURE;
+        }finally {
+            // 无论insert成功/失败、整体异常，都更新redis时间，避免重复消费旧报文
+            redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
         }
     }
 
