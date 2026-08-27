@@ -7,9 +7,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
@@ -406,5 +404,17 @@ public class DateUtils {
             timeList.add(format(targetTime.toDate(), YYYY_MM_DD_HH));
         }
         return timeList;
+    }
+
+
+    /**
+     * utc秒 → 北京时间 LocalDateTime
+     */
+    public static LocalDateTime utcSecondToCnLdt(Long utcSecond) {
+        if (utcSecond == null) {
+            return null;
+        }
+        Instant instant = Instant.ofEpochSecond(utcSecond);
+        return instant.atZone(ZoneId.of("Asia/Shanghai")).toLocalDateTime();
     }
 }

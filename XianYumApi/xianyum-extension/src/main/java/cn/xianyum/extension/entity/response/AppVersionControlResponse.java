@@ -1,7 +1,5 @@
 package cn.xianyum.extension.entity.response;
 
-import java.util.Date;
-
 import cn.xianyum.common.entity.base.BaseResponse;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import lombok.Data;

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import cn.xianyum.common.entity.base.BaseEntity;
 import lombok.Data;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 车机系统自动上报-遥测数据(EvAutoReport)表实体类
@@ -21,9 +22,9 @@ public class EvAutoReportEntity extends BaseEntity {
     private Long id;
 
     /**
-     * UTC时间戳（秒）
+     * 上报时间
      */
-    private Long utc;
+    private LocalDateTime reportTime;
 
     /**
      * 纬度

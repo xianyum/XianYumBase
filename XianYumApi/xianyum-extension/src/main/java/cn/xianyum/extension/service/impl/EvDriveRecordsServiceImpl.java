@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
+import com.alibaba.fastjson2.JSON;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.common.utils.ai.OpenAiUtils;
@@ -302,6 +303,10 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     @Override
     public void saveAutoReportData(EvAutoReportRequest request) {
         EvAutoReportEntity evAutoReportEntity = BeanUtil.copyProperties(request, EvAutoReportEntity.class);
+        evAutoReportEntity.setReportTime(DateUtils.utcSecondToCnLdt(request.getUtc()));
         evAutoReportMapper.insert(evAutoReportEntity);
+        // 保存最新上报数据到Redis，供行程汇总job判断车辆是否还在行驶中
+        String latestReportJson = JSON.toJSONString(evAutoReportEntity);
+        redisUtils.set(RedisKeyEnum.EV_TRIP_LATEST_REPORT.getKey(), latestReportJson);
     }
 }
