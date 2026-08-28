@@ -103,27 +103,6 @@
           </view>
         </view>
       </view>
-      <view class="info-card" v-if="trackList.length > 0">
-        <view class="card-title">轨迹点 ({{ currentIndex + 1 }}/{{ trackList.length }})</view>
-        <view class="track-point-info">
-          <view class="point-info-row">
-            <text class="point-label">当前位置</text>
-            <text class="point-value">{{ currentPoint.address || '行驶中' }}</text>
-          </view>
-          <view class="point-info-row">
-            <text class="point-label">坐标</text>
-            <text class="point-value">{{ currentPoint.lat }}, {{ currentPoint.lon }}</text>
-          </view>
-          <view class="point-info-row">
-            <text class="point-label">方向</text>
-            <text class="point-value">{{ currentPoint.heading ? currentPoint.heading + '°' : '-' }}</text>
-          </view>
-          <view class="point-info-row">
-            <text class="point-label">时间</text>
-            <text class="point-value">{{ currentPoint.reportTime ? formatDateTime(currentPoint.reportTime) : '-' }}</text>
-          </view>
-        </view>
-      </view>
       <view class="bottom-space"></view>
     </view>
 
@@ -174,17 +153,13 @@ export default {
       distanceKm: '0.0',
       durationText: '-',
       avgSpeed: 0,
-      playbackSpeedOptions: [1, 2, 4, 8]
+      playbackSpeedOptions: [1, 4, 16, 32]
     };
   },
   computed: {
     progressPercent() {
       if (this.trackList.length <= 1) return this.isPlaying ? 100 : 0;
       return (this.currentIndex / (this.trackList.length - 1)) * 100;
-    },
-    currentPoint() {
-      if (this.trackList.length === 0) return {};
-      return this.trackList[this.currentIndex] || {};
     },
     currentPlaybackTime() {
       if (this.trackList.length === 0) return '';
@@ -371,19 +346,12 @@ export default {
         this.isPlaying = false;
         return;
       }
-      const current = this.trackList[this.currentIndex];
-      const next = this.trackList[this.currentIndex + 1];
-      let interval = 500;
-      if (current.reportTime && next.reportTime) {
-        const t1 = new Date(current.reportTime.replace('T', ' ')).getTime();
-        const t2 = new Date(next.reportTime.replace('T', ' ')).getTime();
-        interval = Math.max(100, (t2 - t1) / this.playbackSpeed);
-      }
+      const frameInterval = Math.max(30, 500 / this.playbackSpeed);
       this.playTimer = setTimeout(() => {
         this.currentIndex++;
         this.updateCarMarker();
         this.scheduleNextFrame();
-      }, interval);
+      }, frameInterval);
     },
     resetPlayback() {
       this.stopPlayback();
@@ -648,32 +616,6 @@ export default {
       font-size: 32rpx;
       font-weight: 700;
       color: #409eff;
-    }
-  }
-}
-
-.track-point-info {
-  .point-info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10rpx 0;
-    border-bottom: 1rpx solid #f5f5f5;
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .point-label {
-      font-size: 26rpx;
-      color: #999;
-    }
-
-    .point-value {
-      font-size: 26rpx;
-      color: #333;
-      font-weight: 500;
-      max-width: 60%;
-      text-align: right;
     }
   }
 }
