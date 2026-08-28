@@ -4,7 +4,10 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.EvAutoReportRequest;
+import cn.xianyum.extension.entity.request.EvTripRequest;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
+import cn.xianyum.extension.entity.response.EvTripResponse;
+import cn.xianyum.extension.service.EvTripService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,9 @@ public class EvDriveRecordsController {
 
     @Autowired
     private EvDriveRecordsService evDriveRecordsService;
+
+    @Autowired
+    private EvTripService evTripService;
 
     /**
      * 分页查询新能源车行驶记录
@@ -130,5 +136,30 @@ public class EvDriveRecordsController {
     public Results<String> autoReport(@RequestBody EvAutoReportRequest request) {
         this.evDriveRecordsService.saveAutoReportData(request);
         return Results.success();
+    }
+
+    /**
+     * 分页查询行程
+     *
+     * @param request 查询实体
+     * @return 分页数据
+     */
+    @Operation(summary = "分页查询行程")
+    @GetMapping(value = "/trip/getPage")
+    public Results<EvTripResponse> getTripPage(EvTripRequest request) {
+        PageResponse<EvTripResponse> responsePage = evTripService.getPage(request);
+        return Results.page(responsePage);
+    }
+
+    /**
+     * 根据ID查询行程详情
+     *
+     * @param id 主键
+     * @return 行程详情
+     */
+    @Operation(summary = "根据ID查询行程详情")
+    @GetMapping("trip/getById/{id}")
+    public Results<EvTripResponse> getTripById(@PathVariable Long id) {
+        return Results.success(evTripService.getById(id));
     }
 }

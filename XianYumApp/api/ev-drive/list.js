@@ -66,3 +66,11 @@ export function evDriveRecordsDoAiAnalysis() {
     method: 'get'
   })
 }
+
+export function getTripPage(query) {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/trip/getPage',
+    method: 'get',
+    params: query
+  })
+}

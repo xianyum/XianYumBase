@@ -131,9 +131,16 @@
       "style": {
         "navigationBarTitleText": "行驶报表",
         "enablePullDownRefresh": true,
-        // 开启下拉刷新
         "backgroundColor": "#f5f7fa",
-        // 下拉刷新区域背景色（建议与页面背景一致）
+        "backgroundTextStyle": "dark"
+      }
+    },
+    {
+      "path": "pages/ev-drive/trip/index",
+      "style": {
+        "navigationBarTitleText": "行程信息",
+        "enablePullDownRefresh": true,
+        "backgroundColor": "#f5f5f5",
         "backgroundTextStyle": "dark"
       }
     },

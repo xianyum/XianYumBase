@@ -1,7 +1,9 @@
 package cn.xianyum.extension.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.RedisUtils;
@@ -10,11 +12,15 @@ import cn.xianyum.extension.dao.EvAutoReportMapper;
 import cn.xianyum.extension.dao.EvTripMapper;
 import cn.xianyum.extension.entity.po.EvAutoReportEntity;
 import cn.xianyum.extension.entity.po.EvTripEntity;
+import cn.xianyum.extension.entity.request.EvTripRequest;
+import cn.xianyum.extension.entity.response.EvTripResponse;
 import cn.xianyum.extension.infra.amap.AmapService;
 import cn.xianyum.extension.service.EvTripService;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -131,6 +137,33 @@ public class EvTripServiceImpl implements EvTripService {
             // 无论insert成功/失败、整体异常，都更新redis时间，避免重复消费旧报文
             redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
         }
+    }
+
+    /**
+     * 分页查询行程
+     *
+     * @param request 查询实体
+     * @return 分页数据
+     */
+    @Override
+    public PageResponse<EvTripResponse> getPage(EvTripRequest request) {
+        LambdaQueryWrapper<EvTripEntity> queryWrapper = Wrappers.<EvTripEntity>lambdaQuery()
+                .orderByDesc(EvTripEntity::getTripStartTime);
+        Page<EvTripEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
+        IPage<EvTripEntity> pageResult = evTripMapper.selectPage(page, queryWrapper);
+        return PageResponse.of(pageResult, EvTripResponse.class);
+    }
+
+    /**
+     * 根据ID查询行程详情
+     *
+     * @param id 主键
+     * @return 行程详情
+     */
+    @Override
+    public EvTripResponse getById(Long id) {
+        EvTripEntity entity = evTripMapper.selectById(id);
+        return BeanUtil.copyProperties(entity, EvTripResponse.class);
     }
 
     /**
