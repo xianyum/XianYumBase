@@ -12,7 +12,10 @@
 
     <view class="trip-content" v-if="groupedTrips.length > 0">
       <view v-for="(group, gIndex) in groupedTrips" :key="gIndex" class="trip-group">
-        <view class="group-date">{{ group.date }}</view>
+        <view class="group-date">
+          <text>{{ group.date }}</text>
+          <text class="group-weekday">{{ group.weekday }}</text>
+        </view>
         <view
           v-for="(item, index) in group.trips"
           :key="item.id"
@@ -133,7 +136,8 @@ export default {
         dateMap[date].push(processed);
       });
       Object.keys(dateMap).forEach(date => {
-        groups.push({ date, trips: dateMap[date] });
+        const weekday = this.getWeekday(dateMap[date][0].startTime || date);
+        groups.push({ date, weekday, trips: dateMap[date] });
       });
       return groups;
     }
@@ -180,6 +184,12 @@ export default {
       const m = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
       return `${y}.${m}.${day}`;
+    },
+    getWeekday(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      return weekdays[d.getDay()];
     },
     formatTime(dateStr) {
       if (!dateStr) return '';
@@ -350,6 +360,15 @@ export default {
     color: #999;
     padding: 16rpx 8rpx;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+
+    .group-weekday {
+      font-size: 24rpx;
+      color: #b2b2b2;
+      font-weight: 400;
+    }
   }
 }
 

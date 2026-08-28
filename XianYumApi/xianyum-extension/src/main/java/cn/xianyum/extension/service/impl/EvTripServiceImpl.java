@@ -148,7 +148,11 @@ public class EvTripServiceImpl implements EvTripService {
      */
     @Override
     public PageResponse<EvTripResponse> getPage(EvTripRequest request) {
+        String beginTime = request.getParams().get("beginTime") != null ? request.getParams().get("beginTime").toString() : null;
+        String endTime = request.getParams().get("endTime") != null ? request.getParams().get("endTime").toString() : null;
         LambdaQueryWrapper<EvTripEntity> queryWrapper = Wrappers.<EvTripEntity>lambdaQuery()
+                .ge(StringUtil.isNotEmpty(beginTime), EvTripEntity::getTripStartTime, beginTime)
+                .le(StringUtil.isNotEmpty(endTime), EvTripEntity::getTripEndTime, endTime)
                 .orderByDesc(EvTripEntity::getTripStartTime);
         Page<EvTripEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
         IPage<EvTripEntity> pageResult = evTripMapper.selectPage(page, queryWrapper);
