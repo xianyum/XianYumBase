@@ -140,12 +140,10 @@ export default {
     return {
       trip: {},
       trackList: [],
-      mapContext: null,
       mapReady: false,
       mapCenter: { latitude: 34.24, longitude: 108.90 },
       mapScale: 13,
-      markers: [],
-      polylines: [],
+      allTrackPoints: [],
       isPlaying: false,
       currentIndex: 0,
       playbackSpeed: 1,
@@ -157,8 +155,98 @@ export default {
     };
   },
   computed: {
+    markers() {
+      if (this.trackList.length === 0) return [];
+      const start = this.trackList[0];
+      const end = this.trackList[this.trackList.length - 1];
+      const curPoint = this.trackList[this.currentIndex] || start;
+      return [
+        {
+          id: 1,
+          latitude: Number(start.lat),
+          longitude: Number(start.lon),
+          width: 36,
+          height: 36,
+          iconPath: '/static/images/map/start.png',
+          callout: {
+            content: '起点',
+            color: '#fff',
+            fontSize: 12,
+            borderRadius: 8,
+            bgColor: '#409eff',
+            padding: 8,
+            display: 'ALWAYS'
+          }
+        },
+        {
+          id: 2,
+          latitude: Number(end.lat),
+          longitude: Number(end.lon),
+          width: 36,
+          height: 36,
+          iconPath: '/static/images/map/end.png',
+          callout: {
+            content: '终点',
+            color: '#fff',
+            fontSize: 12,
+            borderRadius: 8,
+            bgColor: '#f56c6c',
+            padding: 8,
+            display: 'ALWAYS'
+          }
+        },
+        {
+          id: 3,
+          latitude: Number(curPoint.lat),
+          longitude: Number(curPoint.lon),
+          width: 40,
+          height: 40,
+          iconPath: '/static/images/map/car.png',
+          rotate: curPoint.heading || 0
+        }
+      ];
+    },
+    polylines() {
+      if (this.trackList.length < 2) return [];
+      const allPoints = this.allTrackPoints.length > 0 ? this.allTrackPoints : this.trackList.map(p => ({
+        latitude: Number(p.lat),
+        longitude: Number(p.lon)
+      }));
+      const playedPoints = this.trackList.slice(0, this.currentIndex + 1).map(p => ({
+        latitude: Number(p.lat),
+        longitude: Number(p.lon)
+      }));
+      const result = [];
+      if (!this.isPlaying && this.currentIndex === 0) {
+        result.push({
+          id: 1,
+          points: allPoints,
+          color: '#409eff',
+          width: 6,
+          dottedLine: false
+        });
+      } else {
+        result.push({
+          id: 1,
+          points: allPoints,
+          color: '#D0D0D0',
+          width: 5,
+          dottedLine: false
+        });
+        if (playedPoints.length >= 2) {
+          result.push({
+            id: 2,
+            points: playedPoints,
+            color: '#409eff',
+            width: 8,
+            dottedLine: false
+          });
+        }
+      }
+      return result;
+    },
     progressPercent() {
-      if (this.trackList.length <= 1) return this.isPlaying ? 100 : 0;
+      if (this.trackList.length <= 1) return 0;
       return (this.currentIndex / (this.trackList.length - 1)) * 100;
     },
     currentPlaybackTime() {
@@ -203,120 +291,71 @@ export default {
       if (this.trackList.length > 0) {
         const first = this.trackList[0];
         const last = this.trackList[this.trackList.length - 1];
+        const firstLat = Number(first.lat);
+        const firstLon = Number(first.lon);
+        const lastLat = Number(last.lat);
+        const lastLon = Number(last.lon);
+
         this.mapCenter = {
-          latitude: ((parseFloat(first.lat) + parseFloat(last.lat)) / 2),
-          longitude: ((parseFloat(first.lon) + parseFloat(last.lon)) / 2)
+          latitude: (firstLat + lastLat) / 2,
+          longitude: (firstLon + lastLon) / 2
         };
-        this.initMarkers();
-        this.initPolylines();
+
+        const diff = Math.max(Math.abs(lastLat - firstLat), Math.abs(lastLon - firstLon));
+        let scale = 13;
+        if (diff > 5) scale = 4;
+        else if (diff > 2) scale = 6;
+        else if (diff > 1) scale = 7;
+        else if (diff > 0.5) scale = 9;
+        else if (diff > 0.1) scale = 11;
+        else if (diff > 0.05) scale = 12;
+        else if (diff > 0.01) scale = 13;
+        this.mapScale = scale;
+
+        this.allTrackPoints = this.trackList.map(p => ({
+          latitude: Number(p.lat),
+          longitude: Number(p.lon)
+        }));
       } else if (this.trip.startLat) {
         this.mapCenter = {
-          latitude: parseFloat(this.trip.startLat),
-          longitude: parseFloat(this.trip.startLon)
+          latitude: Number(this.trip.startLat),
+          longitude: Number(this.trip.startLon)
         };
       }
-      this.$nextTick(() => {
-        this.mapContext = uni.createMapContext('tripMap', this);
-        this.mapReady = true;
-      });
-    },
-    initMarkers() {
-      const start = this.trackList[0];
-      const end = this.trackList[this.trackList.length - 1];
-      const startMarker = {
-        id: 1,
-        latitude: parseFloat(start.lat),
-        longitude: parseFloat(start.lon),
-        width: 24,
-        height: 24,
-        callout: {
-          content: '起点',
-          color: '#fff',
-          fontSize: 12,
-          borderRadius: 6,
-          bgColor: '#409eff',
-          padding: 6,
-          display: 'ALWAYS'
-        }
-      };
-      const endMarker = {
-        id: 2,
-        latitude: parseFloat(end.lat),
-        longitude: parseFloat(end.lon),
-        width: 24,
-        height: 24,
-        callout: {
-          content: '终点',
-          color: '#fff',
-          fontSize: 12,
-          borderRadius: 6,
-          bgColor: '#f56c6c',
-          padding: 6,
-          display: 'ALWAYS'
-        }
-      };
-      const carMarker = {
-        id: 3,
-        latitude: parseFloat(start.lat),
-        longitude: parseFloat(start.lon),
-        width: 28,
-        height: 28,
-        rotate: start.heading || 0,
-        callout: {
-          content: '行驶中',
-          color: '#333',
-          fontSize: 11,
-          borderRadius: 6,
-          bgColor: '#fff',
-          padding: 5,
-          display: 'ALWAYS'
-        }
-      };
-      this.markers = [startMarker, endMarker, carMarker];
-    },
-    initPolylines() {
-      const points = this.trackList.map(p => ({
-        latitude: parseFloat(p.lat),
-        longitude: parseFloat(p.lon)
-      }));
-      this.polylines = [{
-        points,
-        color: '#409eff',
-        width: 4,
-        dottedLine: false,
-        arrowLine: false
-      }];
+      this.mapReady = true;
     },
     onMapUpdated() {
     },
     moveToTrack() {
-      if (this.mapContext && this.trackList.length > 0) {
-        const start = this.trackList[0];
-        this.mapContext.translate({
-          latitude: parseFloat(start.lat),
-          longitude: parseFloat(start.lon)
-        });
-      }
+      if (this.trackList.length === 0) return;
+      const first = this.trackList[0];
+      const last = this.trackList[this.trackList.length - 1];
+      const firstLat = Number(first.lat);
+      const firstLon = Number(first.lon);
+      const lastLat = Number(last.lat);
+      const lastLon = Number(last.lon);
+      this.mapCenter = {
+        latitude: (firstLat + lastLat) / 2,
+        longitude: (firstLon + lastLon) / 2
+      };
+      const diff = Math.max(Math.abs(lastLat - firstLat), Math.abs(lastLon - firstLon));
+      let scale = 13;
+      if (diff > 5) scale = 4;
+      else if (diff > 2) scale = 6;
+      else if (diff > 1) scale = 7;
+      else if (diff > 0.5) scale = 9;
+      else if (diff > 0.1) scale = 11;
+      else if (diff > 0.05) scale = 12;
+      else if (diff > 0.01) scale = 13;
+      this.mapScale = scale;
     },
     updateCarMarker() {
-      if (this.markers.length < 3) return;
+      if (this.trackList.length === 0) return;
       const point = this.trackList[this.currentIndex];
-      const newMarkers = [...this.markers];
-      newMarkers[2] = {
-        ...newMarkers[2],
-        latitude: parseFloat(point.lat),
-        longitude: parseFloat(point.lon),
-        rotate: point.heading || 0
+      this.mapCenter = {
+        latitude: Number(point.lat),
+        longitude: Number(point.lon)
       };
-      this.markers = newMarkers;
-      this.$nextTick(() => {
-        if (this.mapContext) {
-          this.mapContext.translate({
-            latitude: parseFloat(point.lat),
-            longitude: parseFloat(point.lon)
-          });
-        }
-      });
     },
     togglePlay() {
       if (this.isPlaying) {
@@ -357,6 +396,7 @@ export default {
       this.stopPlayback();
       this.currentIndex = 0;
       this.updateCarMarker();
+      this.moveToTrack();
     },
     toggleSpeed() {
       const currentIdx = this.playbackSpeedOptions.indexOf(this.playbackSpeed);
