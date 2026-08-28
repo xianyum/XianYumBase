@@ -600,7 +600,8 @@ export default {
 
 .info-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 10rpx;
   padding: 12rpx 0;
   border-bottom: 1rpx solid #f5f5f5;
@@ -613,9 +614,9 @@ export default {
     flex: 1;
     font-size: 28rpx;
     color: #333;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-all;
+    line-height: 1.5;
   }
 
   .row-tag {
@@ -624,6 +625,7 @@ export default {
     background-color: #ecf5ff;
     padding: 4rpx 12rpx;
     border-radius: 8rpx;
+    flex-shrink: 0;
   }
 }
 
