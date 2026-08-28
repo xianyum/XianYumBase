@@ -183,35 +183,90 @@ public class EvTripServiceImpl implements EvTripService {
 
         List<EvAutoReportEntity> reportList = evAutoReportMapper.selectList(queryWrapper);
         List<EvTripTrackResponse> trackList = BeanUtil.copyToList(reportList, EvTripTrackResponse.class);
-        response.setTrackList(reduceTrackPoints(trackList, 500));
+        // 使用 Douglas-Peucker 算法抽稀轨迹点
+        List<EvTripTrackResponse> simplifiedTrack = douglasPeucker(trackList, 0.00005);
+        response.setTrackList(simplifiedTrack);
         return response;
     }
 
-
     /**
-     * 轨迹点缩减（等间隔采样法）
-     * 如果轨迹点数量超过 maxPoints，则均匀采样缩减
+     * Douglas-Peucker 轨迹抽稀算法
+     * 原理：递归地找到距离首尾连线最远的点，如果距离大于阈值则保留该点，继续递归
      *
      * @param trackList 原始轨迹点列表
-     * @param maxPoints  最大保留点数
-     * @return 缩减后的轨迹点
+     * @param tolerance 容差阈值（经度/纬度单位，如 0.00005 约等于 5米）
+     * @return 抽稀后的轨迹点列表
      */
-    private List<EvTripTrackResponse> reduceTrackPoints(List<EvTripTrackResponse> trackList, int maxPoints) {
-        if (trackList.size() <= maxPoints) {
-            return trackList;
+    private List<EvTripTrackResponse> douglasPeucker(List<EvTripTrackResponse> trackList, double tolerance) {
+        if (trackList == null || trackList.size() <= 2) {
+            return trackList != null ? new ArrayList<>(trackList) : new ArrayList<>();
         }
-        // 始终保留首尾两点
-        List<EvTripTrackResponse> reduced = new ArrayList<>();
-        // 计算采样间隔
-        double step = (double) (trackList.size() - 1) / (maxPoints - 1);
-        for (int i = 0; i < maxPoints; i++) {
-            int index = (int) Math.round(i * step);
-            if (index >= trackList.size()) {
-                index = trackList.size() - 1;
+
+        // 找到距离首尾连线最远的点
+        int maxIndex = 0;
+        double maxDistance = 0;
+        EvTripTrackResponse firstPoint = trackList.get(0);
+        EvTripTrackResponse lastPoint = trackList.get(trackList.size() - 1);
+
+        for (int i = 1; i < trackList.size() - 1; i++) {
+            double distance = calculatePointToLineDistance(
+                    trackList.get(i), firstPoint, lastPoint);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxIndex = i;
             }
-            reduced.add(trackList.get(index));
         }
-        return reduced;
+
+        // 如果最大距离大于阈值，则递归处理
+        if (maxDistance > tolerance) {
+            List<EvTripTrackResponse> leftPart = douglasPeucker(
+                    trackList.subList(0, maxIndex + 1), tolerance);
+            List<EvTripTrackResponse> rightPart = douglasPeucker(
+                    trackList.subList(maxIndex, trackList.size()), tolerance);
+
+            // 合并结果，避免重复添加分割点
+            List<EvTripTrackResponse> result = new ArrayList<>(leftPart);
+            for (int i = 1; i < rightPart.size(); i++) {
+                result.add(rightPart.get(i));
+            }
+            return result;
+        } else {
+            // 所有点都在阈值范围内，只保留首尾两点
+            List<EvTripTrackResponse> result = new ArrayList<>();
+            result.add(firstPoint);
+            result.add(lastPoint);
+            return result;
+        }
+    }
+
+    /**
+     * 计算点到线段的距离
+     * 使用欧式距离近似（经纬度坐标在小范围内可近似为平面坐标）
+     *
+     * @param point      待计算点
+     * @param lineStart  线段起点
+     * @param lineEnd    线段终点
+     * @return 距离值
+     */
+    private double calculatePointToLineDistance(EvTripTrackResponse point,
+                                                 EvTripTrackResponse lineStart,
+                                                 EvTripTrackResponse lineEnd) {
+        double x0 = point.getLon().doubleValue();
+        double y0 = point.getLat().doubleValue();
+        double x1 = lineStart.getLon().doubleValue();
+        double y1 = lineStart.getLat().doubleValue();
+        double x2 = lineEnd.getLon().doubleValue();
+        double y2 = lineEnd.getLat().doubleValue();
+
+        // 分母为0时，所有点共线
+        double denominator = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        if (denominator == 0) {
+            return Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
+        }
+
+        // 点到直线的距离
+        double numerator = Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - x1 * y2);
+        return numerator / denominator;
     }
 
     /**
