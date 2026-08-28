@@ -1,9 +1,11 @@
 package cn.xianyum.extension.entity.response;
 
 import cn.xianyum.common.entity.base.BaseResponse;
+import cn.xianyum.common.utils.Pair;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 行程表(EvTrip)表实体类
@@ -95,4 +97,9 @@ public class EvTripResponse extends BaseResponse {
      * 行程最高电池温度℃
      */
     private BigDecimal maxBattTemp;
+
+    /**
+     * 行程轨迹列表
+     */
+    private List<EvTripTrackResponse> trackList;
 }

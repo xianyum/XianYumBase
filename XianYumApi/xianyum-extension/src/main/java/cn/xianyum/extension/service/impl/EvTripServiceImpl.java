@@ -14,6 +14,7 @@ import cn.xianyum.extension.entity.po.EvAutoReportEntity;
 import cn.xianyum.extension.entity.po.EvTripEntity;
 import cn.xianyum.extension.entity.request.EvTripRequest;
 import cn.xianyum.extension.entity.response.EvTripResponse;
+import cn.xianyum.extension.entity.response.EvTripTrackResponse;
 import cn.xianyum.extension.infra.amap.AmapService;
 import cn.xianyum.extension.service.EvTripService;
 import com.alibaba.fastjson2.JSON;
@@ -163,7 +164,50 @@ public class EvTripServiceImpl implements EvTripService {
     @Override
     public EvTripResponse getById(Long id) {
         EvTripEntity entity = evTripMapper.selectById(id);
-        return BeanUtil.copyProperties(entity, EvTripResponse.class);
+        EvTripResponse response = BeanUtil.copyProperties(entity, EvTripResponse.class);
+        if(Objects.isNull(entity)){
+            return response;
+        }
+        // 查询该行程时间范围内、is_parked=0 的行驶数据
+        LambdaQueryWrapper<EvAutoReportEntity> queryWrapper = Wrappers.<EvAutoReportEntity>lambdaQuery()
+                .eq(EvAutoReportEntity::getIsParked, 0)
+                .ge(EvAutoReportEntity::getReportTime, response.getTripStartTime())
+                .le(EvAutoReportEntity::getReportTime, response.getTripEndTime())
+                .isNotNull(EvAutoReportEntity::getLat)
+                .isNotNull(EvAutoReportEntity::getLon)
+                .orderByAsc(EvAutoReportEntity::getReportTime);
+
+        List<EvAutoReportEntity> reportList = evAutoReportMapper.selectList(queryWrapper);
+        List<EvTripTrackResponse> trackList = BeanUtil.copyToList(reportList, EvTripTrackResponse.class);
+        response.setTrackList(reduceTrackPoints(trackList, 500));
+        return response;
+    }
+
+
+    /**
+     * 轨迹点缩减（等间隔采样法）
+     * 如果轨迹点数量超过 maxPoints，则均匀采样缩减
+     *
+     * @param trackList 原始轨迹点列表
+     * @param maxPoints  最大保留点数
+     * @return 缩减后的轨迹点
+     */
+    private List<EvTripTrackResponse> reduceTrackPoints(List<EvTripTrackResponse> trackList, int maxPoints) {
+        if (trackList.size() <= maxPoints) {
+            return trackList;
+        }
+        // 始终保留首尾两点
+        List<EvTripTrackResponse> reduced = new ArrayList<>();
+        // 计算采样间隔
+        double step = (double) (trackList.size() - 1) / (maxPoints - 1);
+        for (int i = 0; i < maxPoints; i++) {
+            int index = (int) Math.round(i * step);
+            if (index >= trackList.size()) {
+                index = trackList.size() - 1;
+            }
+            reduced.add(trackList.get(index));
+        }
+        return reduced;
     }
 
     /**

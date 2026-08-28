@@ -74,3 +74,10 @@ export function getTripPage(query) {
     params: query
   })
 }
+
+export function getTripById(id) {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/trip/getById/' + id,
+    method: 'get'
+  })
+}

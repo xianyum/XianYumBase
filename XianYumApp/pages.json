@@ -145,6 +145,14 @@
       }
     },
     {
+      "path": "pages/ev-drive/trip/detail",
+      "style": {
+        "navigationBarTitleText": "行程详情",
+        "backgroundColor": "#f5f5f5",
+        "backgroundTextStyle": "dark"
+      }
+    },
+    {
       "path": "pages/monitor/server/index",
       "style": {
         "navigationBarTitleText": "服务监控",
