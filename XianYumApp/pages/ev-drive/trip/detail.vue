@@ -253,30 +253,46 @@ export default {
       this.durationText = this.formatDuration(durationMs);
       this.avgSpeed = durationMs > 0 ? Math.round((parseFloat(this.distanceKm) / (durationMs / 3600000))) : 0;
     },
+    // 一进来初始化地图中心和缩放比例
+    calcMapBounds(points) {
+      if (!points || points.length === 0) return null;
+      let minLat = Infinity, maxLat = -Infinity;
+      let minLon = Infinity, maxLon = -Infinity;
+      points.forEach(p => {
+        const lat = Number(p.lat);
+        const lon = Number(p.lon);
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+        if (lon < minLon) minLon = lon;
+        if (lon > maxLon) maxLon = lon;
+      });
+      const latSpan = maxLat - minLat;
+      const lonSpan = maxLon - minLon;
+      const maxSpan = Math.max(latSpan, lonSpan);
+      const centerLat = (minLat + maxLat) / 2;
+      const centerLon = (minLon + maxLon) / 2;
+      let scale = 13;
+      if (maxSpan > 10) scale = 3;
+      else if (maxSpan > 5) scale = 4;
+      else if (maxSpan > 2) scale = 6;
+      else if (maxSpan > 1) scale = 7;
+      else if (maxSpan > 0.5) scale = 9;
+      else if (maxSpan > 0.2) scale = 10;
+      else if (maxSpan > 0.1) scale = 11;
+      else if (maxSpan > 0.05) scale = 12;
+      else if (maxSpan > 0.01) scale = 13;
+      return {
+        center: { latitude: centerLat, longitude: centerLon },
+        scale
+      };
+    },
     initMap() {
       if (this.trackList.length > 0) {
-        const first = this.trackList[0];
-        const last = this.trackList[this.trackList.length - 1];
-        const firstLat = Number(first.lat);
-        const firstLon = Number(first.lon);
-        const lastLat = Number(last.lat);
-        const lastLon = Number(last.lon);
-
-        this.mapCenter = {
-          latitude: (firstLat + lastLat) / 2,
-          longitude: (firstLon + lastLon) / 2
-        };
-
-        const diff = Math.max(Math.abs(lastLat - firstLat), Math.abs(lastLon - firstLon));
-        let scale = 13;
-        if (diff > 5) scale = 4;
-        else if (diff > 2) scale = 6;
-        else if (diff > 1) scale = 7;
-        else if (diff > 0.5) scale = 9;
-        else if (diff > 0.1) scale = 11;
-        else if (diff > 0.05) scale = 12;
-        else if (diff > 0.01) scale = 13;
-        this.mapScale = scale;
+        const bounds = this.calcMapBounds(this.trackList);
+        if (bounds) {
+          this.mapCenter = bounds.center;
+          this.mapScale = bounds.scale;
+        }
 
         this.allTrackPoints = this.trackList.map(p => ({
           latitude: Number(p.lat),
@@ -302,26 +318,11 @@ export default {
     },
     moveToTrack() {
       if (this.trackList.length === 0) return;
-      const first = this.trackList[0];
-      const last = this.trackList[this.trackList.length - 1];
-      const firstLat = Number(first.lat);
-      const firstLon = Number(first.lon);
-      const lastLat = Number(last.lat);
-      const lastLon = Number(last.lon);
-      this.mapCenter = {
-        latitude: (firstLat + lastLat) / 2,
-        longitude: (firstLon + lastLon) / 2
-      };
-      const diff = Math.max(Math.abs(lastLat - firstLat), Math.abs(lastLon - firstLon));
-      let scale = 13;
-      if (diff > 5) scale = 4;
-      else if (diff > 2) scale = 6;
-      else if (diff > 1) scale = 7;
-      else if (diff > 0.5) scale = 9;
-      else if (diff > 0.1) scale = 11;
-      else if (diff > 0.05) scale = 12;
-      else if (diff > 0.01) scale = 13;
-      this.mapScale = scale;
+      const bounds = this.calcMapBounds(this.trackList);
+      if (bounds) {
+        this.mapCenter = bounds.center;
+        this.mapScale = bounds.scale;
+      }
     },
     updateCarMarker() {
       if (this.trackList.length === 0) return;
@@ -690,32 +691,111 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 60rpx;
+    gap: 80rpx;
 
     .control-item {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .speed-btn {
+      width: 64rpx;
+      height: 64rpx;
+      background-color: #ecf5ff;
+      border-radius: 50%;
+      box-shadow: 0 2rpx 8rpx rgba(64, 158, 255, 0.15);
 
       .speed-text {
-        font-size: 30rpx;
-        font-weight: 600;
+        font-size: 26rpx;
+        font-weight: 700;
         color: #409eff;
-        background-color: #ecf5ff;
-        padding: 8rpx 24rpx;
-        border-radius: 24rpx;
       }
 
-      &.play-btn {
-        width: 96rpx;
-        height: 96rpx;
-        background-color: #409eff;
-        border-radius: 50%;
-        box-shadow: 0 8rpx 24rpx rgba(64, 158, 255, 0.4);
+      &:active {
+        transform: scale(0.92);
+      }
+    }
 
-        &:active {
-          opacity: 0.8;
+    .play-btn {
+      position: relative;
+      width: 112rpx;
+      height: 112rpx;
+      background: linear-gradient(135deg, #5a77d7 0%, #3a5fc7 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10rpx 30rpx rgba(90, 119, 215, 0.45);
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      .play-ring {
+        position: absolute;
+        top: -6rpx;
+        left: -6rpx;
+        right: -6rpx;
+        bottom: -6rpx;
+        border: 3rpx solid rgba(90, 119, 215, 0.3);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+      }
+
+      &.playing .play-ring {
+        top: -12rpx;
+        left: -12rpx;
+        right: -12rpx;
+        bottom: -12rpx;
+        border-color: rgba(90, 119, 215, 0.15);
+        animation: ringPulse 1.5s ease-out infinite;
+      }
+
+      .play-icon {
+        width: 40rpx;
+        height: 40rpx;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .play-triangle {
+        width: 0;
+        height: 0;
+        border-left: 28rpx solid #fff;
+        border-top: 18rpx solid transparent;
+        border-bottom: 18rpx solid transparent;
+        margin-left: 6rpx;
+      }
+
+      .pause-bar {
+        width: 8rpx;
+        height: 32rpx;
+        background-color: #fff;
+        border-radius: 4rpx;
+
+        &.left {
+          margin-right: 6rpx;
         }
+        &.right {
+          margin-left: 6rpx;
+        }
+      }
+    }
+
+    .reset-btn {
+      width: 64rpx;
+      height: 64rpx;
+      background-color: #f0f4fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:active {
+        transform: scale(0.92);
       }
     }
   }
