@@ -41,7 +41,7 @@
         <lombok.version>1.18.38</lombok.version>
         <druid.version>1.2.23</druid.version>
         <easy.excel.version>4.0.3</easy.excel.version>
-        <alipay.version>4.10.192.ALL</alipay.version>
+        <alipay.version>4.34.0.ALL</alipay.version>
         <bitwalker.version>1.21</bitwalker.version>
         <oshi.version>6.6.3</oshi.version>
         <commons.io.version>2.16.0</commons.io.version>
