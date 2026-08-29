@@ -118,7 +118,8 @@
           <text class="speed-text">{{ playbackSpeed }}x</text>
         </view>
         <view class="control-item play-btn" @tap="togglePlay">
-          <uni-icons :type="isPlaying ? 'pause' : 'play'" size="24" color="#fff"></uni-icons>
+          <image class="play-icon" src="/static/images/map/play.png" v-if="!isPlaying"></image>
+          <image class="play-icon" src="/static/images/map/pause.png" v-else></image>
         </view>
         <view class="control-item" @tap="resetPlayback">
           <uni-icons type="reload" size="20" color="#666"></uni-icons>
@@ -721,12 +722,9 @@ export default {
       position: relative;
       width: 112rpx;
       height: 112rpx;
-      background: linear-gradient(135deg, #5a77d7 0%, #3a5fc7 100%);
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 10rpx 30rpx rgba(90, 119, 215, 0.45);
 
       &:active {
         transform: scale(0.95);
@@ -753,12 +751,8 @@ export default {
       }
 
       .play-icon {
-        width: 40rpx;
-        height: 40rpx;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 80rpx;
+        height: 80rpx;
       }
 
       .play-triangle {
