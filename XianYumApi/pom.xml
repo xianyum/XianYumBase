@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dynamic.datasource.boot.version>4.3.1</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.5.14</mybatisplus.boot.version>
-        <fastjson.version>2.0.50</fastjson.version>
+        <fastjson.version>2.0.64</fastjson.version>
         <okhttps.fastjson.version>4.0.1</okhttps.fastjson.version>
         <joda.time.version>2.12.7</joda.time.version>
         <lombok.version>1.18.38</lombok.version>
