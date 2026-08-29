@@ -2,7 +2,7 @@ package cn.xianyum.message.infra.sender;
 
 import cn.xianyum.common.constant.Constants;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
@@ -49,7 +49,7 @@ public class EmailSender extends AbstractMessageSender {
             if(StrUtil.isNotEmpty(messageSender.getEmailToUser())){
                 String[] receivers = messageSender.getEmailToUser().split("\\|");
                 for(String receiver : receivers){
-                    String mId = UUIDUtils.UUIDReplace();
+                    String mId = IdGeneratorUtil.generateId();
                     messageSender.setMessageId(mId);
                     List<String> messageContentList  = emailSupporter.generateMessageContentList(messageSender);
                     messageSender.setEmailToUser(receiver);
@@ -85,7 +85,7 @@ public class EmailSender extends AbstractMessageSender {
             if(StrUtil.isNotEmpty(messageSender.getEmailToUser())){
                 String[] receivers = messageSender.getEmailToUser().split("\\|");
                 for(String receiver : receivers){
-                    String mId = UUIDUtils.UUIDReplace();
+                    String mId = IdGeneratorUtil.generateId();
                     messageSender.setEmailToUser(receiver);
                     String result = emailSupporter.sendHtmlEmail(messageConfigEmailEntity,receiver,messageSender.getTitle(),messageSender.getEmailHtmlPath(),context);
                     this.messageMonitorService.insertMessageLog(mId,messageSender.getEmailToUser(),messageSender,result);

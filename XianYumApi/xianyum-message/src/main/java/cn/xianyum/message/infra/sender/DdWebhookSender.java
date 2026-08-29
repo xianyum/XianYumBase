@@ -1,6 +1,6 @@
 package cn.xianyum.message.infra.sender;
 
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.entity.po.MessageConfigWebhookEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
@@ -32,7 +32,7 @@ public class DdWebhookSender extends AbstractMessageSender {
     public void doSendMessage(MessageSenderEntity messageSender) {
         MessageConfigWebhookEntity webhookConfig = messageConfigWebhookService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if(webhookConfig != null){
-            String mId = UUIDUtils.UUIDReplace();
+            String mId = IdGeneratorUtil.generateId();
             messageSender.setMessageId(mId);
             String sendResult = webhookSupporter.sendDdMessage(webhookConfig, messageSender);
             this.messageMonitorService.insertMessageLog(mId,null,messageSender,sendResult);

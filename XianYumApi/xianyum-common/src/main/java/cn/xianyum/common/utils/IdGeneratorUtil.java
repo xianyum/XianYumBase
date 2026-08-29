@@ -1,13 +1,14 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.IdUtil;
 import java.util.Random;
-import java.util.UUID;
+
 
 /**
  * @author zhangwei
  * @date 2019/3/12 17:27
  */
-public class UUIDUtils {
+public class IdGeneratorUtil {
 
     /**
      *  length：随机字符串+数字位数
@@ -44,20 +45,13 @@ public class UUIDUtils {
         }
         return code;
     }
-    /**
-     *
-     * @return
-     */
-    public static String getUUID(){
-        return UUID.randomUUID().toString();
-    }
 
     /**
      *
      * @return
      */
-    public static String UUIDReplace(){
-        return UUID.randomUUID().toString().replace("-", "");
+    public static String generateId(){
+        return IdUtil.getSnowflakeNextIdStr();
     }
 
 }

@@ -1,12 +1,12 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import java.lang.reflect.Method;
 
 /**
  * @author
@@ -17,15 +17,43 @@ import java.lang.reflect.Method;
 public class SystemConstantUtils {
 
     /**
+     * SystemConstantService 全限定类名，用于反射加载（跨模块无法直接依赖）
+     */
+    private static final String SYSTEM_CONSTANT_SERVICE = "cn.xianyum.system.service.SystemConstantService";
+
+    /**
+     * 缓存 SystemConstantService Bean，避免每次调用都通过反射获取
+     */
+    private static volatile Object systemConstantService;
+
+
+    /**
+     * 双重检查锁懒加载获取 SystemConstantService Bean
+     */
+    private static Object getSystemConstantService() {
+        if (systemConstantService == null) {
+            synchronized (SystemConstantUtils.class) {
+                if (systemConstantService == null) {
+                    try {
+                        Class<?> clazz = Class.forName(SYSTEM_CONSTANT_SERVICE);
+                        systemConstantService = SpringUtil.getBean(clazz);
+                    } catch (Exception e) {
+                        log.error("获取SystemConstantService Bean异常. ", e);
+                    }
+                }
+            }
+        }
+        return systemConstantService;
+    }
+
+    /**
      * 通过常量key获取值
      * @param systemConstantKeyEnum
      * @return
      */
     public static String getValueByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
         try {
-            Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
-            Method m = clazz.getDeclaredMethod("getValueKey",String.class);
-            Object object = m.invoke(SpringUtil.getBean(clazz), systemConstantKeyEnum.getKey());
+            Object object = ReflectUtil.invoke(getSystemConstantService(), "getValueKey", systemConstantKeyEnum.getKey());
             return object == null ? null : String.valueOf(object);
         } catch (Exception var5) {
             log.error("通过反射获取系统常用变量异常. ",var5);
@@ -42,9 +70,7 @@ public class SystemConstantUtils {
      */
     public static boolean saveSystemConstant(SystemConstantKeyEnum systemConstantKeyEnum,String value,Integer visible) {
         try {
-            Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
-            Method m = clazz.getDeclaredMethod("saveOrUpdate",SystemConstantKeyEnum.class,String.class,Integer.class);
-            Object object = m.invoke(SpringUtil.getBean(clazz), systemConstantKeyEnum,value,visible);
+            Object object = ReflectUtil.invoke(getSystemConstantService(), "saveOrUpdate", systemConstantKeyEnum, value, visible);
             return (Boolean) object;
         } catch (Exception var5) {
             log.error("通过反射插入系统常用变量异常. ",var5);

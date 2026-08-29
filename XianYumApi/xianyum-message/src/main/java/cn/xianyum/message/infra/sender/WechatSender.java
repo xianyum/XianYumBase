@@ -1,14 +1,13 @@
 package cn.xianyum.message.infra.sender;
 
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
 import cn.xianyum.message.infra.core.AbstractMessageSender;
 import cn.xianyum.message.infra.supporter.WechatSupporter;
 import cn.xianyum.message.service.MessageConfigWechatService;
-import cn.xianyum.message.service.MessageMonitorService;
 import cn.xianyum.message.service.MessageTypeConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class WechatSender extends AbstractMessageSender {
                 // 企微如果没有指定发送人的话，默认发全部
                 messageSender.setWechatToUser("@all");
             }
-            String mId = UUIDUtils.UUIDReplace();
+            String mId = IdGeneratorUtil.generateId();
             messageSender.setMessageId(mId);
             String messageContent = wechatSupporter.generateMessage(messageConfigWechatEntity.getAgentId(),messageSender);
             String sendResult = wechatSupporter.sendTextCard(messageConfigWechatEntity, messageContent);

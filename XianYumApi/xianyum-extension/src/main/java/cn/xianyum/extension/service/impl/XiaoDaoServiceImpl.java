@@ -8,7 +8,7 @@ import cn.xianyum.extension.entity.response.XiaoDaoResponse;
 import cn.xianyum.extension.service.XiaoDaoService;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -94,7 +94,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
                 continue;
             }
             XiaoDaoEntity bean = new XiaoDaoEntity();
-            bean.setId(UUIDUtils.UUIDReplace());
+            bean.setId(IdGeneratorUtil.generateId());
             bean.setUrl(url);
             bean.setTitle(title);
             int insert = xiaoDaoMapper.insert(bean);

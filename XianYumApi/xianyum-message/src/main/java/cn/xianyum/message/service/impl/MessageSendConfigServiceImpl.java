@@ -53,7 +53,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 	public Integer save(MessageSendConfigRequest request) {
 
 		MessageSendConfigEntity bean = BeanUtil.toBean(request,MessageSendConfigEntity.class);
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		return messageSendConfigMapper.insert(bean);
 
 	}
@@ -90,7 +90,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 		if(StrUtil.isNotEmpty(request.getId())){
 			count = messageSendConfigMapper.updateById(bean);
 		}else{
-			bean.setId(UUIDUtils.UUIDReplace());
+			bean.setId(IdGeneratorUtil.generateId());
 			count = messageSendConfigMapper.insert(bean);
 		}
 

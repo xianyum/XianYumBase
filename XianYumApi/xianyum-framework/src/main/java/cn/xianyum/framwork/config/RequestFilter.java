@@ -71,7 +71,7 @@
 //    private void buildRequestId(HttpServletRequest httpRequest) {
 //        String requestId = httpRequest.getHeader("requestId");
 //        if (StrUtil.isEmpty(requestId)) {
-//            requestId = UUIDUtils.UUIDReplace();
+//            requestId = UUIDUtils.generateId();
 //        }
 //        MDC.put("requestId", requestId);
 //        String serverIp = IPUtils.getIpAddr(httpRequest);

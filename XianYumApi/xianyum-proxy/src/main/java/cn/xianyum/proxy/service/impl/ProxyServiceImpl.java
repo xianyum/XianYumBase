@@ -6,7 +6,6 @@ import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -118,7 +117,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public Integer save(ProxyRequest request) {
 		ProxyEntity bean = BeanUtil.toBean(request,ProxyEntity.class);
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		bean.setLoginCount(0);
 		return proxyMapper.insert(bean);
 

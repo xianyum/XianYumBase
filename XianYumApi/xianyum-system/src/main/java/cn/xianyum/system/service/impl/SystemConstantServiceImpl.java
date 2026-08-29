@@ -207,7 +207,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
             throw new SoException("系统常量键已存在");
         }
         SystemConstantEntity bean = BeanUtil.toBean(request,SystemConstantEntity.class);
-        bean.setId(UUIDUtils.UUIDReplace());
+        bean.setId(IdGeneratorUtil.generateId());
         return systemConstantMapper.insert(bean);
     }
 

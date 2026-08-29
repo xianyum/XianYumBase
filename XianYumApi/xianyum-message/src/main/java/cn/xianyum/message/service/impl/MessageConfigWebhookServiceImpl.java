@@ -59,7 +59,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 	public Integer save(MessageConfigWebhookRequest request) {
 
 		MessageConfigWebhookEntity bean = BeanUtil.toBean(request,MessageConfigWebhookEntity.class);
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		return messageConfigWebhookMapper.insert(bean);
 
 	}

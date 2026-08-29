@@ -5,7 +5,7 @@ import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.dao.MessageConfigEmailMapper;
 import cn.xianyum.message.dao.MessageConfigWebhookMapper;
 import cn.xianyum.message.dao.MessageConfigWechatMapper;
@@ -74,7 +74,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 	@Override
 	public Integer save(MessageSendRelationRequest request) {
 		MessageSendRelationEntity bean = BeanUtil.toBean(request,MessageSendRelationEntity.class);
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		return messageSendRelationMapper.insert(bean);
 	}
 

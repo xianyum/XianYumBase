@@ -5,7 +5,7 @@ import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.dao.MessageTypeConfigMapper;
 import cn.xianyum.message.entity.po.MessageTypeConfigEntity;
 import cn.xianyum.message.entity.request.MessageTypeConfigRequest;
@@ -64,7 +64,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 			throw new SoException("消息编码重复");
 		}
 
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		return messageTypeConfigMapper.insert(bean);
 	}
 

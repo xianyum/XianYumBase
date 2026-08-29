@@ -3,9 +3,8 @@ package cn.xianyum.message.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.SecurityUtils;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.message.dao.MessageMonitorMapper;
 import cn.xianyum.message.entity.po.MessageMonitorEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -65,7 +64,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	public Integer save(MessageMonitorRequest request) {
 
 		MessageMonitorEntity bean = BeanUtil.toBean(request,MessageMonitorEntity.class);
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		return messageMonitorMapper.insert(bean);
 
 	}

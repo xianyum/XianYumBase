@@ -125,7 +125,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         if (!valid) {
             throw new SoException("验证码错误");
         }
-        String code = UUIDUtils.getRandomNumber(6);
+        String code = IdGeneratorUtil.getRandomNumber(6);
         switch (request.getLoginType()){
             case EMAIL -> this.sendLoginCredentialsByEmail(request,code);
             default -> throw new SoException("目前只支持发送邮箱验证码");
@@ -372,7 +372,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public LoginTokenResponse createToken(LoginUser loginUser) {
         //生成token
-        String token = UUIDUtils.UUIDReplace();
+        String token = IdGeneratorUtil.generateId();
         Date now = new Date();
         //过期时间
         Date expireTime = new Date(now.getTime() + expire * 86400L * 1000L);

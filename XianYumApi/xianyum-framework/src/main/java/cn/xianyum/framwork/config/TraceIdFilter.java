@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.config;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.utils.UUIDUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 import org.slf4j.MDC;
@@ -20,7 +20,7 @@ public class TraceIdFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String traceId = httpRequest.getHeader(TRACE_ID);
         if (StrUtil.isBlank(traceId)) {
-            traceId = UUIDUtils.UUIDReplace();
+            traceId = IdUtil.fastSimpleUUID();
         }
         MDC.put(TRACE_ID, traceId);
         try {

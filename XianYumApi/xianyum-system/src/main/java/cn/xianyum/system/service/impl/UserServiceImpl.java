@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
         if(userEntity.getStatus() == null){
             userEntity.setStatus(YesOrNoEnum.YES.getStatus());
         }
-        String userId = UUIDUtils.UUIDReplace();
+        String userId = IdGeneratorUtil.generateId();
         userEntity.setId(userId);
         int count = userMapper.insert(userEntity);
         if(count > 0){
@@ -498,9 +498,9 @@ public class UserServiceImpl implements UserService {
             String nickName = EmojiUtils.filterEmoji(aLiUserInfo.getNickName());
             //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
-                loginUser.setId(UUIDUtils.UUIDReplace());
+                loginUser.setId(IdGeneratorUtil.generateId());
                 loginUser.setThirdUserId(aLiUserInfo.getUserId());
-                loginUser.setUsername(UUIDUtils.getCodeChar(5));
+                loginUser.setUsername(IdGeneratorUtil.getCodeChar(5));
                 loginUser.setNickName(nickName);
                 loginUser.setStatus(YesOrNoEnum.YES.getStatus());
                 loginUser.setAvatarFileId(aLiUserInfo.getAvatar());
@@ -548,9 +548,9 @@ public class UserServiceImpl implements UserService {
                     .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.QQ.getThirdType()));
             String nickName = EmojiUtils.filterEmoji(qqUserEntity.getNickname());
             if(qqThirdUserEntity == null ){
-                loginUser.setId(UUIDUtils.UUIDReplace());
+                loginUser.setId(IdGeneratorUtil.generateId());
                 loginUser.setThirdUserId(qqUserEntity.getUserId());
-                loginUser.setUsername(UUIDUtils.getCodeChar(5));
+                loginUser.setUsername(IdGeneratorUtil.getCodeChar(5));
                 loginUser.setNickName(nickName);
                 loginUser.setStatus(YesOrNoEnum.YES.getStatus());
                 if("女".equals(qqUserEntity.getGender())){

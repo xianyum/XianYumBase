@@ -5,7 +5,6 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
@@ -101,7 +100,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		}
 
 		ProxyDetailsEntity bean = BeanUtil.toBean(request,ProxyDetailsEntity.class);
-		bean.setId(UUIDUtils.UUIDReplace());
+		bean.setId(IdGeneratorUtil.generateId());
 		// 删除缓存,后续在重新缓存
 		String redisKey = RedisKeyEnum.PROXY_PROXY_DETAILS_LAN_INFO.getKey().concat(request.getInetPort().toString());
 		redisUtils.del(redisKey);
