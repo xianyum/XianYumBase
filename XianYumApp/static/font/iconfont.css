@@ -12,6 +12,34 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-chelianghangshiguiji:before {
+  content: "\e647";
+}
+
+.icon-hangshiguiji:before {
+  content: "\e606";
+}
+
+.icon-hangshiguijixuanzhong:before {
+  content: "\e60c";
+}
+
+.icon-hangshiguiji1:before {
+  content: "\e67b";
+}
+
+.icon-hangshiguiji2:before {
+  content: "\e633";
+}
+
+.icon-mobile2:before {
+  content: "\e60e";
+}
+
+.icon-chelianghangcheng:before {
+  content: "\e68c";
+}
+
 .icon-AIdamoxing:before {
   content: "\e689";
 }

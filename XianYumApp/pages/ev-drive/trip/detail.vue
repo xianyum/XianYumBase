@@ -2,6 +2,7 @@
   <view class="trip-detail">
     <view class="map-container">
       <map
+        v-if="mapReady"
         id="tripMap"
         class="trip-map"
         :latitude="mapCenter.latitude"
