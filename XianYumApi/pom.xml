@@ -59,6 +59,7 @@
         <qiniu.version>7.12.1</qiniu.version>
         <tianai.captcha.version>1.5.4</tianai.captcha.version>
         <spring-ai.version>1.0.0-M6</spring-ai.version>
+        <hutool-all.version>5.8.46</hutool-all.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -226,6 +227,13 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easy.excel.version}</version>
+            </dependency>
+
+            <!-- Hutool 工具类 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool-all.version}</version>
             </dependency>
 
             <!-- 解析客户端操作系统、浏览器等 -->

@@ -212,7 +212,7 @@ public class EvTripServiceImpl implements EvTripService {
      */
     private List<EvTripTrackResponse> douglasPeucker(List<EvTripTrackResponse> trackList, double tolerance) {
         if (CollUtil.isEmpty(trackList) || trackList.size() <= 1000) {
-            return CollUtil.isEmpty(trackList) ? new ArrayList<>(trackList) : new ArrayList<>();
+            return CollUtil.isNotEmpty(trackList) ? new ArrayList<>(trackList) : new ArrayList<>();
         }
 
         // 找到距离首尾连线最远的点

@@ -5,11 +5,11 @@
     <property name="LOG_HOME" value="logs"/>
     <property name="PROJECT_NAME" value="${projectName}"/>
 
-    <property name="FILE_PATTEN"  value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
+    <property name="FILE_PATTEN"  value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{traceId}] [%X{clientIp}] [%X{requestId}] [%X{serverIp}] %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>[%highlight(%-5level)] [%date{ISO8601}] [%boldGreen(%logger)] [%boldYellow(%thread)] [%X{clientIp}]
+            <pattern>[%highlight(%-5level)] [%date{ISO8601}] [%boldGreen(%logger)] [%boldYellow(%thread)] [%magenta(%X{traceId})] [%X{clientIp}]
                 [%cyan(%X{requestId})] [%X{serverIp}] %msg%n
             </pattern>
         </encoder>
