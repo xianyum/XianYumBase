@@ -2,7 +2,7 @@
   <div class="login">
     <div class="login-container">
       <!-- 顶部标题 -->
-      <h3 class="main-title">有梦想的咸鱼</h3>
+      <h3 class="main-title">XianYum平台</h3>
 
       <!-- 登录Tab切换 -->
       <div class="login-tabs">
