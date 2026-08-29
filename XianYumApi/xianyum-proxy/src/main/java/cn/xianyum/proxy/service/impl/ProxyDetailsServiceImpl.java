@@ -4,6 +4,8 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
@@ -63,7 +65,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public ProxyDetailsResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		ProxyDetailsEntity result = proxyDetailsMapper.selectById(id);
@@ -115,7 +117,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		if(null == request.getInetPort()){
 			throw new SoException("公网端口不能为空");
 		}
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 

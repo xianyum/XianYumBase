@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -78,7 +78,7 @@ public class RedisUtils {
             if (key.length == 1) {
                 redisTemplate.delete(key[0]);
             } else {
-                redisTemplate.delete(CollectionUtils.arrayToList(key));
+                redisTemplate.delete(CollUtil.newArrayList(key));
             }
         }
     }
@@ -667,4 +667,3 @@ public class RedisUtils {
         return redisTemplate.delete(collection) > 0;
     }
 }
-

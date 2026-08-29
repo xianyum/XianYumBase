@@ -7,6 +7,7 @@ import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
@@ -27,12 +28,12 @@ public class HolidayCnTask implements IJobHandler {
         String year = DateUtils.format(new Date(), DateUtils.YYYY);
         String formatHolidayUrl = String.format(Constants.HOLIDAY_URL, year,System.currentTimeMillis());
         String result = HttpUtils.getHttpInstance().sync(formatHolidayUrl).get().getBody().toString();
-        if(StringUtil.isEmpty(result)){
+        if(StrUtil.isEmpty(result)){
             return ReturnT.FAILURE;
         }
         JSONObject jsonObject = JSONObject.parseObject(result);
         String holidayJson = jsonObject.getString("holiday");
-        if(StringUtil.isNotBlank(holidayJson)){
+        if(StrUtil.isNotBlank(holidayJson)){
             SystemConstantUtils.saveSystemConstant(SystemConstantKeyEnum.HOLIDAY_CN,holidayJson,YesOrNoEnum.YES.getStatus());
         }
         return ReturnT.SUCCESS;

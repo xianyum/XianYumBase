@@ -5,7 +5,7 @@ import cn.xianyum.common.entity.base.BaseEntity;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.PermissionThreadLocal;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.common.utils.SecretUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +45,7 @@ public class RoleDataPermissionHandler implements CustomerDataPermissionHandler{
 
             EqualsTo selfEqualsTo = new EqualsTo();
             StringBuffer leftColumn = new StringBuffer();
-            if(Objects.nonNull(fromItemAlias) && StringUtil.isNotEmpty(fromItemAlias.getName())){
+            if(Objects.nonNull(fromItemAlias) && StrUtil.isNotEmpty(fromItemAlias.getName())){
                 leftColumn.append(fromItemAlias.getName());
                 leftColumn.append(StringPool.DOT);
             }

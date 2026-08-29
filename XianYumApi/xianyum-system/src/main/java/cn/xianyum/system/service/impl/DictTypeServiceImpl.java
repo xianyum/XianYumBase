@@ -3,7 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.dao.DictTypeMapper;
 import cn.xianyum.system.entity.po.DictTypeEntity;
@@ -74,7 +74,7 @@ public class DictTypeServiceImpl implements DictTypeService {
 
     @Override
     public boolean checkDictTypeUnique(DictTypeEntity dict) {
-        if(StringUtil.isEmpty(dict.getDictType())){
+        if(StrUtil.isEmpty(dict.getDictType())){
             throw new SoException("字典类型为空！");
         }
         Long dictId = Objects.isNull(dict.getId()) ? -1L : dict.getId();

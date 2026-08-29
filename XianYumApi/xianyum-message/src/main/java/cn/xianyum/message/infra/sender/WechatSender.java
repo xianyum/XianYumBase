@@ -1,6 +1,6 @@
 package cn.xianyum.message.infra.sender;
 
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -42,10 +42,10 @@ public class WechatSender extends AbstractMessageSender {
     @Override
     public void doSendMessage(MessageSenderEntity messageSender) {
         // 接口指定的发送用户>发送配置的>默认all
-        messageSender.setWechatToUser(StringUtil.isNotEmpty(messageSender.getWechatToUser())?messageSender.getWechatToUser():messageSender.getDefaultToUser());
+        messageSender.setWechatToUser(StrUtil.isNotEmpty(messageSender.getWechatToUser())?messageSender.getWechatToUser():messageSender.getDefaultToUser());
         MessageConfigWechatEntity messageConfigWechatEntity = messageConfigWechatService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if(messageConfigWechatEntity != null && messageSender != null ){
-            if(StringUtil.isEmpty(messageSender.getWechatToUser())){
+            if(StrUtil.isEmpty(messageSender.getWechatToUser())){
                 // 企微如果没有指定发送人的话，默认发全部
                 messageSender.setWechatToUser("@all");
             }

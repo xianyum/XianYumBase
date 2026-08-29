@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
@@ -65,7 +66,7 @@ public class DateUtils {
      * @param pattern 日期的格式，如：DateUtils.DATE_TIME_PATTERN
      */
     public static Date stringToDate(String strDate, String pattern) {
-        if (StringUtil.isBlank(strDate)){
+        if (StrUtil.isBlank(strDate)){
             return null;
         }
 

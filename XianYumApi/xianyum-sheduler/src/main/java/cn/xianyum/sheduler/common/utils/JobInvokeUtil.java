@@ -2,8 +2,8 @@ package cn.xianyum.sheduler.common.utils;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.IJobHandler;
-import cn.xianyum.common.utils.SpringUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Objects;
 
@@ -17,10 +17,10 @@ import java.util.Objects;
 public class JobInvokeUtil {
 
     public static IJobHandler invokeJobHandler(String jobHandler) throws Exception {
-        if(StringUtil.isEmpty(jobHandler)){
+        if(StrUtil.isEmpty(jobHandler)){
             throw new SoException("jobHandler is null.");
         }
-        Object iJobHandler = SpringUtils.getBean(jobHandler);
+        Object iJobHandler = SpringUtil.getBean(jobHandler);
         if(Objects.isNull(iJobHandler)){
             throw new SoException("jobHandler invoke is null.");
         }

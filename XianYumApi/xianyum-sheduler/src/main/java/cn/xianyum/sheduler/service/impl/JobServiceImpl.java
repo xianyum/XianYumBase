@@ -4,6 +4,8 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.sheduler.common.constant.ScheduleConstants;
 import cn.xianyum.sheduler.common.utils.CronUtils;
@@ -60,8 +62,8 @@ public class JobServiceImpl implements JobService {
 	public PageResponse<JobResponse> getPage(JobRequest request) {
 		Page<JobEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		LambdaQueryWrapper<JobEntity> queryWrapper = Wrappers.<JobEntity>lambdaQuery()
-				.like(StringUtil.isNotEmpty(request.getJobName()),JobEntity::getJobName,request.getJobName())
-				.like(StringUtil.isNotEmpty(request.getJobHandler()),JobEntity::getJobHandler,request.getJobHandler())
+				.like(StrUtil.isNotEmpty(request.getJobName()),JobEntity::getJobName,request.getJobName())
+				.like(StrUtil.isNotEmpty(request.getJobHandler()),JobEntity::getJobHandler,request.getJobHandler())
 				.orderByDesc(JobEntity::getCreateTime);
 		IPage<JobEntity> pageResult = jobMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,JobResponse.class);
@@ -85,7 +87,7 @@ public class JobServiceImpl implements JobService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public Integer save(JobRequest request) throws SchedulerException {
-		if(StringUtil.isBlank(request.getJobName())){
+		if(StrUtil.isBlank(request.getJobName())){
 			throw new SoException("定时任务名称不能为空！");
 		}
 		this.checkJobHandler(request.getJobHandler());
@@ -215,12 +217,12 @@ public class JobServiceImpl implements JobService {
 
 	@Override
 	public void checkJobHandler(String jobHandler) {
-		if(StringUtil.isEmpty(jobHandler)){
+		if(StrUtil.isEmpty(jobHandler)){
 			throw new SoException("jobHandler is null.");
 		}
 		Object iJobHandler = null;
 		try {
-			iJobHandler = SpringUtils.getBean(jobHandler);
+			iJobHandler = SpringUtil.getBean(jobHandler);
 		}catch (Exception e){
 			throw new SoException("["+jobHandler+"]没有注册到spring容器中！"+e.getMessage());
 		}
@@ -240,7 +242,7 @@ public class JobServiceImpl implements JobService {
 	 */
 	@Override
 	public void checkJobParams(String jobParams) {
-		if(StringUtil.isNotEmpty(jobParams)){
+		if(StrUtil.isNotEmpty(jobParams)){
 			try {
 				JSONObject.parseObject(jobParams);
 			}catch (Exception e){

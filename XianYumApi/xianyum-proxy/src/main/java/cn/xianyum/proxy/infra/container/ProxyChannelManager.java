@@ -1,6 +1,6 @@
 package cn.xianyum.proxy.infra.container;
 
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.proxy.infra.common.constant.ProxyConstants;
 import cn.xianyum.proxy.infra.handlers.ProxyChangedListener;
 import cn.xianyum.proxy.service.ProxyDetailsService;
@@ -46,14 +46,14 @@ public class ProxyChannelManager implements ProxyChangedListener {
             String clientKey = proxyChannel.attr(CHANNEL_CLIENT_KEY).get();
 
             // 去除已经去掉的clientKey配置
-            Set<String> clientKeySet = SpringUtils.getBean(ProxyService.class).getAllClientKey();
+            Set<String> clientKeySet = SpringUtil.getBean(ProxyService.class).getAllClientKey();
             if (!clientKeySet.contains(clientKey)) {
                 removeCmdChannel(proxyChannel);
                 continue;
             }
 
             if (proxyChannel.isActive()) {
-                List<Integer> inetPorts = SpringUtils.getBean(ProxyDetailsService.class).getClientInetPorts(clientKey);
+                List<Integer> inetPorts = SpringUtil.getBean(ProxyDetailsService.class).getClientInetPorts(clientKey);
                 Set<Integer> inetPortSet = new HashSet<Integer>(inetPorts);
                 List<Integer> channelInetPorts = new ArrayList<Integer>(proxyChannel.attr(CHANNEL_PORT).get());
 
@@ -114,7 +114,7 @@ public class ProxyChannelManager implements ProxyChangedListener {
             String requestLanInfo = getUserChannelRequestLanInfo(userChannel);
             InetSocketAddress sa = (InetSocketAddress) userChannel.localAddress();
 
-            String lanInfo = SpringUtils.getBean(ProxyDetailsService.class).getLanInfo(sa.getPort());
+            String lanInfo = SpringUtil.getBean(ProxyDetailsService.class).getLanInfo(sa.getPort());
             // 判断当前配置中对应外网端口的lan信息是否与正在运行的连接中的lan信息是否一致
             if (lanInfo == null || !lanInfo.equals(requestLanInfo)) {
                 userChannel.close();
@@ -164,8 +164,8 @@ public class ProxyChannelManager implements ProxyChangedListener {
         }
 
         String clientKey = channel.attr(CHANNEL_CLIENT_KEY).get();
-        ThreadPoolTaskExecutor xianYumTaskExecutor = SpringUtils.getBean("xianYumTaskExecutor");
-        xianYumTaskExecutor.execute(()->SpringUtils.getBean(ProxyService.class).offlineNotify(clientKey));
+        ThreadPoolTaskExecutor xianYumTaskExecutor = SpringUtil.getBean("xianYumTaskExecutor");
+        xianYumTaskExecutor.execute(()->SpringUtil.getBean(ProxyService.class).offlineNotify(clientKey));
         Channel channel0 = cmdChannels.remove(clientKey);
         if (channel != channel0) {
             cmdChannels.put(clientKey, channel);
@@ -216,7 +216,7 @@ public class ProxyChannelManager implements ProxyChangedListener {
      */
     public static void addUserChannelToCmdChannel(Channel cmdChannel, String userId, Channel userChannel) {
         InetSocketAddress sa = (InetSocketAddress) userChannel.localAddress();
-        String lanInfo = SpringUtils.getBean(ProxyDetailsService.class).getLanInfo(sa.getPort());
+        String lanInfo = SpringUtil.getBean(ProxyDetailsService.class).getLanInfo(sa.getPort());
         userChannel.attr(ProxyConstants.USER_ID).set(userId);
         userChannel.attr(REQUEST_LAN_INFO).set(lanInfo);
         cmdChannel.attr(USER_CHANNELS).get().put(userId, userChannel);

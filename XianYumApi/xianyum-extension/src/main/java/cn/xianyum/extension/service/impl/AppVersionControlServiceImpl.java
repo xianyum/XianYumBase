@@ -5,7 +5,7 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.AppVersionCompareUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.FileUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -37,7 +37,7 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
     @Override
     public PageResponse<AppVersionControlResponse> getPage(AppVersionControlRequest request) {
         LambdaQueryWrapper<AppVersionControlEntity> queryWrapper = Wrappers.<AppVersionControlEntity>lambdaQuery()
-                .eq(StringUtil.isNotBlank(request.getAppId()),AppVersionControlEntity::getAppId,request.getAppId())
+                .eq(StrUtil.isNotBlank(request.getAppId()),AppVersionControlEntity::getAppId,request.getAppId())
                 .orderByDesc(AppVersionControlEntity::getCreateTime);
         Page<AppVersionControlEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
         IPage<AppVersionControlEntity> pageResult = appVersionControlMapper.selectPage(page, queryWrapper);

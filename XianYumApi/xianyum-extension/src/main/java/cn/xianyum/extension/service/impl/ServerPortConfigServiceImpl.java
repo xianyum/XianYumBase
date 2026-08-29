@@ -2,7 +2,7 @@ package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.extension.dao.ServerConfigMapper;
 import cn.xianyum.extension.entity.po.ServerConfigEntity;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -42,7 +42,7 @@ public class ServerPortConfigServiceImpl implements ServerPortConfigService {
 	@Override
 	public PageResponse<ServerPortConfigResponse> getPage(ServerPortConfigRequest request) {
 		LambdaQueryWrapper<ServerPortConfigEntity> queryWrapper = Wrappers.<ServerPortConfigEntity>lambdaQuery()
-				.eq(StringUtil.isNotEmpty(request.getPort()),ServerPortConfigEntity::getPort,request.getPort())
+				.eq(StrUtil.isNotEmpty(request.getPort()),ServerPortConfigEntity::getPort,request.getPort())
 				.eq(Objects.nonNull(request.getServerConfigId()),ServerPortConfigEntity::getServerConfigId,request.getServerConfigId())
 				.orderByDesc(ServerPortConfigEntity::getCreateTime);
 		Page<ServerPortConfigEntity> page = new Page<>(request.getPageNum(),request.getPageSize());

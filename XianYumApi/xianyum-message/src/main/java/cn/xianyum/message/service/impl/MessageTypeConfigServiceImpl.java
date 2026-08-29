@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageTypeConfigMapper;
 import cn.xianyum.message.entity.po.MessageTypeConfigEntity;
@@ -32,8 +32,8 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 		Page<MessageTypeConfigEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
 				.eq("del_tag", YesOrNoEnum.YES.getStatus())
-				.like(StringUtil.isNotEmpty(request.getMessageCode()),"message_code",request.getMessageCode())
-				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
+				.like(StrUtil.isNotEmpty(request.getMessageCode()),"message_code",request.getMessageCode())
+				.like(StrUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageTypeConfigEntity> pageResult = messageTypeConfigMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,MessageTypeConfigResponse.class);
@@ -42,7 +42,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 	@Override
 	public MessageTypeConfigResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageTypeConfigEntity result = messageTypeConfigMapper.selectById(id);
@@ -71,7 +71,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 	@Override
 	public Integer update(MessageTypeConfigRequest request) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 
@@ -108,7 +108,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 
 	@Override
 	public MessageTypeConfigEntity check(String messageCode) {
-		if(StringUtil.isEmpty(messageCode)){
+		if(StrUtil.isEmpty(messageCode)){
 			throw new SoException("消息编码参数未找到");
 		}
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()

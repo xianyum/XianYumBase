@@ -1,6 +1,7 @@
 package cn.xianyum.common.utils;
 
 import cn.xianyum.common.constant.Constants;
+import cn.hutool.core.util.StrUtil;
 import cn.zhxu.okhttps.HTTP;
 import cn.zhxu.okhttps.fastjson2.Fastjson2MsgConvertor;
 import okhttp3.Interceptor;
@@ -58,6 +59,24 @@ public class HttpUtils {
             }
         }
         return http;
+    }
+
+    /**
+     * http链接判断是否为http://开头的url
+     * @param url
+     * @return
+     */
+    public static boolean isHttpOnly(String url) {
+        return StrUtil.startWithAnyIgnoreCase(url, Constants.HTTP);
+    }
+
+    /**
+     * http链接判断是否为https://或http://开头的url
+     * @param url
+     * @return
+     */
+    public static boolean isHttpOrHttps(String url) {
+        return StrUtil.startWithAnyIgnoreCase(url, Constants.HTTP, Constants.HTTPS);
     }
 
 }

@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageConfigEmailMapper;
 import cn.xianyum.message.dao.MessageConfigWebhookMapper;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.util.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 import java.util.List;
 
 @Service
@@ -51,11 +51,11 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 		Page<MessageSendRelationEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageSendRelationEntity> queryWrapper = new QueryWrapper<MessageSendRelationEntity>()
 				.eq("message_send_id",request.getMessageSendId())
-				.eq(StringUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
+				.eq(StrUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
 				.orderByDesc("create_time");
 		IPage<MessageSendRelationEntity> pageResult = messageSendRelationMapper.selectPage(page,queryWrapper);
 		List<MessageSendRelationResponse> messageSendRelationResponses = BeanUtil.copyToList(pageResult.getRecords(), MessageSendRelationResponse.class);
-		if(!CollectionUtils.isEmpty(pageResult.getRecords())){
+		if(!CollUtil.isEmpty(pageResult.getRecords())){
 			for(MessageSendRelationResponse item : messageSendRelationResponses){
 				JSONArray messageConfigByAccountType = this.getMessageConfigByAccountType(item.getMessageConfigId(), item.getMessageAccountType());
 				if(messageConfigByAccountType != null){
@@ -80,7 +80,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 
 	@Override
 	public Integer update(MessageSendRelationRequest request) {
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		MessageSendRelationEntity bean = new MessageSendRelationEntity();
@@ -93,7 +93,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 	@Override
 	public MessageSendRelationResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageSendRelationEntity result = messageSendRelationMapper.selectById(id);
@@ -104,10 +104,10 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 
 	@Override
 	public JSONArray getMessageConfigByAccountType(String messageConfigId, String messageAccountType) {
-		if(StringUtil.isEmpty(messageAccountType)){
+		if(StrUtil.isEmpty(messageAccountType)){
 			throw new SoException("账户类型不能为空");
 		}
-		boolean idNotEmpty = StringUtil.isNotEmpty(messageConfigId);
+		boolean idNotEmpty = StrUtil.isNotEmpty(messageConfigId);
 
 		String objJson = "";
 		switch (MessageAccountTypeEnums.getByCode(messageAccountType)){

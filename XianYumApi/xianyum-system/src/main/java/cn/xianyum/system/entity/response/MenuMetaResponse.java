@@ -1,6 +1,6 @@
 package cn.xianyum.system.entity.response;
 
-import cn.xianyum.common.utils.StringUtil;
+import cn.xianyum.common.utils.HttpUtils;
 import lombok.Data;
 
 /**
@@ -34,7 +34,7 @@ public class MenuMetaResponse {
         this.title = title;
         this.icon = icon;
         this.noCache = noCache;
-        if (StringUtil.ishttp(link)) {
+        if (HttpUtils.isHttpOrHttps(link)) {
             this.link = link;
         }
     }

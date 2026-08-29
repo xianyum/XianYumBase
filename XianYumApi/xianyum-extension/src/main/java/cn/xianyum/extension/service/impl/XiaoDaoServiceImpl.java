@@ -7,7 +7,7 @@ import cn.xianyum.extension.entity.request.XiaoDaoRequest;
 import cn.xianyum.extension.entity.response.XiaoDaoResponse;
 import cn.xianyum.extension.service.XiaoDaoService;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -63,7 +63,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
     public PageResponse<XiaoDaoResponse> getPage(XiaoDaoRequest request) {
         Page<XiaoDaoEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<XiaoDaoEntity> xiaoDaoEntityQueryWrapper  = new QueryWrapper<XiaoDaoEntity>()
-                .like(StringUtil.isNotEmpty(request.getTitle()),"title", request.getTitle()).orderByDesc("create_time");
+                .like(StrUtil.isNotEmpty(request.getTitle()),"title", request.getTitle()).orderByDesc("create_time");
         IPage<XiaoDaoEntity> xiaoDaoEntityPage = xiaoDaoMapper.selectPage(page, xiaoDaoEntityQueryWrapper);
         return PageResponse.of(xiaoDaoEntityPage,XiaoDaoResponse.class);
     }

@@ -5,6 +5,8 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -60,8 +62,8 @@ public class ProxyServiceImpl implements ProxyService {
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
-				.like(StringUtil.isNotEmpty(request.getId()),ProxyEntity::getId,request.getId())
-				.like(StringUtil.isNotEmpty(request.getName()),ProxyEntity::getName,request.getName())
+				.like(StrUtil.isNotEmpty(request.getId()),ProxyEntity::getId,request.getId())
+				.like(StrUtil.isNotEmpty(request.getName()),ProxyEntity::getName,request.getName())
 				.eq(!SecurityUtils.isSupperAdminAuth(),ProxyEntity::getBindUserId,SecurityUtils.getLoginUser().getId())
 				.orderByDesc(ProxyEntity::getCreateTime,ProxyEntity::getLoginCount);
 		IPage<ProxyEntity> pageResult = proxyMapper.selectPage(page,queryWrapper);
@@ -72,7 +74,7 @@ public class ProxyServiceImpl implements ProxyService {
 			} else {
 				response.setStatus(0);// offline
 			}
-			if(StringUtil.isNotEmpty(item.getBindUserId())){
+			if(StrUtil.isNotEmpty(item.getBindUserId())){
 				LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(item.getBindUserId());
 				if(Objects.nonNull(userByIdFromRedis)){
 					response.setBindEmail(userByIdFromRedis.getEmail());
@@ -104,7 +106,7 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public ProxyResponse getById(String id) {
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		ProxyEntity result = proxyMapper.selectById(id);
@@ -124,7 +126,7 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public Integer update(ProxyRequest request) {
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		ProxyEntity bean = new ProxyEntity();
@@ -178,10 +180,10 @@ public class ProxyServiceImpl implements ProxyService {
 
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
-			if(StringUtil.isNotEmpty(proxyLogEntity.getMacAddress())){
+			if(StrUtil.isNotEmpty(proxyLogEntity.getMacAddress())){
 				content.put("客户端mac：",proxyLogEntity.getMacAddress());
 			}
-			if(StringUtil.isNotEmpty(proxyLogEntity.getHostIp())){
+			if(StrUtil.isNotEmpty(proxyLogEntity.getHostIp())){
 				content.put("客户端ip：",proxyLogEntity.getHostIp());
 			}
 			content.put("服务器节点：",IPUtils.getHostName());
@@ -195,7 +197,7 @@ public class ProxyServiceImpl implements ProxyService {
 			// 发送邮件通知客户端
 			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyEntity.getBindUserId());
 			if(null != proxyEntity.getNotify() && 1 == proxyEntity.getNotify()
-					&& Objects.nonNull(userByIdFromRedis) && StringUtil.isNotEmpty(userByIdFromRedis.getEmail())){
+					&& Objects.nonNull(userByIdFromRedis) && StrUtil.isNotEmpty(userByIdFromRedis.getEmail())){
 				this.sendProxyEmail(proxyEntity,userByIdFromRedis.getEmail());
 			}
 
@@ -214,7 +216,7 @@ public class ProxyServiceImpl implements ProxyService {
 			Map<String,Object> content = new LinkedHashMap<>();
 			content.put("客户端名称：",proxyEntity.getName());
 			// onlineTime如果不为空，说明有可能获取的不是最新的一条数据，可能客户端登录的时候未上报登录数据
-			if(Objects.nonNull(proxyLogEntity.getId()) && StringUtil.isEmpty(proxyLogEntity.getOnlineTime())){
+			if(Objects.nonNull(proxyLogEntity.getId()) && StrUtil.isEmpty(proxyLogEntity.getOnlineTime())){
 				String onlineTime = DateUtils.getDatePoor(now.toDate(), proxyLogEntity.getCreateTime());
 				content.put("在线时长：",onlineTime);
 				proxyLogEntity.setOnlineTime(onlineTime);
@@ -317,7 +319,7 @@ public class ProxyServiceImpl implements ProxyService {
 			throw new SoException("客户端暂未绑定账户，请联系管理员配置！");
 		}
 
-		if(StringUtil.isEmpty(userByIdFromRedis.getEmail())){
+		if(StrUtil.isEmpty(userByIdFromRedis.getEmail())){
 			throw new SoException("客户端绑定的账号尚未配置邮箱，请联系管理员配置！");
 		}
 		this.sendProxyEmail(proxyEntity, userByIdFromRedis.getEmail());
@@ -348,7 +350,7 @@ public class ProxyServiceImpl implements ProxyService {
 	public List<LoginUser> getProxyBindUser(String id) {
 		List<LoginUser> loginUserList = new ArrayList<>();
 		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
-				.ne(StringUtil.isNotEmpty(id),ProxyEntity::getId,id)
+				.ne(StrUtil.isNotEmpty(id),ProxyEntity::getId,id)
 				.isNotNull(ProxyEntity::getBindUserId);
 		List<ProxyEntity> proxyEntities = proxyMapper.selectList(queryWrapper);
 		if(Objects.nonNull(proxyEntities)){
@@ -377,7 +379,7 @@ public class ProxyServiceImpl implements ProxyService {
 			throw new SoException("该用户未绑定远程客户端！");
 		}
 		ProxyResponse proxyResponse = BeanUtil.toBean(proxy, ProxyResponse.class);
-		if(StringUtil.isNotEmpty(proxyResponse.getBindUserId())){
+		if(StrUtil.isNotEmpty(proxyResponse.getBindUserId())){
 			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyResponse.getBindUserId());
 			if(Objects.nonNull(userByIdFromRedis)){
 				proxyResponse.setBindEmail(userByIdFromRedis.getEmail());

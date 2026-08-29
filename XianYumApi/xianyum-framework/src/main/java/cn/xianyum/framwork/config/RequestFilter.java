@@ -1,7 +1,7 @@
 //package cn.xianyum.framwork.config;
 //
 //import cn.xianyum.common.utils.IPUtils;
-//import cn.xianyum.common.utils.StringUtil;
+//import cn.hutool.core.util.StrUtil;
 //import cn.xianyum.common.utils.UUIDUtils;
 //import com.alibaba.druid.util.DruidWebUtils;
 //import com.alibaba.druid.util.PatternMatcher;
@@ -70,7 +70,7 @@
 //
 //    private void buildRequestId(HttpServletRequest httpRequest) {
 //        String requestId = httpRequest.getHeader("requestId");
-//        if (StringUtil.isEmpty(requestId)) {
+//        if (StrUtil.isEmpty(requestId)) {
 //            requestId = UUIDUtils.UUIDReplace();
 //        }
 //        MDC.put("requestId", requestId);

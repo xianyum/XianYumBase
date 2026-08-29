@@ -4,6 +4,7 @@ import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.extension.entity.response.GoldPriceApiResponse;
 import com.alibaba.fastjson2.JSONObject;
@@ -65,7 +66,7 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 		DateTime dateTime = new DateTime();
 		Integer hourOfDay = dateTime.getHourOfDay();
 		int minuteOfHour = dateTime.getMinuteOfHour();
-		if(StringUtil.isNotBlank(limitHour)){
+		if(StrUtil.isNotBlank(limitHour)){
 			List<Integer> limitHourList = JSONObject.parseObject(limitHour, new TypeReference<List<Integer>>(){});
 			if(limitHourList.contains(hourOfDay)){
 				return ReturnT.SUCCESS;

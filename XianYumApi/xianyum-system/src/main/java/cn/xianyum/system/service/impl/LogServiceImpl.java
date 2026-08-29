@@ -4,6 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -50,29 +51,29 @@ public class LogServiceImpl implements LogService {
     @Transactional(rollbackFor = Exception.class)
     public void saveLog(LogEntity logEntity) {
 
-        if(StringUtil.isEmpty(logEntity.getIp())){
+        if(StrUtil.isEmpty(logEntity.getIp())){
             HttpServletRequest httpServletRequest = HttpContextUtils.getHttpServletRequest();
             String ip = IPUtils.getIpAddr(httpServletRequest);
             logEntity.setIp(ip);
             logEntity.setIpInfo(IPUtils.getIpInfo(ip));
         }
 
-        if(StringUtil.isEmpty(logEntity.getMethod())){
+        if(StrUtil.isEmpty(logEntity.getMethod())){
             logEntity.setMethod(this.getClass().toString());
         }
 
-        if(StringUtil.isEmpty(logEntity.getUsername())){
+        if(StrUtil.isEmpty(logEntity.getUsername())){
             if(null != SecurityUtils.getLoginUser()){
                 logEntity.setUsername(SecurityUtils.getLoginUser().getUsername());
             }else{
                 logEntity.setUsername("system");
             }
         }
-        if(StringUtil.isEmpty(logEntity.getOperation())){
+        if(StrUtil.isEmpty(logEntity.getOperation())){
             logEntity.setOperation("系统无法识别用户操作");
         }
 
-        if(StringUtil.isEmpty(logEntity.getParams())){
+        if(StrUtil.isEmpty(logEntity.getParams())){
             logEntity.setParams("{}");
         }
 

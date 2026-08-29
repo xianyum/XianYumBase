@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageMonitorMapper;
 import cn.xianyum.message.entity.po.MessageMonitorEntity;
@@ -37,11 +37,11 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	public PageResponse<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
 		Page<MessageMonitorEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageMonitorEntity> queryWrapper = new QueryWrapper<MessageMonitorEntity>()
-				.eq(StringUtil.isNotEmpty(request.getId()),"id",request.getId())
-				.eq(StringUtil.isNotEmpty(request.getMessageType()),"message_type",request.getMessageType())
-				.like(StringUtil.isNotEmpty(request.getMessageCode()),"message_code",request.getMessageCode())
-				.like(StringUtil.isNotEmpty(request.getMessageTitle()),"message_title",request.getMessageTitle())
-				.like(StringUtil.isNotEmpty(request.getMessageContent()),"message_content",request.getMessageContent())
+				.eq(StrUtil.isNotEmpty(request.getId()),"id",request.getId())
+				.eq(StrUtil.isNotEmpty(request.getMessageType()),"message_type",request.getMessageType())
+				.like(StrUtil.isNotEmpty(request.getMessageCode()),"message_code",request.getMessageCode())
+				.like(StrUtil.isNotEmpty(request.getMessageTitle()),"message_title",request.getMessageTitle())
+				.like(StrUtil.isNotEmpty(request.getMessageContent()),"message_content",request.getMessageContent())
 				.gt(Objects.nonNull(request.getParams().get("beginTime")),"create_time",request.getParams().get("beginTime"))
 				.lt(Objects.nonNull(request.getParams().get("endTime")),"create_time",request.getParams().get("endTime"))
 				.orderByDesc("create_time");;
@@ -52,7 +52,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	@Override
 	public MessageMonitorResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageMonitorEntity result = messageMonitorMapper.selectById(id);
@@ -73,7 +73,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	@Override
 	public Integer update(MessageMonitorRequest request) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		MessageMonitorEntity bean = BeanUtil.toBean(request,MessageMonitorEntity.class);

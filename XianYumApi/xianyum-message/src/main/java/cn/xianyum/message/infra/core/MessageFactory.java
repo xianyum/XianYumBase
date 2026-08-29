@@ -1,6 +1,6 @@
 package cn.xianyum.message.infra.core;
 
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.message.enums.MessageAccountTypeEnums;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class MessageFactory {
         Map<String, AbstractMessageSender> beans = applicationContext.getBeansOfType(AbstractMessageSender.class);
         for (AbstractMessageSender service : beans.values()) {
             String messageAccountTypeCode = service.getMessageAccountTypeCode();
-            if(StringUtil.isNotBlank(messageAccountTypeCode)){
+            if(StrUtil.isNotBlank(messageAccountTypeCode)){
                 ABSTRACT_MESSAGE_SERVICE_CONCURRENT_HASH_MAP.put(messageAccountTypeCode,service);
             }
         }

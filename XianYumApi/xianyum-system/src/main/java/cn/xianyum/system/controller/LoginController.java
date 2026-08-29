@@ -9,6 +9,7 @@ import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.CaptchaConstant;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.entity.request.CheckCaptchaRequest;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;

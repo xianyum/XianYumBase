@@ -7,7 +7,7 @@ import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.proxy.dao.ProxyLogMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
 import cn.xianyum.proxy.entity.po.ProxyEntity;
@@ -57,7 +57,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 	@Override
 	public Integer save(ProxyLogRequest request) {
 		String proxyId = request.getProxyId();
-		if(StringUtil.isEmpty(proxyId)){
+		if(StrUtil.isEmpty(proxyId)){
 			throw new SoException("客户端未上传授权码");
 		}
 		String redisKey = RedisKeyEnum.PROXY_PROXY_LOG_LOG_DATA.getKey()+proxyId;

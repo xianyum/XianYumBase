@@ -1,6 +1,6 @@
 package cn.xianyum.message.infra.supporter;
 
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -127,7 +127,7 @@ public class EmailSupporter {
      */
     public String generateMessageContent(MessageSenderEntity messageSender){
         StringBuffer sb = new StringBuffer();
-        if(StringUtil.isNotEmpty(messageSender.getContent())){
+        if(StrUtil.isNotEmpty(messageSender.getContent())){
             sb.append("<div><p>");
             sb.append(messageSender.getContent());
             sb.append("</p></div>");
@@ -153,7 +153,7 @@ public class EmailSupporter {
      */
     public List<String> generateMessageContentList(MessageSenderEntity messageSender){
         List<String> contentList = new ArrayList<>();
-        if(StringUtil.isNotEmpty(messageSender.getContent())){
+        if(StrUtil.isNotEmpty(messageSender.getContent())){
             contentList.add(messageSender.getContent());
         }else{
             List<MessageContent> messageContents = messageSender.getMessageContents();

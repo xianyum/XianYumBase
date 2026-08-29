@@ -1,7 +1,7 @@
 package cn.xianyum.message.infra.sender;
 
 import cn.xianyum.common.utils.DateUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.message.dao.MessageSendConfigMapper;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.response.MessageSendConfigResponse;
@@ -93,7 +93,7 @@ public class MessageSender {
             }
             for(MessageSendRelationResponse item : messageSendConfigResponse.getMessageSendRelationResponses()){
                 MessageSenderEntity messageSenderEntity = JSONObject.parseObject(JSONObject.toJSONString(messageSender),MessageSenderEntity.class);
-                if(StringUtil.isEmpty(messageSenderEntity.getTitle())){
+                if(StrUtil.isEmpty(messageSenderEntity.getTitle())){
                     messageSenderEntity.setTitle(messageSendConfigResponse.getMessageTitle());
                 }
                 messageSenderEntity.setMessageCode(messageSendConfigResponse.getMessageCode());

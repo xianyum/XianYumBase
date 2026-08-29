@@ -1,6 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.extension.entity.po.IpInfoEntity;
 import cn.xianyum.extension.service.IpService;
 import com.alibaba.fastjson2.JSONObject;
@@ -19,7 +20,7 @@ public class IpServiceImpl implements IpService {
 
     @Override
     public IpInfoEntity getIpInfo(String ip) {
-        if(StringUtil.isBlank(ip)){
+        if(StrUtil.isBlank(ip)){
             ip = IPUtils.getIpAddr(HttpContextUtils.getHttpServletRequest());
         }
         IpInfoEntity ipInfoEntity = JSONObject.parseObject(JSONObject.toJSONString(IPUtils.getIpInfoMap(ip)),IpInfoEntity.class);

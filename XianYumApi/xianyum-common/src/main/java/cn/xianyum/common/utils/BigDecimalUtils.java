@@ -1,5 +1,7 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
@@ -18,7 +20,7 @@ public class BigDecimalUtils {
      */
     public static BigDecimal formatString(String str) {
         String regex = "^-?\\d*(\\.\\d+)?$";
-        if(StringUtil.isBlank(str) || !str.matches(regex)){
+        if(StrUtil.isBlank(str) || !str.matches(regex)){
             return null;
         }
         return new BigDecimal(str);

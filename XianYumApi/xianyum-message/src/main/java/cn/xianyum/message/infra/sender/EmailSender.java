@@ -1,7 +1,7 @@
 package cn.xianyum.message.infra.sender;
 
 import cn.xianyum.common.constant.Constants;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -43,10 +43,10 @@ public class EmailSender extends AbstractMessageSender {
      */
     @Override
     public void doSendMessage(MessageSenderEntity messageSender) {
-        messageSender.setEmailToUser(StringUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getEmailToUser():messageSender.getDefaultToUser());
+        messageSender.setEmailToUser(StrUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getEmailToUser():messageSender.getDefaultToUser());
         MessageConfigEmailEntity messageConfigEmailEntity = this.messageConfigEmailService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if (messageConfigEmailEntity != null){
-            if(StringUtil.isNotEmpty(messageSender.getEmailToUser())){
+            if(StrUtil.isNotEmpty(messageSender.getEmailToUser())){
                 String[] receivers = messageSender.getEmailToUser().split("\\|");
                 for(String receiver : receivers){
                     String mId = UUIDUtils.UUIDReplace();
@@ -79,10 +79,10 @@ public class EmailSender extends AbstractMessageSender {
      * @param context
      */
     public void sendEmailTemplateMessage(MessageSenderEntity messageSender, Context context) {
-        messageSender.setEmailToUser(StringUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getEmailToUser():messageSender.getDefaultToUser());
+        messageSender.setEmailToUser(StrUtil.isNotEmpty(messageSender.getEmailToUser())?messageSender.getEmailToUser():messageSender.getDefaultToUser());
         MessageConfigEmailEntity messageConfigEmailEntity = this.messageConfigEmailService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if (messageConfigEmailEntity != null){
-            if(StringUtil.isNotEmpty(messageSender.getEmailToUser())){
+            if(StrUtil.isNotEmpty(messageSender.getEmailToUser())){
                 String[] receivers = messageSender.getEmailToUser().split("\\|");
                 for(String receiver : receivers){
                     String mId = UUIDUtils.UUIDReplace();

@@ -2,6 +2,8 @@ package cn.xianyum.sheduler.handler;
 
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -58,8 +60,8 @@ public abstract class AbstractQuartzJob implements Job {
      * @param e
      */
     private void executeSendMessage(JobEntity jobEntity, Exception e) {
-        if(jobEntity != null && StringUtil.isNotEmpty(jobEntity.getMessageCode())){
-            MessageSender bean = SpringUtils.getBean(MessageSender.class);
+        if(jobEntity != null && StrUtil.isNotEmpty(jobEntity.getMessageCode())){
+            MessageSender bean = SpringUtil.getBean(MessageSender.class);
             Map<String,Object> content = new LinkedHashMap<>();
             content.put("任务名称：",jobEntity.getJobName());
             content.put("JobHandler：",jobEntity.getJobHandler());
@@ -114,7 +116,7 @@ public abstract class AbstractQuartzJob implements Job {
         jobLogEntity.setJobId(jobEntity.getJobId());
         jobLogEntity.setJobName(jobEntity.getJobName());
         jobLogEntity.setExecuteIp(IPUtils.getHostIp());
-        SpringUtils.getBean(JobLogMapper.class).insert(jobLogEntity);
+        SpringUtil.getBean(JobLogMapper.class).insert(jobLogEntity);
     }
 
     protected abstract ReturnT doExecute(String jobHandler, Map<String,String> mapParam, SchedulerTool tool) throws Exception;

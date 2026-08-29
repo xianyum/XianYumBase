@@ -8,7 +8,7 @@ import cn.xianyum.common.utils.GeoCoordinateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.extension.dao.EvAutoReportMapper;
 import cn.xianyum.extension.dao.EvTripMapper;
 import cn.xianyum.extension.entity.po.EvAutoReportEntity;
@@ -73,7 +73,7 @@ public class EvTripServiceImpl implements EvTripService {
         try {
             // 1. 获取上次处理的时间
             String lastProcessedTimeStr = redisUtils.getString(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey());
-            if (StringUtil.isNotBlank(lastProcessedTimeStr)) {
+            if (StrUtil.isNotBlank(lastProcessedTimeStr)) {
                 maxTime = LocalDateTime.parse(lastProcessedTimeStr);
             }
 
@@ -152,8 +152,8 @@ public class EvTripServiceImpl implements EvTripService {
         String beginTime = request.getParams().get("beginTime") != null ? request.getParams().get("beginTime").toString() : null;
         String endTime = request.getParams().get("endTime") != null ? request.getParams().get("endTime").toString() : null;
         LambdaQueryWrapper<EvTripEntity> queryWrapper = Wrappers.<EvTripEntity>lambdaQuery()
-                .ge(StringUtil.isNotEmpty(beginTime), EvTripEntity::getTripStartTime, beginTime)
-                .le(StringUtil.isNotEmpty(endTime), EvTripEntity::getTripEndTime, endTime)
+                .ge(StrUtil.isNotEmpty(beginTime), EvTripEntity::getTripStartTime, beginTime)
+                .le(StrUtil.isNotEmpty(endTime), EvTripEntity::getTripEndTime, endTime)
                 .orderByDesc(EvTripEntity::getTripStartTime);
         Page<EvTripEntity> page = new Page<>(request.getPageNum(), request.getPageSize());
         IPage<EvTripEntity> pageResult = evTripMapper.selectPage(page, queryWrapper);
@@ -343,7 +343,7 @@ public class EvTripServiceImpl implements EvTripService {
     private boolean isLastTripOngoing() {
         try {
             String latestReportJson = redisUtils.getString(RedisKeyEnum.EV_TRIP_LATEST_REPORT.getKey());
-            if (StringUtil.isBlank(latestReportJson)) {
+            if (StrUtil.isBlank(latestReportJson)) {
                 return false;
             }
 

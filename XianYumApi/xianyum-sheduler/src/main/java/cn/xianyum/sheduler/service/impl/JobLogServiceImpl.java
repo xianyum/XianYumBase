@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.sheduler.dao.JobLogMapper;
 import cn.xianyum.sheduler.entity.po.JobLogEntity;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
@@ -31,8 +31,8 @@ public class JobLogServiceImpl implements JobLogService {
 		LambdaQueryWrapper<JobLogEntity> queryWrapper = Wrappers.<JobLogEntity>lambdaQuery()
 				.eq(null != request.getStatus(),JobLogEntity::getStatus,request.getStatus())
 				.eq(null != request.getJobId(),JobLogEntity::getJobId,request.getJobId())
-				.like(StringUtil.isNotEmpty(request.getJobName()),JobLogEntity::getJobName,request.getJobName())
-				.like(StringUtil.isNotEmpty(request.getJobHandler()),JobLogEntity::getJobHandler,request.getJobHandler())
+				.like(StrUtil.isNotEmpty(request.getJobName()),JobLogEntity::getJobName,request.getJobName())
+				.like(StrUtil.isNotEmpty(request.getJobHandler()),JobLogEntity::getJobHandler,request.getJobHandler())
 				.orderByDesc(JobLogEntity::getStartTime);
 		IPage<JobLogEntity> pageResult = jobLogMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,JobLogResponse.class);

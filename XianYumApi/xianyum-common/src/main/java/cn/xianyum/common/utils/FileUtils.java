@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.exception.SoException;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class FileUtils {
             }
 
             // 2. 获取Spring容器中的FileService实例
-            Object fileServiceBean = SpringUtils.getBean(FILE_SERVICE_BEAN_NAME);
+            Object fileServiceBean = SpringUtil.getBean(FILE_SERVICE_BEAN_NAME);
             if (fileServiceBean == null) {
                 throw new IllegalStateException("未找到FileService实例（请确认system模块已加载）");
             }
@@ -76,7 +77,7 @@ public class FileUtils {
             }
 
             // 2. 获取FileService实例
-            Object fileServiceBean = SpringUtils.getBean(FILE_SERVICE_BEAN_NAME);
+            Object fileServiceBean = SpringUtil.getBean(FILE_SERVICE_BEAN_NAME);
             if (fileServiceBean == null) {
                 throw new IllegalStateException("未找到FileService实例（请确认system模块已加载）");
             }

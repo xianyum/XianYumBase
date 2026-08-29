@@ -5,7 +5,7 @@ import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -38,7 +38,7 @@ public class BaiDuAiUtils {
      * @return
      */
     public String getAccessToken(String clientId,String clientSecret){
-        if(StringUtil.isEmpty(clientId) || StringUtil.isEmpty(clientSecret)){
+        if(StrUtil.isEmpty(clientId) || StrUtil.isEmpty(clientSecret)){
             JSONObject systemConstantObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.BAIDU_AI_OCR);
             clientId = systemConstantObject.getString("clientId");
             clientSecret = systemConstantObject.getString("clientSecret");
@@ -72,7 +72,7 @@ public class BaiDuAiUtils {
      */
     public String ocrGeneralBasic(String accessToken,String imageData){
         try {
-            if(StringUtil.isEmpty(accessToken)){
+            if(StrUtil.isEmpty(accessToken)){
                 accessToken = this.getAccessToken();
             }
             String result = HttpUtils.getHttpInstance().sync(OCR_GENERAL_BASIC_URL)

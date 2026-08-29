@@ -1,6 +1,6 @@
 package cn.xianyum.proxy.infra.handlers;
 
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.proxy.infra.common.constant.ProxyConstants;
 import cn.xianyum.proxy.infra.common.utils.ProxyMessage;
 import cn.xianyum.proxy.infra.container.ProxyChannelManager;
@@ -61,7 +61,7 @@ public class UserChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
             ctx.channel().close();
         } else {
             String userId = newUserId();
-            String lanInfo = SpringUtils.getBean(ProxyDetailsService.class).getLanInfo(sa.getPort());
+            String lanInfo = SpringUtil.getBean(ProxyDetailsService.class).getLanInfo(sa.getPort());
             // 用户连接到代理服务器时，设置用户连接不可读，等待代理后端服务器连接成功后再改变为可读状态
             userChannel.config().setOption(ChannelOption.AUTO_READ, false);
             ProxyChannelManager.addUserChannelToCmdChannel(cmdChannel, userId, userChannel);

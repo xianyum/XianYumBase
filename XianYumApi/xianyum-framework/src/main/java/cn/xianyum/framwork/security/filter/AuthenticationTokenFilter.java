@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.security.filter;
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.system.service.UserTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +25,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        LoginUser loginUser = SpringUtils.getBean(UserTokenService.class).getLoginUserByHttpRequest();
+        LoginUser loginUser = SpringUtil.getBean(UserTokenService.class).getLoginUserByHttpRequest();
         if(null != loginUser){
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -6,7 +6,7 @@ import cn.xianyum.common.enums.TrendEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
 import cn.xianyum.common.utils.ai.OpenAiUtils;
 import cn.xianyum.mqtt.entity.po.MqttFishEntity;
@@ -18,7 +18,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.mqtt.service.MqttFishService;
 import cn.xianyum.mqtt.dao.MqttFishMapper;
-import org.apache.commons.collections4.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -57,7 +57,7 @@ public class MqttFishServiceImpl implements MqttFishService {
      */
     @Override
     public void syncIotData(String payload) {
-        if(StringUtil.isBlank(payload)){
+        if(StrUtil.isBlank(payload)){
             return;
         }
         MqttFishEntity fishEntity = JSONObject.parseObject(payload).toJavaObject(MqttFishEntity.class);
@@ -115,7 +115,7 @@ public class MqttFishServiceImpl implements MqttFishService {
             return new MqttFishReportResponse();
         }
         List<MqttFishResponse> mqttFishResponses = this.mqttFishMapper.getReportLineData(request);
-        if(CollectionUtils.isEmpty(mqttFishResponses)){
+        if(CollUtil.isEmpty(mqttFishResponses)){
             return new MqttFishReportResponse();
         }
         MqttFishReportResponse mqttFishReportResponse = new MqttFishReportResponse();
@@ -163,7 +163,7 @@ public class MqttFishServiceImpl implements MqttFishService {
 
         // 尝试从Redis读取缓存
         String cachedAnalysis = redisUtils.getString(cacheKey);
-        if (StringUtil.isNotBlank(cachedAnalysis)) {
+        if (StrUtil.isNotBlank(cachedAnalysis)) {
             return cachedAnalysis;
         }
 
@@ -204,7 +204,7 @@ public class MqttFishServiceImpl implements MqttFishService {
 			prompt.append("6. 报告末尾必须输出：整体总结，凝练总结水质状态、风险点、核心建议与后续维护重点。\n");
             prompt.append("7. 输出格式规范：全程使用标准Markdown格式，合理使用表格/趋势图呈现数据，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
             String content = OpenAiUtils.chat(prompt.toString());
-            if(StringUtil.isNotBlank(content)){
+            if(StrUtil.isNotBlank(content)){
                 // 缓存结果到Redis，设置30分钟过期
                 redisUtils.setMin(cacheKey, content, 30);
             }

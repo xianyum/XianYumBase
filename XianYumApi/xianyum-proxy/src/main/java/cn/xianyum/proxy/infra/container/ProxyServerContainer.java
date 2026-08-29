@@ -1,7 +1,7 @@
 package cn.xianyum.proxy.infra.container;
 
 import cn.xianyum.common.utils.PropertiesUtil;
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.proxy.infra.common.utils.IdleCheckHandler;
 import cn.xianyum.proxy.infra.common.utils.ProxyMessageDecoder;
 import cn.xianyum.proxy.infra.common.utils.ProxyMessageEncoder;
@@ -135,7 +135,7 @@ public class ProxyServerContainer implements Container, ProxyChangedListener {
             }
         });
 
-        List<Integer> ports = SpringUtils.getBean(ProxyDetailsService.class).getUserPorts();
+        List<Integer> ports = SpringUtil.getBean(ProxyDetailsService.class).getUserPorts();
         for (int port : ports) {
             try {
                 bootstrap.bind(port).get();

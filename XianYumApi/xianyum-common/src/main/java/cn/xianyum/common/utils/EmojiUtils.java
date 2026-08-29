@@ -1,5 +1,7 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
+
 /**
  * Emoji过滤
  * @author zhangwei
@@ -22,7 +24,7 @@ public class EmojiUtils {
      * @return
      */
     public static String filterEmoji(String source) {
-        if (StringUtil.isBlank(source)) {
+        if (StrUtil.isBlank(source)) {
             return source;
         }
         StringBuilder buf = null;

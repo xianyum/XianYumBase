@@ -3,7 +3,7 @@ package cn.xianyum.message.infra.supporter;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -64,7 +64,7 @@ public class WechatSupporter {
     public String generateMessage(String agentId,MessageSenderEntity messageSenderEntity){
 
         StringBuffer sb = new StringBuffer();
-        if(StringUtil.isNotEmpty(messageSenderEntity.getContent())){
+        if(StrUtil.isNotEmpty(messageSenderEntity.getContent())){
             sb.append(messageSenderEntity.getContent());
         }else{
             List<MessageContent> messageContents = messageSenderEntity.getMessageContents();

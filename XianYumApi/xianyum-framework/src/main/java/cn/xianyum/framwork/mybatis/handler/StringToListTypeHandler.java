@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.mybatis.handler;
 
-import cn.xianyum.common.utils.StringUtil;
-import org.apache.commons.collections4.CollectionUtils;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.collection.CollUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -47,7 +47,7 @@ public class StringToListTypeHandler extends BaseTypeHandler<List<String>> {
      * 字符串转List
      */
     private List<String> parse(String json) {
-        if (StringUtil.isBlank(json)) {
+        if (StrUtil.isBlank(json)) {
             return Collections.emptyList();
         }
         return Arrays.stream(json.split(",")).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class StringToListTypeHandler extends BaseTypeHandler<List<String>> {
      * List转字符串
      */
     private String toJson(List<String> obj) {
-        if (CollectionUtils.isEmpty(obj)) {
+        if (CollUtil.isEmpty(obj)) {
             return "";
         }
         return obj.stream().filter(s -> s != null && !s.isEmpty()).collect(Collectors.joining(","));

@@ -7,7 +7,7 @@ import cn.xianyum.common.entity.ai.OpenAiTokenUsageResponse;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
@@ -50,7 +50,7 @@ public class OpenAiUtils {
      */
     public static String chat(String prompt, String model) {
         try {
-            ChatClient chatClient = SpringUtils.getBean(ChatClient.class);
+            ChatClient chatClient = SpringUtil.getBean(ChatClient.class);
             return chatClient.prompt()
                     .user(prompt)
                     .options(new OpenAiChatOptions() {{
@@ -74,9 +74,9 @@ public class OpenAiUtils {
     public static List<OpenAiModelResponse> getModels() {
         try {
             // 从配置中获取 OpenAI 的 base-url
-            String baseUrl = SpringUtils.getProperty("spring.ai.openai.base-url");
+            String baseUrl = SpringUtil.getProperty("spring.ai.openai.base-url");
             // 从配置中获取 API Key
-            String apiKey = SpringUtils.getProperty("spring.ai.openai.api-key");
+            String apiKey = SpringUtil.getProperty("spring.ai.openai.api-key");
             validateConfig(baseUrl, apiKey);
 
             // 构建 models API 地址
@@ -107,8 +107,8 @@ public class OpenAiUtils {
      */
     public static List<OpenAiLogResponse> getTokenLog() {
         try {
-            String baseUrl = SpringUtils.getProperty("spring.ai.openai.base-url");
-            String apiKey = SpringUtils.getProperty("spring.ai.openai.api-key");
+            String baseUrl = SpringUtil.getProperty("spring.ai.openai.base-url");
+            String apiKey = SpringUtil.getProperty("spring.ai.openai.api-key");
 
             validateConfig(baseUrl, apiKey);
 
@@ -137,8 +137,8 @@ public class OpenAiUtils {
      */
     public static OpenAiTokenUsageResponse getTokenUsage() {
         try {
-            String baseUrl = SpringUtils.getProperty("spring.ai.openai.base-url");
-            String apiKey = SpringUtils.getProperty("spring.ai.openai.api-key");
+            String baseUrl = SpringUtil.getProperty("spring.ai.openai.base-url");
+            String apiKey = SpringUtil.getProperty("spring.ai.openai.api-key");
 
             validateConfig(baseUrl, apiKey);
 
@@ -179,7 +179,7 @@ public class OpenAiUtils {
      * @return 当前配置的 OpenAI 模型
      */
     public static String getCurrentModel() {
-        return StringUtils.defaultIfBlank(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.OPEN_AI_MODEL), SpringUtils.getProperty("spring.ai.openai.chat.options.model"));
+        return StringUtils.defaultIfBlank(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.OPEN_AI_MODEL), SpringUtil.getProperty("spring.ai.openai.chat.options.model"));
     }
 
 }

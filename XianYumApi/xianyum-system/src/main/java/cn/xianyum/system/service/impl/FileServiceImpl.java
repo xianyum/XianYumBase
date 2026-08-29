@@ -7,7 +7,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.system.service.FileDetailService;
 import cn.xianyum.system.service.FileService;
@@ -75,7 +75,7 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     public FileDetailResponse selectFileById(String fileId, boolean isCached) {
-        if (StringUtil.isEmpty(fileId)) {
+        if (StrUtil.isEmpty(fileId)) {
             return null;
         }
         String redisKey = String.format(RedisKeyEnum.FILE_PRESIGNED_URL.getKey(), fileId);
@@ -92,7 +92,7 @@ public class FileServiceImpl implements FileService {
         String presignedUrl = fileStorageService.generatePresignedUrl(fileInfo, DateUtil.offsetHour(new Date(), 1));
         FileDetailResponse response = BeanUtil.copyProperties(fileInfo, FileDetailResponse.class);
         List<? extends FileStorageProperties.QiniuKodoConfig> qiniuKodo = fileStorageService.getProperties().getQiniuKodo();
-        if (StringUtil.isNotBlank(presignedUrl)) {
+        if (StrUtil.isNotBlank(presignedUrl)) {
             String domain = qiniuKodo.get(0).getDomain();
             response.setFileUrl(presignedUrl.replaceAll(domain,customDomain));
             response.setExpireTime(new Date().getTime() + 3600 * 1000L);

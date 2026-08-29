@@ -2,7 +2,7 @@ package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import cn.xianyum.system.service.QqNetService;
 import cn.zhxu.okhttps.HttpResult;
@@ -60,7 +60,7 @@ public class QqNetServiceImpl implements QqNetService {
         stringBuilder.append("&code="+authCode);
         stringBuilder.append("&redirect_uri="+REDIRECT_URI);
         HttpResult result = HttpUtils.getHttpInstance().sync(ACCESS_TOKEN_URL + stringBuilder.toString()).get();
-        String accessToken = StringUtil.substringBetween(result.getBody().toString(),"access_token=","&");
+        String accessToken = StrUtil.subBetween(result.getBody().toString(), "access_token=", "&");
         return accessToken;
     }
 
@@ -68,7 +68,7 @@ public class QqNetServiceImpl implements QqNetService {
     public QqUserInfoDto getUserId(String accessToken, QqUserInfoDto qqUserInfo) {
         HttpResult result = HttpUtils.getHttpInstance().sync(OPEN_ID_URL + "?access_token="+accessToken+"&unionid=1&fmt=json").get();
         String resultResponse = result.getBody().toString();
-        if(StringUtil.isBlank(resultResponse)){
+        if(StrUtil.isBlank(resultResponse)){
             throw new SoException("QQ获取unionid异常");
         }
         log.info("第三方QQ登录,{}",resultResponse);

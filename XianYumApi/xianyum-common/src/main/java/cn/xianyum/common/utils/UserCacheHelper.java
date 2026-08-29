@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import com.alibaba.fastjson2.JSONObject;
@@ -24,11 +25,11 @@ public class UserCacheHelper {
      * @return
      */
     public LoginUser getUserByIdFromRedis(String userId){
-        if(StringUtil.isEmpty(userId)){
+        if(StrUtil.isEmpty(userId)){
             return null;
         }
         String userRedisStr = (String)redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
-        if(StringUtil.isNotEmpty(userRedisStr)){
+        if(StrUtil.isNotEmpty(userRedisStr)){
             return JSONObject.parseObject(userRedisStr,LoginUser.class);
         }
         return null;

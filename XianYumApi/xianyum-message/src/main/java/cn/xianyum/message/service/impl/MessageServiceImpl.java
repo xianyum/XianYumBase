@@ -3,7 +3,7 @@ package cn.xianyum.message.service.impl;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.DateUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -15,7 +15,7 @@ import cn.xianyum.message.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
     public void receiveFnOsPushMessage(FnOsPushMessageRequest request) {
         MessageSenderEntity messageSenderEntity =new MessageSenderEntity();
         List<MessageContent> messageContents = new ArrayList<>();
-        if(StringUtil.isBlank(request.getContent())){
+        if(StrUtil.isBlank(request.getContent())){
             return;
         }
         List<String> contentList = Arrays.asList(request.getContent().split("\n\n"));
@@ -123,7 +123,7 @@ public class MessageServiceImpl implements MessageService {
 
         // 判断恢复时间
         List<GrafanaAlertWebhookRequest.GrafanaAlerts> alerts = request.getAlerts();
-        if(!CollectionUtils.isEmpty(alerts) && Objects.nonNull(alerts.get(0).getEndsAt()) && Objects.nonNull(alerts.get(0).getStartsAt())){
+        if(!CollUtil.isEmpty(alerts) && Objects.nonNull(alerts.get(0).getEndsAt()) && Objects.nonNull(alerts.get(0).getStartsAt())){
             long diffSecond = (alerts.get(0).getEndsAt().getTime() - alerts.get(0).getStartsAt().getTime()) / 1000;
             if("resolved".equals(status)){
                 MessageContent diffSecondContent = new MessageContent();

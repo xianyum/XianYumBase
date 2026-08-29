@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageConfigWechatMapper;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
@@ -35,7 +36,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 		Page<MessageConfigWechatEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigWechatEntity> queryWrapper = new QueryWrapper<MessageConfigWechatEntity>()
 				.eq("del_tag", YesOrNoEnum.YES.getStatus())
-				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
+				.like(StrUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigWechatEntity> pageResult = messageConfigWechatMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,MessageConfigWechatResponse.class);
@@ -44,7 +45,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	@Override
 	public MessageConfigWechatResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageConfigWechatEntity result = messageConfigWechatMapper.selectById(id);
@@ -65,7 +66,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	@Override
 	public Integer update(MessageConfigWechatRequest request) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		MessageConfigWechatEntity bean = BeanUtil.toBean(request,MessageConfigWechatEntity.class);

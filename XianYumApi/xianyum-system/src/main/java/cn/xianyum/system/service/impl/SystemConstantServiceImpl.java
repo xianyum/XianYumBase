@@ -5,6 +5,8 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.system.dao.SystemConstantMapper;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
@@ -59,13 +61,13 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         SystemConstantEntity bean = BeanUtil.toBean(request,SystemConstantEntity.class);
         bean.setConstantKey(null);
         int count = systemConstantMapper.updateById(bean);
-        xianYumTaskExecutor.execute(()-> SpringUtils.getBean(SystemConstantService.class).setSystemConstantToRedis(request.getConstantKey(),null));
+        xianYumTaskExecutor.execute(()-> SpringUtil.getBean(SystemConstantService.class).setSystemConstantToRedis(request.getConstantKey(),null));
         return count;
     }
 
     @Override
     public SystemConstantEntity getByKey(String key) {
-        if(StringUtil.isEmpty(key)){
+        if(StrUtil.isEmpty(key)){
             return null;
         }
         SystemConstantEntity byKeyFromRedis = getByKeyFromRedis(key);
@@ -76,7 +78,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
                 = new QueryWrapper<SystemConstantEntity>()
                 .eq("constant_key",key);
         SystemConstantEntity systemConstantEntity = systemConstantMapper.selectOne(queryWrapper);
-        xianYumTaskExecutor.execute(()-> SpringUtils.getBean(SystemConstantService.class).setSystemConstantToRedis(key,systemConstantEntity));
+        xianYumTaskExecutor.execute(()-> SpringUtil.getBean(SystemConstantService.class).setSystemConstantToRedis(key,systemConstantEntity));
         return systemConstantEntity;
     }
 
@@ -125,8 +127,8 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     public PageResponse<SystemConstantResponse> getPage(SystemConstantRequest request) {
         Page<SystemConstantEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>()
-                .like(StringUtil.isNotEmpty(request.getConstantKey()),"constant_key",request.getConstantKey())
-                .like(StringUtil.isNotEmpty(request.getConstantDescribe()),"constant_describe",request.getConstantDescribe())
+                .like(StrUtil.isNotEmpty(request.getConstantKey()),"constant_key",request.getConstantKey())
+                .like(StrUtil.isNotEmpty(request.getConstantDescribe()),"constant_describe",request.getConstantDescribe())
                 .orderByDesc(Arrays.asList("update_time","create_time"));
         IPage<SystemConstantEntity> pageResult = systemConstantMapper.selectPage(page,queryWrapper);
         return PageResponse.of(pageResult,SystemConstantResponse.class);
@@ -134,7 +136,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public void deleteByKey(String key) {
-        if(StringUtil.isEmpty(key)){
+        if(StrUtil.isEmpty(key)){
             throw new SoException("系统常量键不能为空");
         }
         QueryWrapper<SystemConstantEntity> queryWrapper = new QueryWrapper<SystemConstantEntity>().eq("constant_key",key);
@@ -145,7 +147,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public void deleteRedisCache(String key) {
-        if(StringUtil.isEmpty(key)){
+        if(StrUtil.isEmpty(key)){
             throw new SoException("key不能为空");
         }
         String redisKey = RedisKeyEnum.SYSTEM_CONSTANT_PREFIX.getKey() + key;
@@ -195,7 +197,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public Integer save(SystemConstantRequest request) {
-        if(StringUtil.isBlank(request.getConstantValue())){
+        if(StrUtil.isBlank(request.getConstantValue())){
             throw new SoException("系统常量值不能为空");
         }
         QueryWrapper<SystemConstantEntity> queryRepeatWrapper = new QueryWrapper<SystemConstantEntity>()

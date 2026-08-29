@@ -10,6 +10,8 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.system.common.enums.ThirdTypeEnum;
 import cn.xianyum.system.common.utils.SecretUtils;
@@ -177,7 +179,7 @@ public class UserServiceImpl implements UserService {
         if(repeatList != null && repeatList.size() >0){
             throw new SoException("用户名或手机号已被使用！");
         }
-        if(StringUtil.isNotEmpty(user.getPassword())){
+        if(StrUtil.isNotEmpty(user.getPassword())){
             userEntity.setPassword(SecretUtils.encryptPassword(user.getPassword()));
         }
         int count = userMapper.updateById(userEntity);
@@ -220,7 +222,7 @@ public class UserServiceImpl implements UserService {
         LoginUser u = userTokenService.getUserSelf();
         if(Objects.nonNull(u)){
             u.setPermissions(this.menuService.getMenuPermission(u.getId()));
-            if(StringUtil.isNotBlank(u.getAvatarFileId()) && StringUtil.ishttp(u.getAvatarFileId())){
+            if(StrUtil.isNotBlank(u.getAvatarFileId()) && HttpUtils.isHttpOrHttps(u.getAvatarFileId())){
                 u.setAvatar(u.getAvatarFileId());
             }else{
                 u.setAvatar(this.fileService.presignedUrl(u.getAvatarFileId()));
@@ -276,7 +278,7 @@ public class UserServiceImpl implements UserService {
         UserResponse userResponse = BeanUtil.toBean(userEntity, UserResponse.class);
         if(null != userResponse){
             String groupRoleName = roleMapper.getRoleByUserId(userId).stream().map(RoleResponse::getRoleName).collect(Collectors.joining(","));
-            if(StringUtil.isNotBlank(userResponse.getAvatarFileId()) && StringUtil.ishttp(userResponse.getAvatarFileId())){
+            if(StrUtil.isNotBlank(userResponse.getAvatarFileId()) && HttpUtils.isHttpOrHttps(userResponse.getAvatarFileId())){
                 userResponse.setAvatar(userResponse.getAvatarFileId());
             }else{
                 userResponse.setAvatar(this.fileService.presignedUrl(userResponse.getAvatarFileId()));
@@ -404,13 +406,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public boolean bindQqUser(String authCode) {
-        if(StringUtil.isBlank(authCode)){
+        if(StrUtil.isBlank(authCode)){
             return false;
         }
         String accessToken = qqNetService.getAccessToken(authCode);
         QqUserInfoDto qqUserEntity = qqNetService.getUserId(accessToken,null);
         String openUserId = qqUserEntity.getUserId();
-        if(StringUtil.isBlank(openUserId)){
+        if(StrUtil.isBlank(openUserId)){
             return false;
         }
         String userId = SecurityUtils.getLoginUser().getId();
@@ -483,7 +485,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginUser getUserByAli(String authCode) {
-        if(StringUtil.isBlank(authCode)){
+        if(StrUtil.isBlank(authCode)){
             throw new SoException("支付宝授权登录失败");
         }
         String accessToken = aliNetService.getAccessToken(authCode);
@@ -504,7 +506,7 @@ public class UserServiceImpl implements UserService {
                 loginUser.setAvatarFileId(aLiUserInfo.getAvatar());
                 loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getAccountType());
                 loginUser.setSex(0);
-                SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
+                SpringUtil.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
                         .eq(UserEntity::getId,aliUserEntity.getUserId())
@@ -514,7 +516,7 @@ public class UserServiceImpl implements UserService {
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
                 }
-                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,aliUserEntity.getOpenUserName())){
+                if(StrUtil.isNotBlank(nickName) && !Objects.equals(nickName,aliUserEntity.getOpenUserName())){
                     aliUserEntity.setOpenUserName(nickName);
                     userThirdRelationMapper.updateById(aliUserEntity);
                 }
@@ -529,17 +531,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginUser getUserByQq(UserLoginRequest request) {
-        if(StringUtil.isBlank(request.getAuthCode()) && StringUtil.isBlank(request.getAccessToken())){
+        if(StrUtil.isBlank(request.getAuthCode()) && StrUtil.isBlank(request.getAccessToken())){
             throw new SoException("QQ授权失败");
         }
         String accessToken;
-        if(StringUtil.isNotBlank(request.getAuthCode())){
+        if(StrUtil.isNotBlank(request.getAuthCode())){
             accessToken = qqNetService.getAccessToken(request.getAuthCode());
         }else {
             accessToken = request.getAccessToken();
         }
         QqUserInfoDto qqUserEntity = qqNetService.getUserId(accessToken,request.getQqUserInfo());
-        if(StringUtil.isNotBlank(qqUserEntity.getUserId())){
+        if(StrUtil.isNotBlank(qqUserEntity.getUserId())){
             LoginUser loginUser = new LoginUser();
             UserThirdRelationEntity qqThirdUserEntity = userThirdRelationMapper.selectOne(Wrappers.<UserThirdRelationEntity>lambdaQuery()
                     .eq(UserThirdRelationEntity::getOpenUserId,qqUserEntity.getUserId())
@@ -557,13 +559,13 @@ public class UserServiceImpl implements UserService {
                     loginUser.setSex(0);
                 }
                 // 现在qq返回的是http连接，实际https也是支持的，这里替换下
-                if(StringUtil.isNotEmpty(qqUserEntity.getFigureurlQq2())){
+                if(StrUtil.isNotEmpty(qqUserEntity.getFigureurlQq2())){
                     loginUser.setAvatarFileId(qqUserEntity.getFigureurlQq2().replace("http","https"));
                 }else{
                     loginUser.setAvatarFileId(qqUserEntity.getFigureurlQq1().replace("http","https"));
                 }
                 loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());
-                SpringUtils.getBean(UserService.class).initDefaultUser(loginUser);
+                SpringUtil.getBean(UserService.class).initDefaultUser(loginUser);
             }else{
                 LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
                         .eq(UserEntity::getId,qqThirdUserEntity.getUserId())
@@ -573,7 +575,7 @@ public class UserServiceImpl implements UserService {
                 if(Objects.isNull(userEntity)){
                     throw new SoException("账号不存在或被禁用！");
                 }
-                if(StringUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getOpenUserName())){
+                if(StrUtil.isNotBlank(nickName) && !Objects.equals(nickName,qqThirdUserEntity.getOpenUserName())){
                     qqThirdUserEntity.setOpenUserName(nickName);
                     userThirdRelationMapper.updateById(qqThirdUserEntity);
                 }

@@ -1,5 +1,7 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import com.alibaba.fastjson2.JSONObject;
@@ -23,7 +25,7 @@ public class SystemConstantUtils {
         try {
             Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
             Method m = clazz.getDeclaredMethod("getValueKey",String.class);
-            Object object = m.invoke(SpringUtils.getBean(clazz), systemConstantKeyEnum.getKey());
+            Object object = m.invoke(SpringUtil.getBean(clazz), systemConstantKeyEnum.getKey());
             return object == null ? null : String.valueOf(object);
         } catch (Exception var5) {
             log.error("通过反射获取系统常用变量异常. ",var5);
@@ -42,7 +44,7 @@ public class SystemConstantUtils {
         try {
             Class<?> clazz = Class.forName("cn.xianyum.system.service.SystemConstantService");
             Method m = clazz.getDeclaredMethod("saveOrUpdate",SystemConstantKeyEnum.class,String.class,Integer.class);
-            Object object = m.invoke(SpringUtils.getBean(clazz), systemConstantKeyEnum,value,visible);
+            Object object = m.invoke(SpringUtil.getBean(clazz), systemConstantKeyEnum,value,visible);
             return (Boolean) object;
         } catch (Exception var5) {
             log.error("通过反射插入系统常用变量异常. ",var5);
@@ -57,7 +59,7 @@ public class SystemConstantUtils {
      */
     public static JSONObject getValueObjectByKey(SystemConstantKeyEnum systemConstantKeyEnum) {
         String value = getValueByKey(systemConstantKeyEnum);
-        if(StringUtil.isBlank(value)){
+        if(StrUtil.isBlank(value)){
             throw new SoException("系统常量不存在："+systemConstantKeyEnum.getKey());
         }
         return JSONObject.parseObject(value);

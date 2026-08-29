@@ -9,6 +9,8 @@ import cn.xianyum.common.enums.QrCodeLoginStatus;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -102,7 +104,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public LoginUser getLoginUserByHttpRequest() {
         String token = HttpContextUtils.getRequestToken();
-        String userEntityJson = (String)SpringUtils.getBean(RedisUtils.class).get(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
+        String userEntityJson = (String)SpringUtil.getBean(RedisUtils.class).get(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
         LoginUser loginUser = JSONObject.parseObject(userEntityJson, LoginUser.class);
         return loginUser;
     }
@@ -114,8 +116,8 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public void sendLoginCredentials(UserLoginRequest request) {
-        if(StringUtil.isBlank(request.getUsername())
-                || Objects.isNull(request.getLoginType()) || StringUtil.isBlank(request.getVerifyCode())){
+        if(StrUtil.isBlank(request.getUsername())
+                || Objects.isNull(request.getLoginType()) || StrUtil.isBlank(request.getVerifyCode())){
             throw new SoException("发送失败");
         }
         // 校验滑动验证码
@@ -175,10 +177,10 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginPwd(UserLoginRequest request) {
-        if(StringUtil.isBlank(request.getUsername()) || StringUtil.isBlank(request.getPassword())){
+        if(StrUtil.isBlank(request.getUsername()) || StrUtil.isBlank(request.getPassword())){
             throw new SoException("账号密码不能为空");
         }
-        if(StringUtil.isBlank(request.getVerifyCode())){
+        if(StrUtil.isBlank(request.getVerifyCode())){
             throw new SoException("未通过验证码校验");
         }
         Authentication authentication;
@@ -209,19 +211,19 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginEmail(UserLoginRequest request) {
-        if(StringUtil.isBlank(request.getUsername())){
+        if(StrUtil.isBlank(request.getUsername())){
             throw new SoException("邮箱账号不能为空");
         }
         String redisKey = String.format(RedisKeyEnum.TOKEN_CREDENTIALS_PREFIX.getKey(),request.getUsername());
         if(!redisUtils.hasKey(redisKey)){
             throw new SoException("验证码已过期");
         }
-        if(StringUtil.isBlank(request.getCode()) || !request.getCode().equals(redisUtils.getString(redisKey))){
+        if(StrUtil.isBlank(request.getCode()) || !request.getCode().equals(redisUtils.getString(redisKey))){
             throw new SoException("验证码错误");
         }
         // 校验登录凭证成功就删除
         redisUtils.del(redisKey);
-        UserDetails userDetails = SpringUtils.getBean(UserDetailsService.class).loadUserByUsername(request.getUsername());
+        UserDetails userDetails = SpringUtil.getBean(UserDetailsService.class).loadUserByUsername(request.getUsername());
         // 第三步：构建认证信息（密码置空，跳过密码校验）
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         // 设置认证上下文
@@ -238,7 +240,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginByQq(UserLoginRequest request) {
-        LoginUser user = SpringUtils.getBean(UserService.class).getUserByQq(request);
+        LoginUser user = SpringUtil.getBean(UserService.class).getUserByQq(request);
         UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
         // 第三步：构建认证信息（密码置空，跳过密码校验）
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -257,7 +259,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginByZhiFuBao(UserLoginRequest request) {
-        LoginUser user = SpringUtils.getBean(UserService.class).getUserByAli(request.getAuthCode());
+        LoginUser user = SpringUtil.getBean(UserService.class).getUserByAli(request.getAuthCode());
         UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
         // 第三步：构建认证信息（密码置空，跳过密码校验）
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -353,10 +355,10 @@ public class UserTokenServiceImpl implements UserTokenService {
             throw new SoException("二维码过期，请刷新");
         }
         QrLoginTicketResponse qrLoginTicketResponse = JSONObject.parseObject(redisUtils.getString(redisKey), QrLoginTicketResponse.class);
-        if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.CONFIRMED) || StringUtil.isBlank(qrLoginTicketResponse.getUserName())){
+        if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.CONFIRMED) || StrUtil.isBlank(qrLoginTicketResponse.getUserName())){
             throw new SoException("二维码过期，请刷新");
         }
-        UserDetails userDetails = SpringUtils.getBean(UserDetailsService.class).loadUserByUsername(qrLoginTicketResponse.getUserName());
+        UserDetails userDetails = SpringUtil.getBean(UserDetailsService.class).loadUserByUsername(qrLoginTicketResponse.getUserName());
         // 第三步：构建认证信息（密码置空，跳过密码校验）
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         // 设置认证上下文

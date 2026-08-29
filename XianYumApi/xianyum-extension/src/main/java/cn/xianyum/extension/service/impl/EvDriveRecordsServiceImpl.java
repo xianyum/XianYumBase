@@ -8,6 +8,7 @@ import cn.xianyum.common.enums.YesOrNoEnum;
 import com.alibaba.fastjson2.JSON;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.ai.OpenAiUtils;
 import cn.xianyum.extension.dao.EvAutoReportMapper;
 import cn.xianyum.extension.entity.po.EvAutoReportEntity;
@@ -19,7 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
-import org.apache.commons.collections4.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -61,11 +62,11 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     public PageResponse<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
         LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
                 .like(Objects.nonNull(request.getStatus()),EvDriveRecordsEntity::getStatus,request.getStatus())
-                .like(StringUtil.isNotEmpty(request.getVehicleNo()),EvDriveRecordsEntity::getVehicleNo,request.getVehicleNo())
+                .like(StrUtil.isNotEmpty(request.getVehicleNo()),EvDriveRecordsEntity::getVehicleNo,request.getVehicleNo())
                 .ge(Objects.nonNull(request.getParams().get("beginTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("beginTime"))
                 .le(Objects.nonNull(request.getParams().get("endTime")),EvDriveRecordsEntity::getDriveDate,request.getParams().get("endTime"))
                 .orderByDesc(EvDriveRecordsEntity::getDriveDate);
-        if(CollectionUtils.isNotEmpty(request.getMatter())){
+        if(CollUtil.isNotEmpty(request.getMatter())){
             if (request.getMatter().size() == 1) {
                 queryWrapper.apply("FIND_IN_SET({0}, matter)", request.getMatter().get(0));
             } else {
@@ -234,7 +235,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         String processingKey = RedisKeyEnum.EV_DRIVE_AI_PROCESSING.getKey();
         // 尝试从Redis读取缓存
         String cachedAnalysis = redisUtils.getString(cacheKey);
-        if (StringUtil.isNotBlank(cachedAnalysis)) {
+        if (StrUtil.isNotBlank(cachedAnalysis)) {
             return cachedAnalysis;
         }
         // 检查是否正在处理中
@@ -282,7 +283,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
                 prompt.append("11. 输出格式规范：全程使用标准Markdown格式，必须使用表格呈现【日期、里程、耗电量、电耗、充电费用】，合理使用emoji提升可读性，排版整洁、层级分明、无冗余内容\n");
 
                 String content = OpenAiUtils.chat(prompt.toString());
-                if(StringUtil.isNotBlank(content)){
+                if(StrUtil.isNotBlank(content)){
                     // 计算当前时间到今天结束的毫秒差,再转成秒
                     long expireSeconds = (DateUtil.endOfDay(new Date()).getTime() - System.currentTimeMillis()) / 1000;
                     redisUtils.set(cacheKey, content, Math.max(expireSeconds, 1));

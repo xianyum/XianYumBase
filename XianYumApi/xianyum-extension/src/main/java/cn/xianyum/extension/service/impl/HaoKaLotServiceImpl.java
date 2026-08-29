@@ -10,6 +10,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.ai.BaiDuAiUtils;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
@@ -114,7 +115,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
         JSONObject loginResultObject = JSONObject.parseObject(loginResultStr);
         String token = JSONObject.parseObject(loginResultObject.getString("data")).getString("token");
         log.info("172号卡系统生成token,{}",token);
-        if(StringUtil.isNotEmpty(token)){
+        if(StrUtil.isNotEmpty(token)){
             redisUtils.setMin(redisKey,token,120);
         }
         return token;
@@ -129,7 +130,7 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
     public List<HaoKaLotArticleEntity> getHaoKaLotArticleList() {
         String token = "bearer "+this.getAccessTokenByLogin();
         String articleJsonStr = HttpUtils.getHttpInstance().sync(ARTICLE_URL).addHeader("Authorization",token).get().getBody().toString();
-        if(StringUtil.isEmpty(articleJsonStr)){
+        if(StrUtil.isEmpty(articleJsonStr)){
             log.error("172号卡系统token可能已经失效,{}",token);
             throw new SoException("172号卡系统token可能已经失效："+token);
         }

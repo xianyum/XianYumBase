@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageConfigWebhookMapper;
 import cn.xianyum.message.entity.po.MessageConfigWebhookEntity;
@@ -35,8 +36,8 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 		Page<MessageConfigWebhookEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigWebhookEntity> queryWrapper = new QueryWrapper<MessageConfigWebhookEntity>()
 				.eq("del_tag", YesOrNoEnum.YES.getStatus())
-				.eq(StringUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
-				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
+				.eq(StrUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
+				.like(StrUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigWebhookEntity> pageResult = messageConfigWebhookMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,MessageConfigWebhookResponse.class);
@@ -45,7 +46,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 	@Override
 	public MessageConfigWebhookResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageConfigWebhookEntity result = messageConfigWebhookMapper.selectById(id);
@@ -66,7 +67,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 	@Override
 	public Integer update(MessageConfigWebhookRequest request) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		MessageConfigWebhookEntity bean = BeanUtil.toBean(request,MessageConfigWebhookEntity.class);

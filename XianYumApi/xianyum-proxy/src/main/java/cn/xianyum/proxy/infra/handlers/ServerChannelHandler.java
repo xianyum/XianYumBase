@@ -1,6 +1,6 @@
 package cn.xianyum.proxy.infra.handlers;
 
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.proxy.infra.common.constant.ProxyConstants;
 import cn.xianyum.proxy.infra.common.utils.ProxyMessage;
 import cn.xianyum.proxy.infra.container.ProxyChannelManager;
@@ -129,7 +129,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
 
     private void handleAuthMessage(ChannelHandlerContext ctx, ProxyMessage proxyMessage) {
         String clientKey = proxyMessage.getUri();
-        List<Integer> ports = SpringUtils.getBean(ProxyDetailsService.class).getClientInetPorts(clientKey);
+        List<Integer> ports = SpringUtil.getBean(ProxyDetailsService.class).getClientInetPorts(clientKey);
         if (ports == null) {
             logger.info("error clientKey {}, {}", clientKey, ctx.channel());
             ctx.channel().close();
@@ -144,8 +144,8 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
         }
 
         // 此处是客户端上线的
-        ThreadPoolTaskExecutor xianYumTaskExecutor = SpringUtils.getBean("xianYumTaskExecutor");
-        xianYumTaskExecutor.execute(()->SpringUtils.getBean(ProxyService.class).onlineNotify(clientKey));
+        ThreadPoolTaskExecutor xianYumTaskExecutor = SpringUtil.getBean("xianYumTaskExecutor");
+        xianYumTaskExecutor.execute(()->SpringUtil.getBean(ProxyService.class).onlineNotify(clientKey));
         logger.info("咸鱼客户端新上线，授权码：{},端口：{}，映射：{}", clientKey, ports, ctx.channel());
         ProxyChannelManager.addCmdChannel(ports, clientKey, ctx.channel());
     }

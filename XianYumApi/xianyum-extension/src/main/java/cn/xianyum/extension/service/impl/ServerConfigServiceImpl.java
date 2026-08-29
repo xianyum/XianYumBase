@@ -3,7 +3,7 @@ package cn.xianyum.extension.service.impl;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.IPUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.extension.entity.po.ServerPortConfigEntity;
 import cn.xianyum.extension.service.ServerPortConfigService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -20,7 +20,7 @@ import cn.xianyum.extension.service.ServerConfigService;
 import cn.xianyum.extension.dao.ServerConfigMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,8 +47,8 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 	@Override
 	public PageResponse<ServerConfigResponse> getPage(ServerConfigRequest request) {
 		LambdaQueryWrapper<ServerConfigEntity> queryWrapper = Wrappers.<ServerConfigEntity>lambdaQuery()
-				.like(StringUtil.isNotEmpty(request.getServerName()),ServerConfigEntity::getServerName,request.getServerName())
-				.eq(StringUtil.isNotEmpty(request.getTag()),ServerConfigEntity::getTag,request.getTag())
+				.like(StrUtil.isNotEmpty(request.getServerName()),ServerConfigEntity::getServerName,request.getServerName())
+				.eq(StrUtil.isNotEmpty(request.getTag()),ServerConfigEntity::getTag,request.getTag())
 				.orderByDesc(ServerConfigEntity::getCreateTime);
 		Page<ServerConfigEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		IPage<ServerConfigEntity> pageResult = serverConfigMapper.selectPage(page,queryWrapper);
@@ -67,7 +67,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 	@Override
 	public Integer save(ServerConfigRequest request) {
 		ServerConfigEntity bean = BeanUtil.toBean(request,ServerConfigEntity.class);
-		if(StringUtil.isNotEmpty(bean.getServerPublicIp())){
+		if(StrUtil.isNotEmpty(bean.getServerPublicIp())){
 			bean.setServerLocation(IPUtils.getIpInfo(bean.getServerPublicIp()));
 		}
 		return serverConfigMapper.insert(bean);
@@ -80,7 +80,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 			throw new SoException("id不能为空");
 		}
 		ServerConfigEntity bean = BeanUtil.toBean(request,ServerConfigEntity.class);
-		if(StringUtil.isNotEmpty(bean.getServerPublicIp())){
+		if(StrUtil.isNotEmpty(bean.getServerPublicIp())){
 			bean.setServerLocation(IPUtils.getIpInfo(bean.getServerPublicIp()));
 		}
 		return serverConfigMapper.updateById(bean);
@@ -94,7 +94,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 		idsStream.forEach(item -> {
 			// 校验是否有绑定的数据
 			List<ServerPortConfigEntity> serverPortConfigEntityList = this.serverPortConfigService.selectByServerId(item);
-			if(!CollectionUtils.isEmpty(serverPortConfigEntityList)){
+			if(!CollUtil.isEmpty(serverPortConfigEntityList)){
 				throw new SoException("该主机在端口配置里有应用，暂不能删除！");
 			}
 		});

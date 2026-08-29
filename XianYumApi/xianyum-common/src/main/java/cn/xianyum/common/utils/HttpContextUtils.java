@@ -1,5 +1,6 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -37,10 +38,10 @@ public class HttpContextUtils {
         //从header中获取token
         String token = httpRequest.getHeader("Authorization");
         //如果header中不存在token，则从参数中获取token
-        if(StringUtil.isBlank(token)){
+        if(StrUtil.isBlank(token)){
             token = httpRequest.getParameter("access_token");
         }
-        return StringUtil.isNotEmpty(token)?token.replace("Bearer ",""):token;
+        return StrUtil.isNotEmpty(token)?token.replace("Bearer ",""):token;
     }
 
     /**

@@ -1,7 +1,6 @@
 package cn.xianyum.mqtt.service.impl;
 
 
-import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.mqtt.infra.handler.MqttMessageHandler;
 import cn.xianyum.mqtt.service.MqttFishService;
 import io.moquette.interception.messages.InterceptPublishMessage;
@@ -31,7 +30,7 @@ public class TestMqttMessage implements MqttMessageHandler {
     public void handle(InterceptPublishMessage msg) {
         // 1. 获取消息体（核心：字节数组转字符串，默认UTF-8编码）
         ByteBuf payloadBuff = msg.getPayload();// 获取payload字节数组
-        String payload = StringUtil.byteBuf2Utf8String(payloadBuff); // 转UTF-8字符串
+        String payload = payloadBuff.toString(java.nio.charset.StandardCharsets.UTF_8);
 
         // 2. 同时获取其他关键信息（便于排查/业务处理）
         String clientId = msg.getClientID(); // 发送消息的客户端ID

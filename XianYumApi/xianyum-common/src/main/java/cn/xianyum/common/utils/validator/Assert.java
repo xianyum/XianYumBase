@@ -1,7 +1,7 @@
 package cn.xianyum.common.utils.validator;
 
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 
 /**
  * 数据校验
@@ -10,7 +10,7 @@ import cn.xianyum.common.utils.StringUtil;
  */
 public abstract class Assert {
     public static void isBlank(String str, String message) {
-        if (StringUtil.isBlank(str)) {
+        if (StrUtil.isBlank(str)) {
             throw new SoException(message);
         }
     }

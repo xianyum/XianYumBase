@@ -1,5 +1,7 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.ip.IpSearcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -311,11 +313,11 @@ public class IPUtils {
     }
 
     public static Map<String, String> getIpInfoMap(String ip) {
-        IpSearcher ipSearcherConfig = SpringUtils.getBean("ipSearcherConfig");
+        IpSearcher ipSearcherConfig = SpringUtil.getBean("ipSearcherConfig");
         String[] data = new String[6];
         try {
             String search = ipSearcherConfig.search(ip);
-            if (StringUtil.isNotEmpty(search)) {
+            if (StrUtil.isNotEmpty(search)) {
                 data = search.split("\\|");
             }
             String country = "0".equals(data[0]) || Objects.isNull(data[0]) ? "" : data[0];

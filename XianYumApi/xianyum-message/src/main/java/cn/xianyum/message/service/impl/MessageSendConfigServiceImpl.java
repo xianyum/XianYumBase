@@ -3,6 +3,7 @@ package cn.xianyum.message.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageSendConfigMapper;
 import cn.xianyum.message.dao.MessageSendRelationMapper;
@@ -39,7 +40,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 	@Override
 	public MessageSendConfigResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageSendConfigEntity result = messageSendConfigMapper.selectById(id);
@@ -60,7 +61,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 	@Override
 	public Integer update(MessageSendConfigRequest request) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		MessageSendConfigEntity bean = BeanUtil.toBean(request,MessageSendConfigEntity.class);
@@ -86,7 +87,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 	public MessageSendConfigEntity saveOrUpdate(MessageSendConfigRequest request) {
 		MessageSendConfigEntity bean = BeanUtil.toBean(request,MessageSendConfigEntity.class);
 		int count = 0;
-		if(StringUtil.isNotEmpty(request.getId())){
+		if(StrUtil.isNotEmpty(request.getId())){
 			count = messageSendConfigMapper.updateById(bean);
 		}else{
 			bean.setId(UUIDUtils.UUIDReplace());

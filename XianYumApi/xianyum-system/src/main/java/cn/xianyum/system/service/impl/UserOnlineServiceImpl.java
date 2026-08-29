@@ -6,7 +6,7 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
 import cn.xianyum.system.entity.response.UserOnlineResponse;
@@ -45,7 +45,7 @@ public class UserOnlineServiceImpl implements UserOnlineService {
             userOnlineList.add(userOnlineEntity);
         }
 
-        if(StringUtil.isNotEmpty(request.getUsername())){
+        if(StrUtil.isNotEmpty(request.getUsername())){
             userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
         }
 

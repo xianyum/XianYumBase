@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.service.LogService;
 import com.alibaba.fastjson2.JSONObject;
@@ -106,7 +106,7 @@ public class RequestLogInterceptor {
 
             xianYumTaskExecutor.execute(()->{
                 SecurityUtils.setLoginUser(loginUser);
-                SpringUtils.getBean(LogService.class).saveLog(logEntity);
+                SpringUtil.getBean(LogService.class).saveLog(logEntity);
             });
         }
     }

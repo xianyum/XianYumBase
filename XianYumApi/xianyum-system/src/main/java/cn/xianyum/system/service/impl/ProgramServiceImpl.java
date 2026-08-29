@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.system.dao.GiteeCommitMapper;
 import cn.xianyum.system.dao.ProgramMapper;
@@ -48,11 +48,11 @@ public class ProgramServiceImpl implements ProgramService {
         Page<ProgramEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<ProgramEntity> queryWrapper = new QueryWrapper<ProgramEntity>()
                 .eq(!SecurityUtils.isSupperAdminAuth(),"create_by",SecurityUtils.getLoginUser().getId())
-                .like(StringUtil.isNotEmpty(request.getContactName()),"contact_name",request.getContactName())
-                .like(StringUtil.isNotEmpty(request.getProgramTitle()),"program_title",request.getProgramTitle())
+                .like(StrUtil.isNotEmpty(request.getContactName()),"contact_name",request.getContactName())
+                .like(StrUtil.isNotEmpty(request.getProgramTitle()),"program_title",request.getProgramTitle())
                 .eq(null != request.getStatus(),"status",request.getStatus())
-                .ge(StringUtil.isNotEmpty(request.getBeginTime()),"create_time",request.getBeginTime())
-                .le(StringUtil.isNotEmpty(request.getEndTime()),"create_time",request.getEndTime())
+                .ge(StrUtil.isNotEmpty(request.getBeginTime()),"create_time",request.getBeginTime())
+                .le(StrUtil.isNotEmpty(request.getEndTime()),"create_time",request.getEndTime())
                 .orderByDesc("create_time");
         IPage<ProgramEntity> programEntityIPage = programMapper.selectPage(page, queryWrapper);
         return PageResponse.of(programEntityIPage,ProgramResponse.class);
@@ -134,7 +134,7 @@ public class ProgramServiceImpl implements ProgramService {
         ProgramEntity programEntity = programMapper.selectById(request.getId());
         QueryWrapper<GiteeCommitEntity> queryWrapper =new QueryWrapper<GiteeCommitEntity>()
                         .eq("program_id",request.getId()).or()
-                .eq(StringUtil.isNotEmpty(programEntity.getGiteeUrl()),"repository_url",programEntity.getGiteeUrl())
+                .eq(StrUtil.isNotEmpty(programEntity.getGiteeUrl()),"repository_url",programEntity.getGiteeUrl())
                 .orderByDesc("create_time");
         List<GiteeCommitEntity> giteeCommitEntities = giteeCommitMapper.selectList(queryWrapper);
         List<JSONObject> list = new ArrayList<>();

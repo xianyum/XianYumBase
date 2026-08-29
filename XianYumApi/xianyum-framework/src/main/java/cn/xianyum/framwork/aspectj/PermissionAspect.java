@@ -1,5 +1,7 @@
 package cn.xianyum.framwork.aspectj;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ReflectUtil;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.base.BaseRequest;
@@ -8,22 +10,19 @@ import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.PermissionThreadLocal;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.framwork.security.context.PermissionStandardEvaluationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -73,18 +72,18 @@ public class PermissionAspect {
             Results results = (Results)result;
             Object data = results.get("data");
             if(data instanceof BaseResponse){
-                Object id = ReflectUtils.getFieldValue(data, "id");
+                Object id = ReflectUtil.getFieldValue(data, "id");
                 if(Objects.nonNull(id)){
-                    ReflectUtils.setFieldValue(data,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
+                    ReflectUtil.setFieldValue(data,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
                 }
             }
             if(data instanceof Collection<?>){
                 Collection<?> collection = (Collection<?>) data;
                 for (Object item : collection) {
                     if(item instanceof BaseResponse){
-                        Object id = ReflectUtils.getFieldValue(item, "id");
+                        Object id = ReflectUtil.getFieldValue(item, "id");
                         if(Objects.nonNull(id)){
-                            ReflectUtils.setFieldValue(item,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
+                            ReflectUtil.setFieldValue(item,"signature",MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET));
                         }
                     }
                 }
@@ -102,9 +101,9 @@ public class PermissionAspect {
         Object[] args = pjp.getArgs();
         if(args != null && args.length>0){
             if(args[0] instanceof BaseRequest){
-                String checkSign = ReflectUtils.getFieldValue(args[0], "signature");
-                Object id = ReflectUtils.getFieldValue(args[0], "id");
-                if(StringUtil.isNotEmpty(checkSign) && Objects.nonNull(id)){
+                String checkSign = ObjectUtil.toString(ReflectUtil.getFieldValue(args[0], "signature"));
+                Object id = ReflectUtil.getFieldValue(args[0], "id");
+                if(StrUtil.isNotBlank(checkSign) && Objects.nonNull(id)){
                     String md5 = MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET);
                     if(!checkSign.equals(md5)){
                         throw new SoException(Constants.CHECK_SIGN_MESSAGE);

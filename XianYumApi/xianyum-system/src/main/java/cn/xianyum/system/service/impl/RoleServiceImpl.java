@@ -5,7 +5,7 @@ import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.RoleMenuMapper;
 import cn.xianyum.system.dao.UserRoleMapper;
 import cn.xianyum.system.entity.po.RoleMenuEntity;
@@ -13,7 +13,7 @@ import cn.xianyum.system.entity.po.UserRoleEntity;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import org.apache.commons.collections4.CollectionUtils;
+import cn.hutool.core.collection.CollUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -51,8 +51,8 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public PageResponse<RoleResponse> getPage(RoleRequest request) {
 		LambdaQueryWrapper<RoleEntity> queryWrapper = Wrappers.<RoleEntity>lambdaQuery()
-				.like(StringUtil.isNotEmpty(request.getRoleCode()),RoleEntity::getRoleCode,request.getRoleCode())
-				.like(StringUtil.isNotEmpty(request.getRoleName()),RoleEntity::getRoleName,request.getRoleName())
+				.like(StrUtil.isNotEmpty(request.getRoleCode()),RoleEntity::getRoleCode,request.getRoleCode())
+				.like(StrUtil.isNotEmpty(request.getRoleName()),RoleEntity::getRoleName,request.getRoleName())
 				.eq(Objects.nonNull(request.getStatus()),RoleEntity::getStatus,request.getStatus())
 				.orderByAsc(RoleEntity::getRoleSort);
 		Page<RoleEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
@@ -188,7 +188,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void setLoginUserRoleService(LoginUser loginUser) {
 		List<RoleResponse> roleByUserIdList = this.getRoleByUserId(loginUser.getId());
-		if(CollectionUtils.isNotEmpty(roleByUserIdList)){
+		if(CollUtil.isNotEmpty(roleByUserIdList)){
 			Set<String> roles = roleByUserIdList.stream().map(RoleResponse::getRoleCode).collect(Collectors.toSet());
 			loginUser.setRoles(roles);
 			// todo 默认取第一条，后面在考虑多角色多数据权限情况

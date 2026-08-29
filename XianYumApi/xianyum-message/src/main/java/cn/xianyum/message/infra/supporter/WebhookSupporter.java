@@ -3,7 +3,7 @@ package cn.xianyum.message.infra.supporter;
 
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.MD5Utils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.message.entity.po.MessageConfigWebhookEntity;
 import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -45,7 +45,7 @@ public class WebhookSupporter {
             markdownStr.append("#### ");
             markdownStr.append(messageSender.getTitle());
 
-            if(StringUtil.isNotEmpty(messageSender.getContent())){
+            if(StrUtil.isNotEmpty(messageSender.getContent())){
                 markdownStr.append("\n");
                 markdownStr.append(">");
                 markdownStr.append("- ");
@@ -99,7 +99,7 @@ public class WebhookSupporter {
 
             List<List<JSONObject>> contentParamList = new ArrayList<>();
 
-            if(StringUtil.isNotEmpty(messageSender.getContent())){
+            if(StrUtil.isNotEmpty(messageSender.getContent())){
                 List<JSONObject> contentParam = new ArrayList<>();
                 JSONObject contentBean = new JSONObject();
                 contentBean.put("tag","text");
@@ -190,7 +190,7 @@ public class WebhookSupporter {
             StringBuilder markdownStr = new StringBuilder();
             markdownStr.append("#### ");
             markdownStr.append(messageSender.getTitle());
-            if(StringUtil.isNotEmpty(messageSender.getContent())){
+            if(StrUtil.isNotEmpty(messageSender.getContent())){
                 markdownStr.append("\n");
                 markdownStr.append(">");
                 markdownStr.append(messageSender.getContent());

@@ -1,5 +1,7 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
+
 /**
  * 版本号比较工具类（支持x.y.z、x.y、x等格式，如1.0.1、2.1、3）
  * @author xianyum
@@ -15,7 +17,7 @@ public class AppVersionCompareUtil {
      */
     public static boolean needUpdate(String clientVersion, String latestVersion) {
         // 空值处理：客户端版本为空/最新版本为空，默认无需更新（可根据业务调整）
-        if (StringUtil.isBlank(clientVersion) || StringUtil.isBlank(latestVersion)) {
+        if (StrUtil.isBlank(clientVersion) || StrUtil.isBlank(latestVersion)) {
             return false;
         }
 

@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageConfigEmailMapper;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
@@ -35,8 +36,8 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 		Page<MessageConfigEmailEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
 		QueryWrapper<MessageConfigEmailEntity> queryWrapper = new QueryWrapper<MessageConfigEmailEntity>()
 				.eq("del_tag", YesOrNoEnum.YES.getStatus())
-				.like(StringUtil.isNotEmpty(request.getEmailUserName()),"email_user_name",request.getEmailUserName())
-				.like(StringUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
+				.like(StrUtil.isNotEmpty(request.getEmailUserName()),"email_user_name",request.getEmailUserName())
+				.like(StrUtil.isNotEmpty(request.getDescription()),"description",request.getDescription())
 				.orderByDesc("create_time");
 		IPage<MessageConfigEmailEntity> pageResult = messageConfigEmailMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,MessageConfigEmailResponse.class);
@@ -45,7 +46,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	@Override
 	public MessageConfigEmailResponse getById(String id) {
 
-		if(StringUtil.isEmpty(id)){
+		if(StrUtil.isEmpty(id)){
 			throw new SoException("id不能为空");
 		}
 		MessageConfigEmailEntity result = messageConfigEmailMapper.selectById(id);
@@ -66,7 +67,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	@Override
 	public Integer update(MessageConfigEmailRequest request) {
 
-		if(StringUtil.isEmpty(request.getId())){
+		if(StrUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
 		MessageConfigEmailEntity bean = BeanUtil.toBean(request,MessageConfigEmailEntity.class);

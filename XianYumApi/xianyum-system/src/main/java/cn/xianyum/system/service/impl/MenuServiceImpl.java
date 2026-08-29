@@ -6,8 +6,9 @@ import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.SecurityUtils;
-import cn.xianyum.common.utils.StringUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.MenuMapper;
 import cn.xianyum.system.entity.po.MenuEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
@@ -113,7 +114,7 @@ public class MenuServiceImpl implements MenuService {
             router.setIconBgColor(menu.getIconBgColor());
             router.setMeta(new MenuMetaResponse(menu.getMenuName(), menu.getIcon(), Objects.equals("1", menu.getIsCache()), menu.getPath()));
             List<MenuEntity> cMenus = menu.getChildren();
-            if (StringUtil.isNotEmpty(cMenus) && Constants.TYPE_DIR.equals(menu.getMenuType())) {
+            if (CollUtil.isNotEmpty(cMenus) && Constants.TYPE_DIR.equals(menu.getMenuType())) {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));
@@ -165,7 +166,7 @@ public class MenuServiceImpl implements MenuService {
             throw new SoException("新增菜单" + menuEntity.getMenuName() + "失败，菜单名称已存在");
         }
 
-        if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !StringUtil.ishttp(menuEntity.getPath())) {
+        if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && HttpUtils.isHttpOnly(menuEntity.getPath())) {
             throw new SoException("新增菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
 
@@ -183,7 +184,7 @@ public class MenuServiceImpl implements MenuService {
     public int update(MenuEntity menuEntity) {
         if (!this.checkMenuNameUnique(menuEntity)) {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，菜单名称已存在");
-        } else if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !StringUtil.ishttp(menuEntity.getPath())) {
+        } else if (Constants.YES_FRAME.equals(menuEntity.getIsFrame()) && !HttpUtils.isHttpOnly(menuEntity.getPath())) {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，地址必须以http(s)://开头");
         } else if (menuEntity.getMenuId().equals(menuEntity.getParentId())) {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，上级菜单不能选择自己");
@@ -420,7 +421,7 @@ public class MenuServiceImpl implements MenuService {
      * @return 结果
      */
     public boolean isInnerLink(MenuEntity menu) {
-        return menu.getIsFrame().equals(Constants.NO_FRAME) && StringUtil.ishttp(menu.getPath());
+        return menu.getIsFrame().equals(Constants.NO_FRAME) && HttpUtils.isHttpOrHttps(menu.getPath());
     }
 
 
