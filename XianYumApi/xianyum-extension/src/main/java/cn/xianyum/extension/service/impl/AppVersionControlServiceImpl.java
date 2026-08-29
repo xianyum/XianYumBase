@@ -3,7 +3,7 @@ package cn.xianyum.extension.service.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.AppVersionCompareUtil;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.FileUtils;
 import cn.xianyum.common.utils.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -49,7 +49,7 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
     @Override
     public AppVersionControlResponse getById(Long id) {
         AppVersionControlEntity result = appVersionControlMapper.selectById(id);
-        AppVersionControlResponse response = BeanUtils.copy(result, AppVersionControlResponse.class);
+        AppVersionControlResponse response = BeanUtil.toBean(result, AppVersionControlResponse.class);
         if(Objects.nonNull(response)){
             response.setFileInfo(FileUtils.selectFileById(response.getPackageFileId()));
         }
@@ -59,7 +59,7 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
 
     @Override
     public Integer save(AppVersionControlRequest request) {
-        AppVersionControlEntity bean = BeanUtils.copy(request, AppVersionControlEntity.class);
+        AppVersionControlEntity bean = BeanUtil.toBean(request, AppVersionControlEntity.class);
         bean.setId(IdUtil.getSnowflakeNextIdStr());
         return appVersionControlMapper.insert(bean);
     }
@@ -70,7 +70,7 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
         if (Objects.isNull(request.getId())) {
             throw new SoException("id不能为空");
         }
-        AppVersionControlEntity bean = BeanUtils.copy(request, AppVersionControlEntity.class);
+        AppVersionControlEntity bean = BeanUtil.toBean(request, AppVersionControlEntity.class);
         return appVersionControlMapper.updateById(bean);
     }
 
@@ -92,7 +92,7 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
                 .last("limit 1");
         AppVersionControlEntity appVersionControlEntity = this.appVersionControlMapper.selectOne(queryWrapper);
         if(Objects.nonNull(appVersionControlEntity) && AppVersionCompareUtil.needUpdate(request.getVersion(), appVersionControlEntity.getVersion())){
-            AppVersionControlResponse response = BeanUtils.copy(appVersionControlEntity, AppVersionControlResponse.class);
+            AppVersionControlResponse response = BeanUtil.toBean(appVersionControlEntity, AppVersionControlResponse.class);
             response.setFileInfo(FileUtils.selectFileById(response.getPackageFileId()));
             return response;
         }
@@ -111,11 +111,10 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
                 .last("limit 1");
         AppVersionControlEntity appVersionControlEntity = this.appVersionControlMapper.selectOne(queryWrapper);
         if(Objects.nonNull(appVersionControlEntity)){
-            AppVersionControlResponse response = BeanUtils.copy(appVersionControlEntity, AppVersionControlResponse.class);
+            AppVersionControlResponse response = BeanUtil.toBean(appVersionControlEntity, AppVersionControlResponse.class);
             response.setFileInfo(FileUtils.selectFileById(response.getPackageFileId()));
             return response;
         }
         return null;
     }
 }
-

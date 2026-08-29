@@ -4,6 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.proxy.dao.ProxyDetailsMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
 import cn.xianyum.proxy.entity.po.ProxyDetailsEntity;
@@ -66,7 +67,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 			throw new SoException("id不能为空");
 		}
 		ProxyDetailsEntity result = proxyDetailsMapper.selectById(id);
-		ProxyDetailsResponse response = BeanUtils.copy(result, ProxyDetailsResponse.class);
+		ProxyDetailsResponse response = BeanUtil.toBean(result, ProxyDetailsResponse.class);
 		return response;
 
 	}
@@ -97,7 +98,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 			throw new SoException("公网端口不能重复！");
 		}
 
-		ProxyDetailsEntity bean = BeanUtils.copy(request,ProxyDetailsEntity.class);
+		ProxyDetailsEntity bean = BeanUtil.toBean(request,ProxyDetailsEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		// 删除缓存,后续在重新缓存
 		String redisKey = RedisKeyEnum.PROXY_PROXY_DETAILS_LAN_INFO.getKey().concat(request.getInetPort().toString());
@@ -126,7 +127,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		if(portCount > 0){
 			throw new SoException("公网端口不能重复！");
 		}
-		ProxyDetailsEntity bean = BeanUtils.copy(request,ProxyDetailsEntity.class);
+		ProxyDetailsEntity bean = BeanUtil.toBean(request,ProxyDetailsEntity.class);
 		bean.setReadBytes(null);
 		bean.setWriteBytes(null);
 
@@ -204,7 +205,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 				.eq(ProxyDetailsEntity::getProxyId,proxy.getId())
 				.orderByDesc(ProxyDetailsEntity::getCreateTime);
 		List<ProxyDetailsEntity> proxyDetailsLists = proxyDetailsMapper.selectList(proxyDetailsEntityLambdaQueryWrapper);
-		List<ProxyDetailsResponse> proxyDetailsResponses = BeanUtils.copyList(proxyDetailsLists,ProxyDetailsResponse.class);
+		List<ProxyDetailsResponse> proxyDetailsResponses = BeanUtil.copyToList(proxyDetailsLists,ProxyDetailsResponse.class);
 		for(ProxyDetailsResponse item : proxyDetailsResponses){
 			MetricsCollector collector = MetricsCollector.getCollector(item.getInetPort());
 			long nowWroteBytes = collector.getWroteBytes().get();

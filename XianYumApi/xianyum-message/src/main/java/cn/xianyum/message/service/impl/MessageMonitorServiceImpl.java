@@ -2,7 +2,7 @@ package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
@@ -56,7 +56,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 			throw new SoException("id不能为空");
 		}
 		MessageMonitorEntity result = messageMonitorMapper.selectById(id);
-		MessageMonitorResponse response = BeanUtils.copy(result, MessageMonitorResponse.class);
+		MessageMonitorResponse response = BeanUtil.toBean(result, MessageMonitorResponse.class);
 		return response;
 
 	}
@@ -64,7 +64,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	@Override
 	public Integer save(MessageMonitorRequest request) {
 
-		MessageMonitorEntity bean = BeanUtils.copy(request,MessageMonitorEntity.class);
+		MessageMonitorEntity bean = BeanUtil.toBean(request,MessageMonitorEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		return messageMonitorMapper.insert(bean);
 
@@ -76,7 +76,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		MessageMonitorEntity bean = BeanUtils.copy(request,MessageMonitorEntity.class);
+		MessageMonitorEntity bean = BeanUtil.toBean(request,MessageMonitorEntity.class);
 		return messageMonitorMapper.updateById(bean);
 
 	}

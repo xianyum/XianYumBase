@@ -2,7 +2,7 @@ package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
@@ -65,7 +65,7 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public int save(ProgramRequest request) {
-        ProgramEntity bean = BeanUtils.copy(request, ProgramEntity.class);
+        ProgramEntity bean = BeanUtil.toBean(request, ProgramEntity.class);
         String id = UUIDUtils.UUIDReplace();
         bean.setId(id);
         bean.setStatus(1);
@@ -84,7 +84,7 @@ public class ProgramServiceImpl implements ProgramService {
         if(0 == programEntity.getStatus()){
             throw new SoException("订单已完成不能再次修改！");
         }
-        ProgramEntity bean = BeanUtils.copy(request, ProgramEntity.class);
+        ProgramEntity bean = BeanUtil.toBean(request, ProgramEntity.class);
         return programMapper.updateById(bean);
     }
 

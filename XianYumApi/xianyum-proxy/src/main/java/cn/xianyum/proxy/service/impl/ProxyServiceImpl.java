@@ -5,6 +5,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -107,14 +108,14 @@ public class ProxyServiceImpl implements ProxyService {
 			throw new SoException("id不能为空");
 		}
 		ProxyEntity result = proxyMapper.selectById(id);
-		ProxyResponse response = BeanUtils.copy(result, ProxyResponse.class);
+		ProxyResponse response = BeanUtil.toBean(result, ProxyResponse.class);
 		return response;
 
 	}
 
 	@Override
 	public Integer save(ProxyRequest request) {
-		ProxyEntity bean = BeanUtils.copy(request,ProxyEntity.class);
+		ProxyEntity bean = BeanUtil.toBean(request,ProxyEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		bean.setLoginCount(0);
 		return proxyMapper.insert(bean);
@@ -235,7 +236,7 @@ public class ProxyServiceImpl implements ProxyService {
 		}
 		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>();
 		List<ProxyEntity> proxyEntities = proxyMapper.selectList(queryWrapper);
-		List<ProxyResponse> proxyResponses = BeanUtils.copyList(proxyEntities, ProxyResponse.class);
+		List<ProxyResponse> proxyResponses = BeanUtil.copyToList(proxyEntities, ProxyResponse.class);
 		return proxyResponses;
 	}
 
@@ -375,7 +376,7 @@ public class ProxyServiceImpl implements ProxyService {
 		if(Objects.isNull(proxy)){
 			throw new SoException("该用户未绑定远程客户端！");
 		}
-		ProxyResponse proxyResponse = BeanUtils.copy(proxy, ProxyResponse.class);
+		ProxyResponse proxyResponse = BeanUtil.toBean(proxy, ProxyResponse.class);
 		if(StringUtil.isNotEmpty(proxyResponse.getBindUserId())){
 			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyResponse.getBindUserId());
 			if(Objects.nonNull(userByIdFromRedis)){

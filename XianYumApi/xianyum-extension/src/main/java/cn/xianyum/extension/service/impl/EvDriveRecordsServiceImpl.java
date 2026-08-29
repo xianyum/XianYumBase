@@ -96,7 +96,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     @Override
     public EvDriveRecordsResponse getById(Long id) {
         EvDriveRecordsEntity result = evDriveRecordsMapper.selectById(id);
-        EvDriveRecordsResponse response = BeanUtils.copy(result, EvDriveRecordsResponse.class);
+        EvDriveRecordsResponse response = BeanUtil.toBean(result, EvDriveRecordsResponse.class);
         return response;
     }
 
@@ -104,7 +104,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     @Override
     public Integer save(EvDriveRecordsRequest request) {
         this.checkForDuplicateData(request);
-        EvDriveRecordsEntity bean = BeanUtils.copy(request, EvDriveRecordsEntity.class);
+        EvDriveRecordsEntity bean = BeanUtil.toBean(request, EvDriveRecordsEntity.class);
         BigDecimal electricityPerKm = BigDecimalUtils.divide(bean.getElectricityConsumed(), new BigDecimal(String.valueOf(bean.getDistanceKm())));
         bean.setElectricityPerKm(Objects.nonNull(electricityPerKm)?electricityPerKm:bean.getElectricityConsumed());
         boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
@@ -119,7 +119,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
             throw new SoException("id不能为空");
         }
         this.checkForDuplicateData(request);
-        EvDriveRecordsEntity bean = BeanUtils.copy(request, EvDriveRecordsEntity.class);
+        EvDriveRecordsEntity bean = BeanUtil.toBean(request, EvDriveRecordsEntity.class);
         BigDecimal electricityPerKm = BigDecimalUtils.divide(bean.getElectricityConsumed(), new BigDecimal(String.valueOf(bean.getDistanceKm())));
         bean.setElectricityPerKm(electricityPerKm);
         boolean isNormalStatus = this.checkNormalStatus(electricityPerKm);
@@ -193,7 +193,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         LambdaQueryWrapper<EvDriveRecordsEntity> queryWrapper = Wrappers.<EvDriveRecordsEntity>lambdaQuery()
                 .apply("DATE(drive_date) = {0}", DateUtils.format(driveDate, DateUtils.DATE_PATTERN));
         EvDriveRecordsEntity evDriveRecordsEntity = this.evDriveRecordsMapper.selectOne(queryWrapper);
-        return BeanUtils.copy(evDriveRecordsEntity, EvDriveRecordsResponse.class);
+        return BeanUtil.toBean(evDriveRecordsEntity, EvDriveRecordsResponse.class);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
@@ -54,7 +54,7 @@ public class DictDataServiceImpl implements DictDataService {
     @Override
     public DictDataResponse getInfo(Long id) {
         DictDataEntity dictDataEntity = dictDataMapper.selectById(id);
-        DictDataResponse dictDataResponse = BeanUtils.copy(dictDataEntity, DictDataResponse.class);
+        DictDataResponse dictDataResponse = BeanUtil.toBean(dictDataEntity, DictDataResponse.class);
         return Objects.isNull(dictDataResponse)?new DictDataResponse():dictDataResponse;
     }
 

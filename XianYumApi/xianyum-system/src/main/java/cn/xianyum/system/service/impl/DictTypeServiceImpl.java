@@ -2,7 +2,7 @@ package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.DictDataMapper;
 import cn.xianyum.system.dao.DictTypeMapper;
@@ -46,7 +46,7 @@ public class DictTypeServiceImpl implements DictTypeService {
     @Override
     public DictTypeResponse selectDictTypeById(Long id) {
         DictTypeEntity dictTypeEntity = dictTypeMapper.selectById(id);
-        DictTypeResponse dictTypeResponse = BeanUtils.copy(dictTypeEntity, DictTypeResponse.class);
+        DictTypeResponse dictTypeResponse = BeanUtil.toBean(dictTypeEntity, DictTypeResponse.class);
         return Objects.isNull(dictTypeResponse)?new DictTypeResponse():dictTypeResponse;
     }
 

@@ -2,7 +2,7 @@ package cn.xianyum.sheduler.service.impl;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.sheduler.dao.JobLogMapper;
@@ -45,7 +45,7 @@ public class JobLogServiceImpl implements JobLogService {
 			throw new SoException("id不能为空");
 		}
 		JobLogEntity result = jobLogMapper.selectById(id);
-		JobLogResponse response = BeanUtils.copy(result, JobLogResponse.class);
+		JobLogResponse response = BeanUtil.toBean(result, JobLogResponse.class);
 		return response;
 
 	}
@@ -53,7 +53,7 @@ public class JobLogServiceImpl implements JobLogService {
 	@Override
 	public Integer save(JobLogRequest request) {
 
-		JobLogEntity bean = BeanUtils.copy(request,JobLogEntity.class);
+		JobLogEntity bean = BeanUtil.toBean(request,JobLogEntity.class);
 		return jobLogMapper.insert(bean);
 
 	}
@@ -64,7 +64,7 @@ public class JobLogServiceImpl implements JobLogService {
 		if(null == request.getId()){
 			throw new SoException("id不能为空");
 		}
-		JobLogEntity bean = BeanUtils.copy(request,JobLogEntity.class);
+		JobLogEntity bean = BeanUtil.toBean(request,JobLogEntity.class);
 		return jobLogMapper.updateById(bean);
 
 	}

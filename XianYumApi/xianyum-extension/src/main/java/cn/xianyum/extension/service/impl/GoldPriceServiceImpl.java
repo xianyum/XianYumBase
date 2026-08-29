@@ -4,6 +4,7 @@ import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.extension.entity.response.GoldPriceApiResponse;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
@@ -123,7 +124,7 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 				.orderByDesc(GoldPriceEntity::getCreateTime)
 				.last("limit 1");
 		GoldPriceEntity goldPriceEntity = this.goldPriceMapper.selectOne(queryWrapper);
-		return BeanUtils.copy(goldPriceEntity,GoldPriceResponse.class);
+		return BeanUtil.toBean(goldPriceEntity,GoldPriceResponse.class);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 	public List<GoldPriceResponse> getTrend() {
 		LambdaQueryWrapper<GoldPriceEntity> queryWrapper = Wrappers.<GoldPriceEntity>lambdaQuery()
 				.orderByAsc(GoldPriceEntity::getTime);
-		return BeanUtils.copyList(this.goldPriceMapper.selectList(queryWrapper),GoldPriceResponse.class);
+		return BeanUtil.copyToList(this.goldPriceMapper.selectList(queryWrapper),GoldPriceResponse.class);
 	}
 
 	@Override
@@ -145,7 +146,7 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 				.orderByAsc(GoldPriceEntity::getTime);
 		List<GoldPriceEntity> goldPriceEntities = this.goldPriceMapper.selectList(queryWrapper);
 		GoldPriceResponse latestPrice = this.getLatestPrice();
-		goldPriceEntities.add(BeanUtils.copy(latestPrice,GoldPriceEntity.class));
+		goldPriceEntities.add(BeanUtil.toBean(latestPrice,GoldPriceEntity.class));
 		List<List<Object>> resultList = new ArrayList<>();
 		for (GoldPriceEntity goldPriceEntity : goldPriceEntities) {
 			List<Object> list = new ArrayList<>();
@@ -165,4 +166,3 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 	}
 
 }
-

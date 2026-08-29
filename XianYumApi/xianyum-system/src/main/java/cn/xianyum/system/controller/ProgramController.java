@@ -2,7 +2,7 @@ package cn.xianyum.system.controller;
 
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.ExportProgramEntity;
 import cn.xianyum.system.entity.po.ProgramEntity;
@@ -116,7 +116,7 @@ public class ProgramController {
             response.addHeader("filename", encode);
             excelWriter = EasyExcel.write(response.getOutputStream(), ExportProgramEntity.class).build();
             WriteSheet writeSheet = EasyExcel.writerSheet().build();
-            excelWriter.write(BeanUtils.copyList(list.getDataList(), ExportProgramEntity.class),writeSheet);
+            excelWriter.write(BeanUtil.copyToList(list.getDataList(), ExportProgramEntity.class),writeSheet);
         }catch (Exception e){
             throw new SoException("导出失败");
         }finally {

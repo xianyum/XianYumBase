@@ -9,6 +9,7 @@ import cn.xianyum.common.enums.QrCodeLoginStatus;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -393,7 +394,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         String token = HttpContextUtils.getRequestToken();
         UserEntity userEntity = userMapper.selectById(SecurityUtils.getLoginUser().getId());
 
-        LoginUser loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+        LoginUser loginUser = BeanUtil.toBean(userEntity,LoginUser.class);
         // 保留本来登录的字段，不能被覆盖。
         loginUser.setLoginType(SecurityUtils.getLoginUser().getLoginType());
 

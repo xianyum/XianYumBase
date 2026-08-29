@@ -1,7 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.extension.dao.ServerConfigMapper;
 import cn.xianyum.extension.entity.po.ServerConfigEntity;
@@ -67,14 +67,14 @@ public class ServerPortConfigServiceImpl implements ServerPortConfigService {
 	@Override
 	public ServerPortConfigResponse getById(Long id) {
 		ServerPortConfigEntity result = serverPortConfigMapper.selectById(id);
-		ServerPortConfigResponse response = BeanUtils.copy(result, ServerPortConfigResponse.class);
+		ServerPortConfigResponse response = BeanUtil.toBean(result, ServerPortConfigResponse.class);
 		return response;
 	}
 
 
 	@Override
 	public Integer save(ServerPortConfigRequest request) {
-		ServerPortConfigEntity bean = BeanUtils.copy(request,ServerPortConfigEntity.class);
+		ServerPortConfigEntity bean = BeanUtil.toBean(request,ServerPortConfigEntity.class);
 		return serverPortConfigMapper.insert(bean);
 	}
 
@@ -84,7 +84,7 @@ public class ServerPortConfigServiceImpl implements ServerPortConfigService {
 		if(Objects.isNull(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		ServerPortConfigEntity bean = BeanUtils.copy(request,ServerPortConfigEntity.class);
+		ServerPortConfigEntity bean = BeanUtil.toBean(request,ServerPortConfigEntity.class);
 		return serverPortConfigMapper.updateById(bean);
 	}
 
@@ -104,4 +104,3 @@ public class ServerPortConfigServiceImpl implements ServerPortConfigService {
 		return this.serverPortConfigMapper.selectList(queryWrapper);
 	}
 }
-

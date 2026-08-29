@@ -4,6 +4,7 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.IJobHandler;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.sheduler.common.constant.ScheduleConstants;
 import cn.xianyum.sheduler.common.utils.CronUtils;
 import cn.xianyum.sheduler.common.utils.ScheduleUtils;
@@ -73,7 +74,7 @@ public class JobServiceImpl implements JobService {
 			throw new SoException("id不能为空");
 		}
 		JobEntity result = jobMapper.selectById(jobId);
-		JobResponse response = BeanUtils.copy(result, JobResponse.class);
+		JobResponse response = BeanUtil.toBean(result, JobResponse.class);
 		if(response != null){
 			response.setNextValidTime(CronUtils.getNextExecution(response.getCronExpression()));
 		}
@@ -92,7 +93,7 @@ public class JobServiceImpl implements JobService {
 		if (!CronUtils.isValid(request.getCronExpression())) {
 			throw new SoException("新增任务'" + request.getJobName() + "'失败，Cron表达式不正确！");
 		}
-		JobEntity bean = BeanUtils.copy(request,JobEntity.class);
+		JobEntity bean = BeanUtil.toBean(request,JobEntity.class);
 		bean.setStatus(ScheduleConstants.Status.PAUSE.getValue());
 		int rows = jobMapper.insert(bean);
 		if (rows > 0) {
@@ -114,7 +115,7 @@ public class JobServiceImpl implements JobService {
 		}
 		this.checkJobHandler(request.getJobHandler());
 		this.checkJobParams(request.getJobParams());
-		JobEntity bean = BeanUtils.copy(request,JobEntity.class);
+		JobEntity bean = BeanUtil.toBean(request,JobEntity.class);
 		int rows = jobMapper.updateById(bean);
 		if(rows > 0){
 			updateSchedulerJob(bean.getJobId());

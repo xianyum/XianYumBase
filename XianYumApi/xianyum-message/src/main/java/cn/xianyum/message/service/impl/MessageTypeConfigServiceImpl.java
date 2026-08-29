@@ -3,7 +3,7 @@ package cn.xianyum.message.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageTypeConfigMapper;
@@ -46,7 +46,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 			throw new SoException("id不能为空");
 		}
 		MessageTypeConfigEntity result = messageTypeConfigMapper.selectById(id);
-		MessageTypeConfigResponse response = BeanUtils.copy(result, MessageTypeConfigResponse.class);
+		MessageTypeConfigResponse response = BeanUtil.toBean(result, MessageTypeConfigResponse.class);
 		return response;
 
 	}
@@ -54,7 +54,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 	@Override
 	public Integer save(MessageTypeConfigRequest request) {
 
-		MessageTypeConfigEntity bean = BeanUtils.copy(request,MessageTypeConfigEntity.class);
+		MessageTypeConfigEntity bean = BeanUtil.toBean(request,MessageTypeConfigEntity.class);
 
 		// 判断是否重复
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
@@ -102,7 +102,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 		QueryWrapper<MessageTypeConfigEntity> queryWrapper = new QueryWrapper<MessageTypeConfigEntity>()
 				.eq("del_tag",YesOrNoEnum.YES.getStatus());
 		List<MessageTypeConfigEntity> messageTypeConfigEntities = messageTypeConfigMapper.selectList(queryWrapper);
-		List<MessageTypeConfigResponse> responseList = BeanUtils.copyList(messageTypeConfigEntities, MessageTypeConfigResponse.class);
+		List<MessageTypeConfigResponse> responseList = BeanUtil.copyToList(messageTypeConfigEntities, MessageTypeConfigResponse.class);
 		return responseList;
 	}
 

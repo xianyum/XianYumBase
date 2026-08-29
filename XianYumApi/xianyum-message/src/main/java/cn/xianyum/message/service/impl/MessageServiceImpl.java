@@ -1,7 +1,7 @@
 package cn.xianyum.message.service.impl;
 
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
@@ -61,7 +61,7 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public void sendStandardMessage(MessageSenderRequest messageSenderRequest) {
-        MessageSenderEntity messageSenderEntity = BeanUtils.copy(messageSenderRequest, MessageSenderEntity.class);
+        MessageSenderEntity messageSenderEntity = BeanUtil.toBean(messageSenderRequest, MessageSenderEntity.class);
         List<MessageContent> messageContents = new ArrayList<>();
         MessageContent messageContent = new MessageContent();
         messageContent.setLabel(MESSAGE_CONTENT_PREFIX);

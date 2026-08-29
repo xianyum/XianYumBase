@@ -1,6 +1,6 @@
 package cn.xianyum.common.entity.base;
 
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Data;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class PageResponse<R extends BaseResponse> {
      * @param <R>
      */
     public static <R extends BaseResponse> PageResponse<R> of(long total, List<?> entityList,Class<R> rClass) {
-        List<R> rs = BeanUtils.copyList(entityList,rClass);
+        List<R> rs = BeanUtil.copyToList(entityList,rClass);
         return new PageResponse(total, rs);
     }
 
@@ -67,7 +67,12 @@ public class PageResponse<R extends BaseResponse> {
      * @param <R>
      */
     public static <T,R extends BaseResponse> PageResponse<R> of(long total, List<T> entityList,Class<R> rClass, BiConsumer<R, T> biConsumer) {
-        List<R> rs = BeanUtils.copyList(entityList,rClass,biConsumer);
+        List<R> rs = new ArrayList<>(entityList.size());
+        for (T entity : entityList) {
+            R response = BeanUtil.toBean(entity, rClass);
+            biConsumer.accept(response, entity);
+            rs.add(response);
+        }
         return new PageResponse(total, rs);
     }
 
@@ -79,7 +84,7 @@ public class PageResponse<R extends BaseResponse> {
      * @param <R>
      */
     public static <R extends BaseResponse> PageResponse<R> of(IPage<?> pageResult, Class<R> rClass) {
-        List<R> rs = BeanUtils.copyList(pageResult.getRecords(),rClass);
+        List<R> rs = BeanUtil.copyToList(pageResult.getRecords(),rClass);
         return new PageResponse(pageResult.getTotal(), rs);
     }
 
@@ -93,7 +98,12 @@ public class PageResponse<R extends BaseResponse> {
      * @param <R>
      */
     public static <T, R extends BaseResponse> PageResponse<R> of(IPage<T> pageResult, Class<R> rClass, BiConsumer<R, T> biConsumer) {
-        List<R> rs = BeanUtils.copyList(pageResult.getRecords(),rClass,biConsumer);
+        List<R> rs = new ArrayList<>(pageResult.getRecords().size());
+        for (T entity : pageResult.getRecords()) {
+            R response = BeanUtil.toBean(entity, rClass);
+            biConsumer.accept(response, entity);
+            rs.add(response);
+        }
         return new PageResponse(pageResult.getTotal(), rs);
     }
 

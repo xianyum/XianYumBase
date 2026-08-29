@@ -3,6 +3,7 @@ package cn.xianyum.message.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageSendConfigMapper;
 import cn.xianyum.message.dao.MessageSendRelationMapper;
 import cn.xianyum.message.entity.po.*;
@@ -42,7 +43,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 			throw new SoException("id不能为空");
 		}
 		MessageSendConfigEntity result = messageSendConfigMapper.selectById(id);
-		MessageSendConfigResponse response = BeanUtils.copy(result, MessageSendConfigResponse.class);
+		MessageSendConfigResponse response = BeanUtil.toBean(result, MessageSendConfigResponse.class);
 		return response;
 
 	}
@@ -50,7 +51,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 	@Override
 	public Integer save(MessageSendConfigRequest request) {
 
-		MessageSendConfigEntity bean = BeanUtils.copy(request,MessageSendConfigEntity.class);
+		MessageSendConfigEntity bean = BeanUtil.toBean(request,MessageSendConfigEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		return messageSendConfigMapper.insert(bean);
 
@@ -62,7 +63,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		MessageSendConfigEntity bean = BeanUtils.copy(request,MessageSendConfigEntity.class);
+		MessageSendConfigEntity bean = BeanUtil.toBean(request,MessageSendConfigEntity.class);
 		return messageSendConfigMapper.updateById(bean);
 
 	}
@@ -83,7 +84,7 @@ public class MessageSendConfigServiceImpl implements MessageSendConfigService {
 
 	@Override
 	public MessageSendConfigEntity saveOrUpdate(MessageSendConfigRequest request) {
-		MessageSendConfigEntity bean = BeanUtils.copy(request,MessageSendConfigEntity.class);
+		MessageSendConfigEntity bean = BeanUtil.toBean(request,MessageSendConfigEntity.class);
 		int count = 0;
 		if(StringUtil.isNotEmpty(request.getId())){
 			count = messageSendConfigMapper.updateById(bean);

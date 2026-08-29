@@ -1,7 +1,7 @@
 package cn.xianyum.extension.service.impl;
 
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.extension.entity.po.ServerPortConfigEntity;
@@ -59,14 +59,14 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 	@Override
 	public ServerConfigResponse getById(Long id) {
 		ServerConfigEntity result = serverConfigMapper.selectById(id);
-		ServerConfigResponse response = BeanUtils.copy(result, ServerConfigResponse.class);
+		ServerConfigResponse response = BeanUtil.toBean(result, ServerConfigResponse.class);
 		return response;
 	}
 
 
 	@Override
 	public Integer save(ServerConfigRequest request) {
-		ServerConfigEntity bean = BeanUtils.copy(request,ServerConfigEntity.class);
+		ServerConfigEntity bean = BeanUtil.toBean(request,ServerConfigEntity.class);
 		if(StringUtil.isNotEmpty(bean.getServerPublicIp())){
 			bean.setServerLocation(IPUtils.getIpInfo(bean.getServerPublicIp()));
 		}
@@ -79,7 +79,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 		if(Objects.isNull(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		ServerConfigEntity bean = BeanUtils.copy(request,ServerConfigEntity.class);
+		ServerConfigEntity bean = BeanUtil.toBean(request,ServerConfigEntity.class);
 		if(StringUtil.isNotEmpty(bean.getServerPublicIp())){
 			bean.setServerLocation(IPUtils.getIpInfo(bean.getServerPublicIp()));
 		}
@@ -106,7 +106,7 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 		LambdaQueryWrapper<ServerConfigEntity> queryWrapper = Wrappers.<ServerConfigEntity>lambdaQuery()
 				.orderByDesc(ServerConfigEntity::getCreateTime);
 		List<ServerConfigEntity> serverConfigEntities = this.serverConfigMapper.selectList(queryWrapper);
-		return BeanUtils.copyList(serverConfigEntities,ServerConfigResponse.class);
+		return BeanUtil.copyToList(serverConfigEntities,ServerConfigResponse.class);
 	}
 
 	@Override
@@ -116,4 +116,3 @@ public class ServerConfigServiceImpl implements ServerConfigService {
 		return this.serverConfigMapper.selectList(queryWrapper);
 	}
 }
-

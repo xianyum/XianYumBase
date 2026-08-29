@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageConfigEmailMapper;
 import cn.xianyum.message.entity.po.MessageConfigEmailEntity;
 import cn.xianyum.message.entity.request.MessageConfigEmailRequest;
@@ -48,7 +49,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 			throw new SoException("id不能为空");
 		}
 		MessageConfigEmailEntity result = messageConfigEmailMapper.selectById(id);
-		MessageConfigEmailResponse response = BeanUtils.copy(result, MessageConfigEmailResponse.class);
+		MessageConfigEmailResponse response = BeanUtil.toBean(result, MessageConfigEmailResponse.class);
 		return response;
 
 	}
@@ -56,7 +57,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	@Override
 	public Integer save(MessageConfigEmailRequest request) {
 
-		MessageConfigEmailEntity bean = BeanUtils.copy(request,MessageConfigEmailEntity.class);
+		MessageConfigEmailEntity bean = BeanUtil.toBean(request,MessageConfigEmailEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		return messageConfigEmailMapper.insert(bean);
 
@@ -68,7 +69,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		MessageConfigEmailEntity bean = BeanUtils.copy(request,MessageConfigEmailEntity.class);
+		MessageConfigEmailEntity bean = BeanUtil.toBean(request,MessageConfigEmailEntity.class);
 		int count = messageConfigEmailMapper.updateById(bean);
 		redisUtils.del(this.getMessageConfigKey(bean.getId()));
 		return count;

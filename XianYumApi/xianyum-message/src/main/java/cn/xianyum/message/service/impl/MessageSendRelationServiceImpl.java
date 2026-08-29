@@ -3,7 +3,7 @@ package cn.xianyum.message.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.common.utils.UUIDUtils;
 import cn.xianyum.message.dao.MessageConfigEmailMapper;
@@ -54,7 +54,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 				.eq(StringUtil.isNotEmpty(request.getMessageAccountType()),"message_account_type",request.getMessageAccountType())
 				.orderByDesc("create_time");
 		IPage<MessageSendRelationEntity> pageResult = messageSendRelationMapper.selectPage(page,queryWrapper);
-		List<MessageSendRelationResponse> messageSendRelationResponses = BeanUtils.copyList(pageResult.getRecords(), MessageSendRelationResponse.class);
+		List<MessageSendRelationResponse> messageSendRelationResponses = BeanUtil.copyToList(pageResult.getRecords(), MessageSendRelationResponse.class);
 		if(!CollectionUtils.isEmpty(pageResult.getRecords())){
 			for(MessageSendRelationResponse item : messageSendRelationResponses){
 				JSONArray messageConfigByAccountType = this.getMessageConfigByAccountType(item.getMessageConfigId(), item.getMessageAccountType());
@@ -73,7 +73,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 
 	@Override
 	public Integer save(MessageSendRelationRequest request) {
-		MessageSendRelationEntity bean = BeanUtils.copy(request,MessageSendRelationEntity.class);
+		MessageSendRelationEntity bean = BeanUtil.toBean(request,MessageSendRelationEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		return messageSendRelationMapper.insert(bean);
 	}
@@ -97,7 +97,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 			throw new SoException("id不能为空");
 		}
 		MessageSendRelationEntity result = messageSendRelationMapper.selectById(id);
-		MessageSendRelationResponse response = BeanUtils.copy(result, MessageSendRelationResponse.class);
+		MessageSendRelationResponse response = BeanUtil.toBean(result, MessageSendRelationResponse.class);
 		return response;
 
 	}

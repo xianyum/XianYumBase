@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.system.dao.SystemConstantMapper;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.SystemConstantRequest;
@@ -55,7 +56,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
 
     @Override
     public int update(SystemConstantRequest request) {
-        SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
+        SystemConstantEntity bean = BeanUtil.toBean(request,SystemConstantEntity.class);
         bean.setConstantKey(null);
         int count = systemConstantMapper.updateById(bean);
         xianYumTaskExecutor.execute(()-> SpringUtils.getBean(SystemConstantService.class).setSystemConstantToRedis(request.getConstantKey(),null));
@@ -187,7 +188,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
     @Override
     public SystemConstantResponse getById(String id) {
         SystemConstantEntity result = systemConstantMapper.selectById(id);
-        SystemConstantResponse response = BeanUtils.copy(result, SystemConstantResponse.class);
+        SystemConstantResponse response = BeanUtil.toBean(result, SystemConstantResponse.class);
         return response;
 
     }
@@ -203,7 +204,7 @@ public class SystemConstantServiceImpl implements SystemConstantService {
         if (Objects.nonNull(repeatSystemConstant)) {
             throw new SoException("系统常量键已存在");
         }
-        SystemConstantEntity bean = BeanUtils.copy(request,SystemConstantEntity.class);
+        SystemConstantEntity bean = BeanUtil.toBean(request,SystemConstantEntity.class);
         bean.setId(UUIDUtils.UUIDReplace());
         return systemConstantMapper.insert(bean);
     }

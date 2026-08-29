@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageConfigWebhookMapper;
 import cn.xianyum.message.entity.po.MessageConfigWebhookEntity;
 import cn.xianyum.message.entity.request.MessageConfigWebhookRequest;
@@ -48,7 +49,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 			throw new SoException("id不能为空");
 		}
 		MessageConfigWebhookEntity result = messageConfigWebhookMapper.selectById(id);
-		MessageConfigWebhookResponse response = BeanUtils.copy(result, MessageConfigWebhookResponse.class);
+		MessageConfigWebhookResponse response = BeanUtil.toBean(result, MessageConfigWebhookResponse.class);
 		return response;
 
 	}
@@ -56,7 +57,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 	@Override
 	public Integer save(MessageConfigWebhookRequest request) {
 
-		MessageConfigWebhookEntity bean = BeanUtils.copy(request,MessageConfigWebhookEntity.class);
+		MessageConfigWebhookEntity bean = BeanUtil.toBean(request,MessageConfigWebhookEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		return messageConfigWebhookMapper.insert(bean);
 
@@ -68,7 +69,7 @@ public class MessageConfigWebhookServiceImpl implements MessageConfigWebhookServ
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		MessageConfigWebhookEntity bean = BeanUtils.copy(request,MessageConfigWebhookEntity.class);
+		MessageConfigWebhookEntity bean = BeanUtil.toBean(request,MessageConfigWebhookEntity.class);
 		int count = messageConfigWebhookMapper.updateById(bean);
 		redisUtils.del(this.getMessageConfigKey(bean.getId()));
 		return count;

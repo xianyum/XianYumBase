@@ -1,6 +1,6 @@
 package cn.xianyum.system.service.impl;
 
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.system.entity.po.UserThirdRelationEntity;
 import cn.xianyum.system.entity.response.UserThirdRelationResponse;
@@ -45,7 +45,6 @@ public class UserThirdRelationServiceImpl implements UserThirdRelationService {
 				.eq(UserThirdRelationEntity::getUserId, SecurityUtils.getLoginUser().getId())
 				.orderByDesc(UserThirdRelationEntity::getCreateTime);
 		List<UserThirdRelationEntity> userThirdRelationEntities = userThirdRelationMapper.selectList(lambdaQueryWrapper);
-		return BeanUtils.copyList(userThirdRelationEntities,UserThirdRelationResponse.class);
+		return BeanUtil.copyToList(userThirdRelationEntities,UserThirdRelationResponse.class);
 	}
 }
-

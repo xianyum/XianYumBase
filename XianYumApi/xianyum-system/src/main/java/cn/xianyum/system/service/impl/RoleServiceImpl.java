@@ -3,7 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
 import cn.xianyum.system.dao.RoleMenuMapper;
@@ -65,14 +65,14 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public RoleResponse getById(Long id) {
 		RoleEntity result = roleMapper.selectById(id);
-		RoleResponse response = BeanUtils.copy(result, RoleResponse.class);
+		RoleResponse response = BeanUtil.toBean(result, RoleResponse.class);
 		return Objects.isNull(response)?new RoleResponse():response;
 	}
 
 
 	@Override
 	public Integer save(RoleRequest request) {
-		RoleEntity bean = BeanUtils.copy(request,RoleEntity.class);
+		RoleEntity bean = BeanUtil.toBean(request,RoleEntity.class);
 		return roleMapper.insert(bean);
 	}
 
@@ -85,7 +85,7 @@ public class RoleServiceImpl implements RoleService {
 		if(request.getId().equals(1L)){
 			throw new SoException("不能更新admin权限！");
 		}
-		RoleEntity bean = BeanUtils.copy(request,RoleEntity.class);
+		RoleEntity bean = BeanUtil.toBean(request,RoleEntity.class);
 		return roleMapper.updateById(bean);
 	}
 
@@ -170,7 +170,7 @@ public class RoleServiceImpl implements RoleService {
 				.eq(RoleEntity::getStatus,0)
 				.orderByAsc(RoleEntity::getRoleSort);
 		List<RoleEntity> roleEntities = roleMapper.selectList(queryWrapper);
-		return BeanUtils.copyList(roleEntities,RoleResponse.class);
+		return BeanUtil.copyToList(roleEntities,RoleResponse.class);
 	}
 
 	@Override
@@ -211,4 +211,3 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 }
-

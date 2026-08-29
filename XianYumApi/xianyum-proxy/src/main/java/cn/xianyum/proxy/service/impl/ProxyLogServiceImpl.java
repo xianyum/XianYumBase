@@ -4,7 +4,7 @@ import cn.xianyum.common.entity.base.BaseEntity;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
-import cn.xianyum.common.utils.BeanUtils;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.StringUtil;
@@ -49,7 +49,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 	@Override
 	public ProxyLogResponse getById(Long id) {
 		ProxyLogEntity result = proxyLogMapper.selectById(id);
-		ProxyLogResponse response = BeanUtils.copy(result, ProxyLogResponse.class);
+		ProxyLogResponse response = BeanUtil.toBean(result, ProxyLogResponse.class);
 		return response;
 
 	}
@@ -127,7 +127,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 				.orderByDesc(ProxyLogEntity::getCreateTime)
 				.last("limit 5");
 		List<ProxyLogEntity> proxyLogEntities = proxyLogMapper.selectList(queryWrapper);
-		return BeanUtils.copyList(proxyLogEntities,ProxyLogResponse.class);
+		return BeanUtil.copyToList(proxyLogEntities,ProxyLogResponse.class);
 	}
 
 }

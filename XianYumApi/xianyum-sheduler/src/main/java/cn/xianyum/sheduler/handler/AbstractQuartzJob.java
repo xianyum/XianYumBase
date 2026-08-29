@@ -2,6 +2,7 @@ package cn.xianyum.sheduler.handler;
 
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
@@ -29,7 +30,7 @@ public abstract class AbstractQuartzJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
-        JobEntity jobEntity = BeanUtils.copy(context.getMergedJobDataMap().get(ScheduleConstants.TASK_PROPERTIES),JobEntity.class);
+        JobEntity jobEntity = BeanUtil.toBean(context.getMergedJobDataMap().get(ScheduleConstants.TASK_PROPERTIES),JobEntity.class);
         SchedulerTool tool = new SchedulerTool(jobEntity.getJobId(), JSONObject.toJSONString(jobEntity));
         ReturnT returnT = null;
         String exceptionInfo = null;

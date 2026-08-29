@@ -5,6 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.dao.MessageConfigWechatMapper;
 import cn.xianyum.message.entity.po.MessageConfigWechatEntity;
 import cn.xianyum.message.entity.request.MessageConfigWechatRequest;
@@ -47,7 +48,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 			throw new SoException("id不能为空");
 		}
 		MessageConfigWechatEntity result = messageConfigWechatMapper.selectById(id);
-		MessageConfigWechatResponse response = BeanUtils.copy(result, MessageConfigWechatResponse.class);
+		MessageConfigWechatResponse response = BeanUtil.toBean(result, MessageConfigWechatResponse.class);
 		return response;
 
 	}
@@ -55,7 +56,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	@Override
 	public Integer save(MessageConfigWechatRequest request) {
 
-		MessageConfigWechatEntity bean = BeanUtils.copy(request,MessageConfigWechatEntity.class);
+		MessageConfigWechatEntity bean = BeanUtil.toBean(request,MessageConfigWechatEntity.class);
 		bean.setId(UUIDUtils.UUIDReplace());
 		return messageConfigWechatMapper.insert(bean);
 
@@ -67,7 +68,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 		if(StringUtil.isEmpty(request.getId())){
 			throw new SoException("id不能为空");
 		}
-		MessageConfigWechatEntity bean = BeanUtils.copy(request,MessageConfigWechatEntity.class);
+		MessageConfigWechatEntity bean = BeanUtil.toBean(request,MessageConfigWechatEntity.class);
 		int count = messageConfigWechatMapper.updateById(bean);
 		redisUtils.del(this.getMessageConfigKey(bean.getId()));
 		return count;

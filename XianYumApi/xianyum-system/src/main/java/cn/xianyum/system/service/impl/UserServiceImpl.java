@@ -10,6 +10,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
+import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.system.common.enums.ThirdTypeEnum;
 import cn.xianyum.system.common.utils.SecretUtils;
 import cn.xianyum.system.dao.RoleMapper;
@@ -136,7 +137,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse selectOneById(String id) {
         UserEntity userEntity = userMapper.selectById(id);
-        UserResponse userResponse = BeanUtils.copy(userEntity, UserResponse.class);
+        UserResponse userResponse = BeanUtil.toBean(userEntity, UserResponse.class);
         if(Objects.nonNull(userResponse)){
             List<RoleResponse> roleByUserId = roleMapper.getRoleByUserId(userEntity.getId());
             userResponse.setRoleIds(roleByUserId.stream().map(RoleResponse::getId).collect(Collectors.toList()));
@@ -151,7 +152,7 @@ public class UserServiceImpl implements UserService {
         if(repeatList != null && repeatList.size() >0){
             throw new SoException("用户名或手机号已被使用！");
         }
-        UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
+        UserEntity userEntity = BeanUtil.toBean(user, UserEntity.class);
         userEntity.setPassword(SecretUtils.encryptPassword(user.getPassword()));
         userEntity.setDelTag(YesOrNoEnum.YES.getStatus());
         if(userEntity.getStatus() == null){
@@ -171,7 +172,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public int update(UserRequest user) {
 
-        UserEntity userEntity = BeanUtils.copy(user, UserEntity.class);
+        UserEntity userEntity = BeanUtil.toBean(user, UserEntity.class);
         List<UserEntity> repeatList = userMapper.getList(user).stream().filter(p -> !user.getId().equals(p.getId())).collect(Collectors.toList());
         if(repeatList != null && repeatList.size() >0){
             throw new SoException("用户名或手机号已被使用！");
@@ -272,7 +273,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserProfile() {
         String userId = SecurityUtils.getLoginUser().getId();
         UserEntity userEntity = userMapper.selectById(userId);
-        UserResponse userResponse = BeanUtils.copy(userEntity, UserResponse.class);
+        UserResponse userResponse = BeanUtil.toBean(userEntity, UserResponse.class);
         if(null != userResponse){
             String groupRoleName = roleMapper.getRoleByUserId(userId).stream().map(RoleResponse::getRoleName).collect(Collectors.joining(","));
             if(StringUtil.isNotBlank(userResponse.getAvatarFileId()) && StringUtil.ishttp(userResponse.getAvatarFileId())){
@@ -315,7 +316,7 @@ public class UserServiceImpl implements UserService {
     public void initDefaultUser(LoginUser loginUser) {
         String thirdUserId = loginUser.getThirdUserId();
         String userId = loginUser.getId();
-        UserEntity userEntity = BeanUtils.copy(loginUser, UserEntity.class);
+        UserEntity userEntity = BeanUtil.toBean(loginUser, UserEntity.class);
         userEntity.setId(userId);
         userEntity.setDelTag(YesOrNoEnum.YES.getStatus());
         // 设置登录密码
@@ -517,7 +518,7 @@ public class UserServiceImpl implements UserService {
                     aliUserEntity.setOpenUserName(nickName);
                     userThirdRelationMapper.updateById(aliUserEntity);
                 }
-                loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+                loginUser = BeanUtil.toBean(userEntity,LoginUser.class);
             }
             loginUser.setLoginType(LoginTypeEnum.ZHI_FU_BAO.getAccountType());
             return loginUser;
@@ -576,7 +577,7 @@ public class UserServiceImpl implements UserService {
                     qqThirdUserEntity.setOpenUserName(nickName);
                     userThirdRelationMapper.updateById(qqThirdUserEntity);
                 }
-                loginUser = BeanUtils.copy(userEntity,LoginUser.class);
+                loginUser = BeanUtil.toBean(userEntity,LoginUser.class);
                 loginUser.setLoginType(LoginTypeEnum.QQ.getAccountType());
             }
             return loginUser;
