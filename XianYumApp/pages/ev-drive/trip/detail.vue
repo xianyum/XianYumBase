@@ -8,7 +8,7 @@
         :longitude="mapCenter.longitude"
         :scale="mapScale"
         :markers="markers"
-        :polylines="polylines"
+        :polyline="polyline"
         :show-location="false"
         @updated="onMapUpdated"
       ></map>
@@ -143,6 +143,7 @@ export default {
       mapReady: false,
       mapCenter: { latitude: 34.24, longitude: 108.90 },
       mapScale: 13,
+      polyline: [],
       allTrackPoints: [],
       isPlaying: false,
       currentIndex: 0,
@@ -151,7 +152,8 @@ export default {
       distanceKm: '0.0',
       durationText: '-',
       avgSpeed: 0,
-      playbackSpeedOptions: [1, 4, 16, 32]
+      playbackSpeedOptions: [1, 4, 16, 32],
+      showCarMarker: false
     };
   },
   computed: {
@@ -160,13 +162,13 @@ export default {
       const start = this.trackList[0];
       const end = this.trackList[this.trackList.length - 1];
       const curPoint = this.trackList[this.currentIndex] || start;
-      return [
+      const list = [
         {
           id: 1,
           latitude: Number(start.lat),
           longitude: Number(start.lon),
-          width: 36,
-          height: 36,
+          width: 48,
+          height: 48,
           iconPath: '/static/images/map/start.png',
           callout: {
             content: '起点',
@@ -182,8 +184,8 @@ export default {
           id: 2,
           latitude: Number(end.lat),
           longitude: Number(end.lon),
-          width: 36,
-          height: 36,
+          width: 48,
+          height: 48,
           iconPath: '/static/images/map/end.png',
           callout: {
             content: '终点',
@@ -194,56 +196,20 @@ export default {
             padding: 8,
             display: 'ALWAYS'
           }
-        },
-        {
+        }
+      ];
+      if (this.showCarMarker) {
+        list.push({
           id: 3,
           latitude: Number(curPoint.lat),
           longitude: Number(curPoint.lon),
-          width: 40,
-          height: 40,
+          width: 56,
+          height: 56,
           iconPath: '/static/images/map/car.png',
           rotate: curPoint.heading || 0
-        }
-      ];
-    },
-    polylines() {
-      if (this.trackList.length < 2) return [];
-      const allPoints = this.allTrackPoints.length > 0 ? this.allTrackPoints : this.trackList.map(p => ({
-        latitude: Number(p.lat),
-        longitude: Number(p.lon)
-      }));
-      const playedPoints = this.trackList.slice(0, this.currentIndex + 1).map(p => ({
-        latitude: Number(p.lat),
-        longitude: Number(p.lon)
-      }));
-      const result = [];
-      if (!this.isPlaying && this.currentIndex === 0) {
-        result.push({
-          id: 1,
-          points: allPoints,
-          color: '#409eff',
-          width: 6,
-          dottedLine: false
         });
-      } else {
-        result.push({
-          id: 1,
-          points: allPoints,
-          color: '#D0D0D0',
-          width: 5,
-          dottedLine: false
-        });
-        if (playedPoints.length >= 2) {
-          result.push({
-            id: 2,
-            points: playedPoints,
-            color: '#409eff',
-            width: 8,
-            dottedLine: false
-          });
-        }
       }
-      return result;
+      return list;
     },
     progressPercent() {
       if (this.trackList.length <= 1) return 0;
@@ -316,6 +282,14 @@ export default {
           latitude: Number(p.lat),
           longitude: Number(p.lon)
         }));
+
+        if (this.allTrackPoints.length >= 2) {
+          this.polyline = [{
+            points: this.allTrackPoints,
+            color: '#5a77d7',
+            width: 15
+          }];
+        }
       } else if (this.trip.startLat) {
         this.mapCenter = {
           latitude: Number(this.trip.startLat),
@@ -370,6 +344,8 @@ export default {
         this.currentIndex = 0;
       }
       this.isPlaying = true;
+      this.showCarMarker = true;
+      this.updateCarMarker();
       this.scheduleNextFrame();
     },
     stopPlayback() {
@@ -395,6 +371,7 @@ export default {
     resetPlayback() {
       this.stopPlayback();
       this.currentIndex = 0;
+      this.showCarMarker = true;
       this.updateCarMarker();
       this.moveToTrack();
     },
@@ -412,6 +389,7 @@ export default {
           const tapX = e.detail.x - rect.left;
           const ratio = Math.max(0, Math.min(1, tapX / rect.width));
           this.currentIndex = Math.floor(ratio * (this.trackList.length - 1));
+          this.showCarMarker = true;
           this.updateCarMarker();
         }
       });
