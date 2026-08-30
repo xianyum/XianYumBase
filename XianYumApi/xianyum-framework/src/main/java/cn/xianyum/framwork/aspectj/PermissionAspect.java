@@ -101,7 +101,8 @@ public class PermissionAspect {
         Object[] args = pjp.getArgs();
         if(args != null && args.length>0){
             if(args[0] instanceof BaseRequest){
-                String checkSign = ObjectUtil.toString(ReflectUtil.getFieldValue(args[0], "signature"));
+                Object signature = ReflectUtil.getFieldValue(args[0], "signature");
+                String checkSign = Objects.isNull(signature)?null:ObjectUtil.toString(signature);
                 Object id = ReflectUtil.getFieldValue(args[0], "id");
                 if(StrUtil.isNotBlank(checkSign) && Objects.nonNull(id)){
                     String md5 = MD5Utils.getMd5(className.concat(id.toString()),Constants.MD5_DEFAULT_SECRET);
