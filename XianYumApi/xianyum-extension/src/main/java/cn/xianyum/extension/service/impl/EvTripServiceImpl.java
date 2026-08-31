@@ -105,11 +105,6 @@ public class EvTripServiceImpl implements EvTripService {
                 }
                 LocalDateTime tripMaxTime = tripData.get(tripData.size() - 1).getReportTime();
 
-                // 更新maxTime（即使跳过也要推进，防止重复处理）
-                if (tripMaxTime.isAfter(maxTime)) {
-                    maxTime = tripMaxTime;
-                }
-
                 // 如果是最后一个行程且还在执行中，跳过不记录
                 if (i == trips.size() - 1 && lastTripOngoing) {
                     continue;
@@ -127,7 +122,11 @@ public class EvTripServiceImpl implements EvTripService {
                             tripEntity.getEndSoc(),
                             tripEntity.getStartAddress(),
                             tripEntity.getEndAddress());
-                    redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
+                    // 插入成功才更新内存maxTime和Redis
+                    if (tripMaxTime.isAfter(maxTime)) {
+                        maxTime = tripMaxTime;
+                        redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
+                    }
                 }
 
             }
