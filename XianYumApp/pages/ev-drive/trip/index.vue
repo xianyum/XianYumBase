@@ -24,12 +24,18 @@
         >
           <view class="card-main">
             <view class="distance-row">
-              <text class="distance-value">{{ item.distanceKm }}</text>
-              <text class="distance-unit">km</text>
+              <view class="distance-main">
+                <text class="distance-value">{{ item.distanceKm }}</text>
+                <text class="distance-unit">km</text>
+              </view>
+              <view class="consume-info">
+                <text class="consume-value">{{ item.consumeKwh }}</text>
+                <text class="consume-unit">kWh</text>
+              </view>
             </view>
             <view class="info-row">
               <view class="info-item">
-                <uni-icons type="clock" size="12" color="#999"></uni-icons>
+                <uni-icons type="calendar" size="12" color="#999"></uni-icons>
                 <text class="info-text">{{ item.timeRange }}</text>
               </view>
               <view class="info-item">
@@ -37,7 +43,7 @@
                 <text class="info-text">{{ item.durationText }}</text>
               </view>
               <view class="info-item">
-                <uni-icons type="navigate" size="12" color="#999"></uni-icons>
+                <uni-icons type="heart" size="12" color="#999"></uni-icons>
                 <text class="info-text">{{ item.avgSpeed }} km/h</text>
               </view>
             </view>
@@ -168,9 +174,12 @@ export default {
 
       const avgSpeed = durationMs > 0 ? Math.round((parseFloat(distance) / (durationMs / 3600000))) : 0;
 
+      const consumeKwh = (item.tripConsumeKwh != null ? item.tripConsumeKwh : item.consumeKwh) || 0;
+
       return {
         ...item,
         distanceKm: distance,
+        consumeKwh: consumeKwh,
         timeRange,
         durationText,
         avgSpeed,
@@ -396,7 +405,13 @@ export default {
   .distance-row {
     display: flex;
     align-items: baseline;
+    justify-content: space-between;
     margin-bottom: 20rpx;
+
+    .distance-main {
+      display: flex;
+      align-items: baseline;
+    }
 
     .distance-value {
       font-size: 56rpx;
@@ -410,6 +425,25 @@ export default {
       color: #666;
       margin-left: 8rpx;
       font-weight: 400;
+    }
+
+    .consume-info {
+      display: flex;
+      align-items: baseline;
+
+      .consume-value {
+        font-size: 40rpx;
+        font-weight: 600;
+        color: #fa8c16;
+        line-height: 1.1;
+      }
+
+      .consume-unit {
+        font-size: 22rpx;
+        color: #fa8c16;
+        margin-left: 4rpx;
+        font-weight: 400;
+      }
     }
   }
 
