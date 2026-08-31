@@ -432,14 +432,14 @@ export default {
       align-items: baseline;
 
       .consume-value {
-        font-size: 40rpx;
+        font-size: 30rpx;
         font-weight: 600;
         color: #fa8c16;
         line-height: 1.1;
       }
 
       .consume-unit {
-        font-size: 22rpx;
+        font-size: 12rpx;
         color: #fa8c16;
         margin-left: 4rpx;
         font-weight: 400;
