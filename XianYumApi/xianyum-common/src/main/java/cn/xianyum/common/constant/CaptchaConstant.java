@@ -14,13 +14,18 @@ public class CaptchaConstant {
 
     // ====================== 验证码资源URL常量 ======================
     /** 验证码默认背景图URL（统一管理，便于后续替换） */
-    public static final String CAPTCHA_DEFAULT_BACKGROUND_URL = "https://picsum.photos/600/360";
+    public static final String CAPTCHA_DEFAULT_BACKGROUND_URL = "captcha/pic_%s.jpg";
+
 
     // ====================== 资源类型常量 ======================
     /** 资源类型-类路径 */
     public static final String RESOURCE_TYPE_CLASSPATH = "classpath";
     /** 资源类型-URL */
     public static final String RESOURCE_TYPE_URL = "url";
+
+    /** 类路径资源类型-URL */
+    public static final String CLASSPATH_RESOURCE_TYPE_URL = "classpath";
+
 
     /** 字体路径  */
     public static final String FONT_PATH = "font/alibaba.ttf";
