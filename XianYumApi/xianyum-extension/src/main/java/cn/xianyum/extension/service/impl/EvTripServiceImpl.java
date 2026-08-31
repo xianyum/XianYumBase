@@ -116,16 +116,20 @@ public class EvTripServiceImpl implements EvTripService {
                 }
 
                 EvTripEntity tripEntity = buildTripEntity(tripData);
-                evTripMapper.insert(tripEntity);
-                savedTripCount++;
-                log.info("保存行程：开始时间={}，结束时间={}，行驶里程={}公里，行驶SOC：{}%‑{}%，起点地址={}，终点地址={}",
-                        DateUtil.formatLocalDateTime(tripEntity.getTripStartTime()),
-                        DateUtil.formatLocalDateTime(tripEntity.getTripEndTime()),
-                        tripEntity.getEndOdometer().subtract(tripEntity.getStartOdometer()),
-                        tripEntity.getStartSoc(),
-                        tripEntity.getEndSoc(),
-                        tripEntity.getStartAddress(),
-                        tripEntity.getEndAddress());
+                int insertRows = evTripMapper.insert(tripEntity);
+                if(insertRows > 0){
+                    savedTripCount++;
+                    log.info("保存行程：开始时间={}，结束时间={}，行驶里程={}公里，行驶SOC：{}%‑{}%，起点地址={}，终点地址={}",
+                            DateUtil.formatLocalDateTime(tripEntity.getTripStartTime()),
+                            DateUtil.formatLocalDateTime(tripEntity.getTripEndTime()),
+                            tripEntity.getEndOdometer().subtract(tripEntity.getStartOdometer()),
+                            tripEntity.getStartSoc(),
+                            tripEntity.getEndSoc(),
+                            tripEntity.getStartAddress(),
+                            tripEntity.getEndAddress());
+                    redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
+                }
+
             }
 
 
@@ -135,9 +139,6 @@ public class EvTripServiceImpl implements EvTripService {
         } catch (Exception e) {
             log.error("Error during trip summary job", e);
             return ReturnT.FAILURE;
-        }finally {
-            // 无论insert成功/失败、整体异常，都更新redis时间，避免重复消费旧报文
-            redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
         }
     }
 
