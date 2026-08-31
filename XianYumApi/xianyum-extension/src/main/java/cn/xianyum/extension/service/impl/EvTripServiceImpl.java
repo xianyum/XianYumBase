@@ -128,10 +128,7 @@ public class EvTripServiceImpl implements EvTripService {
                         redisUtils.set(RedisKeyEnum.EV_TRIP_LAST_PROCESSED_UTC.getKey(), maxTime.toString());
                     }
                 }
-
             }
-
-
             log.info("Trip summary completed. Saved {} trips. Last processed time: {}", savedTripCount, maxTime);
             return ReturnT.SUCCESS;
 
