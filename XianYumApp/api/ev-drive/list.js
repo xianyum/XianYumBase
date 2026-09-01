@@ -81,3 +81,10 @@ export function getTripById(id) {
     method: 'get'
   })
 }
+
+export function getCurrentLocation() {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/getCurrentLocation',
+    method: 'get'
+  })
+}

@@ -1,7 +1,9 @@
 package cn.xianyum.extension.service;
 
+import cn.xianyum.extension.entity.po.EvAutoReportEntity;
 import cn.xianyum.extension.entity.request.EvAutoReportRequest;
 import cn.xianyum.extension.entity.request.EvDriveRecordsRequest;
+import cn.xianyum.extension.entity.response.EvAutoReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsResponse;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -78,4 +80,10 @@ public interface EvDriveRecordsService {
      * @param request
      */
     void saveAutoReportData(EvAutoReportRequest request);
+
+    /**
+     * 获取车辆当前位置信息
+     * @return
+     */
+    EvAutoReportResponse getCurrentLocation();
 }

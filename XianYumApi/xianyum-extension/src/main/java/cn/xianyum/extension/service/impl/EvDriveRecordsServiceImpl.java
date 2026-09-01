@@ -5,6 +5,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
+import cn.xianyum.extension.entity.response.EvAutoReportResponse;
+import cn.xianyum.extension.infra.amap.AmapService;
 import com.alibaba.fastjson2.JSON;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
@@ -55,8 +57,8 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
     @Resource
     private EvAutoReportMapper evAutoReportMapper;
 
-    @Value("${spring.ai.openai.chat.options.model}")
-    private String aiModel;
+    @Resource
+    private AmapService amapService;
 
     @Override
     public PageResponse<EvDriveRecordsResponse> getPage(EvDriveRecordsRequest request) {
@@ -309,5 +311,41 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         // 保存最新上报数据到Redis，供行程汇总job判断车辆是否还在行驶中
         String latestReportJson = JSON.toJSONString(evAutoReportEntity);
         redisUtils.set(RedisKeyEnum.EV_TRIP_LATEST_REPORT.getKey(), latestReportJson);
+    }
+
+    @Override
+    public EvAutoReportResponse getCurrentLocation() {
+        EvAutoReportEntity entity = null;
+        String json = redisUtils.getString(RedisKeyEnum.EV_TRIP_LATEST_REPORT.getKey());
+        if (StrUtil.isNotBlank(json)) {
+            entity = JSON.parseObject(json, EvAutoReportEntity.class);
+        }
+        if (Objects.isNull(entity)) {
+            LambdaQueryWrapper<EvAutoReportEntity> queryWrapper = Wrappers.<EvAutoReportEntity>lambdaQuery().orderByDesc(EvAutoReportEntity::getId).last("limit 1");
+            entity = evAutoReportMapper.selectOne(queryWrapper);
+        }
+        if (Objects.isNull(entity)) {
+            return null;
+        }
+        if (Objects.isNull(entity.getLon()) || Objects.isNull(entity.getLat()) ) {
+            LambdaQueryWrapper<EvAutoReportEntity> locationWrapper = Wrappers.<EvAutoReportEntity>lambdaQuery()
+                    .isNotNull(EvAutoReportEntity::getLon).isNotNull(EvAutoReportEntity::getLat)
+                    .orderByDesc(EvAutoReportEntity::getId).last("limit 1");
+            EvAutoReportEntity lastLocation = evAutoReportMapper.selectOne(locationWrapper);
+            if (lastLocation != null) {
+                entity.setLon(lastLocation.getLon());
+                entity.setLat(lastLocation.getLat());
+                entity.setHeading(lastLocation.getHeading());
+            }
+        }
+        EvAutoReportResponse response = BeanUtil.toBean(entity, EvAutoReportResponse.class);
+        if (Objects.nonNull(response.getLon()) && Objects.nonNull(response.getLat())) {
+            double[] gcj02 = GeoCoordinateUtil.wgs84ToGcj02(response.getLon().doubleValue(), response.getLat().doubleValue());
+            response.setLon(BigDecimal.valueOf(gcj02[0]));
+            response.setLat(BigDecimal.valueOf(gcj02[1]));
+            String address = amapService.getFormattedAddress(String.valueOf(gcj02[0]), String.valueOf(gcj02[1]));
+            response.setFormattedAddress(address);
+        }
+        return response;
     }
 }

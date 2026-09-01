@@ -5,9 +5,11 @@ import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.EvAutoReportRequest;
 import cn.xianyum.extension.entity.request.EvTripRequest;
+import cn.xianyum.extension.entity.response.EvAutoReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvTripResponse;
 import cn.xianyum.extension.service.EvTripService;
+import cn.xianyum.extension.entity.po.EvAutoReportEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +138,14 @@ public class EvDriveRecordsController {
     public Results<String> autoReport(@RequestBody EvAutoReportRequest request) {
         this.evDriveRecordsService.saveAutoReportData(request);
         return Results.success();
+    }
+
+    @Operation(summary = "获取车辆当前位置信息")
+    @GetMapping(value = "/getCurrentLocation")
+    @Permission("@ps.hasPerm('ev-drive-records:location:get')")
+    public Results<EvAutoReportResponse> getCurrentLocation() {
+        EvAutoReportResponse response = this.evDriveRecordsService.getCurrentLocation();
+        return Results.success(response);
     }
 
     /**

@@ -12,6 +12,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-qiche:before {
+  content: "\e610";
+}
+
 .icon-chelianghangshiguiji:before {
   content: "\e647";
 }
