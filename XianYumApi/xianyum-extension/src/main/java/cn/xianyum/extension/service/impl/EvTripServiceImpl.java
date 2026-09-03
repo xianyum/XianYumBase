@@ -387,11 +387,14 @@ public class EvTripServiceImpl implements EvTripService {
         entity.setEndLon(endGeo.getLon());
 
         // WGS84转GCJ02（火星坐标系，高德地图使用）
-        double[] startGcj02 = GeoCoordinateUtil.wgs84ToGcj02(startGeo.getLon().doubleValue(), startGeo.getLat().doubleValue());
-        double[] endGcj02 = GeoCoordinateUtil.wgs84ToGcj02(endGeo.getLon().doubleValue(), endGeo.getLat().doubleValue());
-
-        entity.setStartAddress(amapService.getFormattedAddress(String.valueOf(startGcj02[0]), String.valueOf(startGcj02[1])));
-        entity.setEndAddress(amapService.getFormattedAddress(String.valueOf(endGcj02[0]), String.valueOf(endGcj02[1])));
+        if(Objects.nonNull(startGeo.getLon()) && Objects.nonNull(startGeo.getLat())) {
+            double[] startGcj02 = GeoCoordinateUtil.wgs84ToGcj02(startGeo.getLon().doubleValue(), startGeo.getLat().doubleValue());
+            entity.setStartAddress(amapService.getFormattedAddress(String.valueOf(startGcj02[0]), String.valueOf(startGcj02[1])));
+        }
+        if(Objects.nonNull(endGeo.getLon()) && Objects.nonNull(endGeo.getLat())) {
+            double[] endGcj02 = GeoCoordinateUtil.wgs84ToGcj02(endGeo.getLon().doubleValue(), endGeo.getLat().doubleValue());
+            entity.setEndAddress(amapService.getFormattedAddress(String.valueOf(endGcj02[0]), String.valueOf(endGcj02[1])));
+        }
 
         // 里程
         entity.setStartOdometer(start.getOdometer());
