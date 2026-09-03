@@ -191,11 +191,13 @@ public class EvTripServiceImpl implements EvTripService {
                 track.setLat(BigDecimal.valueOf(gcj02[1]));
             }
         }
-        response.setStartLat(trackList.get(0).getLat());
-        response.setStartLon(trackList.get(0).getLon());
-        response.setEndLat(trackList.get(trackList.size() - 1).getLat());
-        response.setEndLon(trackList.get(trackList.size() - 1).getLon());
-        response.setTrackList(simplifiedTrack);
+        if(CollUtil.isNotEmpty(trackList)){
+            response.setStartLat(trackList.get(0).getLat());
+            response.setStartLon(trackList.get(0).getLon());
+            response.setEndLat(trackList.get(trackList.size() - 1).getLat());
+            response.setEndLon(trackList.get(trackList.size() - 1).getLon());
+            response.setTrackList(simplifiedTrack);
+        }
         return response;
     }
 
