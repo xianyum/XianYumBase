@@ -1,9 +1,12 @@
 package cn.xianyum.extension.infra.amap;
 
 import cn.hutool.core.text.StrPool;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.config.AmapProperties;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
+import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.extension.entity.response.AmapRegeoResponse;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.annotation.Resource;
@@ -23,6 +26,14 @@ public class AmapService {
     @Resource
     private AmapProperties amapProperties;
 
+    @Resource
+    private RedisUtils redisUtils;
+
+    /**
+     * 逆地理编码缓存过期时间（天），半个月 = 15天
+     */
+    private static final int REGEO_CACHE_DAYS = 15;
+
     /**
      * 逆地理编码：通过经纬度查询地址信息
      * @param longitude 经度
@@ -30,6 +41,14 @@ public class AmapService {
      * @return 逆地理编码响应
      */
     public AmapRegeoResponse getAddressByLocation(String longitude, String latitude) {
+        // 先查 Redis 缓存
+        String redisKey = RedisKeyEnum.AMAP_REGEO.formatKey(longitude + StrPool.COMMA + latitude);
+        String cached = redisUtils.getString(redisKey);
+        if (StrUtil.isNotEmpty(cached)) {
+            return JSONObject.parseObject(cached, AmapRegeoResponse.class);
+        }
+
+        // 缓存未命中，调用高德 API
         String location = longitude + StrPool.COMMA + latitude;
         String url = amapProperties.getBaseUrl() + amapProperties.getRegeoPath();
         String result = HttpUtils.getHttpInstance().sync(url)
@@ -43,6 +62,9 @@ public class AmapService {
             log.error("高德逆地理编码接口返回失败：{}", result);
             throw new SoException("高德逆地理编码接口返回失败：" + amapRegeoResponse.getInfo());
         }
+
+        // 写入 Redis 缓存，有效期半个月
+        redisUtils.setDay(redisKey, JSONObject.toJSONString(amapRegeoResponse), REGEO_CACHE_DAYS);
         return amapRegeoResponse;
     }
 
