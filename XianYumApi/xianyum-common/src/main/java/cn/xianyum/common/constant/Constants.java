@@ -1,5 +1,6 @@
 package cn.xianyum.common.constant;
 
+
 /**
  * 通用常量信息
  *

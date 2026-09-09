@@ -47,16 +47,19 @@ public class BaiDuAiUtils {
         if(redisUtils.hasKey(redisKey)){
             return redisUtils.getString(redisKey);
         }
-        String result = HttpUtils.getHttpInstance().sync(ACCESS_TOKEN_URL)
-                .addUrlPara("grant_type","client_credentials")
-                .addUrlPara("client_id",clientId)
-                .addUrlPara("client_secret",clientSecret)
-                .post().getBody().toString();
-        JSONObject resultObject = JSONObject.parseObject(result);
-        String accessToken = resultObject.getString("access_token");
-        Long expiresIn = resultObject.getLong("expires_in");
-        redisUtils.set(redisKey,accessToken,expiresIn);
-        return accessToken;
+        try {
+            String url = ACCESS_TOKEN_URL + "?grant_type=client_credentials"
+                    + "&client_id=" + clientId
+                    + "&client_secret=" + clientSecret;
+            String result = HttpUtils.get(url);
+            JSONObject resultObject = JSONObject.parseObject(result);
+            String accessToken = resultObject.getString("access_token");
+            Long expiresIn = resultObject.getLong("expires_in");
+            redisUtils.set(redisKey,accessToken,expiresIn);
+            return accessToken;
+        } catch (Exception e) {
+            throw new SoException("获取百度AI access_token失败: " + e.getMessage());
+        }
     }
 
     public String getAccessToken(){
@@ -75,10 +78,9 @@ public class BaiDuAiUtils {
             if(StrUtil.isEmpty(accessToken)){
                 accessToken = this.getAccessToken();
             }
-            String result = HttpUtils.getHttpInstance().sync(OCR_GENERAL_BASIC_URL)
-                    .addUrlPara("access_token",accessToken)
-                    .addUrlPara("image", URLEncoder.encode(imageData, "UTF-8"))
-                    .post().getBody().toString();
+            String url = OCR_GENERAL_BASIC_URL + "?access_token=" + accessToken
+                    + "&image=" + URLEncoder.encode(imageData, "UTF-8");
+            String result = HttpUtils.get(url);
             String wordsResult = JSONObject.parseObject(result).getString("words_result");
             JSONArray wordsResultArray = JSONArray.parseArray(wordsResult);
             if(Objects.isNull(wordsResultArray)){

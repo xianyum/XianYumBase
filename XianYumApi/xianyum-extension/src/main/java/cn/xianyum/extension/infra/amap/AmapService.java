@@ -41,31 +41,29 @@ public class AmapService {
      * @return 逆地理编码响应
      */
     public AmapRegeoResponse getAddressByLocation(String longitude, String latitude) {
-        // 先查 Redis 缓存
         String redisKey = RedisKeyEnum.AMAP_REGEO.formatKey(longitude + StrPool.COMMA + latitude);
         String cached = redisUtils.getString(redisKey);
         if (StrUtil.isNotEmpty(cached)) {
             return JSONObject.parseObject(cached, AmapRegeoResponse.class);
         }
 
-        // 缓存未命中，调用高德 API
-        String location = longitude + StrPool.COMMA + latitude;
-        String url = amapProperties.getBaseUrl() + amapProperties.getRegeoPath();
-        String result = HttpUtils.getHttpInstance().sync(url)
-                .addUrlPara("key", amapProperties.getKey())
-                .addUrlPara("location", location)
-                .get()
-                .getBody()
-                .toString();
-        AmapRegeoResponse amapRegeoResponse = JSONObject.parseObject(result, AmapRegeoResponse.class);
-        if (!"1".equals(amapRegeoResponse.getStatus())) {
-            log.error("高德逆地理编码接口返回失败：{}", result);
-            throw new SoException("高德逆地理编码接口返回失败：" + amapRegeoResponse.getInfo());
-        }
+        try {
+            String location = longitude + StrPool.COMMA + latitude;
+            String url = amapProperties.getBaseUrl() + amapProperties.getRegeoPath()
+                    + "?key=" + amapProperties.getKey()
+                    + "&location=" + location;
+            String result =  HttpUtils.get(url);
+            AmapRegeoResponse amapRegeoResponse = JSONObject.parseObject(result, AmapRegeoResponse.class);
+            if (!"1".equals(amapRegeoResponse.getStatus())) {
+                log.error("高德逆地理编码接口返回失败：{}", result);
+                throw new SoException("高德逆地理编码接口返回失败：" + amapRegeoResponse.getInfo());
+            }
 
-        // 写入 Redis 缓存，有效期半个月
-        redisUtils.setDay(redisKey, JSONObject.toJSONString(amapRegeoResponse), REGEO_CACHE_DAYS);
-        return amapRegeoResponse;
+            redisUtils.setDay(redisKey, JSONObject.toJSONString(amapRegeoResponse), REGEO_CACHE_DAYS);
+            return amapRegeoResponse;
+        } catch (Exception e) {
+            throw new SoException("高德逆地理编码调用失败: " + e.getMessage());
+        }
     }
 
     /**

@@ -5,7 +5,6 @@ import cn.xianyum.common.utils.HttpUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.entity.dto.QqUserInfoDto;
 import cn.xianyum.system.service.QqNetService;
-import cn.zhxu.okhttps.HttpResult;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,45 +58,51 @@ public class QqNetServiceImpl implements QqNetService {
         stringBuilder.append("&client_secret="+CLIENT_SECRET);
         stringBuilder.append("&code="+authCode);
         stringBuilder.append("&redirect_uri="+REDIRECT_URI);
-        HttpResult result = HttpUtils.getHttpInstance().sync(ACCESS_TOKEN_URL + stringBuilder.toString()).get();
-        String accessToken = StrUtil.subBetween(result.getBody().toString(), "access_token=", "&");
-        return accessToken;
+        try {
+            String result = HttpUtils.get(ACCESS_TOKEN_URL + stringBuilder.toString());
+            return StrUtil.subBetween(result, "access_token=", "&");
+        } catch (Exception e) {
+            throw new SoException("QQ获取access_token失败: " + e.getMessage());
+        }
     }
 
     @Override
     public QqUserInfoDto getUserId(String accessToken, QqUserInfoDto qqUserInfo) {
-        HttpResult result = HttpUtils.getHttpInstance().sync(OPEN_ID_URL + "?access_token="+accessToken+"&unionid=1&fmt=json").get();
-        String resultResponse = result.getBody().toString();
-        if(StrUtil.isBlank(resultResponse)){
-            throw new SoException("QQ获取unionid异常");
-        }
-        log.info("第三方QQ登录,{}",resultResponse);
-        String userId = JSONObject.parseObject(resultResponse).getString("unionid");
-        String openId = JSONObject.parseObject(resultResponse).getString("openid");
-        if(Objects.nonNull(qqUserInfo)){
-            if(!qqUserInfo.getUnionid().equals(userId)){
-                throw new SoException("QQ用户信息不正确");
+        try {
+            String openIdUrl = OPEN_ID_URL + "?access_token="+accessToken+"&unionid=1&fmt=json";
+            String resultResponse = HttpUtils.get(openIdUrl);
+            if(StrUtil.isBlank(resultResponse)){
+                throw new SoException("QQ获取unionid异常");
             }
-            qqUserInfo.setUserId(userId);
-            return qqUserInfo;
+            log.info("第三方QQ登录,{}",resultResponse);
+            String userId = JSONObject.parseObject(resultResponse).getString("unionid");
+            String openId = JSONObject.parseObject(resultResponse).getString("openid");
+            if(Objects.nonNull(qqUserInfo)){
+                if(!qqUserInfo.getUnionid().equals(userId)){
+                    throw new SoException("QQ用户信息不正确");
+                }
+                qqUserInfo.setUserId(userId);
+                return qqUserInfo;
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append("?access_token="+accessToken);
+            sb.append("&oauth_consumer_key="+CLIENT_ID);
+            sb.append("&openid="+openId);
+            sb.append("&format=json");
+            String userJsonResponse = HttpUtils.get(USER_INFO_URL + sb.toString());
+            log.info("获取QQ用户信息,{}",userJsonResponse);
+            QqUserInfoDto qqUserEntity = JSONObject.parseObject(userJsonResponse, QqUserInfoDto.class);
+            if(qqUserEntity.getRet() != 0 ){
+                throw new SoException(qqUserEntity.getMsg());
+            }
+            if(qqUserEntity == null){
+                qqUserEntity = new QqUserInfoDto();
+            }
+            qqUserEntity.setUserId(userId);
+            return qqUserEntity;
+        } catch (Exception e) {
+            throw new SoException("QQ获取用户信息失败: " + e.getMessage());
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("?access_token="+accessToken);
-        sb.append("&oauth_consumer_key="+CLIENT_ID);
-        sb.append("&openid="+openId);
-        sb.append("&format=json");
-        HttpResult userJson = HttpUtils.getHttpInstance().sync(USER_INFO_URL + sb.toString()).get();
-        String userJsonResponse = userJson.getBody().toString();
-        log.info("获取QQ用户信息,{}",userJsonResponse);
-        QqUserInfoDto qqUserEntity = JSONObject.parseObject(userJsonResponse, QqUserInfoDto.class);
-        if(qqUserEntity.getRet() != 0 ){
-            throw new SoException(qqUserEntity.getMsg());
-        }
-        if(qqUserEntity == null){
-            qqUserEntity = new QqUserInfoDto();
-        }
-        qqUserEntity.setUserId(userId);
-        return qqUserEntity;
     }
 
 }

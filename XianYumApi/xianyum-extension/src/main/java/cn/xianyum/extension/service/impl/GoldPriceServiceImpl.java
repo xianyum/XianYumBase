@@ -74,44 +74,48 @@ public class GoldPriceServiceImpl implements GoldPriceService {
 		}
 		JSONObject jsonObject = SystemConstantUtils.getValueObjectByKey(SystemConstantKeyEnum.GOLD_CONFIG);
 		String url = jsonObject.getString("url");
-		String result = HttpUtils.getHttpInstance().sync(url).get().getBody().toString();
-		GoldPriceApiResponse goldPriceApiResponse = JSONObject.parseObject(result, GoldPriceApiResponse.class);
-		if(!goldPriceApiResponse.getResultCode().equals("200")){
-			log.error("拉取每日黄金api异常,{}",result);
+		try {
+			String result = HttpUtils.get(url);
+			GoldPriceApiResponse goldPriceApiResponse = JSONObject.parseObject(result, GoldPriceApiResponse.class);
+			if(!goldPriceApiResponse.getResultCode().equals("200")){
+				log.error("拉取每日黄金api异常,{}",result);
+				return ReturnT.FAILURE;
+			}
+			GoldPriceApiResponse.Au99g au99g = goldPriceApiResponse.getResult().get(0).getAu99g();
+
+			GoldPriceEntity goldPriceEntity = new GoldPriceEntity();
+			goldPriceEntity.setVariety(au99g.getVariety());
+			goldPriceEntity.setLatestPrice(BigDecimalUtils.formatString(au99g.getLatestPrice()));
+			goldPriceEntity.setMaxPrice(BigDecimalUtils.formatString(au99g.getMaxPrice()));
+			goldPriceEntity.setMinPrice(BigDecimalUtils.formatString(au99g.getMinPrice()));
+			goldPriceEntity.setOpenPrice(BigDecimalUtils.formatString(au99g.getOpenPrice()));
+			goldPriceEntity.setYesPrice(BigDecimalUtils.formatString(au99g.getYesPrice()));
+			goldPriceEntity.setChangePercentage(au99g.getChangePercentage());
+			goldPriceEntity.setTotalVol(BigDecimalUtils.formatString(au99g.getTotalVol()));
+			try {
+				goldPriceEntity.setTime(DateUtils.stringToDate(au99g.getTime(),DateUtils.DATE_TIME_PATTERN));
+			}catch (Exception e){
+				goldPriceEntity.setTime(new Date());
+			}
+			if(hourOfDay == 23 && minuteOfHour > 50){
+				goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.YES.getStatus());
+			}else{
+				goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.NO.getStatus());
+			}
+			if(DateUtils.isWeek()){
+				goldPriceEntity.setWeek(YesOrNoEnum.YES.getStatus());
+			}else{
+				goldPriceEntity.setWeek(YesOrNoEnum.NO.getStatus());
+			}
+			if(Objects.isNull(goldPriceEntity.getLatestPrice()) || Objects.isNull(goldPriceEntity.getOpenPrice())){
+				return ReturnT.SUCCESS;
+			}
+			goldPriceMapper.insert(goldPriceEntity);
+			return ReturnT.SUCCESS;
+		} catch (Exception e) {
+			log.error("拉取每日金价失败", e);
 			return ReturnT.FAILURE;
 		}
-		// 获取足金99的价格
-		GoldPriceApiResponse.Au99g au99g = goldPriceApiResponse.getResult().get(0).getAu99g();
-
-		GoldPriceEntity goldPriceEntity = new GoldPriceEntity();
-		goldPriceEntity.setVariety(au99g.getVariety());
-		goldPriceEntity.setLatestPrice(BigDecimalUtils.formatString(au99g.getLatestPrice()));
-		goldPriceEntity.setMaxPrice(BigDecimalUtils.formatString(au99g.getMaxPrice()));
-		goldPriceEntity.setMinPrice(BigDecimalUtils.formatString(au99g.getMinPrice()));
-		goldPriceEntity.setOpenPrice(BigDecimalUtils.formatString(au99g.getOpenPrice()));
-		goldPriceEntity.setYesPrice(BigDecimalUtils.formatString(au99g.getYesPrice()));
-		goldPriceEntity.setChangePercentage(au99g.getChangePercentage());
-		goldPriceEntity.setTotalVol(BigDecimalUtils.formatString(au99g.getTotalVol()));
-		try {
-			goldPriceEntity.setTime(DateUtils.stringToDate(au99g.getTime(),DateUtils.DATE_TIME_PATTERN));
-		}catch (Exception e){
-			goldPriceEntity.setTime(new Date());
-		}
-		if(hourOfDay == 23 && minuteOfHour > 50){
-			goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.YES.getStatus());
-		}else{
-			goldPriceEntity.setLatestTimeOfDay(YesOrNoEnum.NO.getStatus());
-		}
-		if(DateUtils.isWeek()){
-			goldPriceEntity.setWeek(YesOrNoEnum.YES.getStatus());
-		}else{
-			goldPriceEntity.setWeek(YesOrNoEnum.NO.getStatus());
-		}
-		if(Objects.isNull(goldPriceEntity.getLatestPrice()) || Objects.isNull(goldPriceEntity.getOpenPrice())){
-			return ReturnT.SUCCESS;
-		}
-		goldPriceMapper.insert(goldPriceEntity);
-		return ReturnT.SUCCESS;
 	}
 
 	/**

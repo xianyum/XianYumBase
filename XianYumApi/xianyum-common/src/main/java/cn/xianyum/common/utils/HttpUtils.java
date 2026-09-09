@@ -1,65 +1,176 @@
 package cn.xianyum.common.utils;
 
-import cn.xianyum.common.constant.Constants;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.StrUtil;
-import cn.zhxu.okhttps.HTTP;
-import cn.zhxu.okhttps.fastjson2.Fastjson2MsgConvertor;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
+import cn.xianyum.common.constant.Constants;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * http://okhttps.ejlchina.com/v2/getstart.html#maven
- * @author zhangwei
- * @date 2020-12-4 19:24:32
- */
+@Slf4j
 public class HttpUtils {
 
-    private static volatile HTTP http;
+    /**
+     * JSON Media Type
+     */
+    public static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json; charset=utf-8");
 
-    private HttpUtils() {
 
+    // 私有构造函数，防止外部实例化
+    private HttpUtils() {}
+
+    // OkHttp 客户端
+    private static OkHttpClient client;
+
+    static {
+        client = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
     }
 
     /**
-     * 返回Okhttp3实例
-     * @return
+     * GET 返回原始字符串（不带请求头）
      */
-    public static synchronized HTTP getHttpInstance() {
-        if(null == http){
-            synchronized (HttpUtils.class){
-                if(null == http){
-                    http = HTTP.builder().addMsgConvertor(new Fastjson2MsgConvertor())
-                            .config((OkHttpClient.Builder builder) -> {
-                                // 连接超时时间（默认10秒）
-                                builder.connectTimeout(10, TimeUnit.SECONDS);
-                                // 写入超时时间（默认10秒）
-                                builder.writeTimeout(10, TimeUnit.SECONDS);
-                                // 读取超时时间（默认10秒）
-                                builder.readTimeout(10, TimeUnit.SECONDS);
+    public static String get(String url) throws IOException {
+        return get(url, (Map<String, String>) null);
+    }
 
-                                // 添加默认的请求头
-                                builder.addInterceptor(chain -> {
-                                    // 获取原始请求
-                                    Request originalRequest = chain.request();
-                                    // 构建新的请求，并添加自定义的请求头
-                                    Request newRequest = originalRequest.newBuilder()
-                                            .addHeader(Constants.USER_AGENT_KEY, Constants.USER_AGENT_VALUE)
-                                            .build();
-                                    // 继续请求
-                                    return chain.proceed(newRequest);
-                                });
-                            })
-                            .build();
-                }
+    /**
+     * GET 返回原始字符串
+     */
+    public static String get(String url, Map<String, String> headers) throws IOException {
+        Request.Builder builder = new Request.Builder().url(url).get();
+        addHeaders(builder, headers);
+        Request request = builder.build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assertResponseSuccess(response);
+            ResponseBody body = response.body();
+            return body == null ? null : body.string();
+        }
+    }
+
+    /**
+     * GET 反序列化为普通Bean（不带请求头）
+     */
+    public static <T> T get(String url, Class<T> clazz) throws IOException {
+        return get(url, null, clazz);
+    }
+
+    /**
+     * GET 反序列化为普通Bean
+     */
+    public static <T> T get(String url, Map<String, String> headers, Class<T> clazz) throws IOException {
+        String json = get(url, headers);
+        return JSON.parseObject(json, clazz);
+    }
+
+    /**
+     * GET 泛型返回（List<T> / Result<T>）
+     */
+    public static <T> T get(String url, TypeReference<T> typeRef) throws IOException {
+        return get(url, null, typeRef);
+    }
+
+    /**
+     * GET 泛型返回（List<T> / Result<T>）
+     */
+    public static <T> T get(String url, Map<String, String> headers, TypeReference<T> typeRef) throws IOException {
+        String json = get(url, headers);
+        return JSON.parseObject(json, typeRef);
+    }
+
+    /**
+     * POST JSON 返回原始字符串（不带请求头）
+     */
+    public static String postJson(String url, Object params) throws IOException {
+        return postJson(url, null, params);
+    }
+
+    /**
+     * POST JSON 返回原始字符串
+     */
+    public static String postJson(String url, Map<String, String> headers, Object params) throws IOException {
+        String jsonStr = params == null ? StrPool.EMPTY_JSON : (params instanceof String ? (String) params : JSON.toJSONString(params));
+        RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, jsonStr);
+
+        Request.Builder builder = new Request.Builder().url(url).post(body);
+        addHeaders(builder, headers);
+        Request request = builder.build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assertResponseSuccess(response);
+            ResponseBody responseBody = response.body();
+            return responseBody == null ? null : responseBody.string();
+        }
+    }
+
+    /**
+     * POST JSON 反序列化为普通Bean（不带请求头）
+     */
+    public static <T> T postJson(String url, Object params, Class<T> clazz) throws IOException {
+        return postJson(url, null, params, clazz);
+    }
+
+    /**
+     * POST JSON 反序列化为普通Bean
+     */
+    public static <T> T postJson(String url, Map<String, String> headers, Object params, Class<T> clazz) throws IOException {
+        String json = postJson(url, headers, params);
+        return JSON.parseObject(json, clazz);
+    }
+
+    /**
+     * POST JSON 泛型返回（List<T> / Result<T>，不带请求头）
+     */
+    public static <T> T postJson(String url, Object params, TypeReference<T> typeRef) throws IOException {
+        return postJson(url, null, params, typeRef);
+    }
+
+    /**
+     * POST JSON 泛型返回（List<T> / Result<T>）
+     */
+    public static <T> T postJson(String url, Map<String, String> headers, Object params, TypeReference<T> typeRef) throws IOException {
+        String json = postJson(url, headers, params);
+        return JSON.parseObject(json, typeRef);
+    }
+
+    /**
+     * 增加请求头
+     * @param builder
+     * @param headers
+     */
+    public static void addHeaders(Request.Builder builder, Map<String, String> headers) {
+        if (CollUtil.isNotEmpty(headers)) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                builder.header(entry.getKey(), entry.getValue());
             }
         }
-        return http;
     }
+
+    /**
+     * 校验响应状态码，非2xx抛异常
+     */
+    public static void assertResponseSuccess(Response response) throws IOException {
+        if (!response.isSuccessful()) {
+            String respBody = "";
+            if(response.body() != null){
+                respBody = response.body().string();
+            }
+            log.error("Http request failed, code={}, msg={}, responseBody={}", response.code(), response.message(), respBody);
+            throw new IOException("Http request failed, code=" + response.code() + ", msg=" + response.message());
+        }
+    }
+
+
 
     /**
      * http链接判断是否为http://开头的url

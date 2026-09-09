@@ -16,7 +16,6 @@ import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.message.infra.utils.MessageUtils;
-import cn.zhxu.okhttps.OkHttps;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
@@ -24,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,26 +99,26 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
         if(redisUtils.hasKey(redisKey)){
             return redisUtils.getString(redisKey);
         }
-        // 获取验证码
-        String imageCodeStr = HttpUtils.getHttpInstance().sync(IMAGE_CODE_URL).get().getBody().toString();
-        JSONObject imageCodeObject = JSONObject.parseObject(imageCodeStr);
-        String imageCodeData = imageCodeObject.getString("data");
-        // 识别验证码
-        String imageCode = baiDuAiUtils.ocrGeneralBasic(null, imageCodeData);
-        // 登录账号获取token
-        JSONObject requestObject = new JSONObject();
-        requestObject.put("UserName",userName);
-        requestObject.put("PassWord",password);
-        requestObject.put("Code",imageCode);
-        String loginResultStr = HttpUtils.getHttpInstance().sync(LOGIN_URL).bodyType(OkHttps.JSON)
-                .setBodyPara(requestObject.toJSONString()).post().getBody().toString();
-        JSONObject loginResultObject = JSONObject.parseObject(loginResultStr);
-        String token = JSONObject.parseObject(loginResultObject.getString("data")).getString("token");
-        log.info("172号卡系统生成token,{}",token);
-        if(StrUtil.isNotEmpty(token)){
-            redisUtils.setMin(redisKey,token,120);
+        try {
+            String imageCodeStr = HttpUtils.get(IMAGE_CODE_URL);
+            JSONObject imageCodeObject = JSONObject.parseObject(imageCodeStr);
+            String imageCodeData = imageCodeObject.getString("data");
+            String imageCode = baiDuAiUtils.ocrGeneralBasic(null, imageCodeData);
+            JSONObject requestObject = new JSONObject();
+            requestObject.put("UserName",userName);
+            requestObject.put("PassWord",password);
+            requestObject.put("Code",imageCode);
+            String loginResultStr = HttpUtils.postJson(LOGIN_URL, requestObject);
+            JSONObject loginResultObject = JSONObject.parseObject(loginResultStr);
+            String token = JSONObject.parseObject(loginResultObject.getString("data")).getString("token");
+            log.info("172号卡系统生成token,{}",token);
+            if(StrUtil.isNotEmpty(token)){
+                redisUtils.setMin(redisKey,token,120);
+            }
+            return token;
+        } catch (Exception e) {
+            throw new SoException("172号卡登录失败: " + e.getMessage());
         }
-        return token;
     }
 
     /**
@@ -128,15 +128,21 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
      */
     @Override
     public List<HaoKaLotArticleEntity> getHaoKaLotArticleList() {
-        String token = "bearer "+this.getAccessTokenByLogin();
-        String articleJsonStr = HttpUtils.getHttpInstance().sync(ARTICLE_URL).addHeader("Authorization",token).get().getBody().toString();
-        if(StrUtil.isEmpty(articleJsonStr)){
-            log.error("172号卡系统token可能已经失效,{}",token);
-            throw new SoException("172号卡系统token可能已经失效："+token);
+        try {
+            String token = "bearer "+this.getAccessTokenByLogin();
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization", token);
+            String articleJsonStr = HttpUtils.get(ARTICLE_URL, headers);
+            if(StrUtil.isEmpty(articleJsonStr)){
+                log.error("172号卡系统token可能已经失效,{}",token);
+                throw new SoException("172号卡系统token可能已经失效："+token);
+            }
+            List<HaoKaLotArticleEntity> haoKaLotArticleEntities = JSONObject.parseObject(JSONObject.parseObject(articleJsonStr).getString("data"), new TypeReference<List<HaoKaLotArticleEntity>>() {
+            });
+            return haoKaLotArticleEntities;
+        } catch (Exception e) {
+            throw new SoException("获取172号卡文章列表失败: " + e.getMessage());
         }
-        List<HaoKaLotArticleEntity> haoKaLotArticleEntities = JSONObject.parseObject(JSONObject.parseObject(articleJsonStr).getString("data"), new TypeReference<List<HaoKaLotArticleEntity>>() {
-        });
-        return haoKaLotArticleEntities;
     }
 
     /**
@@ -147,18 +153,26 @@ public class HaoKaLotServiceImpl implements HaoKaLotService {
      */
     @Override
     public PageResponse<HaoKaLotProductResponse> getPage(HaoKaLotProductRequest request) {
-
-        String token = "bearer "+this.getAccessTokenByLogin();
-        String result = HttpUtils.getHttpInstance().sync(PRODUCT_URL)
-                .addHeader("Authorization",token)
-                .addUrlPara("page",request.getPageNum())
-                .addUrlPara("limit", request.getPageSize())
-                .addUrlPara("ProductName", request.getProductName())
-                .addUrlPara("Operator", request.getOperator())
-                .get().getBody().toString();
-        JSONObject resultObject = JSONObject.parseObject(result);
-        Long count = resultObject.getLong("count");
-        List<HaoKaLotProductResponse> data = JSONArray.parseArray(resultObject.getString("data"), HaoKaLotProductResponse.class);
-        return PageResponse.of(count,data);
+        try {
+            String token = "bearer "+this.getAccessTokenByLogin();
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization", token);
+            StringBuilder urlBuilder = new StringBuilder(PRODUCT_URL);
+            urlBuilder.append("?page=").append(request.getPageNum());
+            urlBuilder.append("&limit=").append(request.getPageSize());
+            if(StrUtil.isNotBlank(request.getProductName())){
+                urlBuilder.append("&ProductName=").append(request.getProductName());
+            }
+            if(StrUtil.isNotBlank(request.getOperator())){
+                urlBuilder.append("&Operator=").append(request.getOperator());
+            }
+            String result = HttpUtils.get(urlBuilder.toString(), headers);
+            JSONObject resultObject = JSONObject.parseObject(result);
+            Long count = resultObject.getLong("count");
+            List<HaoKaLotProductResponse> data = JSONArray.parseArray(resultObject.getString("data"), HaoKaLotProductResponse.class);
+            return PageResponse.of(count,data);
+        } catch (Exception e) {
+            throw new SoException("获取172号卡商品列表失败: " + e.getMessage());
+        }
     }
 }

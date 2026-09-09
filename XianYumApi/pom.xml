@@ -36,7 +36,7 @@
         <dynamic.datasource.boot.version>4.3.1</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.5.14</mybatisplus.boot.version>
         <fastjson.version>2.0.65</fastjson.version>
-        <okhttps.fastjson.version>4.0.1</okhttps.fastjson.version>
+        <okhttp.version>5.5.0</okhttp.version>
         <joda.time.version>2.12.7</joda.time.version>
         <lombok.version>1.18.38</lombok.version>
         <druid.version>1.2.23</druid.version>
@@ -49,7 +49,6 @@
         <quartz.version>2.5.1</quartz.version>
         <commons.codec.version>1.20.0</commons.codec.version>
         <prometheus.version>1.16.0</prometheus.version>
-        <okio.version>3.9.0</okio.version>
         <cglib.version>3.3.0</cglib.version>
         <jakarta.version>6.0.0</jakarta.version>
         <springdoc.version>2.8.9</springdoc.version>
@@ -151,17 +150,12 @@
                 <version>${joda.time.version}</version>
             </dependency>
 
-            <!-- https://ok.zhxu.cn/v4/introduction.html#v4-0-%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7%EF%BC%88v4-0-1%EF%BC%89 -->
             <dependency>
-                <groupId>cn.zhxu</groupId>
-                <artifactId>okhttps-fastjson2</artifactId>
-                <version>${okhttps.fastjson.version}</version>
-            </dependency>
-            <!--  解决okhttps问题-->
-            <dependency>
-                <groupId>com.squareup.okio</groupId>
-                <artifactId>okio</artifactId>
-                <version>${okio.version}</version>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-bom</artifactId>
+                <version>${okhttp.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>

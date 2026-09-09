@@ -9,8 +9,6 @@ import cn.xianyum.message.entity.po.MessageContent;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.po.WxTextCardMessage;
 import cn.xianyum.message.infra.utils.MessageUtils;
-import cn.zhxu.okhttps.HttpResult;
-import cn.zhxu.okhttps.OkHttps;
 import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,24 +38,27 @@ public class WechatSupporter {
             return (String) redisUtils.get(redisKey);
         }
         String sendUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid="+cropId+"&corpsecret="+cropSecret;
-        HttpResult httpResult = HttpUtils.getHttpInstance().sync(sendUrl).get();
-        if(httpResult.isSuccessful()){
-            JSONObject responseObject = JSONObject.parseObject(httpResult.getBody().toString());
+        try {
+            String result = HttpUtils.get(sendUrl);
+            JSONObject responseObject = JSONObject.parseObject(result);
             String access_token = responseObject.getString("access_token");
             redisUtils.set(redisKey,access_token);
             redisUtils.expire(redisKey,6000);
             return access_token;
+        } catch (Exception e) {
+            return "";
         }
-        return "";
     }
 
     public String sendTextCard(MessageConfigWechatEntity messageConfigWechatEntity, String messageJson){
 
         String accessToken = this.getWxTokenWithCache(messageConfigWechatEntity);
         String sendUrl = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token="+accessToken;
-        HttpResult httpResult = HttpUtils.getHttpInstance().sync(sendUrl)
-                .bodyType(OkHttps.JSON).setBodyPara(messageJson).post();
-        return httpResult.getBody().toString();
+        try {
+            return HttpUtils.postJson(sendUrl, messageJson);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
 

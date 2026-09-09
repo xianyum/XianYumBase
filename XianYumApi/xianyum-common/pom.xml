@@ -27,15 +27,15 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-        </dependency>
-
         <!-- 添加 Undertow依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp-jvm</artifactId>
         </dependency>
 
         <dependency>
@@ -100,12 +100,6 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-        </dependency>
-
-        <!--http://okhttps.ejlchina.com/v2/getstart.html#maven -->
-        <dependency>
-            <groupId>cn.zhxu</groupId>
-            <artifactId>okhttps-fastjson2</artifactId>
         </dependency>
 
         <dependency>

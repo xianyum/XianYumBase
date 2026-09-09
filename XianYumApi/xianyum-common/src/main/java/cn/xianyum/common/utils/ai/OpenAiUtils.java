@@ -16,7 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * OpenAI 工具类
@@ -73,22 +76,15 @@ public class OpenAiUtils {
      */
     public static List<OpenAiModelResponse> getModels() {
         try {
-            // 从配置中获取 OpenAI 的 base-url
             String baseUrl = SpringUtil.getProperty("spring.ai.openai.base-url");
-            // 从配置中获取 API Key
             String apiKey = SpringUtil.getProperty("spring.ai.openai.api-key");
             validateConfig(baseUrl, apiKey);
 
-            // 构建 models API 地址
             String modelsUrl = baseUrl + "/v1/models";
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization", "Bearer " + apiKey);
 
-            // 使用 HttpUtils 发送 GET 请求，并添加 Authorization header
-            String result = HttpUtils.getHttpInstance()
-                    .sync(modelsUrl)
-                    .addHeader("Authorization", "Bearer " + apiKey)
-                    .get()
-                    .getBody()
-                    .toString();
+            String result = HttpUtils.get(modelsUrl, headers);
             OpenAiResponse<List<OpenAiModelResponse>> openAiResponse = JSONObject.parseObject(result, new TypeReference<>(){});
             return openAiResponse.getData();
         }catch (Exception e) {
@@ -113,13 +109,10 @@ public class OpenAiUtils {
             validateConfig(baseUrl, apiKey);
 
             String tokenLogUrl = baseUrl + "/api/log/token";
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization", "Bearer " + apiKey);
 
-            String result = HttpUtils.getHttpInstance()
-                    .sync(tokenLogUrl)
-                    .addHeader("Authorization", "Bearer " + apiKey)
-                    .get()
-                    .getBody()
-                    .toString();
+            String result = HttpUtils.get(tokenLogUrl, headers);
 
             OpenAiResponse<List<OpenAiLogResponse>> openAiResponse = JSONObject.parseObject(result, new TypeReference<>(){});
             return openAiResponse.getData();
@@ -143,13 +136,10 @@ public class OpenAiUtils {
             validateConfig(baseUrl, apiKey);
 
             String tokenUsageUrl = baseUrl + "/api/usage/token";
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization", "Bearer " + apiKey);
 
-            String result = HttpUtils.getHttpInstance()
-                    .sync(tokenUsageUrl)
-                    .addHeader("Authorization", "Bearer " + apiKey)
-                    .get()
-                    .getBody()
-                    .toString();
+            String result = HttpUtils.get(tokenUsageUrl, headers);
             OpenAiResponse<OpenAiTokenUsageResponse> openAiResponse = JSONObject.parseObject(result, new TypeReference<>(){});
             return openAiResponse.getData();
         }catch (Exception e) {
