@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>3.5.16</version>
         <relativePath/>
     </parent>
 
@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dynamic.datasource.boot.version>4.3.1</dynamic.datasource.boot.version>
         <mybatisplus.boot.version>3.5.14</mybatisplus.boot.version>
-        <fastjson.version>2.0.64</fastjson.version>
+        <fastjson.version>2.0.65</fastjson.version>
         <okhttps.fastjson.version>4.0.1</okhttps.fastjson.version>
         <joda.time.version>2.12.7</joda.time.version>
         <lombok.version>1.18.38</lombok.version>
@@ -59,7 +59,7 @@
         <qiniu.version>7.12.1</qiniu.version>
         <tianai.captcha.version>1.5.5</tianai.captcha.version>
         <spring-ai.version>1.0.0-M6</spring-ai.version>
-        <hutool-all.version>5.8.46</hutool-all.version>
+        <hutool-all.version>5.8.47</hutool-all.version>
     </properties>
 
     <!-- 依赖声明 -->
