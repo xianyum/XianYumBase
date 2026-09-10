@@ -51,7 +51,11 @@
     <!-- 第三方包日志级别 -->
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.springframework" level="WARN"/>
-    <logger name="io.undertow" level="INFO"/>
+    <logger name="org.quartz" level="WARN"/>
+    <logger name="io.moquette" level="WARN"/>
+    <logger name="org.springframework.context.support.PostProcessorRegistrationDelegate" level="ERROR"/>
+    <logger name="io.undertow" level="WARN"/>
+    <logger name="io.undertow.websockets.jsr" level="ERROR"/>
     <logger name="springfox.documentation" level="WARN"/>
     <logger name="org.xnio.nio" level="WARN"/>
     <logger name="com.geccocrawler.gecco" level="WARN"/>

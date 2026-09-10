@@ -61,7 +61,13 @@ public class RequestLogInterceptor {
         String requestParam = getMethodArgs(joinPoint);
         LoginUser loginUser = Optional.ofNullable(SecurityUtils.getLoginUser()).orElse(new LoginUser());
         if(!IGNORE_FILTER_URLS.contains(requestUri)){
-            log.info("requestUri:{},cost:{}ms,userId:{},requestParam:{}", requestUri, time,loginUser.getId(),requestParam);
+            log.info("【API】uri={}, cost={}ms, userId={}, username={}, reqParam={}",
+                    requestUri,
+                    System.currentTimeMillis() - beginTime,
+                    loginUser.getId() == null ? "-" : loginUser.getId(),
+                    loginUser.getUsername() == null ? "anonymous" : loginUser.getUsername(),
+                    requestParam
+            );
         }
         //保存日志
         saveSysLog(joinPoint, time,requestParam);
