@@ -219,3 +219,19 @@ captcha:
     enabled: false
     expire: 120000
     keyPrefix: "${spring.application.name}:xianyum-system:captcha:secondary"
+    
+# CosId配置：雪花算法 + Redis自动分配machineId
+cosid:
+  # 命名空间，区分不同业务应用；多项目共用一套Redis时必须隔离，防止争抢machineId
+  namespace: ${spring.application.name}
+  machine:
+    # 开启机器ID分发（雪花算法必须开启）
+    enabled: true
+    distributor:
+      # 使用Redis作为machineId分发器
+      type: redis
+    guarder:
+      enabled: true
+  snowflake:
+    # 开启雪花ID生成器（趋势递增，ID内置时间戳、机器号、序列号，可解析）
+    enabled: true
