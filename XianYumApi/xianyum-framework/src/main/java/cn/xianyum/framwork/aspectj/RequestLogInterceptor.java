@@ -1,5 +1,6 @@
 package cn.xianyum.framwork.aspectj;
 
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.common.utils.IPUtils;
@@ -64,8 +65,8 @@ public class RequestLogInterceptor {
             log.info("【API】uri={}, cost={}ms, userId={}, username={}, reqParam={}",
                     requestUri,
                     System.currentTimeMillis() - beginTime,
-                    loginUser.getId() == null ? "-" : loginUser.getId(),
-                    loginUser.getUsername() == null ? "anonymous" : loginUser.getUsername(),
+                    StrUtil.isBlank(loginUser.getId()) ? "-" : loginUser.getId(),
+                    StrUtil.isBlank(loginUser.getUsername()) ? "anonymous" : loginUser.getUsername(),
                     requestParam
             );
         }
