@@ -64,7 +64,7 @@ public class MessageTypeConfigServiceImpl implements MessageTypeConfigService {
 			throw new SoException("消息编码重复");
 		}
 
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		return messageTypeConfigMapper.insert(bean);
 	}
 

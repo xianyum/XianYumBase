@@ -1,11 +1,12 @@
 package cn.xianyum.common.utils;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import cn.hutool.core.collection.CollUtil;
-
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,19 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisUtils {
 
-    @Autowired
+    @Resource(name = "businessRedisTemplate")
     private RedisTemplate redisTemplate;
+
+
+    /**
+     * 获取RedisTemplate
+     * @return
+     */
+    public RedisTemplate getRedisTemplate() {
+        return redisTemplate;
+    }
+
+
     /**
      * 指定缓存失效时间
      *
@@ -665,5 +677,36 @@ public class RedisUtils {
 
     public boolean deleteObject(final Collection collection) {
         return redisTemplate.delete(collection) > 0;
+    }
+
+    public boolean expire(String key, Duration duration) {
+        try {
+            if (duration.toMillis() > 0) {
+                redisTemplate.expire(key, duration);
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("", e);
+            return false;
+        }
+    }
+
+    public boolean zAdd(String key, Object value, double score) {
+        try {
+            Boolean result = redisTemplate.opsForZSet().add(key, value, score);
+            return Boolean.TRUE.equals(result);
+        } catch (Exception e) {
+            log.error("", e);
+            return false;
+        }
+    }
+
+    public Set<ZSetOperations.TypedTuple<Object>> zReverseRangeWithScores(String key, long start, long end) {
+        try {
+            return redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);
+        } catch (Exception e) {
+            log.error("", e);
+            return null;
+        }
     }
 }

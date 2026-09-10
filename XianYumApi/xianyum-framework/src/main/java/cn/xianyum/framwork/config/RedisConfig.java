@@ -3,42 +3,44 @@ package cn.xianyum.framwork.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-/**
- * @author zhangwei
- * @date 2019/5/24 20:10
- */
 @Configuration
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport {
 
-    /**
-     * RedisTemplate配置
-     * @param factory
-     * @return
-     */
     @Bean
+    @Primary
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
-        StringRedisTemplate template = new StringRedisTemplate(factory);
-        //定义key序列化方式
-        //RedisSerializer<String> redisSerializer = new StringRedisSerializer();//Long类型会出现异常信息;需要我们上面的自定义key生成策略，一般没必要
-        //定义value的序列化方式
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        return new StringRedisTemplate(factory);
+    }
+
+    @Bean("businessRedisTemplate")
+    public RedisTemplate<String, String> businessRedisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+
         ObjectMapper om = new ObjectMapper();
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-        jackson2JsonRedisSerializer.setObjectMapper(om);
+        om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
 
-        template.setValueSerializer(jackson2JsonRedisSerializer);
-        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+        GenericJackson2JsonRedisSerializer json = new GenericJackson2JsonRedisSerializer(om);
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+
+        template.setKeySerializer(stringSerializer);
+        template.setHashKeySerializer(stringSerializer);
+        template.setValueSerializer(json);
+        template.setHashValueSerializer(json);
         template.afterPropertiesSet();
         return template;
     }

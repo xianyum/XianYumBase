@@ -64,7 +64,7 @@ public class MessageMonitorServiceImpl implements MessageMonitorService {
 	public Integer save(MessageMonitorRequest request) {
 
 		MessageMonitorEntity bean = BeanUtil.toBean(request,MessageMonitorEntity.class);
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		return messageMonitorMapper.insert(bean);
 
 	}

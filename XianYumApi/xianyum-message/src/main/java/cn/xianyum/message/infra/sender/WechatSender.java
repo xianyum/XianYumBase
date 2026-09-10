@@ -48,7 +48,7 @@ public class WechatSender extends AbstractMessageSender {
                 // 企微如果没有指定发送人的话，默认发全部
                 messageSender.setWechatToUser("@all");
             }
-            String mId = IdGeneratorUtil.generateId();
+            String mId = IdGeneratorUtil.nextIdStr();
             messageSender.setMessageId(mId);
             String messageContent = wechatSupporter.generateMessage(messageConfigWechatEntity.getAgentId(),messageSender);
             String sendResult = wechatSupporter.sendTextCard(messageConfigWechatEntity, messageContent);

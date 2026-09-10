@@ -100,7 +100,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 		}
 
 		ProxyDetailsEntity bean = BeanUtil.toBean(request,ProxyDetailsEntity.class);
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		// 删除缓存,后续在重新缓存
 		String redisKey = RedisKeyEnum.PROXY_PROXY_DETAILS_LAN_INFO.getKey().concat(request.getInetPort().toString());
 		redisUtils.del(redisKey);

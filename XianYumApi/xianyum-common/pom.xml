@@ -16,6 +16,11 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>me.ahoo.cosid</groupId>
+            <artifactId>cosid-spring-redis</artifactId>
+        </dependency>
+
         <!-- Spring AI OpenAI Starter -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

@@ -94,7 +94,7 @@ public class XiaoDaoServiceImpl implements XiaoDaoService {
                 continue;
             }
             XiaoDaoEntity bean = new XiaoDaoEntity();
-            bean.setId(IdGeneratorUtil.generateId());
+            bean.setId(IdGeneratorUtil.nextIdStr());
             bean.setUrl(url);
             bean.setTitle(title);
             int insert = xiaoDaoMapper.insert(bean);

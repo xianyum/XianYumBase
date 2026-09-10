@@ -49,7 +49,7 @@ public class EmailSender extends AbstractMessageSender {
             if(StrUtil.isNotEmpty(messageSender.getEmailToUser())){
                 String[] receivers = messageSender.getEmailToUser().split("\\|");
                 for(String receiver : receivers){
-                    String mId = IdGeneratorUtil.generateId();
+                    String mId = IdGeneratorUtil.nextIdStr();
                     messageSender.setMessageId(mId);
                     List<String> messageContentList  = emailSupporter.generateMessageContentList(messageSender);
                     messageSender.setEmailToUser(receiver);
@@ -85,7 +85,7 @@ public class EmailSender extends AbstractMessageSender {
             if(StrUtil.isNotEmpty(messageSender.getEmailToUser())){
                 String[] receivers = messageSender.getEmailToUser().split("\\|");
                 for(String receiver : receivers){
-                    String mId = IdGeneratorUtil.generateId();
+                    String mId = IdGeneratorUtil.nextIdStr();
                     messageSender.setEmailToUser(receiver);
                     String result = emailSupporter.sendHtmlEmail(messageConfigEmailEntity,receiver,messageSender.getTitle(),messageSender.getEmailHtmlPath(),context);
                     this.messageMonitorService.insertMessageLog(mId,messageSender.getEmailToUser(),messageSender,result);

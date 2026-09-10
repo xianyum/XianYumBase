@@ -33,7 +33,7 @@ public class WechatWebhookSender extends AbstractMessageSender {
     public void doSendMessage(MessageSenderEntity messageSender) {
         MessageConfigWebhookEntity webhookConfig = messageConfigWebhookService.getMessageConfigWithCache(messageSender.getMessageConfigId());
         if(webhookConfig != null){
-            String mId = IdGeneratorUtil.generateId();
+            String mId = IdGeneratorUtil.nextIdStr();
             messageSender.setMessageId(mId);
             String sendResult = webhookSupporter.sendWechatMessage(webhookConfig,messageSender);
             this.messageMonitorService.insertMessageLog(mId,null,messageSender,sendResult);

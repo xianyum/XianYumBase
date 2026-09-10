@@ -59,6 +59,7 @@
         <tianai.captcha.version>1.5.5</tianai.captcha.version>
         <spring-ai.version>1.0.0-M6</spring-ai.version>
         <hutool-all.version>5.8.47</hutool-all.version>
+        <cosid.version>2.15.2</cosid.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -84,6 +85,18 @@
                 <groupId>com.qiniu</groupId>
                 <artifactId>qiniu-java-sdk</artifactId>
                 <version>${qiniu.version}</version>
+            </dependency>
+
+            <!-- https://cosid.ahoo.me/zh/guide/getting-started.html-->
+            <dependency>
+                <groupId>me.ahoo.cosid</groupId>
+                <artifactId>cosid-spring-redis</artifactId>
+                <version>${cosid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>me.ahoo.cosid</groupId>
+                <artifactId>cosid-spring-boot-starter</artifactId>
+                <version>${cosid.version}</version>
             </dependency>
 
             <!-- 增加x-file-storage-->

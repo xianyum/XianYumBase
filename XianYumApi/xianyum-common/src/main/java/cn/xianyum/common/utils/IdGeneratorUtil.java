@@ -1,6 +1,9 @@
 package cn.xianyum.common.utils;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.extra.spring.SpringUtil;
+import me.ahoo.cosid.snowflake.SnowflakeId;
+
 import java.util.Random;
 
 
@@ -47,11 +50,19 @@ public class IdGeneratorUtil {
     }
 
     /**
-     *
-     * @return
+     * 获取雪花ID字符串形式
+     * @return 雪花ID（字符串）
      */
-    public static String generateId(){
-        return IdUtil.getSnowflakeNextIdStr();
+    public static String nextIdStr(){
+        return String.valueOf(SpringUtil.getBean(SnowflakeId.class).generate());
+    }
+
+    /**
+     * 获取雪花ID Long类型
+     * @return 雪花ID（Long）
+     */
+    public static Long nextId(){
+        return SpringUtil.getBean(SnowflakeId.class).generate();
     }
 
 }

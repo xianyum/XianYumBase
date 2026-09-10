@@ -117,7 +117,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public Integer save(ProxyRequest request) {
 		ProxyEntity bean = BeanUtil.toBean(request,ProxyEntity.class);
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		bean.setLoginCount(0);
 		return proxyMapper.insert(bean);
 

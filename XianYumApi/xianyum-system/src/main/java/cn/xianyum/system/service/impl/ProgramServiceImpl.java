@@ -66,12 +66,12 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public int save(ProgramRequest request) {
         ProgramEntity bean = BeanUtil.toBean(request, ProgramEntity.class);
-        String id = IdGeneratorUtil.generateId();
+        String id = IdGeneratorUtil.nextIdStr();
         bean.setId(id);
         bean.setStatus(1);
 
         GiteeCommitEntity giteeCommitEntity = new GiteeCommitEntity();
-        giteeCommitEntity.setId(IdGeneratorUtil.generateId());
+        giteeCommitEntity.setId(IdGeneratorUtil.nextIdStr());
         giteeCommitEntity.setProgramId(id);
         giteeCommitEntity.setCommitMessage("感谢您的信任，["+bean.getProgramTitle()+"] 订单已经录入系统，等待管理员审核订单后，订单状态会进入开发期！");
         giteeCommitMapper.insert(giteeCommitEntity);
@@ -115,7 +115,7 @@ public class ProgramServiceImpl implements ProgramService {
         ProgramEntity bean = new ProgramEntity();
         bean.setId(request.getId());
         GiteeCommitEntity giteeCommitEntity = new GiteeCommitEntity();
-        giteeCommitEntity.setId(IdGeneratorUtil.generateId());
+        giteeCommitEntity.setId(IdGeneratorUtil.nextIdStr());
         giteeCommitEntity.setProgramId(request.getId());
         if("success".equals(request.getTag())){
             bean.setStatus(0);

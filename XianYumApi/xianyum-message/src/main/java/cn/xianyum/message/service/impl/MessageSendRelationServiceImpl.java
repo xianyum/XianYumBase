@@ -74,7 +74,7 @@ public class MessageSendRelationServiceImpl implements MessageSendRelationServic
 	@Override
 	public Integer save(MessageSendRelationRequest request) {
 		MessageSendRelationEntity bean = BeanUtil.toBean(request,MessageSendRelationEntity.class);
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		return messageSendRelationMapper.insert(bean);
 	}
 

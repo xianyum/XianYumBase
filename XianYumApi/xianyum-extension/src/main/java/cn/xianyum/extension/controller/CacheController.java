@@ -3,13 +3,13 @@ package cn.xianyum.extension.controller;
 import cn.hutool.core.text.StrPool;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.Constants;
+import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -23,16 +23,16 @@ import java.util.*;
 @Tag(name = "缓存接口")
 public class CacheController {
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private RedisUtils redisUtils;
 
     @GetMapping("/getInfo")
     @Operation(summary = "查询Redis缓存基本信息")
     @Permission("@ps.hasPerm('monitor:cache:list')")
     public Results<Map<String, Object>> getInfo() {
-        Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
-        Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
-        Object dbSize = redisTemplate.execute((RedisCallback<Object>) connection -> connection.dbSize());
+        Properties info = (Properties) redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.info());
+        Properties commandStats = (Properties) redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
+        Object dbSize = redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.dbSize());
 
         Map<String, Object> result = new HashMap<>(3);
         result.put("info", info);
@@ -61,8 +61,7 @@ public class CacheController {
             if (StringUtils.isNotEmpty(trimKey)) {
                 String redisProcessKey = Constants.DEFAULT_REDIS_KEY_PREFIX.concat(trimKey);
                 if (redisProcessKey.contains("*")) {
-                    // 使用scan命令遍历匹配的key
-                    redisTemplate.execute((RedisCallback<Void>) connection -> {
+                    redisUtils.getRedisTemplate().execute((RedisCallback<Void>) connection -> {
                         try (var cursor = connection.scan(ScanOptions.scanOptions().match(redisProcessKey).count(100).build())) {
                             while (cursor.hasNext()) {
                                 keys.add(new String(cursor.next()));
@@ -76,7 +75,7 @@ public class CacheController {
             }
         }
         if (!keys.isEmpty()) {
-            redisTemplate.delete(keys);
+            redisUtils.deleteObject(keys);
         }
         return Results.success();
     }

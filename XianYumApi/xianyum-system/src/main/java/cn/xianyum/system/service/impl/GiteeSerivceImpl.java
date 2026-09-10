@@ -35,7 +35,7 @@ public class GiteeSerivceImpl implements GiteeSerivce {
         String repositoryName = JSONObject.parseObject(requestObj.getString("repository")).getString("name");
 
         GiteeCommitEntity giteeCommitEntity = new GiteeCommitEntity();
-        giteeCommitEntity.setId(IdGeneratorUtil.generateId());
+        giteeCommitEntity.setId(IdGeneratorUtil.nextIdStr());
         giteeCommitEntity.setRepositoryName(repositoryName);
         giteeCommitEntity.setCommitMessage(commitMessage);
         giteeCommitEntity.setRepositoryUrl(url);

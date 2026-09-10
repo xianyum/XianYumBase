@@ -58,7 +58,7 @@ public class MessageConfigWechatServiceImpl implements MessageConfigWechatServic
 	public Integer save(MessageConfigWechatRequest request) {
 
 		MessageConfigWechatEntity bean = BeanUtil.toBean(request,MessageConfigWechatEntity.class);
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		return messageConfigWechatMapper.insert(bean);
 
 	}

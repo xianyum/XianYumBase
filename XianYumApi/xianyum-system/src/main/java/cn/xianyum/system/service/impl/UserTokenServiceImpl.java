@@ -372,7 +372,7 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public LoginTokenResponse createToken(LoginUser loginUser) {
         //生成token
-        String token = IdGeneratorUtil.generateId();
+        String token = IdGeneratorUtil.nextIdStr();
         Date now = new Date();
         //过期时间
         Date expireTime = new Date(now.getTime() + expire * 86400L * 1000L);

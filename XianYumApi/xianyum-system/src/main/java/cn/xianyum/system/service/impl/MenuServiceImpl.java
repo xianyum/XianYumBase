@@ -7,6 +7,7 @@ import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
+import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.MenuMapper;
@@ -19,9 +20,9 @@ import cn.xianyum.system.service.MenuService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class MenuServiceImpl implements MenuService {
     private MenuMapper menuMapper;
 
     @Resource
-    private StringRedisTemplate redisTemplate;
+    private RedisUtils redisUtils;
 
 
     /**
@@ -295,17 +296,14 @@ public class MenuServiceImpl implements MenuService {
             // 2. 记录点击时间到时间序列
             String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
             long currentTime = System.currentTimeMillis();
-            redisTemplate.opsForList().rightPush(timeSeriesKey, String.valueOf(currentTime));
+            redisUtils.lSet(timeSeriesKey, String.valueOf(currentTime));
 
-            // 3. 设置过期时间，自动清理24小时前的数据
-            redisTemplate.expire(timeSeriesKey, java.time.Duration.ofHours(24));
+            redisUtils.expire(timeSeriesKey, Duration.ofHours(24));
 
-            // 4. 计算滑动窗口活跃度分数
             double activityScore = calculateActivityScore(menuRequest.getMenuId());
 
-            // 5. 更新排行榜（zset有序集合，score为活跃度分数）
             String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(),SecurityUtils.getLoginUser().getId());
-            redisTemplate.opsForZSet().add(menuRankKey, String.valueOf(menuRequest.getMenuId()), activityScore);
+            redisUtils.zAdd(menuRankKey, String.valueOf(menuRequest.getMenuId()), activityScore);
         } catch (Exception e) {
             log.error("菜单埋点上报失败", e);
             throw e;
@@ -319,7 +317,7 @@ public class MenuServiceImpl implements MenuService {
      */
     private double calculateActivityScore(Long menuId) {
         String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuId) + ":timeseries";
-        List<String> clickTimes = redisTemplate.opsForList().range(timeSeriesKey, 0, -1);
+        List<Object> clickTimes = redisUtils.lGet(timeSeriesKey, 0, -1);
 
         if (CollUtil.isEmpty(clickTimes)) {
             return 0;
@@ -330,9 +328,9 @@ public class MenuServiceImpl implements MenuService {
         long twentyFourHoursAgo = currentTime - (24 * 60 * 60 * 1000);
 
         // 计算最近24小时内的点击，越近的点击权重越高
-        for (String clickTimeStr : clickTimes) {
+        for (Object clickTimeObj : clickTimes) {
             try {
-                long clickTime = Long.parseLong(clickTimeStr);
+                long clickTime = Long.parseLong(String.valueOf(clickTimeObj));
 
                 // 只考虑24小时内的点击
                 if (clickTime >= twentyFourHoursAgo) {
@@ -370,8 +368,7 @@ public class MenuServiceImpl implements MenuService {
             return List.of();
         }
         String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(),SecurityUtils.getLoginUser().getId());
-        Set<ZSetOperations.TypedTuple<String>> menuRankSet = redisTemplate.opsForZSet()
-                .reverseRangeWithScores(menuRankKey, 0, -1);
+        Set<ZSetOperations.TypedTuple<Object>> menuRankSet = redisUtils.zReverseRangeWithScores(menuRankKey, 0, -1);
         if(menuRankSet.isEmpty()){
             // 无排名数据，直接取前topN个
             return allMenuResponse.stream().limit(topN).collect(Collectors.toList());
@@ -380,12 +377,12 @@ public class MenuServiceImpl implements MenuService {
         List<MenuResponse> finalMenuList = new ArrayList<>(topN);
 
         // 先从排名中取菜单，直到凑够topN个或排名取完
-        for (ZSetOperations.TypedTuple<String> tuple : menuRankSet) {
+        for (ZSetOperations.TypedTuple<Object> tuple : menuRankSet) {
             if (finalMenuList.size() >= topN) {
-                break; // 已凑够topN个，终止循环
+                break;
             }
             Long menuId = Optional.ofNullable(tuple.getValue())
-                    .map(Long::valueOf)
+                    .map(v -> Long.valueOf(String.valueOf(v)))
                     .orElse(0L);
             if (menuId == 0L) {
                 continue; // 无效ID跳过

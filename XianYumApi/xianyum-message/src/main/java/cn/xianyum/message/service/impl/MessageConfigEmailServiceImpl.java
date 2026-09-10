@@ -59,7 +59,7 @@ public class MessageConfigEmailServiceImpl implements MessageConfigEmailService 
 	public Integer save(MessageConfigEmailRequest request) {
 
 		MessageConfigEmailEntity bean = BeanUtil.toBean(request,MessageConfigEmailEntity.class);
-		bean.setId(IdGeneratorUtil.generateId());
+		bean.setId(IdGeneratorUtil.nextIdStr());
 		return messageConfigEmailMapper.insert(bean);
 
 	}
