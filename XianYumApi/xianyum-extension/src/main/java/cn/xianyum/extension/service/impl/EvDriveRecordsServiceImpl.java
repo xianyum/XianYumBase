@@ -2,6 +2,7 @@ package cn.xianyum.extension.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.CoordinateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.enums.YesOrNoEnum;
@@ -340,10 +341,10 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         }
         EvAutoReportResponse response = BeanUtil.toBean(entity, EvAutoReportResponse.class);
         if (Objects.nonNull(response.getLon()) && Objects.nonNull(response.getLat())) {
-            double[] gcj02 = GeoCoordinateUtil.wgs84ToGcj02(response.getLon().doubleValue(), response.getLat().doubleValue());
-            response.setLon(BigDecimal.valueOf(gcj02[0]));
-            response.setLat(BigDecimal.valueOf(gcj02[1]));
-            String address = amapService.getFormattedAddress(String.valueOf(gcj02[0]), String.valueOf(gcj02[1]));
+            CoordinateUtil.Coordinate gcj02 = CoordinateUtil.wgs84ToGcj02(response.getLon().doubleValue(), response.getLat().doubleValue());
+            response.setLon(BigDecimal.valueOf(gcj02.getLng()));
+            response.setLat(BigDecimal.valueOf(gcj02.getLat()));
+            String address = amapService.getFormattedAddress(String.valueOf(gcj02.getLng()), String.valueOf(gcj02.getLat()));
             response.setFormattedAddress(address);
         }
         return response;

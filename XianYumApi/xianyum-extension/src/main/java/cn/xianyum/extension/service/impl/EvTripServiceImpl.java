@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.utils.GeoCoordinateUtil;
+import cn.hutool.core.util.CoordinateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.RedisUtils;
@@ -186,9 +186,9 @@ public class EvTripServiceImpl implements EvTripService {
         // 将坐标从WGS84转为GCJ-02（火星坐标系，高德/谷歌地图使用）
         for (EvTripTrackResponse track : simplifiedTrack) {
             if (track.getLon() != null && track.getLat() != null) {
-                double[] gcj02 = GeoCoordinateUtil.wgs84ToGcj02(track.getLon().doubleValue(), track.getLat().doubleValue());
-                track.setLon(BigDecimal.valueOf(gcj02[0]));
-                track.setLat(BigDecimal.valueOf(gcj02[1]));
+                CoordinateUtil.Coordinate gcj02 = CoordinateUtil.wgs84ToGcj02(track.getLon().doubleValue(), track.getLat().doubleValue());
+                track.setLon(BigDecimal.valueOf(gcj02.getLng()));
+                track.setLat(BigDecimal.valueOf(gcj02.getLat()));
             }
         }
         if(CollUtil.isNotEmpty(trackList)){
@@ -390,12 +390,12 @@ public class EvTripServiceImpl implements EvTripService {
 
         // WGS84转GCJ02（火星坐标系，高德地图使用）
         if(Objects.nonNull(startGeo.getLon()) && Objects.nonNull(startGeo.getLat())) {
-            double[] startGcj02 = GeoCoordinateUtil.wgs84ToGcj02(startGeo.getLon().doubleValue(), startGeo.getLat().doubleValue());
-            entity.setStartAddress(amapService.getFormattedAddress(String.valueOf(startGcj02[0]), String.valueOf(startGcj02[1])));
+            CoordinateUtil.Coordinate startGcj02 = CoordinateUtil.wgs84ToGcj02(startGeo.getLon().doubleValue(), startGeo.getLat().doubleValue());
+            entity.setStartAddress(amapService.getFormattedAddress(String.valueOf(startGcj02.getLng()), String.valueOf(startGcj02.getLat())));
         }
         if(Objects.nonNull(endGeo.getLon()) && Objects.nonNull(endGeo.getLat())) {
-            double[] endGcj02 = GeoCoordinateUtil.wgs84ToGcj02(endGeo.getLon().doubleValue(), endGeo.getLat().doubleValue());
-            entity.setEndAddress(amapService.getFormattedAddress(String.valueOf(endGcj02[0]), String.valueOf(endGcj02[1])));
+            CoordinateUtil.Coordinate endGcj02 = CoordinateUtil.wgs84ToGcj02(endGeo.getLon().doubleValue(), endGeo.getLat().doubleValue());
+            entity.setEndAddress(amapService.getFormattedAddress(String.valueOf(endGcj02.getLng()), String.valueOf(endGcj02.getLat())));
         }
 
         // 里程
