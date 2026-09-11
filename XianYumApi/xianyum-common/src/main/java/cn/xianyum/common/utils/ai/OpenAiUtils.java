@@ -11,8 +11,8 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.utils.SystemConstantUtils;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatOptions;
 
@@ -169,7 +169,7 @@ public class OpenAiUtils {
      * @return 当前配置的 OpenAI 模型
      */
     public static String getCurrentModel() {
-        return StringUtils.defaultIfBlank(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.OPEN_AI_MODEL), SpringUtil.getProperty("spring.ai.openai.chat.options.model"));
+        return StrUtil.blankToDefault(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.OPEN_AI_MODEL), SpringUtil.getProperty("spring.ai.openai.chat.options.model"));
     }
 
 }

@@ -40,7 +40,6 @@ public class AppVersionCompareUtil {
             }
             // 相等则继续比较下一位
         }
-
         // 版本号完全相同，无需更新
         return false;
     }

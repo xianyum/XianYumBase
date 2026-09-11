@@ -1,7 +1,7 @@
 package cn.xianyum.common.utils;
 
 
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -44,7 +44,7 @@ public class PropertiesUtil {
     public static String getString(String key, String defaultValue) {
         try {
             String value = env.getProperty(key);
-            if (StringUtils.isEmpty(value)) {
+            if (StrUtil.isEmpty(value)) {
                 return defaultValue;
             }
             return value;
@@ -72,7 +72,7 @@ public class PropertiesUtil {
      */
     public static int getInt(String key, int defaultValue) {
         String value = env.getProperty(key);
-        if (StringUtils.isBlank(value)) {
+        if (StrUtil.isBlank(value)) {
             return defaultValue;
         }
         return Integer.parseInt(value);
@@ -87,7 +87,7 @@ public class PropertiesUtil {
      */
     public static boolean getBoolean(String key, boolean defaultValue) {
         String value = env.getProperty(key);
-        if (StringUtils.isBlank(value)) {
+        if (StrUtil.isBlank(value)) {
             return defaultValue;
         }
         return new Boolean(value);
@@ -101,4 +101,3 @@ public class PropertiesUtil {
         return "prod".equals(getString("spring.profiles.active")) || "pred".equals(getString("spring.profiles.active"));
     }
 }
-

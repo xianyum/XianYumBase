@@ -13,7 +13,6 @@ import cn.xianyum.system.entity.response.UserOnlineResponse;
 import cn.xianyum.system.service.UserOnlineService;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -46,11 +45,11 @@ public class UserOnlineServiceImpl implements UserOnlineService {
         }
 
         if(StrUtil.isNotEmpty(request.getUsername())){
-            userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
+            userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
         }
 
         if(!SecurityUtils.isSupperAdminAuth()){
-            userOnlineList = userOnlineList.stream().filter( p -> StringUtils.containsIgnoreCase(p.getUsername(),SecurityUtils.getLoginUser().getUsername())).collect(Collectors.toList());
+            userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(),SecurityUtils.getLoginUser().getUsername())).collect(Collectors.toList());
         }
 
 

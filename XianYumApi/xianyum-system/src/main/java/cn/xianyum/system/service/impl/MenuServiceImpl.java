@@ -19,7 +19,6 @@ import cn.xianyum.system.entity.response.MenuTreeSelect;
 import cn.xianyum.system.service.MenuService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
@@ -125,8 +124,8 @@ public class MenuServiceImpl implements MenuService {
                 MenuResponse children = new MenuResponse();
                 children.setPath(menu.getPath());
                 children.setComponent(menu.getComponent());
-                children.setName(StringUtils.capitalize(menu.getPath()));
-                children.setMeta(new MenuMetaResponse(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+                children.setName(StrUtil.upperFirst(menu.getPath()));
+                children.setMeta(new MenuMetaResponse(menu.getMenuName(), menu.getIcon(), StrUtil.equals("1", menu.getIsCache()), menu.getPath()));
                 children.setQuery(menu.getQuery());
                 childrenList.add(children);
                 router.setChildren(childrenList);
@@ -138,7 +137,7 @@ public class MenuServiceImpl implements MenuService {
                 String routerPath = innerLinkReplaceEach(menu.getPath());
                 children.setPath(routerPath);
                 children.setComponent(Constants.INNER_LINK);
-                children.setName(StringUtils.capitalize(routerPath));
+                children.setName(StrUtil.upperFirst(routerPath));
                 children.setMeta(new MenuMetaResponse(menu.getMenuName(), menu.getIcon(), menu.getPath()));
                 childrenList.add(children);
                 router.setChildren(childrenList);
@@ -428,8 +427,10 @@ public class MenuServiceImpl implements MenuService {
      * @return 替换后的内链域名
      */
     public String innerLinkReplaceEach(String path) {
-        return StringUtils.replaceEach(path, new String[]{Constants.HTTP, Constants.HTTPS, Constants.WWW, "."},
-                new String[]{"", "", "", "/"});
+        return path.replace(Constants.HTTP, "")
+                .replace(Constants.HTTPS, "")
+                .replace(Constants.WWW, "")
+                .replace(".", "/");
     }
 
     /**
@@ -439,10 +440,10 @@ public class MenuServiceImpl implements MenuService {
      * @return 路由名称
      */
     public String getRouteName(MenuEntity menu) {
-        String routerName = StringUtils.capitalize(menu.getPath());
+        String routerName = StrUtil.upperFirst(menu.getPath());
         // 非外链并且是一级目录（类型为目录）
         if (isMenuFrame(menu)) {
-            routerName = StringUtils.EMPTY;
+            routerName = StrUtil.EMPTY;
         }
         return routerName;
     }
@@ -479,11 +480,11 @@ public class MenuServiceImpl implements MenuService {
      */
     public String getComponent(MenuEntity menu) {
         String component = Constants.LAYOUT;
-        if (StringUtils.isNotEmpty(menu.getComponent()) && !isMenuFrame(menu)) {
+        if (StrUtil.isNotEmpty(menu.getComponent()) && !isMenuFrame(menu)) {
             component = menu.getComponent();
-        } else if (StringUtils.isEmpty(menu.getComponent()) && menu.getParentId().intValue() != 0 && isInnerLink(menu)) {
+        } else if (StrUtil.isEmpty(menu.getComponent()) && menu.getParentId().intValue() != 0 && isInnerLink(menu)) {
             component = Constants.INNER_LINK;
-        } else if (StringUtils.isEmpty(menu.getComponent()) && isParentView(menu)) {
+        } else if (StrUtil.isEmpty(menu.getComponent()) && isParentView(menu)) {
             component = Constants.PARENT_VIEW;
         }
         return component;

@@ -61,6 +61,7 @@
     <logger name="com.geccocrawler.gecco" level="WARN"/>
     <logger name="org.reflections.Reflections" level="WARN"/>
     <logger name="cn.xianyum.extension.dao" level="DEBUG"/>
+    <logger name="org.springdoc.core.events.SpringDocAppInitializer" level="ERROR"/>
 
     <!-- dev/test/uat 环境 -->
     <springProfile name="dev,test,uat">

@@ -1,6 +1,7 @@
 package cn.xianyum.extension.controller;
 
 import cn.hutool.core.text.StrPool;
+import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.utils.RedisUtils;
@@ -8,7 +9,6 @@ import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +42,8 @@ public class CacheController {
         commandStats.stringPropertyNames().forEach(key -> {
             Map<String, String> data = new HashMap<>(2);
             String property = commandStats.getProperty(key);
-            data.put("name", StringUtils.removeStart(key, "cmdstat_"));
-            data.put("value", StringUtils.substringBetween(property, "calls=", ",usec"));
+            data.put("name", StrUtil.removePrefix(key, "cmdstat_"));
+            data.put("value", StrUtil.subBetween(property, "calls=", ",usec"));
             pieList.add(data);
         });
         result.put("commandStats", pieList);
@@ -55,10 +55,10 @@ public class CacheController {
     @Permission("@ps.hasPerm('monitor:cache:delete')")
     public Results<Void> deleteByKey(@RequestParam String redisKey) {
         Set<String> keys = new HashSet<>();
-        String[] keyArray = StringUtils.split(redisKey, StrPool.COMMA);
+        String[] keyArray = StrUtil.splitToArray(redisKey, StrPool.COMMA);
         for (String key : keyArray) {
-            String trimKey = StringUtils.trim(key);
-            if (StringUtils.isNotEmpty(trimKey)) {
+            String trimKey = StrUtil.trim(key);
+            if (StrUtil.isNotEmpty(trimKey)) {
                 String redisProcessKey = Constants.DEFAULT_REDIS_KEY_PREFIX.concat(trimKey);
                 if (redisProcessKey.contains("*")) {
                     redisUtils.getRedisTemplate().execute((RedisCallback<Void>) connection -> {

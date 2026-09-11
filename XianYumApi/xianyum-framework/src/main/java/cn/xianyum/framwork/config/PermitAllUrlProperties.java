@@ -2,8 +2,8 @@ package cn.xianyum.framwork.config;
 
 import cn.xianyum.common.annotation.Permission;
 import com.alibaba.fastjson2.JSONObject;
+import cn.hutool.core.util.ReUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -47,7 +47,7 @@ public class PermitAllUrlProperties implements InitializingBean, ApplicationCont
 
             try {
                 Optional.ofNullable(method).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
-                        .forEach(url -> urls.add(RegExUtils.replaceAll(url, PATTERN, ASTERISK))));
+                        .forEach(url -> urls.add(ReUtil.replaceAll(url, PATTERN, ASTERISK))));
             }catch (Exception e){
                 log.error("设置Permission注解允许匿名访问的url异常.",e.getMessage());
             }
@@ -56,7 +56,7 @@ public class PermitAllUrlProperties implements InitializingBean, ApplicationCont
             // 获取类上边的注解, 替代path variable 为 *
             Permission controller = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), Permission.class);
             Optional.ofNullable(controller).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
-                    .forEach(url -> urls.add(RegExUtils.replaceAll(url, PATTERN, ASTERISK))));
+                    .forEach(url -> urls.add(ReUtil.replaceAll(url, PATTERN, ASTERISK))));
         });
     }
 

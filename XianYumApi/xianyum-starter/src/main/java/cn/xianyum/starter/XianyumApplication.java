@@ -35,7 +35,7 @@ public class XianyumApplication {
     public static void printStartupLog(Environment env) {
         String STARTUP_MSG = "\n----------------------------------------------------------" +
                 "\n应用 '{}' 启动成功，JDK版本号：{} ！" +
-                "\nswagger文档：http://{}:{}{}/swagger-ui/index.html" +
+                "\nswagger文档：http://{}:{}{}/swagger-ui.html" +
                 "\ndruid地址：http://{}:{}/druid/login.html" +
                 "\n当前环境变量：{}" +
                 "\n----------------------------------------------------------";
