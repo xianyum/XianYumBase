@@ -11,6 +11,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -27,7 +28,9 @@ public class HolidayCnTask implements IJobHandler {
     public ReturnT execute(Map<String, String> jobParamsMap, SchedulerTool tool) throws Exception {
         String year = DateUtils.format(new Date(), DateUtils.YYYY);
         String formatHolidayUrl = String.format(Constants.HOLIDAY_URL, year,System.currentTimeMillis());
-        String result = HttpUtils.get(formatHolidayUrl);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+        String result = HttpUtils.get(formatHolidayUrl, headers);
         if(StrUtil.isEmpty(result)){
             return ReturnT.FAILURE;
         }
