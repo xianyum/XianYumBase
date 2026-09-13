@@ -1,4 +1,5 @@
-FROM dockerproxy.net/library/eclipse-temurin:21.0.3_9-jdk
+#FROM dockerproxy.net/library/eclipse-temurin:21.0.3_9-jdk
+FROM registry.cn-hangzhou.aliyuncs.com/xianyum-common/xianyum-jdk:21.0.3_9-jdk
 
 # 定义主目录环境变量
 ENV API_ROOT_PATH=/home/xianyum/api
