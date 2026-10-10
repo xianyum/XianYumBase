@@ -2,8 +2,8 @@
 <configuration>
     <!-- 定义日志的根目录 -->
     <springProperty scope="context" name="projectName" source="spring.application.name" defaultValue="BaseApi"/>
+
     <property name="LOG_HOME" value="logs"/>
-    <property name="PROJECT_NAME" value="${projectName}"/>
 
     <property name="FILE_PATTEN" value="[%level] [%date{ISO8601}] [%logger] [%thread] [%X{traceId}] %msg%n"/>
 
@@ -16,7 +16,7 @@
     <!-- ERROR 日志文件：只记录ERROR级别 -->
     <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/ERROR-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/ERROR-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>10</maxHistory>
             <maxFileSize>100MB</maxFileSize>
             <!-- 可选：限制日志总大小，防止磁盘打满，推荐加上 -->
@@ -35,7 +35,7 @@
     <!-- INFO+DEBUG日志文件：原逻辑BUG修复：LevelFilter只匹配DEBUG，INFO/WARN会被DENY，改用ThresholdFilter -->
     <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/${PROJECT_NAME}/INFO-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/INFO-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>10</maxHistory>
             <maxFileSize>100MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
