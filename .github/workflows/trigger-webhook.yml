@@ -8,6 +8,7 @@ jobs:
     steps:
       - name: Request Yunxiao Webhook
         run: |
-          curl -X POST \
+          curl --connect-timeout 10 -X POST \
             -H "Content-Type: application/json" \
+            -d '{}' \
             ${{ secrets.YUNXIAO_WEBHOOK_URL }}
