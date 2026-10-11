@@ -25,7 +25,7 @@ public class CaptchaResourceConfiguration {
         // 需要配置背景图的验证码类型
         List<String> captchaTypes = Arrays.asList(CaptchaTypeConstant.SLIDER, CaptchaTypeConstant.CONCAT, CaptchaTypeConstant.WORD_IMAGE_CLICK, CaptchaTypeConstant.ROTATE);
         for (String type : captchaTypes) {
-            for (int i = 1; i <= 10; i++) {
+            for (int i = 1; i <= 14; i++) {
                 resourceStore.addResource(type, new Resource(CaptchaConstant.RESOURCE_TYPE_CLASSPATH,String.format(CaptchaConstant.CAPTCHA_DEFAULT_BACKGROUND_URL, i)));
             }
         }
