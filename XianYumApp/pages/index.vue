@@ -1,8 +1,6 @@
 <template>
   <view class="index-container">
-    <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
-
-    <view class="header">
+    <view class="header" :style="{ paddingTop: (statusBarHeight + 10) + 'px' }">
       <view class="header-bg">
         <view class="blob blob-1"></view>
         <view class="blob blob-2"></view>
@@ -113,7 +111,7 @@
               <view class="indicator-dots">
                 <view
                     class="indicator-dot"
-                    :class="{ active: i === pageNum - 1 }"
+                    :class="{ active: i === pageNum}"
                     v-for="i in totalPage"
                     :key="i"
                 ></view>
@@ -469,13 +467,9 @@ export default {
   background: linear-gradient(180deg, #eef2f7 0%, #f5f7fa 300rpx);
   padding-bottom: 40rpx;
 
-  .status-bar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
   .header {
     position: relative;
-    padding: 20rpx 40rpx 80rpx;
+    padding: 0 40rpx 80rpx;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     overflow: hidden;
 
