@@ -58,9 +58,9 @@ public class EvTripServiceImpl implements EvTripService {
     private AmapService amapService;
 
     /**
-     * 行程拆分间隔：1分钟
+     * 行程拆分间隔：2分钟
      */
-    private static final long TRIP_GAP_SECONDS = 60L;
+    private static final long TRIP_GAP_SECONDS = 120L;
 
     /**
      * 汇总行程
@@ -302,7 +302,7 @@ public class EvTripServiceImpl implements EvTripService {
             EvAutoReportEntity previous = reportList.get(i - 1);
 
             // 判断是否需要开启新行程：
-            // 1. 时间间隔超过1分钟
+            // 1. 时间间隔超过2分钟
             long durationSeconds = Duration.between(previous.getReportTime(), current.getReportTime()).getSeconds();
             boolean newTripByGap = durationSeconds > TRIP_GAP_SECONDS;
 
