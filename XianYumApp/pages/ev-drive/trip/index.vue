@@ -2,22 +2,35 @@
   <view class="trip-list-page">
     <view class="filter-bar">
       <view class="filter-left" @tap="openDatePopup">
-        <text class="filter-text">{{ dateRangeText || '全部时间' }}</text>
-        <uni-icons type="arrowdown" size="14" color="#666"></uni-icons>
+        <view class="filter-icon">
+          <uni-icons type="calendar" size="16" color="#409eff"></uni-icons>
+        </view>
+        <text class="filter-text">{{ dateRangeText }}</text>
+        <uni-icons type="arrowdown" size="12" color="#999"></uni-icons>
       </view>
-      <view class="filter-right" @tap="handleFilter">
-        <uni-icons type="list" size="20" color="#666"></uni-icons>
+      <view class="filter-total" v-if="total > 0">
+        <text class="total-num">{{ total }}</text>
+        <text class="total-label">条行程</text>
       </view>
     </view>
 
-    <view class="trip-content" v-if="groupedTrips.length > 0">
-      <view v-for="(group, gIndex) in groupedTrips" :key="gIndex" class="trip-group">
+    <view class="trip-content" v-if="state === 'loading'">
+      <view class="skeleton-card" v-for="i in 4" :key="i">
+        <view class="skeleton-line line-lg"></view>
+        <view class="skeleton-line line-sm"></view>
+        <view class="skeleton-line line-xs"></view>
+      </view>
+    </view>
+
+    <view class="trip-content" v-else-if="groupedTrips.length > 0">
+      <view v-for="group in groupedTrips" :key="group.date" class="trip-group">
         <view class="group-date">
-          <text>{{ group.date }}</text>
+          <view class="date-dot"></view>
+          <text class="date-text">{{ group.date }}</text>
           <text class="group-weekday">{{ group.weekday }}</text>
         </view>
         <view
-          v-for="(item, index) in group.trips"
+          v-for="item in group.trips"
           :key="item.id"
           class="trip-card"
           @tap="goToDetail(item)"
@@ -29,13 +42,16 @@
                 <text class="distance-unit">km</text>
               </view>
               <view class="consume-info">
-                <text class="consume-value">{{ item.consumeKwh }}</text>
-                <text class="consume-unit">kWh</text>
+                <view class="consume-badge">
+                  <uni-icons type="bolt" size="12" color="#fa8c16"></uni-icons>
+                  <text class="consume-value">{{ item.consumeKwh }}</text>
+                  <text class="consume-unit">kWh</text>
+                </view>
               </view>
             </view>
             <view class="info-row">
               <view class="info-item">
-                <uni-icons type="calendar" size="12" color="#999"></uni-icons>
+                <uni-icons type="clock" size="12" color="#999"></uni-icons>
                 <text class="info-text">{{ item.timeRange }}</text>
               </view>
               <view class="info-item">
@@ -59,43 +75,38 @@
       </view>
 
       <view class="load-more">
-        <uni-load-more :status="loadMoreStatus" :content-text="contentText" />
+        <uni-load-more :status="loadMoreStatus" :content-text="loadMoreText" />
       </view>
     </view>
 
     <view v-else class="empty-box">
-      <uni-icons type="info" size="60" color="#ccc"></uni-icons>
-      <text class="empty-text">暂无轨迹数据</text>
+      <image class="empty-image" src="https://a0ai.marscode.cn/api/ide/v1/text_to_image?prompt=empty%20trip%20list%20illustration%2C%20a%20car%20with%20dashed%20route%20line%20on%20minimalist%20background%2C%20flat%20design%2C%20blue%20and%20gray%20tones&image_size=square_hd"></image>
+      <text class="empty-title">暂无轨迹数据</text>
+      <text class="empty-desc">快去驾驶爱车，开启你的第一次旅程吧</text>
     </view>
 
     <uni-popup ref="datePopupRef" type="bottom" :mask-click="true">
       <view class="date-popup">
-        <view class="popup-title">时间范围</view>
+        <view class="popup-header">
+          <text class="popup-title">时间范围</text>
+          <view class="popup-close" @tap="closeDatePopup">
+            <uni-icons type="closeempty" size="18" color="#999"></uni-icons>
+          </view>
+        </view>
         <view class="date-options">
           <view
+            v-for="opt in dateOptions"
+            :key="opt.value"
             class="date-option"
-            :class="{ active: dateFilterType === 'all' }"
-            @tap="selectDateFilter('all')"
-          >全部时间</view>
-          <view
-            class="date-option"
-            :class="{ active: dateFilterType === 'week' }"
-            @tap="selectDateFilter('week')"
-          >近一周</view>
-          <view
-            class="date-option"
-            :class="{ active: dateFilterType === 'month' }"
-            @tap="selectDateFilter('month')"
-          >近一月</view>
-          <view
-            class="date-option"
-            :class="{ active: dateFilterType === 'year' }"
-            @tap="selectDateFilter('year')"
-          >近一年</view>
+            :class="{ active: dateFilterType === opt.value }"
+            @tap="selectDateFilter(opt.value)"
+          >
+            <text>{{ opt.label }}</text>
+            <uni-icons v-if="dateFilterType === opt.value" type="checkmarkempty" size="16" color="#409eff"></uni-icons>
+          </view>
         </view>
         <view class="popup-btn" @tap="confirmDateFilter">确定</view>
       </view>
-      <view class="mask-close" @tap="closeDatePopup"></view>
     </uni-popup>
   </view>
 </template>
@@ -103,10 +114,20 @@
 <script>
 import { getTripPage } from "@/api/ev-drive/list";
 
+const DATE_FILTER_OPTIONS = [
+  { value: 'all', label: '全部时间' },
+  { value: 'yesterday', label: '昨天' },
+  { value: 'lastWeek', label: '上一周' },
+  { value: 'lastMonth', label: '上一月' }
+];
+
+const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
 export default {
   name: 'TripList',
   data() {
     return {
+      state: 'loading',
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -122,148 +143,141 @@ export default {
       hasMore: true,
       total: 0,
       loadMoreStatus: 'more',
-      contentText: {
-        contentdown: '上拉显示更多',
-        contentrefresh: '正在加载...',
-        contentnomore: '没有更多数据了'
-      }
+      loadMoreText: {
+        contentdown: '上拉加载更多',
+        contentrefresh: '加载中...',
+        contentnomore: '— 没有更多了 —'
+      },
+      dateOptions: DATE_FILTER_OPTIONS
     };
   },
   computed: {
     groupedTrips() {
-      const groups = [];
-      const dateMap = {};
-      this.tripList.forEach(item => {
-        const date = this.formatDate(item.tripStartTime);
-        if (!dateMap[date]) {
-          dateMap[date] = [];
+      const map = new Map();
+      for (const item of this.tripList) {
+        const date = this._formatDate(item.tripStartTime);
+        if (!map.has(date)) {
+          map.set(date, []);
         }
-        const processed = this.processTripItem(item);
-        dateMap[date].push(processed);
-      });
-      Object.keys(dateMap).forEach(date => {
-        const weekday = this.getWeekday(dateMap[date][0].startTime || date);
-        groups.push({ date, weekday, trips: dateMap[date] });
+        map.get(date).push(this._processItem(item));
+      }
+      const groups = [];
+      map.forEach((trips, date) => {
+        groups.push({
+          date,
+          weekday: this._getWeekday(trips[0].startTime || date),
+          trips
+        });
       });
       return groups;
     }
   },
   onLoad(options) {
-    if (options.pageTitle) {
-      uni.setNavigationBarTitle({ title: options.pageTitle });
-    } else {
-      uni.setNavigationBarTitle({ title: '全部轨迹' });
-    }
-    this.getTripList();
+    const title = (options && options.pageTitle) || '全部轨迹';
+    uni.setNavigationBarTitle({ title });
+    this._getTripList('init');
   },
   onPullDownRefresh() {
-    this.refreshData();
+    this._refresh();
+  },
+  onReachBottom() {
+    if (this.hasMore && !this.loading) {
+      this.queryParams.pageNum++;
+      this._getTripList('more');
+    }
   },
   methods: {
-    processTripItem(item) {
+    _processItem(item) {
       const startOdo = item.startOdometer || 0;
       const endOdo = item.endOdometer || 0;
       const distance = (endOdo - startOdo).toFixed(1);
-
-      const start = this.formatTime(item.tripStartTime);
-      const end = this.formatTime(item.tripEndTime);
-      const timeRange = `${start}-${end}`;
-
-      const durationMs = this.getDurationMs(item.tripStartTime, item.tripEndTime);
-      const durationText = this.formatDuration(durationMs);
-
-      const avgSpeed = durationMs > 0 ? Math.round((parseFloat(distance) / (durationMs / 3600000))) : 0;
-
-      const consumeKwh = (item.tripConsumeKwh != null ? item.tripConsumeKwh : item.consumeKwh) || 0;
+      const durationMs = this._durationMs(item.tripStartTime, item.tripEndTime);
+      const avgSpeed = durationMs > 0
+        ? Math.round(parseFloat(distance) / (durationMs / 3600000))
+        : 0;
 
       return {
         ...item,
         distanceKm: distance,
-        consumeKwh: consumeKwh,
-        timeRange,
-        durationText,
+        consumeKwh: (item.tripConsumeKwh != null ? item.tripConsumeKwh : item.consumeKwh) || 0,
+        timeRange: `${this._formatTime(item.tripStartTime)}-${this._formatTime(item.tripEndTime)}`,
+        durationText: this._formatDuration(durationMs),
         avgSpeed,
-        deviceInfo: this.stripProvince(item.endAddress)
+        deviceInfo: this._stripProvince(item.endAddress)
       };
     },
-    formatDate(dateStr) {
+    _formatDate(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}.${m}.${day}`;
+      return `${d.getFullYear()}.${this._pad(d.getMonth() + 1)}.${this._pad(d.getDate())}`;
     },
-    getWeekday(dateStr) {
+    _formatTime(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);
-      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-      return weekdays[d.getDay()];
+      return `${this._pad(d.getHours())}:${this._pad(d.getMinutes())}`;
     },
-    formatTime(dateStr) {
-      if (!dateStr) return '';
-      const d = new Date(dateStr);
-      const h = String(d.getHours()).padStart(2, '0');
-      const mi = String(d.getMinutes()).padStart(2, '0');
-      return `${h}:${mi}`;
-    },
-    getDurationMs(startStr, endStr) {
-      if (!startStr || !endStr) return 0;
-      const start = new Date(startStr.replace('T', ' ')).getTime();
-      const end = new Date(endStr.replace('T', ' ')).getTime();
-      return end - start;
-    },
-    formatDuration(ms) {
+    _formatDuration(ms) {
       if (ms <= 0) return '00:00:00';
-      const hours = Math.floor(ms / 3600000);
-      const minutes = Math.floor((ms % 3600000) / 60000);
-      const seconds = Math.floor((ms % 60000) / 1000);
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const h = Math.floor(ms / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      return `${this._pad(h)}:${this._pad(m)}:${this._pad(s)}`;
     },
-    stripProvince(address) {
-      if (!address) return '';
-      return address.replace(/^[\u4e00-\u9fa5]+?省/, '');
+    _durationMs(start, end) {
+      if (!start || !end) return 0;
+      return new Date(end.replace('T', ' ')).getTime() - new Date(start.replace('T', ' ')).getTime();
     },
-    async getTripList(type = 'more') {
+    _getWeekday(dateStr) {
+      if (!dateStr) return '';
+      return WEEKDAYS[new Date(dateStr).getDay()];
+    },
+    _pad(n) {
+      return String(n).padStart(2, '0');
+    },
+    _stripProvince(address) {
+      return address ? address.replace(/^[\u4e00-\u9fa5]+?省/, '') : '';
+    },
+    _formatDateTime(date, isStart) {
+      const y = date.getFullYear();
+      const m = this._pad(date.getMonth() + 1);
+      const d = this._pad(date.getDate());
+      return isStart ? `${y}-${m}-${d} 00:00:00` : `${y}-${m}-${d} 23:59:59`;
+    },
+
+    async _getTripList(type) {
       if (this.loading) return;
       this.loading = true;
+      if (type === 'init') this.state = 'loading';
       try {
         const response = await getTripPage(this.queryParams);
         if (response.code === 200) {
           const list = response.data || [];
-          const total = response.total || 0;
-          if (type === 'refresh' || this.queryParams.pageNum === 1) {
-            this.tripList = list;
-          } else {
-            this.tripList = [...this.tripList, ...list];
-          }
-          this.total = total;
-          this.hasMore = this.tripList.length < total;
+          this.tripList = (type === 'more')
+            ? [...this.tripList, ...list]
+            : list;
+          this.total = response.total || 0;
+          this.hasMore = this.tripList.length < this.total;
           this.loadMoreStatus = this.hasMore ? 'more' : 'noMore';
+        } else {
+          this.loadMoreStatus = 'more';
         }
       } catch (error) {
         this.loadMoreStatus = 'more';
         this.$modal.msg('获取轨迹数据失败');
       } finally {
         this.loading = false;
-        if (type === 'refresh') {
-          uni.stopPullDownRefresh();
-        }
+        this.state = 'loaded';
+        if (type === 'refresh') uni.stopPullDownRefresh();
       }
     },
-    refreshData() {
+    _refresh() {
       this.queryParams.pageNum = 1;
       this.tripList = [];
       this.hasMore = true;
       this.loadMoreStatus = 'more';
-      this.getTripList('refresh');
+      this._getTripList('refresh');
     },
-    onReachBottom() {
-      if (this.hasMore && !this.loading) {
-        this.queryParams.pageNum++;
-        this.getTripList('more');
-      }
-    },
+
     openDatePopup() {
       this.$refs.datePopupRef.open();
     },
@@ -274,45 +288,54 @@ export default {
       this.dateFilterType = type;
     },
     confirmDateFilter() {
-      const now = new Date();
-      let beginTime, endTime, text;
-      switch (this.dateFilterType) {
-        case 'all':
-          beginTime = undefined;
-          endTime = undefined;
-          text = '全部时间';
-          break;
-        case 'week':
-          beginTime = this.formatDateTime(new Date(now.getTime() - 7 * 24 * 3600 * 1000), true);
-          endTime = this.formatDateTime(now, false);
-          text = '近一周';
-          break;
-        case 'month':
-          beginTime = this.formatDateTime(new Date(now.getTime() - 30 * 24 * 3600 * 1000), true);
-          endTime = this.formatDateTime(now, false);
-          text = '近一月';
-          break;
-        case 'year':
-          beginTime = this.formatDateTime(new Date(now.getTime() - 365 * 24 * 3600 * 1000), true);
-          endTime = this.formatDateTime(now, false);
-          text = '近一年';
-          break;
-      }
-      this.queryParams.params.beginTime = beginTime;
-      this.queryParams.params.endTime = endTime;
+      const { begin, end, text } = this._resolveDateRange(this.dateFilterType);
+      this.queryParams.params.beginTime = begin;
+      this.queryParams.params.endTime = end;
       this.dateRangeText = text;
       this.closeDatePopup();
-      this.refreshData();
+      this._refresh();
     },
-    formatDateTime(date, isStart) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      if (isStart) return `${y}-${m}-${d} 00:00:00`;
-      return `${y}-${m}-${d} 23:59:59`;
-    },
-    handleFilter() {
-      this.openDatePopup();
+    _resolveDateRange(type) {
+      const now = new Date();
+      const _setDayStart = (d) => { d.setHours(0, 0, 0, 0); return d; };
+      const _setDayEnd = (d) => { d.setHours(23, 59, 59, 999); return d; };
+      const _fmt = (d, isStart) => this._formatDateTime(d, isStart);
+
+      switch (type) {
+        case 'yesterday': {
+          const y = new Date(now);
+          y.setDate(y.getDate() - 1);
+          return {
+            begin: _fmt(_setDayStart(new Date(y)), true),
+            end: _fmt(_setDayEnd(new Date(y)), false),
+            text: '昨天'
+          };
+        }
+        case 'lastWeek': {
+          const dow = now.getDay();
+          const offsetToMonday = dow === 0 ? -6 : 1 - dow;
+          const lastMonday = new Date(now);
+          lastMonday.setDate(lastMonday.getDate() + offsetToMonday - 7);
+          const lastSunday = new Date(lastMonday);
+          lastSunday.setDate(lastSunday.getDate() + 6);
+          return {
+            begin: _fmt(_setDayStart(new Date(lastMonday)), true),
+            end: _fmt(_setDayEnd(new Date(lastSunday)), false),
+            text: '上一周'
+          };
+        }
+        case 'lastMonth': {
+          const lmStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const lmEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+          return {
+            begin: _fmt(_setDayStart(lmStart), true),
+            end: _fmt(_setDayEnd(lmEnd), false),
+            text: '上一月'
+          };
+        }
+        default:
+          return { begin: undefined, end: undefined, text: '全部时间' };
+      }
     },
     goToDetail(item) {
       uni.navigateTo({
@@ -324,9 +347,20 @@ export default {
 </script>
 
 <style lang="scss">
+$primary: #409eff;
+$primary-light: #ecf5ff;
+$warning: #fa8c16;
+$text-primary: #222;
+$text-secondary: #666;
+$text-tertiary: #999;
+$text-placeholder: #b2b2b2;
+$bg-page: #f5f6fa;
+$bg-card: #ffffff;
+$shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+
 .trip-list-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: $bg-page;
   padding-bottom: 120rpx;
 }
 
@@ -334,48 +368,89 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24rpx 32rpx;
-  background-color: #fff;
+  padding: 20rpx 32rpx;
+  padding-top: calc(20rpx + env(safe-area-inset-top));
+  background-color: $bg-card;
   position: sticky;
   top: 0;
   z-index: 10;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
 
   .filter-left {
     display: flex;
     align-items: center;
-    gap: 8rpx;
+    gap: 10rpx;
+    padding: 12rpx 20rpx 12rpx 12rpx;
+    background-color: $primary-light;
+    border-radius: 40rpx;
+
+    .filter-icon {
+      width: 44rpx;
+      height: 44rpx;
+      background-color: rgba(64, 158, 255, 0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     .filter-text {
-      font-size: 30rpx;
-      color: #333;
+      font-size: 28rpx;
+      color: $primary;
       font-weight: 500;
     }
   }
 
-  .filter-right {
-    padding: 12rpx;
+  .filter-total {
+    display: flex;
+    align-items: baseline;
+    gap: 6rpx;
+
+    .total-num {
+      font-size: 32rpx;
+      font-weight: 700;
+      color: $primary;
+    }
+
+    .total-label {
+      font-size: 24rpx;
+      color: $text-tertiary;
+    }
   }
 }
 
 .trip-content {
-  padding: 0 24rpx;
+  padding: 8rpx 24rpx 0;
 }
 
 .trip-group {
-  margin-top: 24rpx;
+  margin-top: 28rpx;
 
   .group-date {
     font-size: 26rpx;
-    color: #999;
+    color: $text-tertiary;
     padding: 16rpx 8rpx;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 12rpx;
 
+    .date-dot {
+      width: 12rpx;
+      height: 12rpx;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $primary, #5a77d7);
+    }
+
+    .date-text {
+      font-size: 28rpx;
+      color: $text-primary;
+      font-weight: 600;
+    }
+
     .group-weekday {
       font-size: 24rpx;
-      color: #b2b2b2;
+      color: $text-placeholder;
       font-weight: 400;
     }
   }
@@ -384,11 +459,11 @@ export default {
 .trip-card {
   display: flex;
   align-items: stretch;
-  background-color: #fff;
+  background-color: $bg-card;
   border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  box-shadow: $shadow-card;
   transition: all 0.2s ease;
 
   &:active {
@@ -404,7 +479,7 @@ export default {
 
   .distance-row {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     margin-bottom: 20rpx;
 
@@ -414,35 +489,38 @@ export default {
     }
 
     .distance-value {
-      font-size: 56rpx;
+      font-size: 60rpx;
       font-weight: 700;
-      color: #222;
-      line-height: 1.1;
+      color: $text-primary;
+      line-height: 1;
+      letter-spacing: -1rpx;
     }
 
     .distance-unit {
       font-size: 26rpx;
-      color: #666;
+      color: $text-secondary;
       margin-left: 8rpx;
       font-weight: 400;
     }
 
-    .consume-info {
+    .consume-badge {
       display: flex;
       align-items: baseline;
+      gap: 4rpx;
+      padding: 8rpx 16rpx;
+      background: linear-gradient(135deg, rgba(250, 140, 22, 0.1), rgba(250, 140, 22, 0.04));
+      border-radius: 24rpx;
 
       .consume-value {
-        font-size: 30rpx;
+        font-size: 28rpx;
         font-weight: 600;
-        color: #fa8c16;
-        line-height: 1.1;
+        color: $warning;
       }
 
       .consume-unit {
-        font-size: 12rpx;
-        color: #fa8c16;
-        margin-left: 4rpx;
-        font-weight: 400;
+        font-size: 20rpx;
+        color: $warning;
+        opacity: 0.8;
       }
     }
   }
@@ -451,8 +529,8 @@ export default {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16rpx 24rpx;
-    margin-bottom: 16rpx;
+    gap: 14rpx 22rpx;
+    margin-bottom: 14rpx;
 
     .info-item {
       display: flex;
@@ -462,7 +540,7 @@ export default {
 
       .info-text {
         font-size: 24rpx;
-        color: #666;
+        color: $text-secondary;
       }
     }
   }
@@ -475,7 +553,7 @@ export default {
 
     .device-text {
       font-size: 24rpx;
-      color: #aaa;
+      color: $text-tertiary;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -487,8 +565,44 @@ export default {
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    margin-left: 16rpx;
+    margin-left: 8rpx;
   }
+}
+
+.skeleton-card {
+  background-color: $bg-card;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: $shadow-card;
+
+  .skeleton-line {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s ease infinite;
+    border-radius: 8rpx;
+    margin-bottom: 16rpx;
+  }
+
+  .line-lg {
+    height: 48rpx;
+    width: 60%;
+  }
+
+  .line-sm {
+    height: 24rpx;
+    width: 80%;
+  }
+
+  .line-xs {
+    height: 20rpx;
+    width: 40%;
+  }
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .load-more {
@@ -500,80 +614,104 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 200rpx 0;
+  padding: 160rpx 60rpx;
 
-  .empty-text {
-    margin-top: 24rpx;
-    font-size: 28rpx;
-    color: #999;
+  .empty-image {
+    width: 280rpx;
+    height: 280rpx;
+    margin-bottom: 32rpx;
+  }
+
+  .empty-title {
+    font-size: 32rpx;
+    color: $text-primary;
+    font-weight: 600;
+    margin-bottom: 12rpx;
+  }
+
+  .empty-desc {
+    font-size: 26rpx;
+    color: $text-tertiary;
   }
 }
 
 .date-popup {
-  background-color: #fff;
-  border-radius: 24rpx 24rpx 0 0;
-  padding: 40rpx 32rpx;
-  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  background-color: $bg-card;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 32rpx 32rpx;
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
 
-  .popup-title {
-    font-size: 34rpx;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    margin-bottom: 36rpx;
+  .popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28rpx;
+
+    .popup-title {
+      font-size: 34rpx;
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    .popup-close {
+      width: 56rpx;
+      height: 56rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f5f5;
+      border-radius: 50%;
+    }
   }
 
   .date-options {
     display: flex;
     flex-direction: column;
-    gap: 20rpx;
-    margin-bottom: 40rpx;
+    gap: 16rpx;
+    margin-bottom: 36rpx;
 
     .date-option {
-      height: 88rpx;
-      line-height: 88rpx;
-      text-align: center;
+      height: 96rpx;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28rpx;
       background-color: #f7f8fa;
-      border-radius: 12rpx;
+      border-radius: 16rpx;
       font-size: 30rpx;
-      color: #333;
+      color: $text-secondary;
       transition: all 0.2s ease;
 
       &.active {
-        background-color: #e8f4ff;
-        color: #409eff;
+        background-color: $primary-light;
+        color: $primary;
         font-weight: 600;
       }
 
       &:active {
-        opacity: 0.8;
+        transform: scale(0.98);
       }
     }
   }
 
   .popup-btn {
-    height: 88rpx;
-    line-height: 88rpx;
+    height: 96rpx;
+    line-height: 96rpx;
     text-align: center;
-    background-color: #409eff;
+    background: linear-gradient(135deg, $primary, #5a77d7);
     color: #fff;
-    border-radius: 12rpx;
+    border-radius: 48rpx;
     font-size: 32rpx;
     font-weight: 500;
+    letter-spacing: 4rpx;
+    box-shadow: 0 8rpx 24rpx rgba(64, 158, 255, 0.3);
+    transition: all 0.2s ease;
 
     &:active {
-      background-color: #3a8ee6;
+      opacity: 0.9;
+      transform: translateY(2rpx);
+      box-shadow: 0 4rpx 12rpx rgba(64, 158, 255, 0.3);
     }
   }
-}
-
-.mask-close {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
 }
 </style>
