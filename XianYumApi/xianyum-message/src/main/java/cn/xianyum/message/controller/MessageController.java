@@ -58,7 +58,7 @@ public class MessageController {
      * @return
      */
     @Permission(publicApi = true)
-    @PostMapping("/push")
+    @PostMapping("/nasPush")
     public Results<?> receiveFnOsPushMessage(@RequestBody FnOsPushMessageRequest request){
         messageService.receiveFnOsPushMessage(request);
         return Results.success();
