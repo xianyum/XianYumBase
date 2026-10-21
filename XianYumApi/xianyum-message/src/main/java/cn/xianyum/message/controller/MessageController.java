@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "消息接口")
 @RestController
-@RequestMapping()
+@RequestMapping(value = "xym-message/v1/message")
 @Slf4j
 public class MessageController {
 
     @Autowired
     private MessageService messageService;
 
-    @PostMapping("/xym-message/v1/message/sendSimpleMessage")
+    @PostMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
     @Permission(publicApi = true)
     public Results<?> sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
@@ -36,7 +36,7 @@ public class MessageController {
         return Results.success();
     }
 
-    @PostMapping("/xym-message/v1/message/sendStandardMessage")
+    @PostMapping("/sendStandardMessage")
     @Operation(summary = "发送标准消息")
     @Permission(publicApi = true)
     public Results<?> sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
@@ -44,7 +44,7 @@ public class MessageController {
         return Results.success();
     }
 
-    @GetMapping("/xym-message/v1/message/sendSimpleMessage")
+    @GetMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
     @Permission(publicApi = true)
     public Results<?> sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
