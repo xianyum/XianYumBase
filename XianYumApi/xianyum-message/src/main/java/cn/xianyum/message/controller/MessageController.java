@@ -57,8 +57,9 @@ public class MessageController {
      * @param request
      * @return
      */
+    @Operation(summary = "接收飞牛os消息推送")
     @Permission(publicApi = true)
-    @PostMapping("/nasPush")
+    @PostMapping("/receiveFnOsPushMessage")
     public Results<?> receiveFnOsPushMessage(@RequestBody FnOsPushMessageRequest request){
         messageService.receiveFnOsPushMessage(request);
         return Results.success();
