@@ -1,7 +1,9 @@
 package cn.xianyum.common.utils;
 
+import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.base.BaseResponse;
 import cn.xianyum.common.entity.base.PageResponse;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 
@@ -27,6 +29,7 @@ public class Results<T> extends HashMap<String, Object> {
     public Results() {
         put(CODE_FIELD, HttpStatus.OK.value());
         put(MSG_FIELD, SUCCESS_FIELD);
+        put(Constants.TRACE_ID, MDC.get(Constants.TRACE_ID));
     }
 
     // -------------------- 错误返回方法 --------------------

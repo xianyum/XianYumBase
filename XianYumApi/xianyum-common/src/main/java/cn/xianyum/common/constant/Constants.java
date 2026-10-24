@@ -104,4 +104,9 @@ public class Constants {
      */
     public static final String DEFAULT_REDIS_KEY_PREFIX = "XianYumApi:";
 
+    /**
+     * 跟踪ID
+     */
+    public static final String TRACE_ID = "traceId";
+
 }
