@@ -9,7 +9,6 @@ import cn.xianyum.extension.entity.response.EvAutoReportResponse;
 import cn.xianyum.extension.entity.response.EvDriveRecordsAppReportResponse;
 import cn.xianyum.extension.entity.response.EvTripResponse;
 import cn.xianyum.extension.service.EvTripService;
-import cn.xianyum.extension.entity.po.EvAutoReportEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

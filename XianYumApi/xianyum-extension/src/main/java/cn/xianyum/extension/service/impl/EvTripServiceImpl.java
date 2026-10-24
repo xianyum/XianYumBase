@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.hutool.core.util.CoordinateUtil;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.RedisUtils;
@@ -181,16 +180,7 @@ public class EvTripServiceImpl implements EvTripService {
 
         List<EvAutoReportEntity> reportList = evAutoReportMapper.selectList(queryWrapper);
         List<EvTripTrackResponse> trackList = BeanUtil.copyToList(reportList, EvTripTrackResponse.class);
-        // 使用 Douglas-Peucker 算法抽稀轨迹点
         List<EvTripTrackResponse> simplifiedTrack = douglasPeucker(trackList, 0.00005);
-        // 将坐标从WGS84转为GCJ-02（火星坐标系，高德/谷歌地图使用）
-        for (EvTripTrackResponse track : simplifiedTrack) {
-            if (track.getLon() != null && track.getLat() != null) {
-                CoordinateUtil.Coordinate gcj02 = CoordinateUtil.wgs84ToGcj02(track.getLon().doubleValue(), track.getLat().doubleValue());
-                track.setLon(BigDecimal.valueOf(gcj02.getLng()));
-                track.setLat(BigDecimal.valueOf(gcj02.getLat()));
-            }
-        }
         if(CollUtil.isNotEmpty(trackList)){
             response.setStartLat(trackList.get(0).getLat());
             response.setStartLon(trackList.get(0).getLon());
@@ -388,14 +378,11 @@ public class EvTripServiceImpl implements EvTripService {
         entity.setEndLat(endGeo.getLat());
         entity.setEndLon(endGeo.getLon());
 
-        // WGS84转GCJ02（火星坐标系，高德地图使用）
         if(Objects.nonNull(startGeo.getLon()) && Objects.nonNull(startGeo.getLat())) {
-            CoordinateUtil.Coordinate startGcj02 = CoordinateUtil.wgs84ToGcj02(startGeo.getLon().doubleValue(), startGeo.getLat().doubleValue());
-            entity.setStartAddress(amapService.getFormattedAddress(String.valueOf(startGcj02.getLng()), String.valueOf(startGcj02.getLat())));
+            entity.setStartAddress(amapService.getFormattedAddress(startGeo.getLon().toPlainString(), startGeo.getLat().toPlainString()));
         }
         if(Objects.nonNull(endGeo.getLon()) && Objects.nonNull(endGeo.getLat())) {
-            CoordinateUtil.Coordinate endGcj02 = CoordinateUtil.wgs84ToGcj02(endGeo.getLon().doubleValue(), endGeo.getLat().doubleValue());
-            entity.setEndAddress(amapService.getFormattedAddress(String.valueOf(endGcj02.getLng()), String.valueOf(endGcj02.getLat())));
+            entity.setEndAddress(amapService.getFormattedAddress(endGeo.getLon().toPlainString(), endGeo.getLat().toPlainString()));
         }
 
         // 里程

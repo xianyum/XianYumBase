@@ -306,6 +306,11 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
      */
     @Override
     public void saveAutoReportData(EvAutoReportRequest request) {
+        if (Objects.nonNull(request) && Objects.nonNull(request.getLon()) && Objects.nonNull(request.getLat())) {
+            CoordinateUtil.Coordinate gcj02 = CoordinateUtil.wgs84ToGcj02(request.getLon().doubleValue(), request.getLat().doubleValue());
+            request.setLon(BigDecimal.valueOf(gcj02.getLng()));
+            request.setLat(BigDecimal.valueOf(gcj02.getLat()));
+        }
         EvAutoReportEntity evAutoReportEntity = BeanUtil.copyProperties(request, EvAutoReportEntity.class);
         evAutoReportEntity.setReportTime(DateUtils.utcSecondToCnLdt(request.getUtc()));
         evAutoReportMapper.insert(evAutoReportEntity);
@@ -341,10 +346,7 @@ public class EvDriveRecordsServiceImpl implements EvDriveRecordsService {
         }
         EvAutoReportResponse response = BeanUtil.toBean(entity, EvAutoReportResponse.class);
         if (Objects.nonNull(response.getLon()) && Objects.nonNull(response.getLat())) {
-            CoordinateUtil.Coordinate gcj02 = CoordinateUtil.wgs84ToGcj02(response.getLon().doubleValue(), response.getLat().doubleValue());
-            response.setLon(BigDecimal.valueOf(gcj02.getLng()));
-            response.setLat(BigDecimal.valueOf(gcj02.getLat()));
-            String address = amapService.getFormattedAddress(String.valueOf(gcj02.getLng()), String.valueOf(gcj02.getLat()));
+            String address = amapService.getFormattedAddress(response.getLon().toPlainString(), response.getLat().toPlainString());
             response.setFormattedAddress(address);
         }
         return response;
