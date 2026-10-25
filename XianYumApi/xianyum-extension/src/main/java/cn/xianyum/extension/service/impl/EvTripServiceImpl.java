@@ -164,13 +164,22 @@ public class EvTripServiceImpl implements EvTripService {
      */
     @Override
     public EvTripResponse getById(Long id) {
+        String cacheKey = RedisKeyEnum.EV_TRIP_DETAIL.formatKey(id);
+
+        String cached = redisUtils.getString(cacheKey);
+        if (StrUtil.isNotBlank(cached)) {
+            return JSON.parseObject(cached, EvTripResponse.class);
+        }
+
         EvTripEntity entity = evTripMapper.selectById(id);
         EvTripResponse response = BeanUtil.copyProperties(entity, EvTripResponse.class);
-        if(Objects.isNull(entity)){
+        if (Objects.isNull(entity)) {
             return response;
         }
-        // 查询该行程时间范围内、is_parked=0 的行驶数据
+
         LambdaQueryWrapper<EvAutoReportEntity> queryWrapper = Wrappers.<EvAutoReportEntity>lambdaQuery()
+                .select(EvAutoReportEntity::getLat, EvAutoReportEntity::getLon,
+                        EvAutoReportEntity::getHeading, EvAutoReportEntity::getReportTime)
                 .eq(EvAutoReportEntity::getIsParked, 0)
                 .ge(EvAutoReportEntity::getReportTime, response.getTripStartTime())
                 .le(EvAutoReportEntity::getReportTime, response.getTripEndTime())
@@ -181,13 +190,15 @@ public class EvTripServiceImpl implements EvTripService {
         List<EvAutoReportEntity> reportList = evAutoReportMapper.selectList(queryWrapper);
         List<EvTripTrackResponse> trackList = BeanUtil.copyToList(reportList, EvTripTrackResponse.class);
         List<EvTripTrackResponse> simplifiedTrack = douglasPeucker(trackList, 0.00005);
-        if(CollUtil.isNotEmpty(trackList)){
+        if (CollUtil.isNotEmpty(trackList)) {
             response.setStartLat(trackList.get(0).getLat());
             response.setStartLon(trackList.get(0).getLon());
             response.setEndLat(trackList.get(trackList.size() - 1).getLat());
             response.setEndLon(trackList.get(trackList.size() - 1).getLon());
             response.setTrackList(simplifiedTrack);
         }
+
+        redisUtils.setDay(cacheKey, JSON.toJSONString(response), 30);
         return response;
     }
 
