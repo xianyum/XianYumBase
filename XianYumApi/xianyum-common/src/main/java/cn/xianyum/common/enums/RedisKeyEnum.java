@@ -45,7 +45,6 @@ public enum RedisKeyEnum {
     EV_DRIVE_AI_PROCESSING("xianyum-extension:ev-drive:processing"),
     EV_TRIP_LAST_PROCESSED_UTC("xianyum-extension:ev-trip:last-processed-utc"),
     EV_TRIP_LATEST_REPORT("xianyum-extension:ev-trip:latest-report"),
-    EV_TRIP_DETAIL("xianyum-extension:ev-trip:detail:%s"),
     AMAP_REGEO("xianyum-extension:amap:regeo:%s");
 
 
