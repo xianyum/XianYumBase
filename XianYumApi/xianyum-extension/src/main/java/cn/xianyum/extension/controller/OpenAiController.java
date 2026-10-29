@@ -37,7 +37,7 @@ public class OpenAiController {
      * @return 令牌使用情况
      */
     @GetMapping("/token/usage")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<OpenAiTokenUsageResponse> getTokenUsage() {
         return Results.success(openAiService.getTokenUsage());
     }

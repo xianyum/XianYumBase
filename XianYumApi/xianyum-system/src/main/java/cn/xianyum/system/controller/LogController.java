@@ -74,7 +74,7 @@ public class LogController {
      */
     @Operation(summary = "获取接口日志数量")
     @GetMapping(value = "/getLogCount")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<Long> getLogCount() {
         return Results.success(logService.getLogCount());
     }

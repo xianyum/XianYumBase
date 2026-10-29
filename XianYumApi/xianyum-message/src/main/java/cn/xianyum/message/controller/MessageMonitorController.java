@@ -1,5 +1,6 @@
 package cn.xianyum.message.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
@@ -43,7 +44,7 @@ public class MessageMonitorController {
      */
     @Operation(summary = "消息监控根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<MessageMonitorResponse> getById(@PathVariable String id) {
         MessageMonitorResponse response = messageMonitorService.getById(id);
         return Results.success(response);

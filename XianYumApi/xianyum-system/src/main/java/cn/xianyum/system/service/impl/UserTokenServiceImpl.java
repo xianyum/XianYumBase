@@ -2,6 +2,8 @@ package cn.xianyum.system.service.impl;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
+import cn.dev33.satoken.stp.SaTokenInfo;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
@@ -15,6 +17,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
+import cn.xianyum.system.common.utils.SecretUtils;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UserLoginRequest;
@@ -183,22 +186,19 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(StrUtil.isBlank(request.getVerifyCode())){
             throw new SoException("未通过验证码校验");
         }
-        Authentication authentication;
-        try {
-            boolean valid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(request.getVerifyCode());
-            if (!valid && request.getLoginType().equals(LoginTypeEnum.USER_PASSWORD)) {
-                throw new SoException("验证码错误");
-            }
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }catch (Exception e){
-            if (e instanceof BadCredentialsException) {
-                throw new SoException("密码错误");
-            } else {
-                throw new SoException(e.getMessage());
-            }
+        boolean valid = ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(request.getVerifyCode());
+        if (!valid && request.getLoginType().equals(LoginTypeEnum.USER_PASSWORD)) {
+            throw new SoException("验证码错误");
         }
-        LoginUser loginUserEntity = (LoginUser)authentication.getPrincipal();
+        UserEntity userEntity = SpringUtil.getBean(UserService.class).queryByUserName(request.getUsername());
+        if(Objects.isNull(userEntity)){
+            throw new SoException("用户不存在");
+        }
+        if(!SecretUtils.matchesPassword(request.getPassword(),userEntity.getPassword())){
+            throw new SoException("密码错误");
+        }
+        LoginUser loginUserEntity = new LoginUser();
+        loginUserEntity.setId(userEntity.getId());
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -223,12 +223,12 @@ public class UserTokenServiceImpl implements UserTokenService {
         }
         // 校验登录凭证成功就删除
         redisUtils.del(redisKey);
-        UserDetails userDetails = SpringUtil.getBean(UserDetailsService.class).loadUserByUsername(request.getUsername());
-        // 第三步：构建认证信息（密码置空，跳过密码校验）
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        // 设置认证上下文
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        UserEntity userEntity = SpringUtil.getBean(UserService.class).queryByUserName(request.getUsername());
+        if(Objects.isNull(userEntity)){
+            throw new SoException("用户不存在");
+        }
+        LoginUser loginUserEntity = new LoginUser();
+        loginUserEntity.setId(userEntity.getId());
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -240,13 +240,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginByQq(UserLoginRequest request) {
-        LoginUser user = SpringUtil.getBean(UserService.class).getUserByQq(request);
-        UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
-        // 第三步：构建认证信息（密码置空，跳过密码校验）
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        // 设置认证上下文
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        LoginUser loginUserEntity = SpringUtil.getBean(UserService.class).getUserByQq(request);
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -259,13 +253,7 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginUser loginByZhiFuBao(UserLoginRequest request) {
-        LoginUser user = SpringUtil.getBean(UserService.class).getUserByAli(request.getAuthCode());
-        UserDetails userDetails =  JSONObject.parseObject(JSONObject.toJSONString(user),LoginUser.class);
-        // 第三步：构建认证信息（密码置空，跳过密码校验）
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        // 设置认证上下文
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        LoginUser loginUserEntity = SpringUtil.getBean(UserService.class).getUserByAli(request.getAuthCode());
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -371,24 +359,21 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public LoginTokenResponse createToken(LoginUser loginUser) {
-        //生成token
-        String token = IdGeneratorUtil.nextIdStr();
-        Date now = new Date();
-        //过期时间
-        Date expireTime = new Date(now.getTime() + expire * 86400L * 1000L);
         // 设置额外用户信息
         this.setExtraUserInfo(loginUser);
-        redisUtils.setDay(RedisKeyEnum.TOKEN_PREFIX.getKey()+token,JSONObject.toJSONString(loginUser),expire);
+        // 使用saToken登录
+        StpUtil.login(loginUser.getId(),loginUser.getLoginType());
+        // 获取token信息
+        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
-        loginTokenResponse.setToken(token);
-        loginTokenResponse.setExpireTime(expireTime);
+        loginTokenResponse.setToken(tokenInfo.getTokenValue());
+        loginTokenResponse.setExpireTime(tokenInfo.tokenTimeout);
         return loginTokenResponse;
     }
 
     @Override
     public void logout() {
-        String token =  HttpContextUtils.getRequestToken();
-        redisUtils.del(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
+        StpUtil.logout();
     }
 
     @Override

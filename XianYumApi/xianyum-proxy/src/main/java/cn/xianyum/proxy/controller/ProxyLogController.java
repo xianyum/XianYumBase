@@ -59,7 +59,7 @@ public class ProxyLogController {
      */
     @Operation(summary = "通过客户端上报数据")
     @PostMapping(value = "/reportClientInfo")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> reportClientInfo(@RequestBody ProxyLogRequest request) {
         Integer count = proxyLogService.save(request);
 		if(count>0){

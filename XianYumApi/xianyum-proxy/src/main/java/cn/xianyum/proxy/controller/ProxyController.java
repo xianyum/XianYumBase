@@ -1,5 +1,6 @@
 package cn.xianyum.proxy.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -205,7 +206,7 @@ public class ProxyController {
 
     @Operation(summary = "重启java应用刷入写入量和读取量")
     @GetMapping(value = "/flushWriteAndReadBytes")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<String> flushWriteAndReadBytes() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>(2);
         jobMapParams.put("resetZeroFlag","Y");

@@ -1,6 +1,6 @@
 package cn.xianyum.extension.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,7 +46,7 @@ public class GoldPriceController{
      */
     @Operation(summary = "获取最新金价")
     @GetMapping(value = "/getLatestPrice")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<GoldPriceResponse> getLatestPrice() {
         GoldPriceResponse response = goldPriceService.getLatestPrice();
         return Results.success(response);
@@ -60,7 +60,7 @@ public class GoldPriceController{
      */
     @Operation(summary = "获取金价趋势图")
     @GetMapping(value = "/getTrend")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<List<GoldPriceResponse>> getTrend() {
         List<GoldPriceResponse> responseList = goldPriceService.getTrend();
         return Results.success(responseList);
@@ -73,7 +73,7 @@ public class GoldPriceController{
      */
     @Operation(summary = "获取K线图")
     @GetMapping(value = "/getKLine")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> getKLine() {
         List<List<Object>> responseList = goldPriceService.getKLine();
         return Results.success(responseList);

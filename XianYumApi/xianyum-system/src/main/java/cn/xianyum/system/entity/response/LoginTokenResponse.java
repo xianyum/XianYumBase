@@ -1,7 +1,6 @@
 package cn.xianyum.system.entity.response;
 
 import lombok.Data;
-import java.util.Date;
 
 /**
  * 登录token响应体
@@ -14,6 +13,6 @@ public class LoginTokenResponse {
     /** 验证码 */
     private String token;
 
-    /** 过期时间 */
-    private Date expireTime;
+    /** token剩余时间，单位：秒 */
+    private long expireTime;
 }

@@ -33,7 +33,7 @@ public class QqController {
 
     @PostMapping("/login")
     @Operation(summary = "QQ第三方登录")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
         request.setLoginType(LoginTypeEnum.QQ);
         return Results.success(userTokenService.login(request));

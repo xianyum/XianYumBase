@@ -1,5 +1,6 @@
 package cn.xianyum.mqtt.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.mqtt.entity.request.MqttFishRequest;
@@ -64,7 +65,7 @@ public class MqttFishController{
     }
 
     @GetMapping(value = "/metrics", produces = "text/plain; version=0.0.4")
-    @Permission(publicApi = true)
+    @SaIgnore
     public String metrics(){
         return mqttFishService.metrics();
     }

@@ -1,5 +1,6 @@
 package cn.xianyum.message.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
@@ -30,7 +31,7 @@ public class MessageController {
 
     @PostMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
@@ -38,7 +39,7 @@ public class MessageController {
 
     @PostMapping("/sendStandardMessage")
     @Operation(summary = "发送标准消息")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
         messageService.sendStandardMessage(messageSenderRequest);
         return Results.success();
@@ -46,7 +47,7 @@ public class MessageController {
 
     @GetMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
@@ -58,14 +59,14 @@ public class MessageController {
      * @return
      */
     @Operation(summary = "接收飞牛os消息推送")
-    @Permission(publicApi = true)
+    @SaIgnore
     @PostMapping("/receiveFnOsPushMessage")
     public Results<?> receiveFnOsPushMessage(@RequestBody FnOsPushMessageRequest request){
         messageService.receiveFnOsPushMessage(request);
         return Results.success();
     }
 
-    @Permission(publicApi = true)
+    @SaIgnore
     @PostMapping("/grafana/alert")
     public Results<?> receiveGrafanaAlert(@RequestBody String json) {
         GrafanaAlertWebhookRequest request =  JSONObject.parseObject(json, GrafanaAlertWebhookRequest.class);

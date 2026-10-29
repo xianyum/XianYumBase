@@ -27,7 +27,7 @@ public class IpController {
 
     @GetMapping("/getIpInfo")
     @Operation(summary = "查询IP地理位置")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<IpInfoEntity> getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
         return Results.success(result);

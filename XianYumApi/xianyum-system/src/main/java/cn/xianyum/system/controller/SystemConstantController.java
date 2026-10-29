@@ -26,7 +26,7 @@ public class SystemConstantController {
 
     @GetMapping("/getPublicConstant/{key}")
     @Operation(summary = "获取系统可见参数")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<SystemConstantEntity> getPublicConstant(@PathVariable String key) {
         SystemConstantEntity response = systemConstantService.getPublicConstant(key);
         return Results.success(response);

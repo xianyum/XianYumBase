@@ -1,5 +1,6 @@
 package cn.xianyum.extension.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
@@ -133,7 +134,7 @@ public class EvDriveRecordsController {
 
     @Operation(summary = "上报车机遥感数据")
     @PostMapping(value = "/autoReport")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<String> autoReport(@RequestBody EvAutoReportRequest request) {
         this.evDriveRecordsService.saveAutoReportData(request);
         return Results.success();

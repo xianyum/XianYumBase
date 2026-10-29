@@ -1,5 +1,6 @@
 package cn.xianyum.system.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
@@ -38,7 +39,7 @@ public class AliController {
 
     @PostMapping("/login")
     @Operation(summary = "支付宝第三方登录")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest aliRequest) {
         aliRequest.setLoginType(LoginTypeEnum.ZHI_FU_BAO);
         return Results.success(userTokenService.login(aliRequest));
@@ -46,7 +47,7 @@ public class AliController {
 
     @PostMapping("/yunXiao/flowCallBack")
     @Operation(summary = "阿里云-云效-流水线执行结果回调")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
         return Results.success();

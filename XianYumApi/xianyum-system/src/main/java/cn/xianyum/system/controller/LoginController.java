@@ -5,6 +5,7 @@ import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.generator.common.model.dto.GenerateParam;
 import cloud.tianai.captcha.generator.common.model.dto.ParamKeyEnum;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.CaptchaConstant;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
@@ -43,7 +44,7 @@ public class LoginController {
 
     @PostMapping("/login")
     @Operation(summary = "登录系统")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
         return Results.success(this.userTokenService.login(request));
     }
@@ -53,7 +54,7 @@ public class LoginController {
      * @return 验证码数据
      */
     @PostMapping("/captcha/genCaptcha")
-    @Permission(publicApi = true)
+    @SaIgnore
     @Operation(summary = "获取验证码")
     public ApiResponse<ImageCaptchaVO> genCaptcha() {
         GenerateParam generateParam = new GenerateParam();
@@ -69,7 +70,7 @@ public class LoginController {
      */
     @PostMapping("/captcha/check")
     @Operation(summary = "校验验证码")
-    @Permission(publicApi = true)
+    @SaIgnore
     public ApiResponse<?> checkCaptcha(@RequestBody CheckCaptchaRequest request) {
         ApiResponse<?> response = imageCaptchaApplication.matching(request.getId(), request.getData());
         if (response.isSuccess()) {
@@ -84,7 +85,7 @@ public class LoginController {
      * @return 获取二维码登录凭证
      */
     @GetMapping("/login/qrcode/generate")
-    @Permission(publicApi = true)
+    @SaIgnore
     @Operation(summary = "获取二维码登录凭证")
     public Results<QrLoginTicketResponse> generateQrCode() {
         return Results.success(userTokenService.generateQrCode());
@@ -118,7 +119,7 @@ public class LoginController {
      */
     @GetMapping("/login/qrcode/status")
     @Operation(summary = "二维码状态")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<QrLoginTicketResponse> getQrCodeStatus(@RequestParam String ticket) {
         return Results.success(userTokenService.getQrCodeStatus(ticket));
     }
@@ -128,7 +129,7 @@ public class LoginController {
      * @return 验证码数据
      */
     @GetMapping("/captcha/getType")
-    @Permission(publicApi = true)
+    @SaIgnore
     @Operation(summary = "获取验证码类型")
     public Results<String> getCaptchaType() {
        return Results.success(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.CAPTCHA_TYPE));
@@ -139,7 +140,7 @@ public class LoginController {
      */
     @PostMapping("/sendLoginCredentials")
     @Operation(summary = "发送登录凭证")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> sendLoginCredentials(@RequestBody UserLoginRequest request) {
         this.userTokenService.sendLoginCredentials(request);
         return Results.success();
@@ -147,7 +148,7 @@ public class LoginController {
 
     @PostMapping("/xianYuLogin")
     @Operation(summary = "咸鱼客户端登录系统")
-    @Permission(publicApi = true)
+    @SaIgnore
     public Results<?> xianYuLogin(@RequestBody UserLoginRequest request) {
         // todo 后期得改造xianyu PC客户端登录方式
         return Results.success();
