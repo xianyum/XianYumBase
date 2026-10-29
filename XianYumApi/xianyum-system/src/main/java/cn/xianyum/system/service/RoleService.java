@@ -5,14 +5,7 @@ import cn.xianyum.system.entity.request.RoleRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.common.entity.base.PageResponse;
 import java.util.List;
-import java.util.Set;
 
-/**
- * 角色管理(Role)service层
- *
- * @author zhangwei
- * @since 2023-10-31 19:57:15
- */
 public interface RoleService{
 
 	PageResponse<RoleResponse> getPage(RoleRequest request);
@@ -33,11 +26,9 @@ public interface RoleService{
 
 	List<RoleResponse> getList(RoleRequest request);
 
-	Set<String> getRolePermission(String userId);
+	LoginUser getCurrentUserRolePermission(String userId);
 
-	List<RoleResponse> getRoleByUserId(String userId);
-
-    void setLoginUserRoleService(LoginUser loginUser);
+	void clearRoleCacheByUserId(String userId);
 
 	void checkRoleIsDelete(Long id);
 }

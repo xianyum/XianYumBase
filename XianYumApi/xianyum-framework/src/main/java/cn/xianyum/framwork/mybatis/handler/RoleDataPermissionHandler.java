@@ -6,7 +6,6 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.PermissionThreadLocal;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.system.common.utils.SecretUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.expression.Alias;

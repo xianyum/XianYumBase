@@ -13,8 +13,8 @@ import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.system.common.enums.ThirdTypeEnum;
-import cn.xianyum.system.common.utils.SecretUtils;
+import cn.xianyum.common.enums.ThirdTypeEnum;
+import cn.xianyum.common.utils.SecretUtils;
 import cn.xianyum.system.dao.RoleMapper;
 import cn.xianyum.system.dao.UserThirdRelationMapper;
 import cn.xianyum.system.dao.UserMapper;
@@ -221,13 +221,11 @@ public class UserServiceImpl implements UserService {
     public LoginUser getUserSelf() {
         LoginUser u = userTokenService.getUserSelf();
         if(Objects.nonNull(u)){
-            u.setPermissions(this.menuService.getMenuPermission(u.getId()));
             if(StrUtil.isNotBlank(u.getAvatarFileId()) && HttpUtils.isHttpOrHttps(u.getAvatarFileId())){
                 u.setAvatar(u.getAvatarFileId());
             }else{
                 u.setAvatar(this.fileService.presignedUrl(u.getAvatarFileId()));
             }
-            this.roleService.setLoginUserRoleService(u);
         }
         return u;
     }
@@ -264,6 +262,8 @@ public class UserServiceImpl implements UserService {
             userRoleEntity.setUserId(id);
             userRoleMapper.insert(userRoleEntity);
         }
+        roleService.clearRoleCacheByUserId(id);
+        menuService.clearMenuPermissionCacheByUserId(id);
     }
 
     /**

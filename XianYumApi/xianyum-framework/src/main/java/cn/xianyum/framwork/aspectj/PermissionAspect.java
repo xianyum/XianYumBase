@@ -11,12 +11,10 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.PermissionThreadLocal;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.framwork.security.context.PermissionStandardEvaluationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -33,10 +31,6 @@ import java.util.Objects;
 @Aspect
 @Component
 public class PermissionAspect {
-
-    @Autowired
-    private PermissionStandardEvaluationContext permissionStandardEvaluationContext;
-
 
     @Around("@annotation(userPermission)")
     public Object doAround(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
@@ -153,9 +147,6 @@ public class PermissionAspect {
         // 权限校验
         ExpressionParser parser = new SpelExpressionParser();
         Expression expression = parser.parseExpression(userPermission.value());
-        Boolean value = expression.getValue(permissionStandardEvaluationContext,Boolean.class);
-        if(Boolean.FALSE.equals(value)){
-            throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
-        }
+
     }
 }

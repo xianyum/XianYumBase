@@ -1,66 +1,47 @@
 package cn.xianyum.common.utils;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import cn.xianyum.common.enums.RedisKeyEnum;
+import com.alibaba.fastjson2.JSONObject;
 
 import java.util.Objects;
 
-/**
- * 安全服务工具类
- * @author zhangwei
- * @date 2021/7/16 23:29
- */
 public class SecurityUtils {
 
+    private static final ThreadLocal<LoginUser> THREAD_LOCAL_USER = new ThreadLocal<>();
 
-    /**
-     * 获取当前登录用户信息
-     * @return
-     */
-    public static LoginUser getLoginUser(){
-        // 有可能返回anonymousUser
-        Authentication authentication = getAuthentication();
-        if(Objects.isNull(authentication)){
+    public static LoginUser getLoginUser() {
+        LoginUser threadLocalUser = THREAD_LOCAL_USER.get();
+        if (Objects.nonNull(threadLocalUser)) {
+            return threadLocalUser;
+        }
+        String token = HttpContextUtils.getRequestToken();
+        if (StrUtil.isBlank(token)) {
             return null;
         }
-        Object principal = authentication.getPrincipal();
-        if(principal instanceof LoginUser){
-            return (LoginUser)principal;
+        String userJson = (String) SpringUtil.getBean(RedisUtils.class).get(RedisKeyEnum.TOKEN_PREFIX.getKey() + token);
+        if (StrUtil.isBlank(userJson)) {
+            return null;
         }
-        return null;
+        return JSONObject.parseObject(userJson, LoginUser.class);
     }
 
-    /**
-     * 设置登录用户信息
-     * @return
-     */
-    public static void setLoginUser(LoginUser loginUser){
-        if(Objects.nonNull(loginUser)){
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    public static void setLoginUser(LoginUser loginUser) {
+        if (Objects.nonNull(loginUser)) {
+            THREAD_LOCAL_USER.set(loginUser);
         }
     }
 
-    /**
-     * 判断是不是超级管理员
-     * @return
-     */
-    public static boolean isSupperAdminAuth(){
+    public static void clearLoginUser() {
+        THREAD_LOCAL_USER.remove();
+    }
+
+    public static boolean isSupperAdminAuth() {
         LoginUser userEntity = getLoginUser();
         return (Objects.nonNull(userEntity) && (Constants.USER_ADMIN_ACCOUNT.equals(userEntity.getUsername())
                 || userEntity.getRoles().stream().anyMatch(item -> Constants.USER_ADMIN_ACCOUNT.equals(item))));
     }
-
-
-    /**
-     * 获取Authentication
-     */
-    public static Authentication getAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
 }

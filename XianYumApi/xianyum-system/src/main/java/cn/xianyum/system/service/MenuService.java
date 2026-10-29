@@ -59,7 +59,11 @@ public interface MenuService{
 
     List<Long>  selectMenuListByRoleId(Long roleId);
 
-    Set<String> getMenuPermission(String userId);
+    Set<String> getCurrentUserPermission(String userId);
+
+    void clearMenuPermissionCacheByUserId(String userId);
+
+    void clearMenuPermissionCacheByRoleId(Long roleId);
 
     /**
      * 菜单埋点上报

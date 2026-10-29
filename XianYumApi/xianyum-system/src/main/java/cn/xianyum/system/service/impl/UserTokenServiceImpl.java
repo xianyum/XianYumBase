@@ -9,6 +9,7 @@ import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.QrCodeLoginStatus;
 import cn.xianyum.common.enums.RedisKeyEnum;
+import cn.xianyum.common.enums.YesOrNoEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
@@ -17,7 +18,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
-import cn.xianyum.system.common.utils.SecretUtils;
+import cn.xianyum.common.utils.SecretUtils;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
 import cn.xianyum.system.entity.request.UserLoginRequest;
@@ -32,13 +33,6 @@ import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import java.util.Date;
@@ -69,9 +63,6 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
 
-    @Resource
-    private AuthenticationManager authenticationManager;
-
     /**
      * 获取当前登录user
      * @return
@@ -93,10 +84,8 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setOs(userAgent.getOperatingSystem().getName());
         loginUser.setLoginTime(new Date());
 
-        // =======设置权限===========
-        this.roleService.setLoginUserRoleService(loginUser);
         // 设置菜单权限
-        loginUser.setPermissions(menuService.getMenuPermission(loginUser.getId()));
+        loginUser.setPermissions(menuService.getCurrentUserPermission(loginUser.getId()));
     }
 
     /**
@@ -194,6 +183,9 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(Objects.isNull(userEntity)){
             throw new SoException("用户不存在");
         }
+        if(userEntity.getStatus() == YesOrNoEnum.NO.getStatus()){
+            throw new SoException("账号已被锁定,请联系管理员");
+        }
         if(!SecretUtils.matchesPassword(request.getPassword(),userEntity.getPassword())){
             throw new SoException("密码错误");
         }
@@ -221,12 +213,15 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(StrUtil.isBlank(request.getCode()) || !request.getCode().equals(redisUtils.getString(redisKey))){
             throw new SoException("验证码错误");
         }
-        // 校验登录凭证成功就删除
-        redisUtils.del(redisKey);
         UserEntity userEntity = SpringUtil.getBean(UserService.class).queryByUserName(request.getUsername());
         if(Objects.isNull(userEntity)){
             throw new SoException("用户不存在");
         }
+        if(userEntity.getStatus() == YesOrNoEnum.NO.getStatus()){
+            throw new SoException("账号已被锁定,请联系管理员");
+        }
+        // 校验登录凭证成功就删除
+        redisUtils.del(redisKey);
         LoginUser loginUserEntity = new LoginUser();
         loginUserEntity.setId(userEntity.getId());
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
@@ -241,6 +236,9 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public LoginUser loginByQq(UserLoginRequest request) {
         LoginUser loginUserEntity = SpringUtil.getBean(UserService.class).getUserByQq(request);
+        if(loginUserEntity.getStatus() == YesOrNoEnum.NO.getStatus()){
+            throw new SoException("账号已被锁定,请联系管理员");
+        }
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -254,6 +252,9 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public LoginUser loginByZhiFuBao(UserLoginRequest request) {
         LoginUser loginUserEntity = SpringUtil.getBean(UserService.class).getUserByAli(request.getAuthCode());
+        if(loginUserEntity.getStatus() == YesOrNoEnum.NO.getStatus()){
+            throw new SoException("账号已被锁定,请联系管理员");
+        }
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -346,12 +347,12 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.CONFIRMED) || StrUtil.isBlank(qrLoginTicketResponse.getUserName())){
             throw new SoException("二维码过期，请刷新");
         }
-        UserDetails userDetails = SpringUtil.getBean(UserDetailsService.class).loadUserByUsername(qrLoginTicketResponse.getUserName());
-        // 第三步：构建认证信息（密码置空，跳过密码校验）
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        // 设置认证上下文
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        LoginUser loginUserEntity = (LoginUser) authentication.getPrincipal();
+        UserEntity userEntity = SpringUtil.getBean(UserService.class).queryByUserName(qrLoginTicketResponse.getUserName());
+        if(Objects.isNull(userEntity)){
+            throw new SoException("用户不存在");
+        }
+        LoginUser loginUserEntity = new LoginUser();
+        loginUserEntity.setId(userEntity.getId());
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }

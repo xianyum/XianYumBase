@@ -1,6 +1,6 @@
 package cn.xianyum.extension.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.po.IpInfoEntity;
 import cn.xianyum.extension.service.IpService;

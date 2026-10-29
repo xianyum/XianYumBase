@@ -1,4 +1,4 @@
-package cn.xianyum.system.common.enums;
+package cn.xianyum.common.enums;
 
 /**
  * @Description

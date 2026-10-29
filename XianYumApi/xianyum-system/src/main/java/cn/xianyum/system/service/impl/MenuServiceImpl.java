@@ -11,12 +11,19 @@ import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.MenuMapper;
+import cn.xianyum.system.dao.RoleMenuMapper;
+import cn.xianyum.system.dao.UserRoleMapper;
 import cn.xianyum.system.entity.po.MenuEntity;
+import cn.xianyum.system.entity.po.RoleMenuEntity;
+import cn.xianyum.system.entity.po.UserRoleEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuMetaResponse;
 import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.entity.response.MenuTreeSelect;
 import cn.xianyum.system.service.MenuService;
+import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -39,6 +46,12 @@ public class MenuServiceImpl implements MenuService {
 
     @Resource
     private RedisUtils redisUtils;
+
+    @Resource
+    private RoleMenuMapper roleMenuMapper;
+
+    @Resource
+    private UserRoleMapper userRoleMapper;
 
 
     /**
@@ -197,7 +210,11 @@ public class MenuServiceImpl implements MenuService {
                 throw new SoException("平台类型必须和上级菜单类型保持一致");
             }
         }
-        return menuMapper.updateById(menuEntity);
+        int result = menuMapper.updateById(menuEntity);
+        if (result > 0) {
+            this.clearMenuPermissionCacheByMenuId(menuEntity.getMenuId());
+        }
+        return result;
     }
 
     @Override
@@ -215,7 +232,11 @@ public class MenuServiceImpl implements MenuService {
         if (this.hasChildByMenuId(menuId)) {
            throw new SoException("存在子菜单,不允许删除");
         }
-        return menuMapper.deleteById(menuId);
+        int result = menuMapper.deleteById(menuId);
+        if (result > 0) {
+            this.clearMenuPermissionCacheByMenuId(menuId);
+        }
+        return result;
     }
 
     /**
@@ -268,14 +289,60 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Set<String> getMenuPermission(String userId) {
+    public Set<String> getCurrentUserPermission(String userId) {
+        Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_MENU_PERMISSION_KEY.getKey(), userId);
+        if (Objects.nonNull(cacheObj)) {
+            try {
+                Set<String> perms = JSON.parseObject(cacheObj.toString(), new com.alibaba.fastjson2.TypeReference<Set<String>>() {});
+                if (Objects.nonNull(perms)) {
+                    return perms;
+                }
+            } catch (Exception e) {
+                log.warn("解析用户菜单权限缓存失败，重新查询数据库, userId={}", userId, e);
+            }
+        }
         Set<String> resultPermissions = new HashSet<>();
-        if(SecurityUtils.isSupperAdminAuth()){
+        if (SecurityUtils.isSupperAdminAuth()) {
             resultPermissions.add("*:*:*");
-        }else{
+        } else {
             resultPermissions = this.menuMapper.selectMenuPermsByUserId(userId);
         }
+        redisUtils.hSet(RedisKeyEnum.USER_MENU_PERMISSION_KEY.getKey(), userId, JSON.toJSONString(resultPermissions));
         return resultPermissions;
+    }
+
+    @Override
+    public void clearMenuPermissionCacheByUserId(String userId) {
+        redisUtils.hDel(RedisKeyEnum.USER_MENU_PERMISSION_KEY.getKey(), userId);
+    }
+
+    private void clearMenuPermissionCacheByMenuId(Long menuId) {
+        LambdaQueryWrapper<RoleMenuEntity> rmQuery = Wrappers.<RoleMenuEntity>lambdaQuery()
+                .eq(RoleMenuEntity::getMenuId, menuId);
+        List<RoleMenuEntity> roleMenus = roleMenuMapper.selectList(rmQuery);
+        if (CollUtil.isNotEmpty(roleMenus)) {
+            List<Long> roleIds = roleMenus.stream().map(RoleMenuEntity::getRoleId).collect(Collectors.toList());
+            LambdaQueryWrapper<UserRoleEntity> urQuery = Wrappers.<UserRoleEntity>lambdaQuery()
+                    .in(UserRoleEntity::getRoleId, roleIds);
+            List<UserRoleEntity> userRoles = userRoleMapper.selectList(urQuery);
+            if (CollUtil.isNotEmpty(userRoles)) {
+                for (UserRoleEntity ur : userRoles) {
+                    this.clearMenuPermissionCacheByUserId(ur.getUserId());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void clearMenuPermissionCacheByRoleId(Long roleId) {
+        LambdaQueryWrapper<UserRoleEntity> urQuery = Wrappers.<UserRoleEntity>lambdaQuery()
+                .eq(UserRoleEntity::getRoleId, roleId);
+        List<UserRoleEntity> userRoles = userRoleMapper.selectList(urQuery);
+        if (CollUtil.isNotEmpty(userRoles)) {
+            for (UserRoleEntity ur : userRoles) {
+                this.clearMenuPermissionCacheByUserId(ur.getUserId());
+            }
+        }
     }
 
     /**
