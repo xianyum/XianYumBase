@@ -29,6 +29,13 @@ public class UserContextHolder {
         SaHolder.getStorage().set(Constants.THREAD_LOGIN_USER,loginUser);
     }
 
+    /**
+     * 给当前线程设置用户信息
+     * @return
+     */
+    public static void setLoginUser(LoginUser loginUser) {
+        SaHolder.getStorage().set(Constants.THREAD_LOGIN_USER,loginUser);
+    }
 
     /**
      * 判断是不是管理员

@@ -1,5 +1,7 @@
 package cn.xianyum.system.infra.handler;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.util.SaResult;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
@@ -13,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.LinkedHashMap;
@@ -58,6 +62,35 @@ public class SystemExceptionHandler {
         this.sendFailedExceptionMessage(e);
         logger.error(e.getMessage(), e);
         return Results.error();
+    }
+
+    /**
+     * 处理未登录异常
+     * @param nle
+     * @return
+     */
+    @ExceptionHandler(NotLoginException.class)
+    public Results handlerNotLoginException(NotLoginException nle) {
+        String message;
+        if(nle.getType().equals(NotLoginException.NOT_TOKEN)) {
+            message = "未获取到认证信息";
+        } else if(nle.getType().equals(NotLoginException.INVALID_TOKEN)) {
+            message = "认证信息无效";
+        } else if(nle.getType().equals(NotLoginException.TOKEN_TIMEOUT)) {
+            message = "认证信息已过期";
+        } else if(nle.getType().equals(NotLoginException.BE_REPLACED)) {
+            message = "已被顶下线";
+        } else if(nle.getType().equals(NotLoginException.KICK_OUT)) {
+            message = "已被踢下线";
+        } else if(nle.getType().equals(NotLoginException.TOKEN_FREEZE)) {
+            message = "当前登录已被冻结";
+        } else if(nle.getType().equals(NotLoginException.NO_PREFIX)) {
+            message = "token未指定前缀";
+        }else {
+            message = "当前未登录";
+        }
+        logger.error(message, nle);
+        return Results.error(HttpStatus.UNAUTHORIZED.value(),message);
     }
 
     /**

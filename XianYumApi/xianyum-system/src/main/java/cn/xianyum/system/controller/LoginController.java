@@ -6,6 +6,7 @@ import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.generator.common.model.dto.GenerateParam;
 import cloud.tianai.captcha.generator.common.model.dto.ParamKeyEnum;
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.xianyum.common.constant.CaptchaConstant;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.utils.*;
@@ -42,6 +43,8 @@ public class LoginController {
     @Operation(summary = "登录系统")
     @SaIgnore
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
+        StpUtil.login("1");
+        log.info("获取的token: {}", StpUtil.getTokenValue());
         return Results.success(this.userTokenService.login(request));
     }
 

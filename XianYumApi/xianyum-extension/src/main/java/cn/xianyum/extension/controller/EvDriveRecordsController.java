@@ -1,4 +1,4 @@
-﻿package cn.xianyum.extension.controller;
+package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;

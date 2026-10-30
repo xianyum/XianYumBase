@@ -1,4 +1,4 @@
-﻿package cn.xianyum.mqtt.controller;
+package cn.xianyum.mqtt.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;

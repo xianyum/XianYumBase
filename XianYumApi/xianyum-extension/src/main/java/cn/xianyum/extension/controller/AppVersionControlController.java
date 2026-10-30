@@ -1,4 +1,4 @@
-﻿package cn.xianyum.extension.controller;
+package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;

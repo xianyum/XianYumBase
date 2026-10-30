@@ -1,4 +1,4 @@
-﻿package cn.xianyum.extension.controller;
+package cn.xianyum.extension.controller;
 
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.StrUtil;
