@@ -6,11 +6,9 @@ import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.generator.common.model.dto.GenerateParam;
 import cloud.tianai.captcha.generator.common.model.dto.ParamKeyEnum;
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.constant.CaptchaConstant;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.utils.*;
-import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.entity.request.CheckCaptchaRequest;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
@@ -19,10 +17,8 @@ import cn.xianyum.system.service.UserTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 
 /**

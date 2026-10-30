@@ -54,9 +54,6 @@ public class ProxyServiceImpl implements ProxyService {
 	@Autowired
 	private ProxyLogService proxyLogService;
 
-	@Autowired
-	private UserCacheHelper userCacheHelper;
-
 	@Override
 	public PageResponse<ProxyResponse> getPage(ProxyRequest request) {
 		Page<ProxyEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
@@ -74,7 +71,7 @@ public class ProxyServiceImpl implements ProxyService {
 				response.setStatus(0);// offline
 			}
 			if(StrUtil.isNotEmpty(item.getBindUserId())){
-				LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(item.getBindUserId());
+				LoginUser userByIdFromRedis = UserCacheHelper.selectUserById(item.getBindUserId());
 				if(Objects.nonNull(userByIdFromRedis)){
 					response.setBindEmail(userByIdFromRedis.getEmail());
 					response.setBindUserName(userByIdFromRedis.getUsername());
@@ -194,7 +191,7 @@ public class ProxyServiceImpl implements ProxyService {
 			messageSender.sendAsyncMessage(MessageCodeEnums.XIANYU_ONLINE_OFFLINE_NOTIFY.getMessageCode(),messageSenderEntity);
 
 			// 发送邮件通知客户端
-			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyEntity.getBindUserId());
+			LoginUser userByIdFromRedis = UserCacheHelper.selectUserById(proxyEntity.getBindUserId());
 			if(null != proxyEntity.getNotify() && 1 == proxyEntity.getNotify()
 					&& Objects.nonNull(userByIdFromRedis) && StrUtil.isNotEmpty(userByIdFromRedis.getEmail())){
 				this.sendProxyEmail(proxyEntity,userByIdFromRedis.getEmail());
@@ -313,7 +310,7 @@ public class ProxyServiceImpl implements ProxyService {
 			throw new SoException("客户端授权信息不存在！");
 		}
 
-		LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyEntity.getBindUserId());
+		LoginUser userByIdFromRedis = UserCacheHelper.selectUserById(proxyEntity.getBindUserId());
 		if(Objects.isNull(userByIdFromRedis)){
 			throw new SoException("客户端暂未绑定账户，请联系管理员配置！");
 		}
@@ -348,23 +345,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public List<LoginUser> getProxyBindUser(String id) {
 		List<LoginUser> loginUserList = new ArrayList<>();
-		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
-				.ne(StrUtil.isNotEmpty(id),ProxyEntity::getId,id)
-				.isNotNull(ProxyEntity::getBindUserId);
-		List<ProxyEntity> proxyEntities = proxyMapper.selectList(queryWrapper);
-		if(Objects.nonNull(proxyEntities)){
-			List<LoginUser> userListFromRedis = userCacheHelper.getUserListFromRedis();
-			List<String> bindUserList = proxyEntities.stream().map(ProxyEntity::getBindUserId).collect(Collectors.toList());
-			for(LoginUser item : userListFromRedis){
-				if(!bindUserList.contains(item.getId())){
-					LoginUser loginUser = new LoginUser();
-					loginUser.setId(item.getId());
-					loginUser.setNickName(item.getNickName());
-					loginUser.setUsername(item.getUsername());
-					loginUserList.add(loginUser);
-				}
-			}
-		}
+		// todo 这个有时间在做
 		return loginUserList;
 	}
 
@@ -379,7 +360,7 @@ public class ProxyServiceImpl implements ProxyService {
 		}
 		ProxyResponse proxyResponse = BeanUtil.toBean(proxy, ProxyResponse.class);
 		if(StrUtil.isNotEmpty(proxyResponse.getBindUserId())){
-			LoginUser userByIdFromRedis = userCacheHelper.getUserByIdFromRedis(proxyResponse.getBindUserId());
+			LoginUser userByIdFromRedis = UserCacheHelper.selectUserById(proxyResponse.getBindUserId());
 			if(Objects.nonNull(userByIdFromRedis)){
 				proxyResponse.setBindEmail(userByIdFromRedis.getEmail());
 				proxyResponse.setBindUserName(userByIdFromRedis.getUsername());

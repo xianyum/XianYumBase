@@ -2,6 +2,7 @@ package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.UserRoleCache;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
@@ -26,6 +27,7 @@ import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.system.entity.response.UserResponse;
 import cn.xianyum.system.infra.event.UserCacheChangeEvent;
+import cn.xianyum.system.infra.event.UserRoleCacheChangeEvent;
 import cn.xianyum.system.service.*;
 import com.alibaba.fastjson2.JSON;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
@@ -34,7 +36,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,25 +62,13 @@ public class UserServiceImpl implements UserService {
     private QqNetService qqNetService;
 
     @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private UserTokenService userTokenService;
-
-    @Autowired
     private RoleMapper roleMapper;
-
-    @Autowired
-    private RoleService roleService;
 
     @Autowired
     private UserRoleMapper userRoleMapper;
 
     @Autowired
     private RedisUtils redisUtils;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private FileService fileService;
@@ -110,24 +99,38 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 根据用户id查询用户缓存信息
-     *
+     * 此方法主要是为了给用户上下文使用的
      * @param userId
      * @return
      */
     @Override
     public LoginUser selectUserCacheById(String userId) {
         Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
+        LoginUser loginUser;
         if (Objects.nonNull(cacheObj)) {
-            LoginUser loginUser = JSON.parseObject(cacheObj.toString(), LoginUser.class);
-            return loginUser;
+            loginUser = JSON.parseObject(cacheObj.toString(), LoginUser.class);
+        }else{
+            LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery().eq(UserEntity::getId, userId).eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus());
+            UserEntity userEntity = userMapper.selectOne(queryWrapper);
+            if (Objects.isNull(userEntity)) {
+                return null;
+            }
+            loginUser = BeanUtil.toBean(userEntity, LoginUser.class);
+            redisUtils.hSet(RedisKeyEnum.USER_DATA.getKey(), userId, JSON.toJSONString(loginUser));
         }
-        LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery().eq(UserEntity::getId, userId).eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus());
-        UserEntity userEntity = userMapper.selectOne(queryWrapper);
-        if (Objects.isNull(userEntity)) {
-            return null;
+        // 处理用户图像url
+        if(StrUtil.isNotBlank(loginUser.getAvatarFileId()) && HttpUtils.isHttpOrHttps(loginUser.getAvatarFileId())){
+            loginUser.setAvatar(loginUser.getAvatarFileId());
+        }else{
+            loginUser.setAvatar(this.fileService.presignedUrl(loginUser.getAvatarFileId()));
         }
-        LoginUser loginUser = BeanUtil.toBean(userEntity, LoginUser.class);
-        redisUtils.hSet(RedisKeyEnum.USER_DATA.getKey(), userId, JSON.toJSONString(loginUser));
+        // 设置用户权限
+        UserRoleCache userRoleCache = SpringUtil.getBean(RoleService.class).selectUserRoleCacheByUserId(loginUser.getId());
+        if(Objects.nonNull(userRoleCache)){
+            loginUser.setRoles(userRoleCache.getRoleCodes());
+            loginUser.setDataScopeEnum(userRoleCache.getDataScopeEnum());
+            loginUser.setPermissions(SpringUtil.getBean(MenuService.class).selectMenuPermsByRoleCodes(userRoleCache.getRoleCodes()));
+        }
         return loginUser;
     }
 
@@ -140,13 +143,11 @@ public class UserServiceImpl implements UserService {
         for(String id : userIds){
             userEntity.setId(id);
             userMapper.updateById(userEntity);
-            LambdaQueryWrapper<UserRoleEntity> userRoleEntityLambdaQueryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
-                    .eq(UserRoleEntity::getUserId,id);
+            LambdaQueryWrapper<UserRoleEntity> userRoleEntityLambdaQueryWrapper = Wrappers.<UserRoleEntity>lambdaQuery().eq(UserRoleEntity::getUserId,id);
             userRoleMapper.delete(userRoleEntityLambdaQueryWrapper);
-            LambdaQueryWrapper<UserThirdRelationEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery()
-                    .eq(UserThirdRelationEntity::getUserId,id);
+            LambdaQueryWrapper<UserThirdRelationEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery().eq(UserThirdRelationEntity::getUserId,id);
             userThirdRelationMapper.delete(thirdUserEntityLambdaQueryWrapper);
-            eventPublisher.publishEvent(new UserCacheChangeEvent(id));
+            SpringUtil.publishEvent(new UserCacheChangeEvent(id));
         }
     }
 
@@ -197,7 +198,7 @@ public class UserServiceImpl implements UserService {
         int count = userMapper.updateById(userEntity);
         if(count > 0){
             this.changeUserRole(userEntity.getId(),user.getRoleIds());
-            eventPublisher.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
+            SpringUtil.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
         }
         return count;
     }
@@ -215,7 +216,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(secret);
         int count = userMapper.updateById(user);
         if(count > 0){
-            eventPublisher.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
+            SpringUtil.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
             return true;
         }
         return false;
@@ -225,26 +226,10 @@ public class UserServiceImpl implements UserService {
     public int updateCurrentUser(UserRequest user) {
         user.setId(SecurityUtils.getLoginUser().getId());
         int count = userMapper.updateUser(user);
-        eventPublisher.publishEvent(new UserCacheChangeEvent(user.getId()));
+        SpringUtil.publishEvent(new UserCacheChangeEvent(user.getId()));
         return count;
     }
 
-    @Override
-    public LoginUser getUserSelf() {
-        LoginUser u = userTokenService.getUserSelf();
-        if(Objects.nonNull(u)){
-//            LoginUser roleAndDataScope = this.roleService.getRoleAndDataScope(u.getId());
-//            u.setRoles(roleAndDataScope.getRoles());
-//            u.setDataScopeEnum(roleAndDataScope.getDataScopeEnum());
-            u.setPermissions(this.menuService.getCurrentUserPermission(u.getId()));
-            if(StrUtil.isNotBlank(u.getAvatarFileId()) && HttpUtils.isHttpOrHttps(u.getAvatarFileId())){
-                u.setAvatar(u.getAvatarFileId());
-            }else{
-                u.setAvatar(this.fileService.presignedUrl(u.getAvatarFileId()));
-            }
-        }
-        return u;
-    }
 
     @Override
     public String upload(MultipartFile file) {
@@ -254,7 +239,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setId(SecurityUtils.getLoginUser().getId());
             userEntity.setAvatarFileId(fileDetailResponse.getId());
             userMapper.updateById(userEntity);
-            eventPublisher.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
+            SpringUtil.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
             return fileDetailResponse.getFileUrl();
         }catch (Exception e){
             throw new SoException(e.getMessage());
@@ -272,8 +257,7 @@ public class UserServiceImpl implements UserService {
             userRoleEntity.setUserId(id);
             userRoleMapper.insert(userRoleEntity);
         }
-        roleService.clearRoleCacheByUserId(id);
-        menuService.clearMenuPermissionCacheByUserId(id);
+        SpringUtil.publishEvent(new UserRoleCacheChangeEvent(id));
     }
 
     @Override
@@ -299,8 +283,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setId(request.getId());
         userEntity.setStatus(request.getStatus());
         int count = userMapper.updateById(userEntity);
-        eventPublisher.publishEvent(new UserCacheChangeEvent(request.getId()));
-
+        SpringUtil.publishEvent(new UserCacheChangeEvent(request.getId()));
         return count;
     }
 

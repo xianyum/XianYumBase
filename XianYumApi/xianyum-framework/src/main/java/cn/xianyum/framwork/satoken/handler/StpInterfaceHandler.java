@@ -1,6 +1,9 @@
-package cn.xianyum.framwork.security.handler;
+package cn.xianyum.framwork.satoken.handler;
 
 import cn.dev33.satoken.stp.StpInterface;
+import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.utils.UserCacheHelper;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,7 +12,6 @@ import java.util.List;
  * @date 2026/10/29 21:54
  */
 public class StpInterfaceHandler implements StpInterface {
-
 
     /**
      * 返回指定账号id所拥有的权限码集合
@@ -20,7 +22,8 @@ public class StpInterfaceHandler implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        return List.of();
+        LoginUser userById = UserCacheHelper.selectUserById(loginId.toString());
+        return new ArrayList<>(userById.getPermissions());
     }
 
     /**
@@ -32,6 +35,7 @@ public class StpInterfaceHandler implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        return List.of();
+        LoginUser userById = UserCacheHelper.selectUserById(loginId.toString());
+        return new ArrayList<>(userById.getRoles());
     }
 }

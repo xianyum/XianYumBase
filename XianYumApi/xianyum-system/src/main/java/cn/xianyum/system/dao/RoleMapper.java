@@ -6,6 +6,7 @@ import cn.xianyum.system.entity.po.RoleEntity;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 角色管理(Role)表数据库访问层
@@ -16,5 +17,6 @@ import java.util.List;
 public interface RoleMapper extends BaseMapper<RoleEntity> {
 
     List<RoleResponse> getRoleByUserId(@Param("userId") String userId);
-}
 
+    List<Long> getRoleIdsByRoleCodes(@Param("roleCodes") Set<String> roleCodes);
+}

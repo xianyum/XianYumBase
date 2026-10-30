@@ -1,6 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.UserRoleCache;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.DataScopeEnum;
 import cn.xianyum.common.enums.RedisKeyEnum;
@@ -18,6 +19,8 @@ import cn.xianyum.system.entity.po.RoleMenuEntity;
 import cn.xianyum.system.entity.po.UserRoleEntity;
 import cn.xianyum.system.entity.request.RoleRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
+import cn.xianyum.system.infra.event.RoleMenuCacheChangeEvent;
+import cn.xianyum.system.infra.event.UserRoleCacheChangeEvent;
 import cn.xianyum.system.service.MenuService;
 import cn.xianyum.system.service.RoleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -25,6 +28,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,9 +91,7 @@ public class RoleServiceImpl implements RoleService {
         }
         RoleEntity bean = BeanUtil.toBean(request, RoleEntity.class);
         Integer result = roleMapper.updateById(bean);
-        if (result > 0) {
-            this.clearRoleCacheByRoleId(request.getId());
-        }
+        this.clearRoleCacheByRoleId(request.getId());
         return result;
     }
 
@@ -107,6 +109,7 @@ public class RoleServiceImpl implements RoleService {
                     .eq(RoleMenuEntity::getRoleId, id);
             roleMenuMapper.delete(roleMenuEntityLambdaQueryWrapper);
             this.clearRoleCacheByRoleId(id);
+            this.publishRoleMenuChangeByRoleId(id);
         }
         return resultCount;
     }
@@ -123,9 +126,7 @@ public class RoleServiceImpl implements RoleService {
         bean.setId(request.getId());
         bean.setStatus(request.getStatus());
         Integer result = roleMapper.updateById(bean);
-        if (result > 0) {
-            this.clearRoleCacheByRoleId(request.getId());
-        }
+        this.clearRoleCacheByRoleId(request.getId());
         return result;
     }
 
@@ -141,9 +142,7 @@ public class RoleServiceImpl implements RoleService {
         bean.setId(request.getId());
         bean.setDataScope(request.getDataScope());
         Integer result = roleMapper.updateById(bean);
-        if (result > 0) {
-            this.clearRoleCacheByRoleId(request.getId());
-        }
+        this.clearRoleCacheByRoleId(request.getId());
         return result;
     }
 
@@ -175,8 +174,7 @@ public class RoleServiceImpl implements RoleService {
         }
         Integer result = roleMenuMapper.savBatchRoleMenus(roleMenuEntityList);
         if (result > 0) {
-            this.clearRoleCacheByRoleId(request.getId());
-            menuService.clearMenuPermissionCacheByRoleId(request.getId());
+            this.publishRoleMenuChangeByRoleId(request.getId());
         }
         return result;
     }
@@ -192,34 +190,25 @@ public class RoleServiceImpl implements RoleService {
 
 
     @Override
-    public LoginUser getCurrentUserRolePermission(String userId) {
-        Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_ROLE_KEY.getKey(), userId);
+    public UserRoleCache selectUserRoleCacheByUserId(String userId) {
+        Object cacheObj = redisUtils.hGet(RedisKeyEnum.ROLE_INFO_BY_USER_KEY.getKey(), userId);
         if (Objects.nonNull(cacheObj)) {
-            try {
-                LoginUser loginUser = JSON.parseObject(cacheObj.toString(), LoginUser.class);
-                if (Objects.nonNull(loginUser)) {
-                    return loginUser;
-                }
-            } catch (Exception e) {
-                log.warn("解析用户角色缓存失败，重新查询数据库, userId={}", userId, e);
-            }
+            UserRoleCache roleCache = JSON.parseObject(cacheObj.toString(), UserRoleCache.class);
+            return roleCache;
         }
-        LoginUser loginUser = new LoginUser();
-        loginUser.setId(userId);
+        UserRoleCache roleCache = new UserRoleCache();
         List<RoleResponse> roleList = roleMapper.getRoleByUserId(userId);
         if (CollUtil.isNotEmpty(roleList)) {
-            Set<String> roles = roleList.stream().map(RoleResponse::getRoleCode).collect(Collectors.toSet());
-            String dataScope = roleList.get(0).getDataScope();
-            loginUser.setRoles(roles);
-            loginUser.setDataScopeEnum(DataScopeEnum.getDataScope(dataScope));
-            redisUtils.hSet(RedisKeyEnum.USER_ROLE_KEY.getKey(), userId, JSON.toJSONString(loginUser));
+            Set<String> roleCodes = roleList.stream().map(RoleResponse::getRoleCode).collect(Collectors.toSet());
+            Set<String> roleNames = roleList.stream().map(RoleResponse::getRoleName).collect(Collectors.toSet());
+            // 数字越小说明数据权限越大
+            Integer minDataScopeInt = roleList.stream().map(RoleResponse::getDataScope).filter(Objects::nonNull).map(Integer::valueOf).min(Integer::compareTo).orElse(null);
+            roleCache.setRoleCodes(roleCodes);
+            roleCache.setRoleNames(roleNames);
+            roleCache.setDataScopeEnum(DataScopeEnum.getDataScope(String.valueOf(minDataScopeInt)));
+            redisUtils.hSet(RedisKeyEnum.ROLE_INFO_BY_USER_KEY.getKey(), userId, JSON.toJSONString(roleCache));
         }
-        return loginUser;
-    }
-
-    @Override
-    public void clearRoleCacheByUserId(String userId) {
-        redisUtils.hDel(RedisKeyEnum.USER_ROLE_KEY.getKey(), userId);
+        return roleCache;
     }
 
     @Override
@@ -232,15 +221,29 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    /**
+     * 清除角色缓存
+     * @param roleId
+     */
     private void clearRoleCacheByRoleId(Long roleId) {
         LambdaQueryWrapper<UserRoleEntity> queryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
                 .eq(UserRoleEntity::getRoleId, roleId);
         List<UserRoleEntity> userRoles = userRoleMapper.selectList(queryWrapper);
         if (CollUtil.isNotEmpty(userRoles)) {
             for (UserRoleEntity ur : userRoles) {
-                this.clearRoleCacheByUserId(ur.getUserId());
+                SpringUtil.publishEvent(new UserRoleCacheChangeEvent(ur.getUserId()));
             }
         }
     }
 
+    /**
+     * 角色菜单缓存事件
+     * @param roleId
+     */
+    private void publishRoleMenuChangeByRoleId(Long roleId) {
+        RoleEntity roleEntity = roleMapper.selectById(roleId);
+        if (Objects.nonNull(roleEntity) && StrUtil.isNotBlank(roleEntity.getRoleCode())) {
+            SpringUtil.publishEvent(new RoleMenuCacheChangeEvent(Set.of(roleEntity.getRoleCode())));
+        }
+    }
 }

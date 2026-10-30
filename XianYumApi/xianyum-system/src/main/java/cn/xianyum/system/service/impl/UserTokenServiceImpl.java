@@ -14,7 +14,6 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -63,14 +62,6 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
 
-    /**
-     * 获取当前登录user
-     * @return
-     */
-    @Override
-    public LoginUser getUserSelf(){
-        return SecurityUtils.getLoginUser();
-    }
 
     @Override
     public void setExtraUserInfo(LoginUser loginUser) {
@@ -84,22 +75,8 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setOs(userAgent.getOperatingSystem().getName());
         loginUser.setLoginTime(new Date());
 
-        // 设置菜单权限
-        loginUser.setPermissions(menuService.getCurrentUserPermission(loginUser.getId()));
     }
 
-    /**
-     * 通过httpRequest获取当前登录用户
-     *
-     * @return
-     */
-    @Override
-    public LoginUser getLoginUserByHttpRequest() {
-        String token = HttpContextUtils.getRequestToken();
-        String userEntityJson = (String)SpringUtil.getBean(RedisUtils.class).get(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
-        LoginUser loginUser = JSONObject.parseObject(userEntityJson, LoginUser.class);
-        return loginUser;
-    }
 
     /**
      * 发送验证码
@@ -375,18 +352,5 @@ public class UserTokenServiceImpl implements UserTokenService {
     @Override
     public void logout() {
         StpUtil.logout();
-    }
-
-    @Override
-    public void refreshUser() {
-        String token = HttpContextUtils.getRequestToken();
-        UserEntity userEntity = userMapper.selectById(SecurityUtils.getLoginUser().getId());
-
-        LoginUser loginUser = BeanUtil.toBean(userEntity,LoginUser.class);
-        // 保留本来登录的字段，不能被覆盖。
-        loginUser.setLoginType(SecurityUtils.getLoginUser().getLoginType());
-
-        this.setExtraUserInfo(loginUser);
-        redisUtils.setDay(RedisKeyEnum.TOKEN_PREFIX.getKey()+token,JSONObject.toJSONString(loginUser),expire);
     }
 }

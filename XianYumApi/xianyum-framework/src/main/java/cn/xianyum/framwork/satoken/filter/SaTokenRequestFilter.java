@@ -1,4 +1,4 @@
-package cn.xianyum.framwork.security.filter;
+package cn.xianyum.framwork.satoken.filter;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.stp.StpUtil;

@@ -2,6 +2,8 @@ package cn.xianyum.system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.enums.RedisKeyEnum;
@@ -11,17 +13,19 @@ import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.SecurityUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.MenuMapper;
+import cn.xianyum.system.dao.RoleMapper;
 import cn.xianyum.system.dao.RoleMenuMapper;
-import cn.xianyum.system.dao.UserRoleMapper;
 import cn.xianyum.system.entity.po.MenuEntity;
+import cn.xianyum.system.entity.po.RoleEntity;
 import cn.xianyum.system.entity.po.RoleMenuEntity;
-import cn.xianyum.system.entity.po.UserRoleEntity;
 import cn.xianyum.system.entity.request.MenuRequest;
 import cn.xianyum.system.entity.response.MenuMetaResponse;
 import cn.xianyum.system.entity.response.MenuResponse;
 import cn.xianyum.system.entity.response.MenuTreeSelect;
+import cn.xianyum.system.infra.event.RoleMenuCacheChangeEvent;
 import cn.xianyum.system.service.MenuService;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
@@ -51,7 +55,7 @@ public class MenuServiceImpl implements MenuService {
     private RoleMenuMapper roleMenuMapper;
 
     @Resource
-    private UserRoleMapper userRoleMapper;
+    private RoleMapper roleMapper;
 
 
     /**
@@ -203,7 +207,6 @@ public class MenuServiceImpl implements MenuService {
             throw new SoException("修改菜单'" + menuEntity.getMenuName() + "'失败，上级菜单不能选择自己");
         }
 
-        // 如果不是顶级，那么就需要判断平台类型是否一致
         if(menuEntity.getParentId() != 0L){
             MenuEntity parentMenuEntity = menuMapper.selectById(menuEntity.getParentId());
             if(Objects.nonNull(parentMenuEntity) && !parentMenuEntity.getPlatformType().equals(menuEntity.getPlatformType())){
@@ -212,7 +215,7 @@ public class MenuServiceImpl implements MenuService {
         }
         int result = menuMapper.updateById(menuEntity);
         if (result > 0) {
-            this.clearMenuPermissionCacheByMenuId(menuEntity.getMenuId());
+            this.publishRoleMenuChangeByMenuId(menuEntity.getMenuId());
         }
         return result;
     }
@@ -233,9 +236,7 @@ public class MenuServiceImpl implements MenuService {
            throw new SoException("存在子菜单,不允许删除");
         }
         int result = menuMapper.deleteById(menuId);
-        if (result > 0) {
-            this.clearMenuPermissionCacheByMenuId(menuId);
-        }
+        this.publishRoleMenuChangeByMenuId(menuId);
         return result;
     }
 
@@ -289,58 +290,42 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public Set<String> getCurrentUserPermission(String userId) {
-        Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_MENU_PERMISSION_KEY.getKey(), userId);
-        if (Objects.nonNull(cacheObj)) {
-            try {
-                Set<String> perms = JSON.parseObject(cacheObj.toString(), new com.alibaba.fastjson2.TypeReference<Set<String>>() {});
-                if (Objects.nonNull(perms)) {
-                    return perms;
-                }
-            } catch (Exception e) {
-                log.warn("解析用户菜单权限缓存失败，重新查询数据库, userId={}", userId, e);
+    public Set<String> selectMenuPermsByRoleCodes(Set<String> roleCodes) {
+        if (CollUtil.isEmpty(roleCodes)) {
+            return new HashSet<>();
+        }
+        Set<String> perms = new HashSet<>();
+        for (String roleCode : roleCodes) {
+            Object cacheObj = redisUtils.hGet(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode);
+            Set<String> permsByRoleCode = JSON.parseObject(cacheObj.toString(), new TypeReference<Set<String>>() {});
+            if (Objects.nonNull(perms)) {
+                perms.addAll(permsByRoleCode);
             }
         }
-        Set<String> resultPermissions = new HashSet<>();
-        if (SecurityUtils.isSupperAdminAuth()) {
-            resultPermissions.add("*:*:*");
-        } else {
-            resultPermissions = this.menuMapper.selectMenuPermsByUserId(userId);
+        // 如果从缓存中查到直接返回权限标识符
+        if(CollectionUtil.isEmpty(perms)){
+            return perms;
         }
-        redisUtils.hSet(RedisKeyEnum.USER_MENU_PERMISSION_KEY.getKey(), userId, JSON.toJSONString(resultPermissions));
-        return resultPermissions;
+        for (String roleCode : roleCodes) {
+            Set<String> permsSet = menuMapper.selectPermsByRoleCodes(Set.of(roleCode));
+            if(CollUtil.isNotEmpty(permsSet)){
+                perms.addAll(permsSet);
+                redisUtils.hSet(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode, JSON.toJSONString(permsSet));
+            }
+        }
+        return perms;
     }
 
     @Override
-    public void clearMenuPermissionCacheByUserId(String userId) {
-        redisUtils.hDel(RedisKeyEnum.USER_MENU_PERMISSION_KEY.getKey(), userId);
-    }
-
-    private void clearMenuPermissionCacheByMenuId(Long menuId) {
-        LambdaQueryWrapper<RoleMenuEntity> rmQuery = Wrappers.<RoleMenuEntity>lambdaQuery()
-                .eq(RoleMenuEntity::getMenuId, menuId);
+    public void publishRoleMenuChangeByMenuId(Long menuId) {
+        LambdaQueryWrapper<RoleMenuEntity> rmQuery = Wrappers.<RoleMenuEntity>lambdaQuery().eq(RoleMenuEntity::getMenuId, menuId);
         List<RoleMenuEntity> roleMenus = roleMenuMapper.selectList(rmQuery);
         if (CollUtil.isNotEmpty(roleMenus)) {
             List<Long> roleIds = roleMenus.stream().map(RoleMenuEntity::getRoleId).collect(Collectors.toList());
-            LambdaQueryWrapper<UserRoleEntity> urQuery = Wrappers.<UserRoleEntity>lambdaQuery()
-                    .in(UserRoleEntity::getRoleId, roleIds);
-            List<UserRoleEntity> userRoles = userRoleMapper.selectList(urQuery);
-            if (CollUtil.isNotEmpty(userRoles)) {
-                for (UserRoleEntity ur : userRoles) {
-                    this.clearMenuPermissionCacheByUserId(ur.getUserId());
-                }
-            }
-        }
-    }
-
-    @Override
-    public void clearMenuPermissionCacheByRoleId(Long roleId) {
-        LambdaQueryWrapper<UserRoleEntity> urQuery = Wrappers.<UserRoleEntity>lambdaQuery()
-                .eq(UserRoleEntity::getRoleId, roleId);
-        List<UserRoleEntity> userRoles = userRoleMapper.selectList(urQuery);
-        if (CollUtil.isNotEmpty(userRoles)) {
-            for (UserRoleEntity ur : userRoles) {
-                this.clearMenuPermissionCacheByUserId(ur.getUserId());
+            List<RoleEntity> roles = roleMapper.selectBatchIds(roleIds);
+            Set<String> roleCodes = roles.stream().map(RoleEntity::getRoleCode).filter(StrUtil::isNotBlank).collect(Collectors.toSet());
+            if (CollUtil.isNotEmpty(roleCodes)) {
+                SpringUtil.publishEvent(new RoleMenuCacheChangeEvent(roleCodes));
             }
         }
     }
@@ -356,10 +341,6 @@ public class MenuServiceImpl implements MenuService {
             return;
         }
         try {
-            // 1. 递增菜单点击次数（每个菜单独立计数）
-            String menuKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(),SecurityUtils.getLoginUser().getId(),menuRequest.getMenuId());
-
-            // 2. 记录点击时间到时间序列
             String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
             long currentTime = System.currentTimeMillis();
             redisUtils.lSet(timeSeriesKey, String.valueOf(currentTime));

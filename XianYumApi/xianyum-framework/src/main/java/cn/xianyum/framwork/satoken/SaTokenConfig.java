@@ -1,4 +1,4 @@
-package cn.xianyum.framwork.config;
+package cn.xianyum.framwork.satoken;
 
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoForRedisTemplate;

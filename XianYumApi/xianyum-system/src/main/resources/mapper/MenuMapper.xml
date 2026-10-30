@@ -88,4 +88,16 @@
 				 left join role r on r.id = ur.role_id
 		where m.status = '0' and r.status = 0 and m.perms is not null  and ur.user_id = #{userId}
 	</select>
+
+	<select id="selectPermsByRoleCodes" resultType="java.lang.String">
+		select distinct m.perms
+		from menu m
+			left join role_menu rm on m.menu_id = rm.menu_id
+			left join role r on r.id = rm.role_id
+		where m.status = '0' and r.status = 0 and m.perms is not null and r.role_code in
+		<foreach collection="roleCodes" item="roleCode" open="(" separator="," close=")">
+			#{roleCode}
+		</foreach>
+	</select>
+
 </mapper>

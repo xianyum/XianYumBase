@@ -59,11 +59,18 @@ public interface MenuService{
 
     List<Long>  selectMenuListByRoleId(Long roleId);
 
-    Set<String> getCurrentUserPermission(String userId);
+    /**
+     * 根据角色编码查询菜单权限
+     * @param roleCodes 角色编码列表
+     * @return 菜单权限列表
+     */
+    Set<String> selectMenuPermsByRoleCodes(Set<String> roleCodes);
 
-    void clearMenuPermissionCacheByUserId(String userId);
-
-    void clearMenuPermissionCacheByRoleId(Long roleId);
+    /**
+     * 发布角色菜单缓存变更事件
+     * @param menuId
+     */
+    void publishRoleMenuChangeByMenuId(Long menuId);
 
     /**
      * 菜单埋点上报

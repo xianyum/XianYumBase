@@ -1,11 +1,8 @@
 package cn.xianyum.common.utils;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.enums.RedisKeyEnum;
-import com.alibaba.fastjson2.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import java.util.*;
 
 /**
@@ -13,75 +10,33 @@ import java.util.*;
  * @author zhangwei
  * @date 2023/11/6 21:40
  */
-@Component
 public class UserCacheHelper {
 
-    @Autowired
-    private RedisUtils redisUtils;
 
     /**
-     * 根据用户ID获取redis缓存中数据
+     * UserService 全限定类名，用于反射加载（跨模块无法直接依赖）
+     */
+    private static final String USER_SERVICE = "cn.xianyum.system.service.UserService";
+
+    private static final String SELECT_USER_CACHE_BY_ID = "selectUserCacheById";
+
+    /**
+     * 根据用户ID获取用户缓存数据(通过反射调用UserService.selectUserCacheById)
      * @param userId
      * @return
      */
-    public LoginUser getUserByIdFromRedis(String userId){
+    public static LoginUser selectUserById(String userId){
         if(StrUtil.isEmpty(userId)){
             return null;
         }
-        String userRedisStr = (String)redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
-        if(StrUtil.isNotEmpty(userRedisStr)){
-            return JSONObject.parseObject(userRedisStr,LoginUser.class);
+        try {
+            Class<?> userServiceClass = Class.forName(USER_SERVICE);
+            Object userService = SpringUtil.getBean(userServiceClass);
+            Object result = userServiceClass.getMethod(SELECT_USER_CACHE_BY_ID, String.class).invoke(userService, userId);
+            return (LoginUser) result;
+        } catch (Exception e) {
+            throw new RuntimeException("调用UserService.selectUserCacheById失败", e);
         }
-        return null;
     }
 
-
-    /**
-     * 根据用户ID获取redis缓存中数据
-     * @param userId
-     * @return
-     */
-    public String getUserJsonByIdFromRedis(String userId){
-        String userRedisStr = (String)redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
-        return userRedisStr;
-    }
-
-    /**
-     * 从redis中取出所有用户列表
-     * @return
-     */
-    public List<LoginUser> getUserListFromRedis(){
-        List<LoginUser> loginUserList = new ArrayList<>();
-        // key-->userId  value-->用户json
-        Map<String, String> userMap = (Map<String, String>)redisUtils.hGetAll(RedisKeyEnum.USER_DATA.getKey());
-        if(Objects.isNull(userMap)){
-            return loginUserList;
-        }
-        Set<String> userIdSet = userMap.keySet();
-        for(String userId : userIdSet){
-            String userJson = userMap.get(userId);
-            loginUserList.add(JSONObject.parseObject(userJson,LoginUser.class));
-        }
-        return loginUserList;
-    }
-
-
-    /**
-     * 从redis中取出所有用户列表
-     * @return
-     */
-    public String getUserJsonArrayFromRedis(){
-        List<String> loginUserJson = new ArrayList<>();
-        // key-->userId  value-->用户json
-        Map<String, String> userMap = (Map<String, String>)redisUtils.hGetAll(RedisKeyEnum.USER_DATA.getKey());
-        if(Objects.isNull(userMap)){
-            return null;
-        }
-        Set<String> userIdSet = userMap.keySet();
-        for(String userId : userIdSet){
-            String userJson = userMap.get(userId);
-            loginUserJson.add(userJson);
-        }
-        return JSONObject.toJSONString(loginUserJson);
-    }
 }

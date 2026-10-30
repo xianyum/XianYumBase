@@ -19,5 +19,11 @@
         order by r.role_sort asc
     </select>
 
+    <select id="getRoleIdsByRoleCodes" resultType="java.lang.Long">
+        SELECT id FROM role WHERE role_code IN
+        <foreach collection="roleCodes" item="roleCode" open="(" separator="," close=")">
+            #{roleCode}
+        </foreach>
+    </select>
 
 </mapper>

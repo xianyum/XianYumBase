@@ -1,9 +1,9 @@
 package cn.xianyum.system.controller;
 
 import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
+import cn.xianyum.common.utils.SecurityUtils;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
@@ -45,8 +45,7 @@ public class UserController {
     @GetMapping("/info")
     @Operation(summary = "获取登录的用户信息")
     public Results<?> info(){
-        LoginUser userEntity = userService.getUserSelf();
-        return Results.success().put("user", userEntity);
+        return Results.success().put("user", SecurityUtils.getLoginUser());
     }
 
     /**

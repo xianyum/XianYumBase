@@ -40,8 +40,6 @@ public interface UserService{
 
     int updateCurrentUser(UserRequest user);
 
-    LoginUser getUserSelf();
-
     String upload(MultipartFile file);
 
     void changeUserRole(String id, List<Long> roleIds);

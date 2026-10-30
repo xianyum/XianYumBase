@@ -22,8 +22,8 @@ public enum RedisKeyEnum {
     FILE_PRESIGNED_URL("xianyum-system:xianyum-system:file_url:%s"),
     MENU_CLICK_KEY("xianyum-system:xianyum-system:menu:click:%s:%s"),
     MENU_CLICK_RANK("xianyum-system:xianyum-system:menu:rank:%s"),
-    USER_ROLE_KEY("xianyum-system:user:role"),
-    USER_MENU_PERMISSION_KEY("xianyum-system:user:menu_permission"),
+    ROLE_INFO_BY_USER_KEY("xianyum-system:role:info"),
+    MENU_PERMISSION_BY_ROLE_KEY("xianyum-system:menu:perm"),
 
 
     // ======================== xianyum-message模块 ========================

@@ -34,4 +34,7 @@ public interface MenuMapper extends BaseMapper<MenuEntity> {
     List<Long> selectMenuListByRoleId(@Param("roleId") Long roleId);
 
     Set<String> selectMenuPermsByUserId(@Param("userId") String userId);
+
+    Set<String> selectPermsByRoleCodes(@Param("roleCodes") Set<String> roleCodes);
+
 }

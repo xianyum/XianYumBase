@@ -1,6 +1,7 @@
 package cn.xianyum.system.service;
 
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.UserRoleCache;
 import cn.xianyum.system.entity.request.RoleRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -26,9 +27,7 @@ public interface RoleService{
 
 	List<RoleResponse> getList(RoleRequest request);
 
-	LoginUser getCurrentUserRolePermission(String userId);
-
-	void clearRoleCacheByUserId(String userId);
+	UserRoleCache selectUserRoleCacheByUserId(String userId);
 
 	void checkRoleIsDelete(Long id);
 }

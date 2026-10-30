@@ -19,24 +19,8 @@ public interface UserTokenService {
      */
     void logout();
 
-    /**
-     * 刷新redis中user数据
-     */
-    void refreshUser();
-
-    /**
-     * 获取当前登录user
-     * @return
-     */
-    LoginUser getUserSelf();
 
     void setExtraUserInfo(LoginUser loginUser);
-
-    /**
-     * 通过httpRequest获取当前登录用户
-     * @return
-     */
-    LoginUser getLoginUserByHttpRequest();
 
     /**
      * 发送验证码
