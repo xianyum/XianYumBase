@@ -3,7 +3,7 @@ package cn.xianyum.system.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.system.dao.GiteeCommitMapper;
@@ -47,7 +47,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         Page<ProgramEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
         QueryWrapper<ProgramEntity> queryWrapper = new QueryWrapper<ProgramEntity>()
-                .eq(!SecurityUtils.isSupperAdminAuth(),"create_by",SecurityUtils.getLoginUser().getId())
+                .eq(!UserContextHolder.isSupperAdminAuth(),"create_by", UserContextHolder.getLoginUser().getId())
                 .like(StrUtil.isNotEmpty(request.getContactName()),"contact_name",request.getContactName())
                 .like(StrUtil.isNotEmpty(request.getProgramTitle()),"program_title",request.getProgramTitle())
                 .eq(null != request.getStatus(),"status",request.getStatus())

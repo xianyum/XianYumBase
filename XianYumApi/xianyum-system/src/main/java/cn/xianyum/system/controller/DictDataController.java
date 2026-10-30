@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.DictDataEntity;
@@ -42,7 +43,8 @@ public class DictDataController {
 
     @GetMapping("/getPage")
     @Operation(summary = "分页查询字典数据信息")
-    @Permission(value = "@ps.hasPerm('system:dict:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:dict:page")
     public Results<DictDataResponse> list(DictDataRequest dictData) {
         PageResponse<DictDataResponse> list = dictDataService.selectDictDataList(dictData);
         return Results.page(list);
@@ -50,7 +52,8 @@ public class DictDataController {
 
     @GetMapping(value = "/{id}")
     @Operation(summary = "查询单条信息")
-    @Permission(value = "@ps.hasPerm('system:dict:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:dict:query")
     public Results<DictDataResponse> getInfo(@PathVariable Long id) {
         DictDataResponse dictDataResponse = dictDataService.getInfo(id);
         return Results.success(dictDataResponse);
@@ -61,7 +64,7 @@ public class DictDataController {
      */
     @PostMapping("/save")
     @Operation(summary = "新增字典数据")
-    @Permission("@ps.hasPerm('system:dict:save')")
+    @SaCheckPermission("system:dict:save")
     public Results<?> add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
         return Results.success(count);
@@ -72,7 +75,7 @@ public class DictDataController {
      */
     @PutMapping("/update")
     @Operation(summary = "修改字典数据")
-    @Permission("@ps.hasPerm('system:dict:update')")
+    @SaCheckPermission("system:dict:update")
     public Results<?> edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
         return Results.success(count);
@@ -83,7 +86,7 @@ public class DictDataController {
      */
     @DeleteMapping("/{ids}")
     @Operation(summary = "删除字典数据")
-    @Permission("@ps.hasPerm('system:dict:delete')")
+    @SaCheckPermission("system:dict:delete")
     public Results<?> remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
         return Results.success();

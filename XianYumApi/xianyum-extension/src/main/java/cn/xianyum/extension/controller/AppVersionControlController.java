@@ -1,6 +1,6 @@
-package cn.xianyum.extension.controller;
+﻿package cn.xianyum.extension.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +58,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "APP版本管理保存数据")
     @PostMapping(value = "/save")
-    @Permission("@ps.hasPerm('app:version_control:save')")
+    @SaCheckPermission("app:version_control:save")
     public Results<?> insert(@RequestBody AppVersionControlRequest request) {
         return Results.success(this.appVersionControlService.save(request));
     }
@@ -71,7 +71,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "APP版本管理更新数据")
     @PutMapping(value = "/update")
-    @Permission("@ps.hasPerm('app:version_control:update')")
+    @SaCheckPermission("app:version_control:update")
     public Results<Integer> update(@RequestBody AppVersionControlRequest request) {
         return Results.success(this.appVersionControlService.update(request));
     }
@@ -84,7 +84,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "APP版本管理批量删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('app:version_control:delete')")
+    @SaCheckPermission("app:version_control:delete")
     public Results<Integer> delete(@RequestBody Long[] ids) {
         return Results.success(this.appVersionControlService.deleteById(ids));
     }

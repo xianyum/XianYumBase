@@ -6,7 +6,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.proxy.dao.ProxyLogMapper;
 import cn.xianyum.proxy.dao.ProxyMapper;
@@ -114,7 +114,7 @@ public class ProxyLogServiceImpl implements ProxyLogService {
 
 	@Override
 	public List<ProxyLogResponse> getLastProxyLog(ProxyLogRequest request) {
-		String userId = SecurityUtils.getLoginUser().getId();
+		String userId = UserContextHolder.getLoginUser().getId();
 
 		LambdaQueryWrapper<ProxyEntity> proxyEntityLambdaQueryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
 				.eq(ProxyEntity::getBindUserId,userId);

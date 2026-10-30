@@ -1,7 +1,7 @@
 package cn.xianyum.system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.xianyum.system.entity.po.UserThirdRelationEntity;
 import cn.xianyum.system.entity.response.UserThirdRelationResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -42,7 +42,7 @@ public class UserThirdRelationServiceImpl implements UserThirdRelationService {
 	@Override
 	public List<UserThirdRelationResponse> getCurrentUserThirdRelation() {
 		LambdaQueryWrapper<UserThirdRelationEntity> lambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery()
-				.eq(UserThirdRelationEntity::getUserId, SecurityUtils.getLoginUser().getId())
+				.eq(UserThirdRelationEntity::getUserId, UserContextHolder.getLoginUser().getId())
 				.orderByDesc(UserThirdRelationEntity::getCreateTime);
 		List<UserThirdRelationEntity> userThirdRelationEntities = userThirdRelationMapper.selectList(lambdaQueryWrapper);
 		return BeanUtil.copyToList(userThirdRelationEntities,UserThirdRelationResponse.class);

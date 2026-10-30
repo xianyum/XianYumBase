@@ -1,7 +1,7 @@
 package cn.xianyum.framwork.mybatis.handler;
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
@@ -19,7 +19,7 @@ public class CustomerFillHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = UserContextHolder.getLoginUser();
         if(Objects.isNull(loginUser)){
             this.setFieldValByName("createBy","-1",metaObject);
             this.setFieldValByName("createByName", "system",metaObject);
@@ -37,7 +37,7 @@ public class CustomerFillHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = UserContextHolder.getLoginUser();
         if(Objects.isNull(loginUser)){
             this.setFieldValByName("updateBy","-1",metaObject);
             this.setFieldValByName("updateByName", "system",metaObject);

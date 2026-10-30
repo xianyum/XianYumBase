@@ -60,7 +60,7 @@ public class ProxyServiceImpl implements ProxyService {
 		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
 				.like(StrUtil.isNotEmpty(request.getId()),ProxyEntity::getId,request.getId())
 				.like(StrUtil.isNotEmpty(request.getName()),ProxyEntity::getName,request.getName())
-				.eq(!SecurityUtils.isSupperAdminAuth(),ProxyEntity::getBindUserId,SecurityUtils.getLoginUser().getId())
+				.eq(!UserContextHolder.isSupperAdminAuth(),ProxyEntity::getBindUserId, UserContextHolder.getLoginUser().getId())
 				.orderByDesc(ProxyEntity::getCreateTime,ProxyEntity::getLoginCount);
 		IPage<ProxyEntity> pageResult = proxyMapper.selectPage(page,queryWrapper);
 		return PageResponse.of(pageResult,ProxyResponse.class,(response,item)->{
@@ -229,7 +229,7 @@ public class ProxyServiceImpl implements ProxyService {
 	@Override
 	public List<ProxyResponse> getList() {
 
-		if(!"admin".equals(SecurityUtils.getLoginUser().getUsername())){
+		if(!"admin".equals(UserContextHolder.getLoginUser().getUsername())){
 			return null;
 		}
 		QueryWrapper<ProxyEntity> queryWrapper = new QueryWrapper<ProxyEntity>();
@@ -351,7 +351,7 @@ public class ProxyServiceImpl implements ProxyService {
 
 	@Override
 	public ProxyResponse getCurrentProxy() {
-		String userId = SecurityUtils.getLoginUser().getId();
+		String userId = UserContextHolder.getLoginUser().getId();
 		LambdaQueryWrapper<ProxyEntity> queryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
 				.eq(ProxyEntity::getBindUserId,userId);
 		ProxyEntity proxy = proxyMapper.selectOne(queryWrapper);

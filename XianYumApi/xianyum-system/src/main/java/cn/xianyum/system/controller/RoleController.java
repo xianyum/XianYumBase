@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +35,8 @@ public class RoleController{
      */
 	@Operation(summary = "分页查询角色管理")
     @GetMapping(value = "/getPage")
-    @Permission(value = "@ps.hasPerm('system:role:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:role:page")
     public Results<RoleResponse> getPage(RoleRequest request) {
 		PageResponse<RoleResponse> responsePage = roleService.getPage(request);
         return Results.page(responsePage);
@@ -55,7 +57,8 @@ public class RoleController{
      */
 	@Operation(summary = "根据ID查询角色管理")
     @GetMapping("getById/{id}")
-    @Permission(value = "@ps.hasPerm('system:role:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:role:query")
     public Results<RoleResponse> selectOne(@PathVariable Long id) {
         return Results.success(roleService.getById(id));
     }
@@ -68,7 +71,7 @@ public class RoleController{
      */
 	@Operation(summary = "角色管理保存数据")
     @PostMapping(value = "/save")
-    @Permission("@ps.hasPerm('system:role:save')")
+    @SaCheckPermission("system:role:save")
     public Results<?> insert(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.save(request));
     }
@@ -81,14 +84,14 @@ public class RoleController{
      */
 	@Operation(summary = "角色管理更新数据")
     @PutMapping(value = "/update")
-    @Permission("@ps.hasPerm('system:role:update')")
+    @SaCheckPermission("system:role:update")
     public Results<?> update(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.update(request));
     }
 
     @Operation(summary = "更新角色状态")
     @PutMapping(value = "/changeStatus")
-    @Permission("@ps.hasPerm('system:role:update')")
+    @SaCheckPermission("system:role:update")
     public Results<?> changeStatus(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.changeStatus(request));
     }
@@ -96,14 +99,14 @@ public class RoleController{
 
     @Operation(summary = "更新角色权限范围")
     @PutMapping(value = "/changeDataScope")
-    @Permission("@ps.hasPerm('system:role:authorize')")
+    @SaCheckPermission("system:role:authorize")
     public Results<?> changeDataScope(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.changeDataScope(request));
     }
 
     @Operation(summary = "菜单授权")
     @PutMapping(value = "/authorizationMenu")
-    @Permission("@ps.hasPerm('system:role:authorize')")
+    @SaCheckPermission("system:role:authorize")
     public Results<?> authorizationMenu(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.authorizationMenu(request));
     }
@@ -116,7 +119,7 @@ public class RoleController{
      */
 	@Operation(summary = "角色管理批量删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('system:role:delete')")
+    @SaCheckPermission("system:role:delete")
     public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.roleService.deleteById(ids));
     }

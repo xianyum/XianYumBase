@@ -1,7 +1,7 @@
-package cn.xianyum.extension.controller;
+﻿package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.EvAutoReportRequest;
@@ -72,7 +72,7 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "新能源车行驶记录保存数据")
     @PostMapping(value = "/save")
-    @Permission(value = "@ps.hasPerm('ev-drive-records:save')")
+    @SaCheckPermission("ev-drive-records:save")
     public Results<Integer> insert(@RequestBody EvDriveRecordsRequest request) {
         return Results.success(this.evDriveRecordsService.save(request));
     }
@@ -85,7 +85,7 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "新能源车行驶记录更新数据")
     @PutMapping(value = "/update")
-    @Permission(value = "@ps.hasPerm('ev-drive-records:update')")
+    @SaCheckPermission("ev-drive-records:update")
     public Results<Integer> update(@RequestBody EvDriveRecordsRequest request) {
         return Results.success(this.evDriveRecordsService.update(request));
     }
@@ -98,7 +98,7 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "新能源车行驶记录批量删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission(value = "@ps.hasPerm('ev-drive-records:delete')")
+    @SaCheckPermission("ev-drive-records:delete")
     public Results<Integer> delete(@RequestBody Long[] ids) {
         return Results.success(this.evDriveRecordsService.deleteById(ids));
     }
@@ -126,7 +126,7 @@ public class EvDriveRecordsController {
 
     @GetMapping(value = "/aiAnalysis")
     @Operation(summary = "行驶记录AI预测分析")
-    @Permission("@ps.hasPerm('ev-drive-records:ai:analysis')")
+    @SaCheckPermission("ev-drive-records:ai:analysis")
     public Results<String> aiAnalysis() {
         String result = this.evDriveRecordsService.aiAnalysis();
         return Results.success(result);
@@ -142,7 +142,7 @@ public class EvDriveRecordsController {
 
     @Operation(summary = "获取车辆当前位置信息")
     @GetMapping(value = "/getCurrentLocation")
-    @Permission("@ps.hasPerm('ev-drive-records:location:get')")
+    @SaCheckPermission("ev-drive-records:location:get")
     public Results<EvAutoReportResponse> getCurrentLocation() {
         EvAutoReportResponse response = this.evDriveRecordsService.getCurrentLocation();
         return Results.success(response);

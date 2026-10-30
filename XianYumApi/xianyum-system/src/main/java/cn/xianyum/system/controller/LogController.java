@@ -1,7 +1,8 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
@@ -32,7 +33,8 @@ public class LogController {
      */
     @GetMapping("/getPage")
     @Operation(summary = "获取用户列表")
-    @Permission(value = "@ps.hasPerm('monitor:operlog:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("monitor:operlog:page")
     public Results<LogResponse> getPage(LogRequest request){
         PageResponse<LogResponse> list = logService.getPage(request);
         return Results.page(list);
@@ -50,7 +52,7 @@ public class LogController {
 
     @DeleteMapping("/delete")
     @Operation(summary = "删除日志记录")
-    @Permission("@ps.hasPerm('monitor:operlog:delete')")
+    @SaCheckPermission("monitor:operlog:delete")
     public Results<?> delete(@RequestBody String[] logIdS){
         try {
             logService.deleteById(logIdS);
@@ -62,7 +64,7 @@ public class LogController {
 
     @DeleteMapping("/truncateLog")
     @Operation(summary = "清空用户操作日志")
-    @Permission("@ps.hasPerm('monitor:operlog:delete')")
+    @SaCheckPermission("monitor:operlog:delete")
     public Results<?> truncateLog(){
         logService.truncateLog();
         return Results.success();

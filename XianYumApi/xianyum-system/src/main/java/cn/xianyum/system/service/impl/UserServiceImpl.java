@@ -76,8 +76,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageResponse<UserResponse> getPage(UserRequest user) {
         Page<UserEntity> page = new Page<>(user.getPageNum(),user.getPageSize());
-        if(!SecurityUtils.isSupperAdminAuth()){
-            user.setId(SecurityUtils.getLoginUser().getId());
+        if(!UserContextHolder.isSupperAdminAuth()){
+            user.setId(UserContextHolder.getLoginUser().getId());
         }else{
             user.setId(null);
         }
@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updatePassword(UpdatePasswordRequest info) {
-        LoginUser userEntity = SecurityUtils.getLoginUser();
+        LoginUser userEntity = UserContextHolder.getLoginUser();
         String password = info.getPassword();
         if(!SecretUtils.matchesPassword(password,userEntity.getPassword())){
             return false;
@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateCurrentUser(UserRequest user) {
-        user.setId(SecurityUtils.getLoginUser().getId());
+        user.setId(UserContextHolder.getLoginUser().getId());
         int count = userMapper.updateUser(user);
         SpringUtil.publishEvent(new UserCacheChangeEvent(user.getId()));
         return count;
@@ -236,7 +236,7 @@ public class UserServiceImpl implements UserService {
         try {
             FileDetailResponse fileDetailResponse = fileService.uploadFile(file);
             UserEntity userEntity = new UserEntity();
-            userEntity.setId(SecurityUtils.getLoginUser().getId());
+            userEntity.setId(UserContextHolder.getLoginUser().getId());
             userEntity.setAvatarFileId(fileDetailResponse.getId());
             userMapper.updateById(userEntity);
             SpringUtil.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserProfile() {
-        String userId = SecurityUtils.getLoginUser().getId();
+        String userId = UserContextHolder.getLoginUser().getId();
         UserEntity userEntity = userMapper.selectById(userId);
         UserResponse userResponse = BeanUtil.toBean(userEntity, UserResponse.class);
         if(null != userResponse){
@@ -347,7 +347,7 @@ public class UserServiceImpl implements UserService {
         if(StrUtil.isBlank(openUserId)){
             return false;
         }
-        String userId = SecurityUtils.getLoginUser().getId();
+        String userId = UserContextHolder.getLoginUser().getId();
         LambdaQueryWrapper<UserThirdRelationEntity> queryWrapper= Wrappers.<UserThirdRelationEntity>lambdaQuery()
                 .eq(UserThirdRelationEntity::getOpenUserId, openUserId)
                 .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.QQ.getThirdType());
@@ -381,7 +381,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         String openUserId = aLiUserInfo.getUserId();
-        String userId = SecurityUtils.getLoginUser().getId();
+        String userId = UserContextHolder.getLoginUser().getId();
         LambdaQueryWrapper<UserThirdRelationEntity> queryWrapper= Wrappers.<UserThirdRelationEntity>lambdaQuery()
                 .eq(UserThirdRelationEntity::getOpenUserId, openUserId)
                 .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.ZHI_FU_BAO.getThirdType());

@@ -10,7 +10,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.MenuMapper;
 import cn.xianyum.system.dao.RoleMapper;
@@ -63,8 +63,8 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public List<MenuResponse> getUserMenuList(String platformType) {
-        String userId = SecurityUtils.getLoginUser().getId();
-        if(SecurityUtils.isSupperAdminAuth()){
+        String userId = UserContextHolder.getLoginUser().getId();
+        if(UserContextHolder.isSupperAdminAuth()){
             userId = null;
         }
         //用户菜单列表
@@ -341,7 +341,7 @@ public class MenuServiceImpl implements MenuService {
             return;
         }
         try {
-            String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
+            String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), UserContextHolder.getLoginUser().getId(), menuRequest.getMenuId()) + ":timeseries";
             long currentTime = System.currentTimeMillis();
             redisUtils.lSet(timeSeriesKey, String.valueOf(currentTime));
 
@@ -349,7 +349,7 @@ public class MenuServiceImpl implements MenuService {
 
             double activityScore = calculateActivityScore(menuRequest.getMenuId());
 
-            String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(),SecurityUtils.getLoginUser().getId());
+            String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(), UserContextHolder.getLoginUser().getId());
             redisUtils.zAdd(menuRankKey, String.valueOf(menuRequest.getMenuId()), activityScore);
         } catch (Exception e) {
             log.error("菜单埋点上报失败", e);
@@ -363,7 +363,7 @@ public class MenuServiceImpl implements MenuService {
      * @return 活跃度分数
      */
     private double calculateActivityScore(Long menuId) {
-        String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), SecurityUtils.getLoginUser().getId(), menuId) + ":timeseries";
+        String timeSeriesKey = String.format(RedisKeyEnum.MENU_CLICK_KEY.getKey(), UserContextHolder.getLoginUser().getId(), menuId) + ":timeseries";
         List<Object> clickTimes = redisUtils.lGet(timeSeriesKey, 0, -1);
 
         if (CollUtil.isEmpty(clickTimes)) {
@@ -403,7 +403,7 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuResponse> getMenuClickRank() {
         // 取排名前4个的
         Integer topN = 4;
-        List<MenuEntity> menus = menuMapper.selectMenuTreeByUserId(SecurityUtils.isSupperAdminAuth()?null:SecurityUtils.getLoginUser().getId(), PlatformTypeEnum.APP.getCode());
+        List<MenuEntity> menus = menuMapper.selectMenuTreeByUserId(UserContextHolder.isSupperAdminAuth()?null: UserContextHolder.getLoginUser().getId(), PlatformTypeEnum.APP.getCode());
         List<MenuResponse> allMenuResponse = menus.stream()
                 // 1. 过滤条件：平台类型为APP + 类型为菜单级别的
                 .filter(item -> PlatformTypeEnum.APP.getCode().equals(item.getPlatformType())
@@ -414,7 +414,7 @@ public class MenuServiceImpl implements MenuService {
         if(CollUtil.isEmpty(allMenuResponse)){
             return List.of();
         }
-        String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(),SecurityUtils.getLoginUser().getId());
+        String menuRankKey = String.format(RedisKeyEnum.MENU_CLICK_RANK.getKey(), UserContextHolder.getLoginUser().getId());
         Set<ZSetOperations.TypedTuple<Object>> menuRankSet = redisUtils.zReverseRangeWithScores(menuRankKey, 0, -1);
         if(menuRankSet.isEmpty()){
             // 无排名数据，直接取前topN个

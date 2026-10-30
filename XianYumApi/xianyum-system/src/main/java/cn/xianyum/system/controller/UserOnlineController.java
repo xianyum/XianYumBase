@@ -1,6 +1,6 @@
-package cn.xianyum.system.controller;
+﻿package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
@@ -30,7 +30,7 @@ public class UserOnlineController {
      */
     @GetMapping("/getPage")
     @Operation(summary = "获取在线用户列表")
-    @Permission("@ps.hasPerm('monitor:online:page')")
+    @SaCheckPermission("monitor:online:page")
     public Results<UserOnlineResponse> list(UserOnlineRequest request){
         PageResponse<UserOnlineResponse> responsePage = userOnlineService.queryPage(request);
         return Results.page(responsePage);
@@ -43,7 +43,7 @@ public class UserOnlineController {
      */
     @DeleteMapping("/delete")
     @Operation(summary = "踢出用户")
-    @Permission("@ps.hasPerm('monitor:online:exit')")
+    @SaCheckPermission("monitor:online:exit")
     public Results<?> delete(@RequestBody String[] tokenIds){
         userOnlineService.delete(tokenIds);
         return Results.success();

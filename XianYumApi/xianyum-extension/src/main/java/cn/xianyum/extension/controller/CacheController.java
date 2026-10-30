@@ -1,8 +1,8 @@
-package cn.xianyum.extension.controller;
+﻿package cn.xianyum.extension.controller;
 
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.StrUtil;
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.Results;
@@ -28,7 +28,7 @@ public class CacheController {
 
     @GetMapping("/getInfo")
     @Operation(summary = "查询Redis缓存基本信息")
-    @Permission("@ps.hasPerm('monitor:cache:list')")
+    @SaCheckPermission("monitor:cache:list")
     public Results<Map<String, Object>> getInfo() {
         Properties info = (Properties) redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
@@ -52,7 +52,7 @@ public class CacheController {
 
     @DeleteMapping("/deleteByKey")
     @Operation(summary = "根据Redis Key删除缓存")
-    @Permission("@ps.hasPerm('monitor:cache:delete')")
+    @SaCheckPermission("monitor:cache:delete")
     public Results<Void> deleteByKey(@RequestParam String redisKey) {
         Set<String> keys = new HashSet<>();
         String[] keyArray = StrUtil.splitToArray(redisKey, StrPool.COMMA);

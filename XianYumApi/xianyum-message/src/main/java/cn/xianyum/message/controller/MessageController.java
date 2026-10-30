@@ -1,7 +1,6 @@
 package cn.xianyum.message.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
 import cn.xianyum.message.entity.request.GrafanaAlertWebhookRequest;

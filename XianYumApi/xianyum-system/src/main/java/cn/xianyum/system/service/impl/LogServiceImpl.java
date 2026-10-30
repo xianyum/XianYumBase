@@ -63,8 +63,8 @@ public class LogServiceImpl implements LogService {
         }
 
         if(StrUtil.isEmpty(logEntity.getUsername())){
-            if(null != SecurityUtils.getLoginUser()){
-                logEntity.setUsername(SecurityUtils.getLoginUser().getUsername());
+            if(null != UserContextHolder.getLoginUser()){
+                logEntity.setUsername(UserContextHolder.getLoginUser().getUsername());
             }else{
                 logEntity.setUsername("system");
             }

@@ -1,8 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
-import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserLoginRequest;

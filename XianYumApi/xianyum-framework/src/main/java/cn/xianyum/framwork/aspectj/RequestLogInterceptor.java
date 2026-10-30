@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.common.utils.IPUtils;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.service.LogService;
@@ -60,7 +60,7 @@ public class RequestLogInterceptor {
         long time = System.currentTimeMillis() - beginTime;
         String requestUri = HttpContextUtils.getHttpServletRequest().getRequestURI();
         String requestParam = getMethodArgs(joinPoint);
-        LoginUser loginUser = Optional.ofNullable(SecurityUtils.getLoginUser()).orElse(new LoginUser());
+        LoginUser loginUser = Optional.ofNullable(UserContextHolder.getLoginUser()).orElse(new LoginUser());
         if(!IGNORE_FILTER_URLS.contains(requestUri)){
             log.info("【API】uri={}, cost={}ms, userId={}, username={}, reqParam={}",
                     requestUri,
@@ -101,9 +101,9 @@ public class RequestLogInterceptor {
             String ipInfo =IPUtils.getIpInfo(ip);
             logEntity.setIpInfo(ipInfo);
             //用户名
-            LoginUser loginUser = SecurityUtils.getLoginUser();
+            LoginUser loginUser = UserContextHolder.getLoginUser();
             if(null != loginUser){
-                logEntity.setUsername(SecurityUtils.getLoginUser().getUsername());
+                logEntity.setUsername(UserContextHolder.getLoginUser().getUsername());
             }else{
                 logEntity.setUsername("system");
             }
@@ -112,7 +112,7 @@ public class RequestLogInterceptor {
             //异步保存系统日志
 
             xianYumTaskExecutor.execute(()->{
-                SecurityUtils.setLoginUser(loginUser);
+                UserContextHolder.setLoginUser(loginUser);
                 SpringUtil.getBean(LogService.class).saveLog(logEntity);
             });
         }

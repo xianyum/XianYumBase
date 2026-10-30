@@ -1,7 +1,6 @@
 package cn.xianyum.framwork.config;
 
-import cn.xianyum.common.annotation.Permission;
-import com.alibaba.fastjson2.JSONObject;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.hutool.core.util.ReUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -43,7 +42,7 @@ public class PermitAllUrlProperties implements InitializingBean, ApplicationCont
                 return;
             }
             // 获取方法上边的注解 替代path variable 为 *
-            Permission method = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), Permission.class);
+            IgnoreDataScope method = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), IgnoreDataScope.class);
 
             try {
                 Optional.ofNullable(method).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
@@ -54,7 +53,7 @@ public class PermitAllUrlProperties implements InitializingBean, ApplicationCont
 
 
             // 获取类上边的注解, 替代path variable 为 *
-            Permission controller = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), Permission.class);
+            IgnoreDataScope controller = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), IgnoreDataScope.class);
             Optional.ofNullable(controller).filter(p -> p.publicApi()).ifPresent(anonymous -> Objects.requireNonNull(info.getPatternsCondition().getPatterns())
                     .forEach(url -> urls.add(ReUtil.replaceAll(url, PATTERN, ASTERISK))));
         });

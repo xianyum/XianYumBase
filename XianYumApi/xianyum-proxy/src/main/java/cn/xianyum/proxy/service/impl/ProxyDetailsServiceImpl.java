@@ -42,8 +42,8 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public PageResponse<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
 		Page<ProxyDetailsEntity> page = new Page<>(request.getPageNum(),request.getPageSize());
-		if(!SecurityUtils.isSupperAdminAuth()){
-			request.setBindUserId(SecurityUtils.getLoginUser().getId());
+		if(!UserContextHolder.isSupperAdminAuth()){
+			request.setBindUserId(UserContextHolder.getLoginUser().getId());
 		}
 		List<ProxyDetailsResponse> list = proxyDetailsMapper.getPage(request,page);
 		for(ProxyDetailsResponse item:list){
@@ -197,7 +197,7 @@ public class ProxyDetailsServiceImpl implements ProxyDetailsService {
 	@Override
 	public List<ProxyDetailsResponse> getCurrentProxyDetails() {
 		LambdaQueryWrapper<ProxyEntity> proxyEntityLambdaQueryWrapper = Wrappers.<ProxyEntity>lambdaQuery()
-				.eq(ProxyEntity::getBindUserId,SecurityUtils.getLoginUser().getId());
+				.eq(ProxyEntity::getBindUserId, UserContextHolder.getLoginUser().getId());
 		ProxyEntity proxy = proxyMapper.selectOne(proxyEntityLambdaQueryWrapper);
 		if(Objects.isNull(proxy)){
 			return null;

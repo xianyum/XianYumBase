@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.MenuEntity;
@@ -43,7 +44,8 @@ public class MenuController {
      */
     @GetMapping("/getPage")
     @Operation(summary = "分页查询菜单列表")
-    @Permission(value = "@ps.hasPerm('system:menu:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:menu:page")
     public Results<List<MenuEntity>> selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
         return Results.success(menuResponses);
@@ -55,7 +57,8 @@ public class MenuController {
      */
     @GetMapping(value = "/{menuId}")
     @Operation(summary = "根据菜单编号获取详细信息")
-    @Permission(value = "@ps.hasPerm('system:menu:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:menu:query")
     public Results<MenuEntity> getInfo(@PathVariable Long menuId) {
         return Results.success(menuService.selectMenuById(menuId));
     }
@@ -66,7 +69,7 @@ public class MenuController {
      */
     @PostMapping(value = "/save")
     @Operation(summary = "保存菜单信息")
-    @Permission("@ps.hasPerm('system:menu:save')")
+    @SaCheckPermission("system:menu:save")
     public Results<?> save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
         return Results.success(count);
@@ -77,7 +80,7 @@ public class MenuController {
      */
     @PutMapping(value = "/update")
     @Operation(summary = "保存菜单信息")
-    @Permission("@ps.hasPerm('system:menu:update')")
+    @SaCheckPermission("system:menu:update")
     public Results<?> update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
         return Results.success(count);
@@ -89,7 +92,7 @@ public class MenuController {
      */
     @DeleteMapping("/{menuId}")
     @Operation(summary = "删除菜单")
-    @Permission("@ps.hasPerm('system:menu:delete')")
+    @SaCheckPermission("system:menu:delete")
     public Results<?> remove(@PathVariable("menuId") Long menuId) {
         return Results.success(menuService.deleteMenuById(menuId));
     }

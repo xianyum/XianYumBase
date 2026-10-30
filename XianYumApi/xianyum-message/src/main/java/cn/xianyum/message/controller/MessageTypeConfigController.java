@@ -1,6 +1,6 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageTypeConfigRequest;
@@ -32,7 +32,7 @@ public class MessageTypeConfigController {
      */
 	@Operation(summary = "消息类型配置表分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission("@ps.hasPerm('message:type-config:page')")
+    @SaCheckPermission("message:type-config:page")
 	public Results<MessageTypeConfigResponse> getPage(MessageTypeConfigRequest request) {
         PageResponse<MessageTypeConfigResponse> response = messageTypeConfigService.getPage(request);
         return Results.page(response);
@@ -44,7 +44,7 @@ public class MessageTypeConfigController {
      */
     @Operation(summary = "消息类型配置表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission("@ps.hasPerm('message:type-config:query')")
+    @SaCheckPermission("message:type-config:query")
     public Results<MessageTypeConfigResponse> getById(@PathVariable String id) {
         MessageTypeConfigResponse response = messageTypeConfigService.getById(id);
         return Results.success(response);
@@ -56,7 +56,7 @@ public class MessageTypeConfigController {
      */
     @Operation(summary = "消息类型配置表保存数据")
     @PostMapping(value = "/save")
-    @Permission("@ps.hasPerm('message:type-config:save')")
+    @SaCheckPermission("message:type-config:save")
     public Results<?> save(@RequestBody MessageTypeConfigRequest request) {
 		Integer count = messageTypeConfigService.save(request);
 		if(count>0){
@@ -71,7 +71,7 @@ public class MessageTypeConfigController {
      */
     @Operation(summary = "消息类型配置表修改数据")
     @PutMapping(value = "/update")
-    @Permission("@ps.hasPerm('message:type-config:update')")
+    @SaCheckPermission("message:type-config:update")
     public Results<?> update(@RequestBody MessageTypeConfigRequest request) {
 		Integer count = messageTypeConfigService.update(request);
 		if(count>0){
@@ -86,7 +86,7 @@ public class MessageTypeConfigController {
      */
     @Operation(summary = "消息类型配置表删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('message:type-config:delete')")
+    @SaCheckPermission("message:type-config:delete")
     public Results<?> delete(@RequestBody String[] ids) {
 		messageTypeConfigService.deleteById(ids);
 	    return Results.success();

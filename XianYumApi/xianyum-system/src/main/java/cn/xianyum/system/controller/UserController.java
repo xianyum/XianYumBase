@@ -1,9 +1,10 @@
-package cn.xianyum.system.controller;
+﻿package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.system.entity.request.UpdatePasswordRequest;
 import cn.xianyum.system.entity.request.UserRequest;
@@ -33,7 +34,8 @@ public class UserController {
      */
     @GetMapping("/getPage")
     @Operation(summary = "分页获取用户列表")
-    @Permission(value = "@ps.hasPerm('system:user:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:user:page")
     public Results<UserResponse> getPage(UserRequest user){
         PageResponse<UserResponse> list = userService.getPage(user);
         return Results.page(list);
@@ -45,7 +47,7 @@ public class UserController {
     @GetMapping("/info")
     @Operation(summary = "获取登录的用户信息")
     public Results<?> info(){
-        return Results.success().put("user", SecurityUtils.getLoginUser());
+        return Results.success().put("user", UserContextHolder.getLoginUser());
     }
 
     /**
@@ -55,7 +57,7 @@ public class UserController {
      */
     @DeleteMapping("/delete")
     @Operation(summary = "删除用户")
-    @Permission("@ps.hasPerm('system:user:delete')")
+    @SaCheckPermission("system:user:delete")
     public Results<?> delete(@RequestBody String[] userIds){
         userService.deleteById(userIds);
         return Results.success();
@@ -66,7 +68,8 @@ public class UserController {
      */
     @GetMapping("/getById/{id}")
     @Operation(summary = "根据Id查询用户")
-    @Permission(value = "@ps.hasPerm('system:user:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:user:query")
     public Results<UserResponse> selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
         return Results.success(userResponse);
@@ -78,7 +81,7 @@ public class UserController {
      */
     @GetMapping("/getByRoleId/{roleId}")
     @Operation(summary = "根据角色ID查询用户")
-    @Permission(value = "@ps.hasPerm('system:role:user')")
+    @SaCheckPermission("system:role:user")
     public Results<List<UserResponse>> getByRoleId(@PathVariable String roleId){
         List<UserResponse> userResponse = userService.getByRoleId(roleId);
         return Results.success(userResponse);
@@ -89,7 +92,7 @@ public class UserController {
      */
     @PostMapping("/save")
     @Operation(summary = "保存用户")
-    @Permission("@ps.hasPerm('system:user:save')")
+    @SaCheckPermission("system:user:save")
     public Results<?> save(@RequestBody UserRequest user){
         ValidatorUtils.validateEntity(user);
         int count = userService.save(user);
@@ -105,7 +108,7 @@ public class UserController {
      */
     @PutMapping("/update")
     @Operation(summary = "修改用户")
-    @Permission("@ps.hasPerm('system:user:update')")
+    @SaCheckPermission("system:user:update")
     public Results<?> update(@RequestBody UserRequest user){
         ValidatorUtils.validateEntity(user);
         int count = userService.update(user);
@@ -130,7 +133,7 @@ public class UserController {
 
     @PutMapping("/changeStatus")
     @Operation(summary = "修改用户状态")
-    @Permission("@ps.hasPerm('system:user:update')")
+    @SaCheckPermission("system:user:update")
     public Results<?> updatePassword(@RequestBody UserRequest request){
         int count = userService.changeStatus(request);
         return Results.success(count);

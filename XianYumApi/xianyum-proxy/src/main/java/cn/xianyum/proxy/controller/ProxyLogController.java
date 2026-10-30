@@ -1,7 +1,7 @@
 package cn.xianyum.proxy.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.proxy.entity.request.ProxyLogRequest;
@@ -34,7 +34,7 @@ public class ProxyLogController {
      */
 	@Operation(summary = "远程代理日志分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
+    @SaCheckPermission("xianyu:proxy-log:page")
 	public Results<ProxyLogResponse> getPage(ProxyLogRequest request) {
         PageResponse<ProxyLogResponse> response = proxyLogService.getPage(request);
         return Results.page(response);
@@ -46,7 +46,7 @@ public class ProxyLogController {
      */
     @Operation(summary = "远程代理日志根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission("@ps.hasPerm('xianyu:proxy-log:page')")
+    @SaCheckPermission("xianyu:proxy-log:page")
     public Results<ProxyLogResponse> getById(@PathVariable Long id) {
         ProxyLogResponse response = proxyLogService.getById(id);
         return Results.success(response);
@@ -76,7 +76,7 @@ public class ProxyLogController {
      */
     @Operation(summary = "远程代理日志删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('xianyu:proxy-log:delete')")
+    @SaCheckPermission("xianyu:proxy-log:delete")
     public Results<?> delete(@RequestBody Long[] ids) {
 		proxyLogService.deleteById(ids);
 	    return Results.success();

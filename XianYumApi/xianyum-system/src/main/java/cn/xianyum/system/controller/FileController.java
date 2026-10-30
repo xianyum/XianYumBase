@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.FileService;
@@ -25,7 +25,7 @@ public class FileController {
 
     @Operation(summary = "上传文件")
     @PostMapping(value = "/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Permission(value = "@ps.hasPerm('system:file:upload')")
+    @SaCheckPermission("system:file:upload")
     public Results<FileDetailResponse> uploadSingleFile(@RequestParam("file") MultipartFile file) {
         FileDetailResponse fileDetailResponse = this.fileService.uploadFile(file);
         return Results.success(fileDetailResponse);

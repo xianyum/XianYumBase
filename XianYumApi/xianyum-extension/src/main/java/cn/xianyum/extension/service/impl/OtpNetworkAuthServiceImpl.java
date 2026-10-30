@@ -3,7 +3,7 @@ package cn.xianyum.extension.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.enums.YesOrNoEnum;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.xianyum.extension.dao.OtpNetworkAuthMapper;
 import cn.xianyum.extension.entity.po.OtpNetworkAuthEntity;
 import cn.xianyum.extension.entity.request.OtpNetworkAuthRequest;
@@ -37,7 +37,7 @@ public class OtpNetworkAuthServiceImpl implements OtpNetworkAuthService {
     @Override
     public List<OtpNetworkAuthResponse> getList() {
         LambdaQueryWrapper<OtpNetworkAuthEntity> queryWrapper = Wrappers.<OtpNetworkAuthEntity>lambdaQuery()
-                .eq(OtpNetworkAuthEntity::getCreateBy, SecurityUtils.getLoginUser().getId())
+                .eq(OtpNetworkAuthEntity::getCreateBy, UserContextHolder.getLoginUser().getId())
                 .eq(OtpNetworkAuthEntity::getStatus, YesOrNoEnum.YES.getStatus())
                 .orderByDesc(OtpNetworkAuthEntity::getCreateTime);
         return BeanUtil.copyToList(otpNetworkAuthMapper.selectList(queryWrapper), OtpNetworkAuthResponse.class);

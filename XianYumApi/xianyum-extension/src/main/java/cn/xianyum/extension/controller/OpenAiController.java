@@ -1,7 +1,6 @@
 package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.entity.ai.OpenAiLogResponse;
 import cn.xianyum.common.entity.ai.OpenAiModelResponse;
 import cn.xianyum.common.entity.ai.OpenAiTokenUsageResponse;

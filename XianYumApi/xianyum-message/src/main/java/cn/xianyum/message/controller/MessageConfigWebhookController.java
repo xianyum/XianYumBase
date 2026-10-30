@@ -1,6 +1,6 @@
 package cn.xianyum.message.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
@@ -36,7 +36,7 @@ public class MessageConfigWebhookController {
      */
 	@Operation(summary = "账户配置webhook分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission("@ps.hasPerm('message:webhook:page')")
+    @SaCheckPermission("message:webhook:page")
 	public Results<MessageConfigWebhookResponse> getPage(MessageConfigWebhookRequest request) {
         PageResponse<MessageConfigWebhookResponse> response = messageConfigWebhookService.getPage(request);
         return Results.page(response);
@@ -48,7 +48,7 @@ public class MessageConfigWebhookController {
      */
     @Operation(summary = "账户配置webhook根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission("@ps.hasPerm('message:webhook:query')")
+    @SaCheckPermission("message:webhook:query")
     public Results<MessageConfigWebhookResponse> getById(@PathVariable String id) {
 
         MessageConfigWebhookResponse response = messageConfigWebhookService.getById(id);
@@ -61,7 +61,7 @@ public class MessageConfigWebhookController {
      */
     @Operation(summary = "账户配置webhook保存数据")
     @PostMapping(value = "/save")
-    @Permission("@ps.hasPerm('message:webhook:save')")
+    @SaCheckPermission("message:webhook:save")
     public Results<?> save(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.save(request);
@@ -77,7 +77,7 @@ public class MessageConfigWebhookController {
      */
     @Operation(summary = "账户配置webhook修改数据")
     @PutMapping(value = "/update")
-    @Permission("@ps.hasPerm('message:webhook:update')")
+    @SaCheckPermission("message:webhook:update")
     public Results<?> update(@RequestBody MessageConfigWebhookRequest request) {
 
 		Integer count = messageConfigWebhookService.update(request);
@@ -93,7 +93,7 @@ public class MessageConfigWebhookController {
      */
     @Operation(summary = "账户配置webhook删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('message:webhook:delete')")
+    @SaCheckPermission("message:webhook:delete")
     public Results<?> delete(@RequestBody String[] ids) {
 
 		messageConfigWebhookService.deleteById(ids);
@@ -106,7 +106,7 @@ public class MessageConfigWebhookController {
      */
     @Operation(summary = "webhook账户测试发送")
     @PutMapping(value = "/sendWebhook")
-    @Permission("@ps.hasPerm('message:webhook:test-send')")
+    @SaCheckPermission("message:webhook:test-send")
     public Results<?> sendWebhook(@RequestBody MessageSenderEntity request) {
         try {
             messageFactory.getMessageService(request.getMessageAccountType()).doSendMessage(request);

@@ -1,7 +1,8 @@
 package cn.xianyum.message.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
@@ -32,7 +33,8 @@ public class MessageMonitorController {
      */
 	@Operation(summary = "消息监控分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(value = "@ps.hasPerm('message:monitor:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("message:monitor:page")
 	public Results<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
         PageResponse<MessageMonitorResponse> response = messageMonitorService.getPage(request);
         return Results.page(response);
@@ -57,7 +59,7 @@ public class MessageMonitorController {
      */
     @Operation(summary = "消息监控删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('message:monitor:delete')")
+    @SaCheckPermission("message:monitor:delete")
     public Results<?> delete(@RequestBody String[] ids) {
 		messageMonitorService.deleteById(ids);
 	    return Results.success();
@@ -70,7 +72,7 @@ public class MessageMonitorController {
      */
     @Operation(summary = "清空监控删除数据")
     @DeleteMapping(value = "/truncate")
-    @Permission("@ps.hasPerm('message:monitor:delete')")
+    @SaCheckPermission("message:monitor:delete")
     public Results<?> truncate() {
         messageMonitorService.truncate();
         return Results.success();

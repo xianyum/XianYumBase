@@ -1,8 +1,10 @@
 package cn.xianyum.framwork.aspectj;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.hutool.core.annotation.AnnotationUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
-import cn.xianyum.common.annotation.Permission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.base.BaseRequest;
 import cn.xianyum.common.entity.base.BaseResponse;
@@ -15,11 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -32,21 +34,18 @@ import java.util.Objects;
 @Component
 public class PermissionAspect {
 
-    @Around("@annotation(userPermission)")
-    public Object doAround(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
-        return process(pjp,userPermission);
+    @Around("@annotation(saCheckPermission)")
+    public Object doAround(ProceedingJoinPoint pjp, SaCheckPermission saCheckPermission) throws Throwable {
+        return process(pjp,saCheckPermission);
     }
 
-    public Object process(ProceedingJoinPoint pjp, Permission userPermission) throws Throwable {
-        if(userPermission.publicApi()){
-            return pjp.proceed();
-        }
+    public Object process(ProceedingJoinPoint pjp, SaCheckPermission saCheckPermission) throws Throwable {
         // 校验参数值
         this.checkSign(pjp);
-        // 权限拦截
-        this.checkPermission(userPermission);
+        // 解析是否要忽略数据范围筛选
+        boolean ignoreDataScope = parseIgnoreDataScope(pjp);
         // 数据范围筛选
-        this.filterDataScope(userPermission);
+        this.filterDataScope(ignoreDataScope);
         try {
             Object result = pjp.proceed();
             this.setCheckSignField(result,pjp);
@@ -54,6 +53,20 @@ public class PermissionAspect {
         }finally {
             PermissionThreadLocal.remove();
         }
+    }
+
+    /**
+     * 解析是否要忽略数据范围筛选
+     * @param pjp
+     * @return
+     */
+    private boolean parseIgnoreDataScope(ProceedingJoinPoint pjp) {
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        Method method = signature.getMethod();
+        // 1. 优先取方法上的注解
+        IgnoreDataScope ignoreDataScope = AnnotationUtil.getAnnotation(method, IgnoreDataScope.class);
+        log.info("{}当前用户是否忽略数据范围筛选:{}", UserContextHolder.getLoginUser().getUsername(),ignoreDataScope!=null);
+        return Objects.nonNull(ignoreDataScope);
     }
 
     /**
@@ -108,19 +121,19 @@ public class PermissionAspect {
         }
     }
 
-    private void filterDataScope(Permission userPermission) {
-        DataScopeEnum dataScopeEnum = SecurityUtils.getLoginUser().getDataScopeEnum();
+    private void filterDataScope(boolean ignoreDataScope) {
+        DataScopeEnum dataScopeEnum = UserContextHolder.getLoginUser().getDataScopeEnum();
         if(Objects.isNull(dataScopeEnum)){
             return;
         }
         switch (dataScopeEnum){
             case SELF:
-                if(!userPermission.ignoreDataScope()){
+                if(!ignoreDataScope){
                     PermissionThreadLocal.set();
                 }
                 break;
             case VISITOR:
-                this.processVisitorDataScope(userPermission);
+                this.processVisitorDataScope(ignoreDataScope);
                 break;
             default:
                 break;
@@ -131,22 +144,16 @@ public class PermissionAspect {
     /**
      * 处理游客数据权限
      */
-    private void processVisitorDataScope(Permission userPermission) {
+    private void processVisitorDataScope(boolean ignoreDataScope) {
         //拦截post，put，delete请求不得操作
         String lowerCase = HttpContextUtils.getHttpServletRequest().getMethod().toLowerCase();
         if (Constants.HTTP_POST_METHOD.equals(lowerCase) || Constants.HTTP_PUT_METHOD.equals(lowerCase)
                 || Constants.HTTP_DELETE_METHOD.equals(lowerCase)) {
             throw new SoException(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
         }
-        if(!userPermission.ignoreDataScope()){
+        if(!ignoreDataScope){
             PermissionThreadLocal.set();
         }
     }
 
-    private void checkPermission(Permission userPermission) {
-        // 权限校验
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression expression = parser.parseExpression(userPermission.value());
-
-    }
 }

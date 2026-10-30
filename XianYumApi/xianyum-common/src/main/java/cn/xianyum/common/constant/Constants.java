@@ -109,4 +109,9 @@ public class Constants {
      */
     public static final String TRACE_ID = "traceId";
 
+    /**
+     * 上下文用户表示
+     */
+    public static final String THREAD_LOGIN_USER = "login-user";
+
 }

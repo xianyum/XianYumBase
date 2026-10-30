@@ -5,7 +5,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
@@ -48,8 +48,8 @@ public class UserOnlineServiceImpl implements UserOnlineService {
             userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
         }
 
-        if(!SecurityUtils.isSupperAdminAuth()){
-            userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(),SecurityUtils.getLoginUser().getUsername())).collect(Collectors.toList());
+        if(!UserContextHolder.isSupperAdminAuth()){
+            userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(), UserContextHolder.getLoginUser().getUsername())).collect(Collectors.toList());
         }
 
 

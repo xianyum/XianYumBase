@@ -1,7 +1,8 @@
 package cn.xianyum.proxy.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.ReturnT;
@@ -47,7 +48,8 @@ public class ProxyController {
      */
 	@Operation(summary = "客户端管理分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(value = "@ps.hasPerm('xianyu:proxy:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("xianyu:proxy:page")
 	public Results<ProxyResponse> getPage(ProxyRequest request) {
 		PageResponse<ProxyResponse> response = proxyService.getPage(request);
         return Results.page(response);
@@ -59,7 +61,8 @@ public class ProxyController {
      */
     @Operation(summary = "客户端管理根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission(value = "@ps.hasPerm('xianyu:proxy:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("xianyu:proxy:query")
     public Results<ProxyResponse> getById(@PathVariable String id) {
         ProxyResponse response = proxyService.getById(id);
         return Results.success(response);
@@ -71,7 +74,7 @@ public class ProxyController {
      */
     @Operation(summary = "客户端管理保存数据")
     @PostMapping(value = "/save")
-    @Permission("@ps.hasPerm('xianyu:proxy:save')")
+    @SaCheckPermission("xianyu:proxy:save")
     public Results<?> save(@RequestBody ProxyRequest request) {
 		Integer count = proxyService.save(request);
 		if(count>0){
@@ -86,7 +89,7 @@ public class ProxyController {
      */
     @Operation(summary = "客户端管理修改数据")
     @PutMapping(value = "/update")
-    @Permission("@ps.hasPerm('xianyu:proxy:update')")
+    @SaCheckPermission("xianyu:proxy:update")
     public Results<?> update(@RequestBody ProxyRequest request) {
 		Integer count = proxyService.update(request);
 		if(count>0){
@@ -101,7 +104,7 @@ public class ProxyController {
      */
     @Operation(summary = "客户端管理删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('xianyu:proxy:delete')")
+    @SaCheckPermission("xianyu:proxy:delete")
     public Results<?> delete(@RequestBody String[] ids) {
 		proxyService.deleteById(ids);
 	    return Results.success();
@@ -125,7 +128,7 @@ public class ProxyController {
      */
     @Operation(summary = "刷入系统")
     @PutMapping(value = "/flushProxy")
-    @Permission("@ps.hasPerm('xianyu:proxy:flush')")
+    @SaCheckPermission("xianyu:proxy:flush")
     public Results<?> flushProxy() {
         proxyService.flushProxy();
         return Results.success();
@@ -138,7 +141,8 @@ public class ProxyController {
      */
     @Operation(summary = "发送客户端配置信息")
     @GetMapping(value = "/sendEmail/{id}")
-    @Permission(value = "@ps.hasPerm('xianyu:proxy:send-email')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("xianyu:proxy:send-email")
     public Results<String> sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
         return Results.success(result);
@@ -162,7 +166,7 @@ public class ProxyController {
      */
     @Operation(summary = "获取可绑定的用户列表")
     @GetMapping(value = "/getProxyBindUser")
-    @Permission("@ps.hasPerm('xianyu:proxy:save')")
+    @SaCheckPermission("xianyu:proxy:save")
     public Results<List<LoginUser>> getProxyBindUser(@RequestParam(required = false) String id) {
         return Results.success(proxyService.getProxyBindUser(id));
     }
@@ -185,7 +189,7 @@ public class ProxyController {
      */
     @Operation(summary = "生成客户端配置信息")
     @PostMapping(value = "/downloadConfig")
-    @Permission("@ps.hasPerm('xianyu:proxy:download')")
+    @SaCheckPermission("xianyu:proxy:download")
     public void downloadConfig(@RequestParam String id, HttpServletResponse response) {
         PrintWriter writer = null;
         try {

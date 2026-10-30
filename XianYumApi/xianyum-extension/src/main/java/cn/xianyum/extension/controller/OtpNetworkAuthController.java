@@ -1,6 +1,5 @@
 package cn.xianyum.extension.controller;
 
-import cn.xianyum.common.annotation.Permission;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.OtpNetworkAuthRequest;
 import cn.xianyum.extension.entity.response.OtpNetworkAuthResponse;

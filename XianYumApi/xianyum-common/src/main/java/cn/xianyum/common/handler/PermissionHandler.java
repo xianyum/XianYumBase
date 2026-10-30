@@ -1,7 +1,7 @@
 package cn.xianyum.common.handler;
 
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Service;
 import cn.hutool.core.collection.CollUtil;
@@ -31,7 +31,7 @@ public class PermissionHandler {
         if (StrUtil.isEmpty(permission)) {
             return false;
         }
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = UserContextHolder.getLoginUser();
         if(Objects.isNull(loginUser) || CollUtil.isEmpty(loginUser.getPermissions()) ){
             return false;
         }
@@ -48,7 +48,7 @@ public class PermissionHandler {
         if (StrUtil.isEmpty(permissions)) {
             return false;
         }
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = UserContextHolder.getLoginUser();
         if(Objects.isNull(loginUser) || CollUtil.isEmpty(loginUser.getPermissions()) ){
             return false;
         }

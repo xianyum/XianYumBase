@@ -3,7 +3,6 @@ package cn.xianyum.sheduler.service.impl;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.SecurityUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.sheduler.dao.JobLogMapper;
 import cn.xianyum.sheduler.entity.po.JobLogEntity;

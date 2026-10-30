@@ -9,7 +9,7 @@ import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.RedisUtils;
 import com.alibaba.fastjson2.JSON;
 import cn.hutool.core.bean.BeanUtil;
-import cn.xianyum.common.utils.SecurityUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.RoleMenuMapper;
 import cn.xianyum.system.dao.RoleMapper;
@@ -159,7 +159,7 @@ public class RoleServiceImpl implements RoleService {
                 .eq(RoleMenuEntity::getRoleId, request.getId());
         roleMenuMapper.delete(queryWrapper);
         List<RoleMenuEntity> roleMenuEntityList = new ArrayList<>();
-        LoginUser loginUser = SecurityUtils.getLoginUser();
+        LoginUser loginUser = UserContextHolder.getLoginUser();
         for (Long menuId : request.getMenuIds()) {
             RoleMenuEntity roleMenuEntity = new RoleMenuEntity();
             roleMenuEntity.setRoleId(request.getId());

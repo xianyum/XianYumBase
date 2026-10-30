@@ -1,6 +1,7 @@
 package cn.xianyum.proxy.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
@@ -33,7 +34,8 @@ public class ProxyDetailsController {
      */
 	@Operation(summary = "客户端配置详细分页查询数据")
 	@GetMapping(value = "/getPage")
-    @Permission(value = "@ps.hasPerm('xianyu:proxy-details:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("xianyu:proxy-details:page")
 	public Results<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
 		PageResponse<ProxyDetailsResponse> response = proxyDetailsService.getPage(request);
         return Results.page(response);
@@ -53,7 +55,8 @@ public class ProxyDetailsController {
      */
     @Operation(summary = "客户端配置详细根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
-    @Permission(value = "@ps.hasPerm('xianyu:proxy-details:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("xianyu:proxy-details:query")
     public Results<ProxyDetailsResponse> getById(@PathVariable String id) {
         ProxyDetailsResponse response = proxyDetailsService.getById(id);
         return Results.success(response);
@@ -65,7 +68,7 @@ public class ProxyDetailsController {
      */
     @Operation(summary = "客户端配置详细保存数据")
     @PostMapping(value = "/save")
-    @Permission("@ps.hasPerm('xianyu:proxy-details:save')")
+    @SaCheckPermission("xianyu:proxy-details:save")
     public Results<?> save(@RequestBody ProxyDetailsRequest request) {
         ValidatorUtils.validateEntity(request);
 		Integer count = proxyDetailsService.save(request);
@@ -81,7 +84,7 @@ public class ProxyDetailsController {
      */
     @Operation(summary = "客户端配置详细修改数据")
     @PutMapping(value = "/update")
-    @Permission("@ps.hasPerm('xianyu:proxy-details:update')")
+    @SaCheckPermission("xianyu:proxy-details:update")
     public Results<?> update(@RequestBody ProxyDetailsRequest request) {
         ValidatorUtils.validateEntity(request);
 		Integer count = proxyDetailsService.update(request);
@@ -97,7 +100,7 @@ public class ProxyDetailsController {
      */
     @Operation(summary = "客户端配置详细删除数据")
     @DeleteMapping(value = "/delete")
-    @Permission("@ps.hasPerm('xianyu:proxy-details:delete')")
+    @SaCheckPermission("xianyu:proxy-details:delete")
     public Results<?> delete(@RequestBody String[] ids) {
 		proxyDetailsService.deleteById(ids);
 	    return Results.success();

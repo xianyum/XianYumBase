@@ -286,7 +286,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(!qrLoginTicketResponse.getLoginStatus().equals(QrCodeLoginStatus.SCANNED)){
             throw new SoException("二维码已被使用，请刷新");
         }
-        qrLoginTicketResponse.setUserName(SecurityUtils.getLoginUser().getUsername());
+        qrLoginTicketResponse.setUserName(UserContextHolder.getLoginUser().getUsername());
         qrLoginTicketResponse.setLoginStatus(QrCodeLoginStatus.CONFIRMED);
         redisUtils.setMin(redisKey,JSONObject.toJSONString(qrLoginTicketResponse),2);
     }

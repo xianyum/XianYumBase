@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
-import cn.xianyum.common.annotation.Permission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.IgnoreDataScope;
 import cn.xianyum.common.entity.base.PageResponse;
 
 import cn.xianyum.common.utils.Results;
@@ -31,7 +32,8 @@ public class DictTypeController {
      */
     @GetMapping("/getPage")
     @Operation(summary = "获取字典类型列表")
-    @Permission(value = "@ps.hasPerm('system:dict:page')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:dict:page")
     public Results<DictTypeResponse> list(DictTypeRequest request){
         PageResponse<DictTypeResponse> list = dictTypeService.selectDictTypeList(request);
         return Results.page(list);
@@ -43,7 +45,8 @@ public class DictTypeController {
      */
     @GetMapping(value = "/{id}")
     @Operation(summary = "查询字典类型详细")
-    @Permission(value = "@ps.hasPerm('system:dict:query')",ignoreDataScope = true)
+    @IgnoreDataScope
+    @SaCheckPermission("system:dict:query")
     public Results<DictTypeResponse> getInfo(@PathVariable Long id) {
         return Results.success(dictTypeService.selectDictTypeById(id));
     }
@@ -53,7 +56,7 @@ public class DictTypeController {
      */
     @PostMapping(value = "/save")
     @Operation(summary = "新增字典类型")
-    @Permission("@ps.hasPerm('system:dict:save')")
+    @SaCheckPermission("system:dict:save")
     public Results<?> save(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.save(dictTypeEntity));
     }
@@ -64,7 +67,7 @@ public class DictTypeController {
      */
     @PutMapping(value = "/update")
     @Operation(summary = "更新字典类型详细")
-    @Permission("@ps.hasPerm('system:dict:update')")
+    @SaCheckPermission("system:dict:update")
     public Results<?> update(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.update(dictTypeEntity));
     }
@@ -78,7 +81,7 @@ public class DictTypeController {
 
     @DeleteMapping("/{ids}")
     @Operation(summary = "批量删除字典类型")
-    @Permission("@ps.hasPerm('system:dict:delete')")
+    @SaCheckPermission("system:dict:delete")
     public Results<?> remove(@PathVariable Long[] ids) {
         dictTypeService.deleteDictTypeByIds(ids);
         return Results.success();
