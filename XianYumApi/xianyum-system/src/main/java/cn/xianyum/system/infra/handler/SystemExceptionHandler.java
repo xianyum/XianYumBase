@@ -1,6 +1,7 @@
 package cn.xianyum.system.infra.handler;
 
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.util.SaResult;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.exception.SoException;
@@ -34,6 +35,7 @@ public class SystemExceptionHandler {
     @Autowired
     private MessageSender messageSender;
 
+
     /**
      * 处理自定义异常
      */
@@ -56,14 +58,6 @@ public class SystemExceptionHandler {
     }
 
 
-
-    @ExceptionHandler(Exception.class)
-    public Results handleException(Exception e){
-        this.sendFailedExceptionMessage(e);
-        logger.error(e.getMessage(), e);
-        return Results.error();
-    }
-
     /**
      * 处理未登录异常
      * @param nle
@@ -73,25 +67,44 @@ public class SystemExceptionHandler {
     public Results handlerNotLoginException(NotLoginException nle) {
         String message;
         if(nle.getType().equals(NotLoginException.NOT_TOKEN)) {
-            message = "未获取到认证信息";
+            message = "当前用户未登录";
         } else if(nle.getType().equals(NotLoginException.INVALID_TOKEN)) {
-            message = "认证信息无效";
+            message = "当前用户认证无效";
         } else if(nle.getType().equals(NotLoginException.TOKEN_TIMEOUT)) {
-            message = "认证信息已过期";
+            message = "当前用户认证已过期";
         } else if(nle.getType().equals(NotLoginException.BE_REPLACED)) {
-            message = "已被顶下线";
+            message = "当前用户已被顶下线";
         } else if(nle.getType().equals(NotLoginException.KICK_OUT)) {
-            message = "已被踢下线";
+            message = "当前用户已被踢下线";
         } else if(nle.getType().equals(NotLoginException.TOKEN_FREEZE)) {
-            message = "当前登录已被冻结";
+            message = "当前用户已被冻结";
         } else if(nle.getType().equals(NotLoginException.NO_PREFIX)) {
             message = "token未指定前缀";
         }else {
-            message = "当前未登录";
+            message = "当前用户未登录";
         }
-        logger.error(message, nle);
+        logger.error("",nle);
         return Results.error(HttpStatus.UNAUTHORIZED.value(),message);
     }
+
+    /**
+     * 没有权限操作
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(NotPermissionException.class)
+    public Results handleRRException(NotPermissionException e){
+        logger.error("",e);
+        return Results.error(HttpStatus.UNAUTHORIZED.value(), Constants.NO_PERMISSION_MESSAGE);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Results handleException(Exception e){
+        this.sendFailedExceptionMessage(e);
+        logger.error("",e);
+        return Results.error();
+    }
+
 
     /**
      * 发送异常信息

@@ -19,9 +19,9 @@ public enum RedisKeyEnum {
     SYSTEM_CONSTANT_PREFIX("xianyum-system:constant:"),
     DICT_TYPE_PREFIX("xianyum-system:dict_type:"),
     LOG_COUNT("xianyum-system:log_count:"),
-    FILE_PRESIGNED_URL("xianyum-system:xianyum-system:file_url:%s"),
-    MENU_CLICK_KEY("xianyum-system:xianyum-system:menu:click:%s:%s"),
-    MENU_CLICK_RANK("xianyum-system:xianyum-system:menu:rank:%s"),
+    FILE_PRESIGNED_URL("xianyum-system:file_url:%s"),
+    MENU_CLICK_KEY("xianyum-system:menu:click:%s:%s"),
+    MENU_CLICK_RANK("xianyum-system:menu:rank:%s"),
     ROLE_INFO_BY_USER_KEY("xianyum-system:role:info"),
     MENU_PERMISSION_BY_ROLE_KEY("xianyum-system:menu:perm"),
 

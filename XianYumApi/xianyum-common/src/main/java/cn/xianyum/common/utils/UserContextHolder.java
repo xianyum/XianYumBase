@@ -1,11 +1,15 @@
 package cn.xianyum.common.utils;
 
-import cn.dev33.satoken.context.SaHolder;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
 import java.util.Objects;
 
 public class UserContextHolder {
+
+    /**
+     * 线程本地存储用户信息
+     */
+    private static final ThreadLocal<LoginUser> USER_THREAD_LOCAL = new ThreadLocal<>();
 
 
     /**
@@ -13,8 +17,7 @@ public class UserContextHolder {
      * @return
      */
     public static LoginUser getLoginUser() {
-        Object o = SaHolder.getStorage().get(Constants.THREAD_LOGIN_USER);
-        return o == null ? null : (LoginUser) o;
+        return USER_THREAD_LOCAL.get();
     }
 
     /**
@@ -22,11 +25,14 @@ public class UserContextHolder {
      * @return
      */
     public static void setLoginUser(String userId) {
+        if(Objects.isNull(userId)){
+            return;
+        }
         LoginUser loginUser = UserCacheHelper.selectUserById(userId);
         if(Objects.isNull(loginUser)){
             return;
         }
-        SaHolder.getStorage().set(Constants.THREAD_LOGIN_USER,loginUser);
+        USER_THREAD_LOCAL.set(loginUser);
     }
 
     /**
@@ -34,7 +40,7 @@ public class UserContextHolder {
      * @return
      */
     public static void setLoginUser(LoginUser loginUser) {
-        SaHolder.getStorage().set(Constants.THREAD_LOGIN_USER,loginUser);
+        USER_THREAD_LOCAL.set(loginUser);
     }
 
     /**
@@ -55,5 +61,12 @@ public class UserContextHolder {
     public static boolean isSupperAdminAuth(LoginUser loginUser) {
         return (Objects.nonNull(loginUser) && (Constants.USER_ADMIN_ACCOUNT.equals(loginUser.getUsername())
                 || loginUser.getRoles().stream().anyMatch(item -> Constants.USER_ADMIN_ACCOUNT.equals(item))));
+    }
+
+    /**
+     * 清除当前线程的用户信息
+     */
+    public static void clear() {
+        USER_THREAD_LOCAL.remove();
     }
 }

@@ -65,6 +65,9 @@ public class Constants {
     /** admin账号 */
     public static final String USER_ADMIN_ACCOUNT = "admin";
 
+    /** 所有权限标识 */
+    public static final String ALL_PERMISSION = "*:*:*";
+
     /** SQL WHERE 1=1  */
     public static final String SQL_EQUALS_DEFAULT = " 1 = 1 ";
 

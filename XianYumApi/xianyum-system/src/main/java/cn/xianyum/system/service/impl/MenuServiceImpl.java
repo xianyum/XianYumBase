@@ -291,12 +291,21 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Set<String> selectMenuPermsByRoleCodes(Set<String> roleCodes) {
+        if(UserContextHolder.isSupperAdminAuth()){
+            return Set.of(Constants.ALL_PERMISSION);
+        }
         if (CollUtil.isEmpty(roleCodes)) {
             return new HashSet<>();
         }
         Set<String> perms = new HashSet<>();
         for (String roleCode : roleCodes) {
+            if(redisUtils.hHasKey(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode)){
+                continue;
+            }
             Object cacheObj = redisUtils.hGet(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode);
+            if(Objects.isNull(cacheObj)){
+                continue;
+            }
             Set<String> permsByRoleCode = JSON.parseObject(cacheObj.toString(), new TypeReference<Set<String>>() {});
             if (Objects.nonNull(perms)) {
                 perms.addAll(permsByRoleCode);

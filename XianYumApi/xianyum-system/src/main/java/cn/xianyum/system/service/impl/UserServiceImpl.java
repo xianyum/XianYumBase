@@ -105,9 +105,9 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public LoginUser selectUserCacheById(String userId) {
-        Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
         LoginUser loginUser;
-        if (Objects.nonNull(cacheObj)) {
+        if (redisUtils.hHasKey(RedisKeyEnum.USER_DATA.getKey(), userId)) {
+            Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
             loginUser = JSON.parseObject(cacheObj.toString(), LoginUser.class);
         }else{
             LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery().eq(UserEntity::getId, userId).eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus());

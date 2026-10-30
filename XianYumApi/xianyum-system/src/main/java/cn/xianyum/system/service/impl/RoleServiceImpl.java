@@ -191,10 +191,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public UserRoleCache selectUserRoleCacheByUserId(String userId) {
-        Object cacheObj = redisUtils.hGet(RedisKeyEnum.ROLE_INFO_BY_USER_KEY.getKey(), userId);
-        if (Objects.nonNull(cacheObj)) {
-            UserRoleCache roleCache = JSON.parseObject(cacheObj.toString(), UserRoleCache.class);
-            return roleCache;
+        if (redisUtils.hHasKey(RedisKeyEnum.ROLE_INFO_BY_USER_KEY.getKey(), userId)) {
+            Object cacheObj = redisUtils.hGet(RedisKeyEnum.ROLE_INFO_BY_USER_KEY.getKey(), userId);
+            if(Objects.nonNull(cacheObj)){
+                UserRoleCache roleCache = JSON.parseObject(cacheObj.toString(), UserRoleCache.class);
+                return roleCache;
+            }
         }
         UserRoleCache roleCache = new UserRoleCache();
         List<RoleResponse> roleList = roleMapper.getRoleByUserId(userId);
