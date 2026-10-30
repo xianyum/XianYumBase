@@ -17,6 +17,13 @@ public interface UserService{
 
     UserEntity queryByUserName(String username);
 
+    /**
+     * 根据用户id查询用户缓存信息
+     * @param userId
+     * @return
+     */
+    LoginUser selectUserCacheById(String userId);
+
     void deleteById(String[] userIds);
 
     UserResponse selectOneById(String id);
@@ -27,17 +34,8 @@ public interface UserService{
 
     boolean updatePassword(UpdatePasswordRequest info);
 
-    /**
-     * 通过阿里authCode获取系统用户信息
-     * @param authCode
-     * @return
-     */
     LoginUser getUserByAli(String authCode);
-    /**
-     * 通过QQ取系统用户信息
-     * @param request
-     * @return
-     */
+
     LoginUser getUserByQq(UserLoginRequest request);
 
     int updateCurrentUser(UserRequest user);
@@ -46,55 +44,17 @@ public interface UserService{
 
     String upload(MultipartFile file);
 
-    /**
-     * 更新用户权限
-     * @param id
-     * @param roleIds
-     */
     void changeUserRole(String id, List<Long> roleIds);
 
-    /**
-     * 个人中心
-     * @return
-     */
     UserResponse getUserProfile();
 
     int changeStatus(UserRequest request);
 
-    /**
-     * 根据角色Id获取用户
-     * @param roleId
-     * @return
-     */
     List<UserResponse> getByRoleId(String roleId);
 
-    /**
-     * 初始化默认用户
-     * @param loginUser
-     */
     void initDefaultUser(LoginUser loginUser);
 
-
-    /**
-     * 系统用户存储到redis中
-     * @param isAsync true：异步执行  false: 同步执行
-     * @return
-     */
-    int userToRedis(boolean isAsync);
-
-    int userToRedis();
-
-    /**
-     * 绑定qq用户
-     * @param authCode
-     * @return
-     */
     boolean bindQqUser(String authCode);
 
-    /**
-     * 绑定支付宝用户
-     * @param authCode
-     * @return
-     */
     boolean binAliUser(String authCode);
 }

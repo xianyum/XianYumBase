@@ -14,7 +14,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.xianyum.common.enums.ThirdTypeEnum;
-import cn.xianyum.common.utils.SecretUtils;
 import cn.xianyum.system.dao.RoleMapper;
 import cn.xianyum.system.dao.UserThirdRelationMapper;
 import cn.xianyum.system.dao.UserMapper;
@@ -26,15 +25,16 @@ import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.request.UserRequest;
 import cn.xianyum.system.entity.response.RoleResponse;
 import cn.xianyum.system.entity.response.UserResponse;
+import cn.xianyum.system.infra.event.UserCacheChangeEvent;
 import cn.xianyum.system.service.*;
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSON;
 import com.alipay.api.response.AlipayUserInfoShareResponse;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,19 +79,14 @@ public class UserServiceImpl implements UserService {
     private RedisUtils redisUtils;
 
     @Autowired
-    private ThreadPoolTaskExecutor xianYumTaskExecutor;
-
-
-
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private FileService fileService;
 
-
     @Override
     public PageResponse<UserResponse> getPage(UserRequest user) {
         Page<UserEntity> page = new Page<>(user.getPageNum(),user.getPageSize());
-        //查询总记录数
         if(!SecurityUtils.isSupperAdminAuth()){
             user.setId(SecurityUtils.getLoginUser().getId());
         }else{
@@ -113,6 +108,30 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * 根据用户id查询用户缓存信息
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public LoginUser selectUserCacheById(String userId) {
+        Object cacheObj = redisUtils.hGet(RedisKeyEnum.USER_DATA.getKey(), userId);
+        if (Objects.nonNull(cacheObj)) {
+            LoginUser loginUser = JSON.parseObject(cacheObj.toString(), LoginUser.class);
+            return loginUser;
+        }
+        LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery().eq(UserEntity::getId, userId).eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus());
+        UserEntity userEntity = userMapper.selectOne(queryWrapper);
+        if (Objects.isNull(userEntity)) {
+            return null;
+        }
+        LoginUser loginUser = BeanUtil.toBean(userEntity, LoginUser.class);
+        redisUtils.hSet(RedisKeyEnum.USER_DATA.getKey(), userId, JSON.toJSONString(loginUser));
+        return loginUser;
+    }
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteById(String[] userIds) {
@@ -121,18 +140,13 @@ public class UserServiceImpl implements UserService {
         for(String id : userIds){
             userEntity.setId(id);
             userMapper.updateById(userEntity);
-            // 删除用户的同时，解绑角色
             LambdaQueryWrapper<UserRoleEntity> userRoleEntityLambdaQueryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
                     .eq(UserRoleEntity::getUserId,id);
             userRoleMapper.delete(userRoleEntityLambdaQueryWrapper);
-
-            // 删除三方绑定
             LambdaQueryWrapper<UserThirdRelationEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery()
                     .eq(UserThirdRelationEntity::getUserId,id);
             userThirdRelationMapper.delete(thirdUserEntityLambdaQueryWrapper);
-
-            // 重新把用户刷入redis中
-            this.userToRedis(true);
+            eventPublisher.publishEvent(new UserCacheChangeEvent(id));
         }
     }
 
@@ -165,7 +179,6 @@ public class UserServiceImpl implements UserService {
         int count = userMapper.insert(userEntity);
         if(count > 0){
             this.changeUserRole(userId,user.getRoleIds());
-            this.userToRedis(true);
         }
         return count;
     }
@@ -173,7 +186,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int update(UserRequest user) {
-
         UserEntity userEntity = BeanUtil.toBean(user, UserEntity.class);
         List<UserEntity> repeatList = userMapper.getList(user).stream().filter(p -> !user.getId().equals(p.getId())).collect(Collectors.toList());
         if(repeatList != null && repeatList.size() >0){
@@ -185,7 +197,7 @@ public class UserServiceImpl implements UserService {
         int count = userMapper.updateById(userEntity);
         if(count > 0){
             this.changeUserRole(userEntity.getId(),user.getRoleIds());
-            this.userToRedis(true);
+            eventPublisher.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
         }
         return count;
     }
@@ -203,17 +215,17 @@ public class UserServiceImpl implements UserService {
         user.setPassword(secret);
         int count = userMapper.updateById(user);
         if(count > 0){
+            eventPublisher.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
             return true;
         }
         return false;
     }
 
-
     @Override
     public int updateCurrentUser(UserRequest user) {
         user.setId(SecurityUtils.getLoginUser().getId());
         int count = userMapper.updateUser(user);
-        userTokenService.refreshUser();
+        eventPublisher.publishEvent(new UserCacheChangeEvent(user.getId()));
         return count;
     }
 
@@ -221,6 +233,10 @@ public class UserServiceImpl implements UserService {
     public LoginUser getUserSelf() {
         LoginUser u = userTokenService.getUserSelf();
         if(Objects.nonNull(u)){
+//            LoginUser roleAndDataScope = this.roleService.getRoleAndDataScope(u.getId());
+//            u.setRoles(roleAndDataScope.getRoles());
+//            u.setDataScopeEnum(roleAndDataScope.getDataScopeEnum());
+            u.setPermissions(this.menuService.getCurrentUserPermission(u.getId()));
             if(StrUtil.isNotBlank(u.getAvatarFileId()) && HttpUtils.isHttpOrHttps(u.getAvatarFileId())){
                 u.setAvatar(u.getAvatarFileId());
             }else{
@@ -238,19 +254,13 @@ public class UserServiceImpl implements UserService {
             userEntity.setId(SecurityUtils.getLoginUser().getId());
             userEntity.setAvatarFileId(fileDetailResponse.getId());
             userMapper.updateById(userEntity);
-            userTokenService.refreshUser();
+            eventPublisher.publishEvent(new UserCacheChangeEvent(userEntity.getId()));
             return fileDetailResponse.getFileUrl();
         }catch (Exception e){
             throw new SoException(e.getMessage());
         }
     }
 
-    /**
-     * 更新用户权限
-     *
-     * @param id
-     * @param roleIds
-     */
     @Override
     public void changeUserRole(String id, List<Long> roleIds) {
         LambdaQueryWrapper<UserRoleEntity> queryWrapper = Wrappers.<UserRoleEntity>lambdaQuery()
@@ -266,11 +276,6 @@ public class UserServiceImpl implements UserService {
         menuService.clearMenuPermissionCacheByUserId(id);
     }
 
-    /**
-     * 个人中心
-     *
-     * @return
-     */
     @Override
     public UserResponse getUserProfile() {
         String userId = SecurityUtils.getLoginUser().getId();
@@ -293,26 +298,18 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(request.getId());
         userEntity.setStatus(request.getStatus());
-        return userMapper.updateById(userEntity);
+        int count = userMapper.updateById(userEntity);
+        eventPublisher.publishEvent(new UserCacheChangeEvent(request.getId()));
+
+        return count;
     }
 
-    /**
-     * 根据角色Id获取用户
-     *
-     * @param roleId
-     * @return
-     */
     @Override
     public List<UserResponse> getByRoleId(String roleId) {
         List<UserResponse> userResponseList = userMapper.getByRoleId(roleId);
         return userResponseList;
     }
 
-    /**
-     * 初始化默认用户
-     *
-     * @param loginUser
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void initDefaultUser(LoginUser loginUser) {
@@ -321,12 +318,10 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = BeanUtil.toBean(loginUser, UserEntity.class);
         userEntity.setId(userId);
         userEntity.setDelTag(YesOrNoEnum.YES.getStatus());
-        // 设置登录密码
         String secretPassword = SecretUtils.encryptPassword(Constants.DEFAULT_PASSWORD);
         userEntity.setPassword(secretPassword);
         int count = userMapper.insert(userEntity);
         if(count > 0){
-            // 关联用户角色（默认游客角色）
             LambdaQueryWrapper<RoleEntity> queryWrapper = Wrappers.<RoleEntity>lambdaQuery()
                     .eq(RoleEntity::getDataScope, DataScopeEnum.VISITOR.getDataScope());
             Optional<RoleEntity> first = roleMapper.selectList(queryWrapper).stream().findFirst();
@@ -339,7 +334,6 @@ public class UserServiceImpl implements UserService {
             userRoleEntity.setRoleId(roleEntity.getId());
             userRoleMapper.insert(userRoleEntity);
 
-            // 关联三方
             UserThirdRelationEntity thirdUserEntity = new UserThirdRelationEntity();
             thirdUserEntity.setUserId(userId);
             LoginTypeEnum accountTypeEnum = LoginTypeEnum.getLoginTypeEnum(loginUser.getLoginType());
@@ -359,51 +353,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    /**
-     * 系统用户转存到redis中
-     * @param isAsync
-     * @return
-     */
-    @Override
-    public int userToRedis(boolean isAsync) {
-        if(isAsync){
-            xianYumTaskExecutor.execute(()->{
-                try {
-                    Thread.sleep(2000L);
-                }catch (Exception e){
-
-                }
-                this.userToRedis();
-            });
-            return 1;
-        }else{
-            return this.userToRedis();
-        }
-    }
-
-    /**
-     * 执行系统用户刷入redis中
-     * @return
-     */
-    @Override
-    public int userToRedis() {
-        redisUtils.del(RedisKeyEnum.USER_DATA.getKey());
-        LambdaQueryWrapper<UserEntity> queryWrapper = Wrappers.<UserEntity>lambdaQuery()
-                .eq(UserEntity::getDelTag, YesOrNoEnum.YES.getStatus())
-                .eq(UserEntity::getStatus, YesOrNoEnum.YES.getStatus());
-        List<UserEntity> userEntities = userMapper.selectList(queryWrapper);
-        for(UserEntity item : userEntities){
-            redisUtils.hSet(RedisKeyEnum.USER_DATA.getKey(),item.getId(), JSONObject.toJSONString(item));
-        }
-        return userEntities.size();
-    }
-
-    /**
-     * 绑定qq用户
-     *
-     * @param authCode
-     * @return
-     */
     @Override
     public boolean bindQqUser(String authCode) {
         if(StrUtil.isBlank(authCode)){
@@ -441,12 +390,6 @@ public class UserServiceImpl implements UserService {
         return count > 0;
     }
 
-    /**
-     * 绑定支付宝用户
-     *
-     * @param authCode
-     * @return
-     */
     @Override
     public boolean binAliUser(String authCode) {
         AlipayUserInfoShareResponse aLiUserInfo = this.aliNetService.getALiUserInfo(
@@ -454,7 +397,6 @@ public class UserServiceImpl implements UserService {
         if(!aLiUserInfo.isSuccess()){
             return false;
         }
-        // 获取到阿里的openUserId
         String openUserId = aLiUserInfo.getUserId();
         String userId = SecurityUtils.getLoginUser().getId();
         LambdaQueryWrapper<UserThirdRelationEntity> queryWrapper= Wrappers.<UserThirdRelationEntity>lambdaQuery()
@@ -496,7 +438,6 @@ public class UserServiceImpl implements UserService {
                     .eq(UserThirdRelationEntity::getOpenUserId,aLiUserInfo.getUserId())
                     .eq(UserThirdRelationEntity::getThirdType, ThirdTypeEnum.ZHI_FU_BAO.getThirdType()));
             String nickName = EmojiUtils.filterEmoji(aLiUserInfo.getNickName());
-            //如果没有查到与系统用户关联的，自动生成一个用户信息
             if(aliUserEntity == null ){
                 loginUser.setId(IdGeneratorUtil.nextIdStr());
                 loginUser.setThirdUserId(aLiUserInfo.getUserId());
@@ -558,7 +499,6 @@ public class UserServiceImpl implements UserService {
                 }else{
                     loginUser.setSex(0);
                 }
-                // 现在qq返回的是http连接，实际https也是支持的，这里替换下
                 if(StrUtil.isNotEmpty(qqUserEntity.getFigureurlQq2())){
                     loginUser.setAvatarFileId(qqUserEntity.getFigureurlQq2().replace("http","https"));
                 }else{
