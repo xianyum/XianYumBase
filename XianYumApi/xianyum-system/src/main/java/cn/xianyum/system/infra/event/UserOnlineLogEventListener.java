@@ -68,7 +68,6 @@ public class UserOnlineLogEventListener {
                 entity.setExpireTime(DateUtil.date(loginUser.getLoginTime().getTime() + tokenInfo.getTokenTimeout() * 1000));
                 userOnlineMapper.insert(entity);
             });
-            log.info("【在线事件】写入在线用户, username={}, token={}", loginUser.getUsername(), loginUser.getToken());
         } catch (Exception e) {
             log.error("【在线事件】写入在线用户失败, username={}, token={}", loginUser.getUsername(), loginUser.getToken(), e);
         }
@@ -81,7 +80,6 @@ public class UserOnlineLogEventListener {
     private void handleLogout() {
         try {
             LoginUser loginUser = UserContextHolder.getLoginUser();
-            log.info("【在线事件】删除在线用户, username={}, token={}", loginUser.getUsername(), loginUser.getToken());
             if (Objects.nonNull(loginUser) && StrUtil.isNotBlank(loginUser.getToken())) {
                 userOnlineMapper.deleteByToken(loginUser.getToken());
             }
