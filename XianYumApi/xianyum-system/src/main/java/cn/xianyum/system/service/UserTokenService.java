@@ -7,97 +7,23 @@ import cn.xianyum.system.entity.response.QrLoginTicketResponse;
 
 public interface UserTokenService {
 
-    /**
-     * 生成token
-     * @param user
-     * @return
-     */
     LoginTokenResponse createToken(LoginUser user);
 
-    /**
-     * 退出，修改token值
-     */
     void logout();
-
 
     void setExtraUserInfo(LoginUser loginUser);
 
-    /**
-     * 发送验证码
-     * @param request
-     */
     void sendLoginCredentials(UserLoginRequest request);
 
-    /**
-     * 发送邮箱验证码
-     * @param request
-     * @param code
-     */
     void sendLoginCredentialsByEmail(UserLoginRequest request, String code);
 
-    /**
-     * 登录核心
-     * @param request
-     * @return
-     */
     LoginTokenResponse login(UserLoginRequest request);
 
-    /**
-     * 账号密码登录
-     * @param request
-     * @return
-     */
-    LoginUser loginPwd(UserLoginRequest request);
-
-    /**
-     * 邮箱验证码登录
-     * @param request
-     * @return
-     */
-    LoginUser loginEmail(UserLoginRequest request);
-
-    /**
-     * QQ授权登录
-     * @return
-     */
-    LoginUser loginByQq(UserLoginRequest request);
-
-    /**
-     * 支付宝授权登录
-     * @param request
-     * @return
-     */
-    LoginUser loginByZhiFuBao(UserLoginRequest request);
-
-    /**
-     * 生成二维码登录凭证
-     * @return
-     */
     QrLoginTicketResponse generateQrCode();
 
-    /**
-     * 扫描二维码
-     *
-     * @return
-     */
     void scanQrCode(String ticket);
 
-    /**
-     * 二维码确认登录
-     * @param ticket
-     */
     void confirmQrCode(String ticket);
 
-    /**
-     * 获取二维码状态
-     * @param ticket
-     */
     QrLoginTicketResponse getQrCodeStatus(String ticket);
-
-    /**
-     * 二维码登录
-     * @param request
-     * @return
-     */
-    LoginUser loginByQr(UserLoginRequest request);
 }
