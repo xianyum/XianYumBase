@@ -103,7 +103,6 @@ const user = {
       })
     },
 
-    // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
@@ -116,6 +115,16 @@ const user = {
         }).catch(error => {
           reject(error)
         })
+      })
+    },
+    FedLogOut({ commit }) {
+      return new Promise(resolve => {
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        commit('SET_PERMISSIONS', [])
+        removeToken()
+        storage.clean()
+        resolve()
       })
     }
   }

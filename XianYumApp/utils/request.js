@@ -45,7 +45,7 @@ const request = config => {
           showConfirm('登录状态已过期，您可以继续留在该页面，或者重新登录?').then(res => {
             isShowingLoginExpireConfirm = false
             if (res.confirm) {
-              store.dispatch('LogOut').then(res => {
+              store.dispatch('FedLogOut').then(res => {
                 uni.reLaunch({ url: '/pages/login' })
               })
             }

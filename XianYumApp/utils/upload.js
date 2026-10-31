@@ -37,8 +37,8 @@ const upload = config => {
           } else if (code == 401) {
             showConfirm("登录状态已过期，您可以继续留在该页面，或者重新登录?").then(res => {
               if (res.confirm) {
-                store.dispatch('LogOut').then(res => {
-                  uni.reLaunch({ url: '/pages/login/login' })
+                store.dispatch('FedLogOut').then(res => {
+                  uni.reLaunch({ url: '/pages/login' })
                 })
               }
             })
