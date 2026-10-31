@@ -3,7 +3,10 @@ package cn.xianyum.system.entity.po;
 import cn.xianyum.common.entity.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.Date;
 
 /**
@@ -12,6 +15,8 @@ import java.util.Date;
  * @date 2021/1/28 22:00
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@TableName(value = "user_online")
 public class UserOnlineEntity extends BaseEntity {
 
     /**
@@ -24,7 +29,6 @@ public class UserOnlineEntity extends BaseEntity {
      * 会话编号
      */
     private String token;
-
 
     /**
      * 用户名
@@ -62,7 +66,7 @@ public class UserOnlineEntity extends BaseEntity {
     private String loginType;
 
     /**
-     * 过期时间，单位秒
+     * 会话过期时间点
      */
-    private String expireStr;
+    private Date expireTime;
 }

@@ -417,4 +417,33 @@ public class DateUtils {
         Instant instant = Instant.ofEpochSecond(utcSecond);
         return instant.atZone(ZoneId.of("Asia/Shanghai")).toLocalDateTime();
     }
+
+    /**
+     * 将过期时间点格式化为可读的剩余时长字符串（从当前时间算起）
+     * 例如：5分30秒 / 2小时15分 / 3天4小时
+     *
+     * @param expireTime 过期时间点（null 表示永不过期）
+     * @return 可读的剩余时长字符串
+     */
+    public static String formatExpire(Date expireTime) {
+        if (expireTime == null) {
+            return "永久";
+        }
+        long diffMs = expireTime.getTime() - System.currentTimeMillis();
+        if (diffMs <= 0) {
+            return "已过期";
+        }
+        long seconds = diffMs / 1000;
+        long days = seconds / 86400;
+        long hours = (seconds % 86400) / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long secs = seconds % 60;
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) sb.append(days).append("天");
+        if (hours > 0) sb.append(hours).append("小时");
+        if (minutes > 0) sb.append(minutes).append("分");
+        if (secs > 0 && days == 0 && hours == 0) sb.append(secs).append("秒");
+        return sb.length() == 0 ? "已过期" : sb.toString();
+    }
 }

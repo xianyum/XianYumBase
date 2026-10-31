@@ -17,9 +17,11 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.utils.SecretUtils;
 import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
+import cn.xianyum.system.infra.event.LoginEvent;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.entity.response.QrLoginTicketResponse;
@@ -128,14 +130,38 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginTokenResponse login(UserLoginRequest request) {
-        LoginUser loginUserEntity = switch(request.getLoginType()){
-            case XIAN_YU, USER_PASSWORD -> this.loginPwd(request);
-            case EMAIL -> this.loginEmail(request);
-            case QQ -> this.loginByQq(request);
-            case ZHI_FU_BAO -> this.loginByZhiFuBao(request);
-            case QR -> this.loginByQr(request);
-        };
-        return this.createToken(loginUserEntity);
+        String username = request.getUsername();
+        String ipaddr = IPUtils.getIpAddr(HttpContextUtils.getHttpServletRequest());
+        String loginType = request.getLoginType() != null ? request.getLoginType().getAccountType() : "UNKNOWN";
+        try {
+            LoginUser loginUserEntity = switch(request.getLoginType()){
+                case XIAN_YU, USER_PASSWORD -> this.loginPwd(request);
+                case EMAIL -> this.loginEmail(request);
+                case QQ -> this.loginByQq(request);
+                case ZHI_FU_BAO -> this.loginByZhiFuBao(request);
+                case QR -> this.loginByQr(request);
+            };
+            LoginTokenResponse response = this.createToken(loginUserEntity);
+
+            // 发布登录成功事件
+            SpringUtil.publishEvent(LoginEvent.success(
+                    username,
+                    ipaddr,
+                    loginType,
+                    response.getToken(),
+                    loginUserEntity.getId(),
+                    loginUserEntity.getBrowser(),
+                    loginUserEntity.getOs(),
+                    loginUserEntity.getLoginLocation()
+            ));
+            return response;
+        } catch (Exception e) {
+            // 发布登录失败事件
+            SpringUtil.publishEvent(LoginEvent.fail(
+                    username, ipaddr, loginType, e.getMessage()
+            ));
+            throw e;
+        }
     }
 
     /**

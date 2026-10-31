@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.system.dao.UserOnlineMapper">
+
+    <sql id="userOnlineColumns">
+        id,
+        token,
+        username,
+        login_time   AS "loginTime",
+        ipaddr,
+        login_location AS "loginLocation",
+        browser,
+        os,
+        login_type   AS "loginType",
+        expire_time  AS "expireTime",
+        create_by    AS "createBy",
+        create_time  AS "createTime",
+        create_by_name AS "createByName",
+        update_by    AS "updateBy",
+        update_time  AS "updateTime",
+        update_by_name AS "updateByName"
+    </sql>
+
+    <select id="selectByToken" resultType="cn.xianyum.system.entity.po.UserOnlineEntity">
+        SELECT
+        <include refid="userOnlineColumns"/>
+        FROM user_online
+        WHERE token = #{token}
+    </select>
+
+    <delete id="deleteByToken">
+        DELETE FROM user_online WHERE token = #{token}
+    </delete>
+
+    <delete id="deleteExpired">
+        DELETE FROM user_online WHERE expire_time IS NOT NULL AND expire_time &lt; NOW()
+    </delete>
+
+    <delete id="deleteByTokens">
+        DELETE FROM user_online WHERE token IN
+        <foreach collection="tokens" item="token" open="(" separator="," close=")">
+            #{token}
+        </foreach>
+    </delete>
+
+</mapper>

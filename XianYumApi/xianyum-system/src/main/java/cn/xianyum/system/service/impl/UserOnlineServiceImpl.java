@@ -1,22 +1,24 @@
 package cn.xianyum.system.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.xianyum.common.entity.base.PageResponse;
-import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
-import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
+import cn.xianyum.system.dao.UserOnlineMapper;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
 import cn.xianyum.system.entity.response.UserOnlineResponse;
 import cn.xianyum.system.service.UserOnlineService;
-import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * @author zhangwei
@@ -26,48 +28,43 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserOnlineServiceImpl implements UserOnlineService {
 
-    @Autowired
-    private RedisUtils redisUtils;
-
+    @Resource
+    private UserOnlineMapper userOnlineMapper;
 
     @Override
     public PageResponse<UserOnlineResponse> queryPage(UserOnlineRequest request) {
-        Collection<String> keys = redisUtils.keys(RedisKeyEnum.TOKEN_PREFIX.getKey() + "*");
-        List<UserOnlineEntity> userOnlineList = new ArrayList<>();
-        for(String key : keys){
-            String userJson = (String)redisUtils.get(key);
-            UserOnlineEntity userOnlineEntity = JSONObject.parseObject(userJson,UserOnlineEntity.class);
-            userOnlineEntity.setToken(key.substring(key.lastIndexOf(":")+1));
-            // 计算分钟数和剩余的秒数
-            long expire = redisUtils.getExpire(key);
-            userOnlineEntity.setExpireStr(DateUtils.getDatePoor(expire));
-            userOnlineList.add(userOnlineEntity);
+        // 清理已过期的在线记录
+        userOnlineMapper.deleteExpired();
+        LambdaQueryWrapper<UserOnlineEntity> wrapper = Wrappers.<UserOnlineEntity>lambdaQuery()
+                .gt(UserOnlineEntity::getExpireTime, new Date())
+                .orderByDesc(UserOnlineEntity::getLoginTime);
+        if (StrUtil.isNotEmpty(request.getUsername())) {
+            wrapper.like(UserOnlineEntity::getUsername, request.getUsername());
         }
-
-        if(StrUtil.isNotEmpty(request.getUsername())){
-            userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(), request.getUsername())).collect(Collectors.toList());
+        if (!UserContextHolder.isSupperAdminAuth()) {
+            String currentUsername = UserContextHolder.getLoginUser().getUsername();
+            wrapper.like(UserOnlineEntity::getUsername, currentUsername);
         }
-
-        if(!UserContextHolder.isSupperAdminAuth()){
-            userOnlineList = userOnlineList.stream().filter( p -> StrUtil.containsIgnoreCase(p.getUsername(), UserContextHolder.getLoginUser().getUsername())).collect(Collectors.toList());
-        }
-
-
-        Collections.reverse(userOnlineList);
-        long total = userOnlineList.size();
-        userOnlineList = userOnlineList.stream().sorted(Comparator.comparing(UserOnlineEntity::getLoginTime).reversed())
-                .skip((request.getPageNum()-1)*request.getPageSize()).limit(request.getPageSize()).collect(Collectors.toList());
-        return PageResponse.of(total,userOnlineList,UserOnlineResponse.class);
+        Page<UserOnlineEntity> page = userOnlineMapper.selectPage(new Page<>(request.getPageNum(), request.getPageSize()), wrapper);
+        return PageResponse.of(page, UserOnlineResponse.class,
+                (response, entity) -> response.setExpireStr(DateUtils.formatExpire(entity.getExpireTime()))
+        );
     }
 
     @Override
     public void delete(String[] tokenIds) {
-
-        if(tokenIds == null || tokenIds.length == 0){
+        if (tokenIds == null || tokenIds.length == 0) {
             throw new SoException("踢出失败");
         }
-        for(String token : tokenIds){
-            redisUtils.del(RedisKeyEnum.TOKEN_PREFIX.getKey()+token);
+        for (String token : tokenIds) {
+            try {
+                // 让 Sa-Token 也下线该会话，防止客户端还能请求
+                StpUtil.kickoutByTokenValue(token);
+            } catch (Exception e) {
+                log.warn("踢出 token={} 时 Sa-Token 下线失败, 可能会话已过期", token);
+            }
         }
+        // 从数据库删除
+        userOnlineMapper.deleteByTokens(Arrays.asList(tokenIds));
     }
 }
