@@ -95,7 +95,7 @@ public class SystemExceptionHandler {
     @ExceptionHandler(NotPermissionException.class)
     public Results handleRRException(NotPermissionException e){
         logger.error("",e);
-        return Results.error(HttpStatus.UNAUTHORIZED.value(), Constants.NO_PERMISSION_MESSAGE);
+        return Results.error(HttpStatus.FORBIDDEN.value(), Constants.NO_PERMISSION_MESSAGE);
     }
 
     @ExceptionHandler(Exception.class)

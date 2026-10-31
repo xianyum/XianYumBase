@@ -164,7 +164,7 @@ public class UserTokenServiceImpl implements UserTokenService {
             throw new SoException("账号已被锁定,请联系管理员");
         }
         if(!SecretUtils.matchesPassword(request.getPassword(),userEntity.getPassword())){
-            throw new SoException("密码错误");
+            throw new SoException("密码不正确");
         }
         LoginUser loginUserEntity = new LoginUser();
         loginUserEntity.setId(userEntity.getId());
@@ -346,6 +346,8 @@ public class UserTokenServiceImpl implements UserTokenService {
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
         loginTokenResponse.setToken(tokenInfo.getTokenValue());
         loginTokenResponse.setExpireTime(tokenInfo.tokenTimeout);
+        // 设置用户上下文信息
+        UserContextHolder.setLoginUser(loginUser.getId());
         return loginTokenResponse;
     }
 

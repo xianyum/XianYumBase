@@ -1,7 +1,9 @@
 package cn.xianyum.system.entity.po;
 
+import cn.xianyum.common.entity.base.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
-
 import java.util.Date;
 
 /**
@@ -10,7 +12,13 @@ import java.util.Date;
  * @date 2021/1/28 22:00
  */
 @Data
-public class UserOnlineEntity {
+public class UserOnlineEntity extends BaseEntity {
+
+    /**
+     * 主键id
+     */
+    @TableId(type = IdType.INPUT)
+    private String id;
 
     /**
      * 会话编号

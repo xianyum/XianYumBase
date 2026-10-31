@@ -27,7 +27,6 @@ public class StpInterfaceHandler implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        System.out.println("执行顺序-getPermissionList");
         LoginUser loginUser = UserCacheHelper.selectUserById(loginId.toString());
         if(Objects.isNull(loginUser)){
             return List.of();

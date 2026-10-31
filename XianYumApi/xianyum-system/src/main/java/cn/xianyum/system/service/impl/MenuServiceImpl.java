@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
@@ -10,6 +11,7 @@ import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.HttpUtils;
 import cn.xianyum.common.utils.RedisUtils;
+import cn.xianyum.common.utils.UserCacheHelper;
 import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.MenuMapper;
@@ -291,28 +293,24 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Set<String> selectMenuPermsByRoleCodes(Set<String> roleCodes) {
-        if(UserContextHolder.isSupperAdminAuth()){
-            return Set.of(Constants.ALL_PERMISSION);
-        }
         if (CollUtil.isEmpty(roleCodes)) {
             return new HashSet<>();
         }
         Set<String> perms = new HashSet<>();
         for (String roleCode : roleCodes) {
-            if(redisUtils.hHasKey(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode)){
+            if(!redisUtils.hHasKey(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode)){
                 continue;
             }
             Object cacheObj = redisUtils.hGet(RedisKeyEnum.MENU_PERMISSION_BY_ROLE_KEY.getKey(), roleCode);
-            if(Objects.isNull(cacheObj)){
-                continue;
-            }
-            Set<String> permsByRoleCode = JSON.parseObject(cacheObj.toString(), new TypeReference<Set<String>>() {});
-            if (Objects.nonNull(perms)) {
-                perms.addAll(permsByRoleCode);
+            if(Objects.nonNull(cacheObj)){
+                Set<String> permsByRoleCode = JSON.parseObject(cacheObj.toString(), new TypeReference<Set<String>>() {});
+                if (Objects.nonNull(perms)) {
+                    perms.addAll(permsByRoleCode);
+                }
             }
         }
         // 如果从缓存中查到直接返回权限标识符
-        if(CollectionUtil.isEmpty(perms)){
+        if(CollectionUtil.isNotEmpty(perms)){
             return perms;
         }
         for (String roleCode : roleCodes) {

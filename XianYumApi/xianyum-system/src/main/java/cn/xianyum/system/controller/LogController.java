@@ -33,7 +33,6 @@ public class LogController {
      */
     @GetMapping("/getPage")
     @Operation(summary = "获取用户列表")
-    @IgnoreDataScope
     @SaCheckPermission("monitor:operlog:page")
     public Results<LogResponse> getPage(LogRequest request){
         PageResponse<LogResponse> list = logService.getPage(request);

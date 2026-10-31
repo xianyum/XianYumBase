@@ -42,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -129,7 +130,11 @@ public class UserServiceImpl implements UserService {
         if(Objects.nonNull(userRoleCache)){
             loginUser.setRoles(userRoleCache.getRoleCodes());
             loginUser.setDataScopeEnum(userRoleCache.getDataScopeEnum());
-            loginUser.setPermissions(SpringUtil.getBean(MenuService.class).selectMenuPermsByRoleCodes(userRoleCache.getRoleCodes()));
+            if(UserContextHolder.isSupperAdminAuth(loginUser)){
+                loginUser.setPermissions(Set.of(Constants.ALL_PERMISSION));
+            }else{
+                loginUser.setPermissions(SpringUtil.getBean(MenuService.class).selectMenuPermsByRoleCodes(userRoleCache.getRoleCodes()));
+            }
         }
         return loginUser;
     }

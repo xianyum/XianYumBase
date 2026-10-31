@@ -65,7 +65,6 @@ public class PermissionAspect {
         Method method = signature.getMethod();
         // 1. 优先取方法上的注解
         IgnoreDataScope ignoreDataScope = AnnotationUtil.getAnnotation(method, IgnoreDataScope.class);
-        log.info("当前用户：{}是否忽略数据范围筛选:{}", UserContextHolder.getLoginUser().getUsername(),ignoreDataScope!=null);
         return Objects.nonNull(ignoreDataScope);
     }
 

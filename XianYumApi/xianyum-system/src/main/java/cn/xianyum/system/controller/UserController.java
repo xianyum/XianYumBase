@@ -12,6 +12,7 @@ import cn.xianyum.system.entity.response.UserResponse;
 import cn.xianyum.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-system/v1/user")
 @Tag(name = "用户接口")
+@Slf4j
 public class UserController {
 
     @Autowired

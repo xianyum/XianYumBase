@@ -10,6 +10,7 @@ import cn.xianyum.system.entity.po.LogEntity;
 import cn.xianyum.system.service.LogService;
 import com.alibaba.fastjson2.JSONObject;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.annotation.Resource;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,13 +21,13 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @Description
@@ -40,12 +41,21 @@ import java.util.*;
 @Component
 public class RequestLogInterceptor {
 
-    @Autowired
+    @Resource
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
 
     public static final List<String> IGNORE_FILTER_URLS = Arrays.asList("/xym-extension/v1/ip/getIpInfo"
             ,"/login/qrcode/status"
-            ,"/xianyum-mqtt/v1/mqttFish/metrics");
+            ,"/xianyum-mqtt/v1/mqttFish/metrics"
+            ,"/captcha/check","/captcha/genCaptcha");
+
+    /**
+     * 脱敏关键词
+     */
+    public static final List<String> DESENSITIZE_KEYWORDS = Arrays.asList(
+            "password"
+    );
+
 
     @Pointcut("execution(* cn.xianyum.*.controller.*.*(..))")
     private void executeRequestLog() {
@@ -141,11 +151,11 @@ public class RequestLogInterceptor {
                 }
                 params.put(parameterNames[i], arg);
             }
-            return JSONObject.toJSONString(params);
+            return desensitize(JSONObject.toJSONString(params));
         } catch (Exception e) {
             log.error("接口出入参日志打印切面处理请求参数异常", e);
         }
-        return Arrays.toString(args);
+        return desensitize(Arrays.toString(args));
     }
 
 
@@ -176,6 +186,23 @@ public class RequestLogInterceptor {
             log.error("接口出入参日志打印切面处理返回参数异常", e);
         }
         return resultStr;
+    }
+
+    /**
+     * 对JSON字符串进行脱敏处理
+     * @param json
+     * @return
+     */
+    private String desensitize(String json) {
+        if (StrUtil.isBlank(json)) {
+            return json;
+        }
+        String result = json;
+        for (String keyword : DESENSITIZE_KEYWORDS) {
+            String regex = "(?i)(\"[^\"]*" + Pattern.quote(keyword) + "[^\"]*\")\\s*:\\s*\"[^\"]*\"";
+            result = result.replaceAll(regex, "$1:\"***\"");
+        }
+        return result;
     }
 
 }
