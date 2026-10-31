@@ -1,15 +1,14 @@
 package cn.xianyum.framwork.satoken.filter;
 
-import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.xianyum.framwork.satoken.interceptor.UserContextInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
+ * 用户上下文拦截器，包括sa-token认证，权限校验，用户上下文设置
  * @author xianyum
  * @date 2026/10/29 20:46
  */
@@ -23,10 +22,9 @@ public class SaTokenRequestFilter implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new SaInterceptor(handle -> {
-                    // 校验登录状态
+        registry.addInterceptor(new UserContextInterceptor(handler->{
                     StpUtil.checkLogin();
-                })).addPathPatterns("/**").order(Ordered.HIGHEST_PRECEDENCE).excludePathPatterns("/v3/api-docs/**","/error","/swagger-ui.html", "/swagger-ui/**", "/druid/**","/actuator/**");
-        registry.addInterceptor(new UserContextInterceptor()).order(1).addPathPatterns("/**");
+                })).addPathPatterns("/**")
+                .excludePathPatterns("/v3/api-docs/**","/error","/swagger-ui.html", "/swagger-ui/**", "/druid/**","/actuator/**");
     }
 }

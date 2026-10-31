@@ -36,6 +36,7 @@ public class ThreadPoolConfig {
         executor.setKeepAliveSeconds(keepAliveSeconds);
         executor.setThreadNamePrefix("thread-xianyum-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setTaskDecorator(new UserContextTaskDecorator());
         executor.initialize();
         return executor;
     }

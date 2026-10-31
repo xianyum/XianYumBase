@@ -8,19 +8,19 @@
         id,
         token,
         username,
-        login_time   AS "loginTime",
+        login_time,
         ipaddr,
-        login_location AS "loginLocation",
+        login_location,
         browser,
         os,
-        login_type   AS "loginType",
-        expire_time  AS "expireTime",
-        create_by    AS "createBy",
-        create_time  AS "createTime",
-        create_by_name AS "createByName",
-        update_by    AS "updateBy",
-        update_time  AS "updateTime",
-        update_by_name AS "updateByName"
+        login_type,
+        expire_time,
+        create_by,
+        create_time,
+        create_by_name,
+        update_by,
+        update_time,
+        update_by_name
     </sql>
 
     <select id="selectByToken" resultType="cn.xianyum.system.entity.po.UserOnlineEntity">

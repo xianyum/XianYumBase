@@ -23,7 +23,7 @@ public class UserOnlineEntity extends BaseEntity {
      * 主键id
      */
     @TableId(type = IdType.INPUT)
-    private String id;
+    private Long id;
 
     /**
      * 会话编号

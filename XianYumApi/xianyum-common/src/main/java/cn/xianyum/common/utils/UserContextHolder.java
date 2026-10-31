@@ -36,6 +36,23 @@ public class UserContextHolder {
     }
 
     /**
+     * 给当前线程设置用户信息，并设置token数据
+     * @return
+     */
+    public static void setLoginUser(String userId,String token) {
+        if(Objects.isNull(userId)){
+            return;
+        }
+        LoginUser loginUser = UserCacheHelper.selectUserById(userId);
+        if(Objects.isNull(loginUser)){
+            return;
+        }
+        loginUser.setToken(token);
+        USER_THREAD_LOCAL.set(loginUser);
+    }
+
+
+    /**
      * 给当前线程设置用户信息
      * @return
      */

@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 登录事件状态枚举
+ * 登录/登出事件类型枚举
  */
 @Getter
 @AllArgsConstructor
 public enum LoginEventStatusEnum {
 
-    SUCCESS("SUCCESS", "登录成功"),
-    FAIL("FAIL", "登录失败");
+    LOGIN("LOGIN", "登录"),
+    LOGOUT("LOGOUT", "登出");
 
     private final String code;
     private final String desc;

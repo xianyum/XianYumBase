@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.UserRoleCache;
@@ -153,6 +154,8 @@ public class UserServiceImpl implements UserService {
             LambdaQueryWrapper<UserThirdRelationEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery().eq(UserThirdRelationEntity::getUserId,id);
             userThirdRelationMapper.delete(thirdUserEntityLambdaQueryWrapper);
             SpringUtil.publishEvent(new UserCacheChangeEvent(id));
+            // 注销该用户的所有登录凭证
+            StpUtil.logout(id);
         }
     }
 
@@ -288,6 +291,7 @@ public class UserServiceImpl implements UserService {
         userEntity.setId(request.getId());
         userEntity.setStatus(request.getStatus());
         int count = userMapper.updateById(userEntity);
+        StpUtil.logout(request.getId());
         SpringUtil.publishEvent(new UserCacheChangeEvent(request.getId()));
         return count;
     }

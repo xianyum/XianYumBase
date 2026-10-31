@@ -4,12 +4,11 @@ import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.entity.LoginUser;
-import cn.xianyum.common.enums.LoginTypeEnum;
-import cn.xianyum.common.enums.QrCodeLoginStatus;
-import cn.xianyum.common.enums.RedisKeyEnum;
-import cn.xianyum.common.enums.YesOrNoEnum;
+import cn.xianyum.common.enums.*;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
@@ -17,53 +16,34 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
-import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.utils.SecretUtils;
-import cn.xianyum.system.dao.UserMapper;
 import cn.xianyum.system.entity.po.UserEntity;
-import cn.xianyum.system.infra.event.LoginEvent;
+import cn.xianyum.system.infra.event.UserOnlineLogEvent;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
 import cn.xianyum.system.entity.response.QrLoginTicketResponse;
-import cn.xianyum.system.service.MenuService;
-import cn.xianyum.system.service.RoleService;
 import cn.xianyum.system.service.UserService;
 import cn.xianyum.system.service.UserTokenService;
 import com.alibaba.fastjson2.JSONObject;
 import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import java.util.Date;
 import java.util.Objects;
 
 
 @Service
 public class UserTokenServiceImpl implements UserTokenService {
 
-    @Value("${redis.token.expire:30}")
-    private Integer expire;
-
     @Resource
     private RedisUtils redisUtils;
-
-    @Resource
-    private UserMapper userMapper;
-
-    @Resource
-    private RoleService roleService;
-
-    @Resource
-    private MenuService menuService;
 
     @Resource
     private MessageSender messageSender;
 
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
-
 
     @Override
     public void setExtraUserInfo(LoginUser loginUser) {
@@ -75,8 +55,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         loginUser.setLoginLocation(IPUtils.getIpInfo(ip));
         loginUser.setBrowser(userAgent.getBrowser().getName());
         loginUser.setOs(userAgent.getOperatingSystem().getName());
-        loginUser.setLoginTime(new Date());
-
+        loginUser.setLoginTime(DateUtil.date());
     }
 
 
@@ -130,38 +109,17 @@ public class UserTokenServiceImpl implements UserTokenService {
      */
     @Override
     public LoginTokenResponse login(UserLoginRequest request) {
-        String username = request.getUsername();
-        String ipaddr = IPUtils.getIpAddr(HttpContextUtils.getHttpServletRequest());
-        String loginType = request.getLoginType() != null ? request.getLoginType().getAccountType() : "UNKNOWN";
-        try {
-            LoginUser loginUserEntity = switch(request.getLoginType()){
-                case XIAN_YU, USER_PASSWORD -> this.loginPwd(request);
-                case EMAIL -> this.loginEmail(request);
-                case QQ -> this.loginByQq(request);
-                case ZHI_FU_BAO -> this.loginByZhiFuBao(request);
-                case QR -> this.loginByQr(request);
-            };
-            LoginTokenResponse response = this.createToken(loginUserEntity);
-
-            // 发布登录成功事件
-            SpringUtil.publishEvent(LoginEvent.success(
-                    username,
-                    ipaddr,
-                    loginType,
-                    response.getToken(),
-                    loginUserEntity.getId(),
-                    loginUserEntity.getBrowser(),
-                    loginUserEntity.getOs(),
-                    loginUserEntity.getLoginLocation()
-            ));
-            return response;
-        } catch (Exception e) {
-            // 发布登录失败事件
-            SpringUtil.publishEvent(LoginEvent.fail(
-                    username, ipaddr, loginType, e.getMessage()
-            ));
-            throw e;
-        }
+        LoginUser loginUser = switch(request.getLoginType()){
+            case XIAN_YU, USER_PASSWORD -> this.loginPwd(request);
+            case EMAIL -> this.loginEmail(request);
+            case QQ -> this.loginByQq(request);
+            case ZHI_FU_BAO -> this.loginByZhiFuBao(request);
+            case QR -> this.loginByQr(request);
+        };
+        LoginTokenResponse response = this.createToken(loginUser);
+        // 发布登录事件 → 写入在线用户表
+        SpringUtil.publishEvent(UserOnlineLogEvent.login(loginUser));
+        return response;
     }
 
     /**
@@ -192,8 +150,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         if(!SecretUtils.matchesPassword(request.getPassword(),userEntity.getPassword())){
             throw new SoException("密码不正确");
         }
-        LoginUser loginUserEntity = new LoginUser();
-        loginUserEntity.setId(userEntity.getId());
+        LoginUser loginUserEntity = BeanUtil.toBean(userEntity, LoginUser.class);
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -225,8 +182,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         }
         // 校验登录凭证成功就删除
         redisUtils.del(redisKey);
-        LoginUser loginUserEntity = new LoginUser();
-        loginUserEntity.setId(userEntity.getId());
+        LoginUser loginUserEntity = BeanUtil.toBean(userEntity, LoginUser.class);
         loginUserEntity.setLoginType(request.getLoginType().getAccountType());
         return loginUserEntity;
     }
@@ -371,6 +327,7 @@ public class UserTokenServiceImpl implements UserTokenService {
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
         loginTokenResponse.setToken(tokenInfo.getTokenValue());
+        loginUser.setToken(tokenInfo.getTokenValue());
         loginTokenResponse.setExpireTime(tokenInfo.tokenTimeout);
         // 设置用户上下文信息
         UserContextHolder.setLoginUser(loginUser.getId());
@@ -379,6 +336,10 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public void logout() {
+        String token = StpUtil.getTokenValue();
+        // 发布登出事件 → 从在线用户表删除
+        SpringUtil.publishEvent(UserOnlineLogEvent.logout());
+        // 退出登录
         StpUtil.logout();
     }
 }

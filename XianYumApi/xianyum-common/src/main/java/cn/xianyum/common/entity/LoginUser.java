@@ -123,4 +123,8 @@ public class LoginUser {
     private String loginType;
 
 
+    /**
+     * 登录的token
+     */
+    private String token;
 }

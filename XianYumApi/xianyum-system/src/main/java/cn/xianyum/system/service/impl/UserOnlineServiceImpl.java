@@ -4,7 +4,6 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
-import cn.xianyum.common.utils.UserContextHolder;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.system.dao.UserOnlineMapper;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
@@ -37,13 +36,9 @@ public class UserOnlineServiceImpl implements UserOnlineService {
         userOnlineMapper.deleteExpired();
         LambdaQueryWrapper<UserOnlineEntity> wrapper = Wrappers.<UserOnlineEntity>lambdaQuery()
                 .gt(UserOnlineEntity::getExpireTime, new Date())
-                .orderByDesc(UserOnlineEntity::getLoginTime);
+                .orderByDesc(UserOnlineEntity::getId);
         if (StrUtil.isNotEmpty(request.getUsername())) {
             wrapper.like(UserOnlineEntity::getUsername, request.getUsername());
-        }
-        if (!UserContextHolder.isSupperAdminAuth()) {
-            String currentUsername = UserContextHolder.getLoginUser().getUsername();
-            wrapper.like(UserOnlineEntity::getUsername, currentUsername);
         }
         Page<UserOnlineEntity> page = userOnlineMapper.selectPage(new Page<>(request.getPageNum(), request.getPageSize()), wrapper);
         return PageResponse.of(page, UserOnlineResponse.class,
