@@ -3,6 +3,8 @@ package cn.xianyum.system.entity.request;
 import cn.xianyum.common.entity.base.BaseRequest;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 操作日志查询请求
  */
@@ -24,4 +26,6 @@ public class OperLogRequest extends BaseRequest {
     private String requestUrl;
 
     private String queryTime;
+
+    private List<String> operTypeList;
 }

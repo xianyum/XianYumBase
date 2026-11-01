@@ -1,5 +1,6 @@
 package cn.xianyum.system.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -52,6 +53,7 @@ public class OperLogServiceImpl implements OperLogService {
     @Override
     public PageResponse<OperLogResponse> getPage(OperLogRequest request) {
         LambdaQueryWrapper<OperLogEntity> wrapper = Wrappers.<OperLogEntity>lambdaQuery()
+                .in(CollUtil.isNotEmpty(request.getOperTypeList()), OperLogEntity::getOperType, request.getOperTypeList())
                 .eq(StrUtil.isNotBlank(request.getUserName()), OperLogEntity::getUserName, request.getUserName())
                 .eq(StrUtil.isNotBlank(request.getModule()), OperLogEntity::getModule, request.getModule())
                 .eq(StrUtil.isNotBlank(request.getOperType()), OperLogEntity::getOperType, request.getOperType())
@@ -93,8 +95,10 @@ public class OperLogServiceImpl implements OperLogService {
 
     @Override
     public Long getOperLogCount() {
-        Long count = operLogMapper.selectCount(Wrappers.lambdaQuery());
-        return count != null ? count : 0L;
+        LambdaQueryWrapper<OperLogEntity> queryWrapper = Wrappers.<OperLogEntity>lambdaQuery()
+                .orderByDesc(OperLogEntity::getId).last("limit 1");
+        Optional<OperLogEntity> first = operLogMapper.selectList(queryWrapper).stream().findFirst();
+        return first.isPresent()?first.get().getId():0L;
     }
 
     @Override

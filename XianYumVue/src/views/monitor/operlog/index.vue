@@ -19,11 +19,13 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="操作类型" prop="operType">
+      <el-form-item label="操作类型" prop="operTypeList">
         <el-select
-          v-model="queryParams.operType"
+          v-model="queryParams.operTypeList"
           placeholder="请选择操作类型"
           clearable
+          multiple
+          collapse-tags
           style="width: 200px"
         >
           <el-option
@@ -243,7 +245,7 @@ export default {
         pageSize: 10,
         userName: undefined,
         module: undefined,
-        operType: undefined
+        operTypeList: []
       }
     };
   },
