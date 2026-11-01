@@ -12,6 +12,38 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-caozuorizhi:before {
+  content: "\e65f";
+}
+
+.icon-caozuorizhi1:before {
+  content: "\e60d";
+}
+
+.icon-caozuorizhi2:before {
+  content: "\e60f";
+}
+
+.icon-caozuorizhi3:before {
+  content: "\e67f";
+}
+
+.icon-caozuorizhi4:before {
+  content: "\e69f";
+}
+
+.icon-caozuorizhi5:before {
+  content: "\e748";
+}
+
+.icon-caozuorizhi6:before {
+  content: "\e694";
+}
+
+.icon-caozuorizhi7:before {
+  content: "\10219";
+}
+
 .icon-qiche:before {
   content: "\e610";
 }

@@ -91,6 +91,15 @@
       }
     },
     {
+      "path": "pages/monitor/operlog/index",
+      "style": {
+        "navigationBarTitleText": "操作日志",
+        "enablePullDownRefresh": true,
+        "backgroundColor": "#f5f7fa",
+        "backgroundTextStyle": "dark"
+      }
+    },
+    {
       "path": "pages/iot/fish/index",
       "style": {
         "navigationBarTitleText": "智能鱼缸"
