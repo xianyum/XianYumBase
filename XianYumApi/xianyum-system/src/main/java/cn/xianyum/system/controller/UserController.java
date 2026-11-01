@@ -2,7 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.UserContextHolder;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
@@ -22,10 +24,11 @@ import java.util.List;
 /***
  * 用户相关
  */
+@Slf4j
 @RestController
 @RequestMapping("xym-system/v1/user")
 @Tag(name = "用户接口")
-@Slf4j
+@OperLog(module = "用户管理")
 public class UserController {
 
     @Autowired
@@ -38,6 +41,7 @@ public class UserController {
     @Operation(summary = "分页获取用户列表")
     @IgnoreDataScope
     @SaCheckPermission("system:user:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询用户列表")
     public Results<UserResponse> getPage(UserRequest user){
         PageResponse<UserResponse> list = userService.getPage(user);
         return Results.page(list);
