@@ -36,6 +36,17 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="操作状态" prop="status">
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择操作状态"
+          clearable
+          style="width: 200px"
+        >
+          <el-option label="成功" :value="1" />
+          <el-option label="失败" :value="0" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="操作时间" prop="dateRange">
         <el-date-picker
           v-model="dateRange"
@@ -245,7 +256,8 @@ export default {
         pageSize: 10,
         userName: undefined,
         module: undefined,
-        operTypeList: []
+        operTypeList: [],
+        status: undefined
       }
     };
   },
