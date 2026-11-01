@@ -59,7 +59,5 @@ public class UserOnlineServiceImpl implements UserOnlineService {
                 log.warn("踢出 token={} 时 Sa-Token 下线失败, 可能会话已过期", token);
             }
         }
-        // 从数据库删除
-        userOnlineMapper.deleteByTokens(Arrays.asList(tokenIds));
     }
 }

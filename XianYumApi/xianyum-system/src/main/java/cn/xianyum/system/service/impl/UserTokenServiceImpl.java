@@ -11,12 +11,10 @@ import cn.xianyum.common.enums.*;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.*;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
 import cn.xianyum.system.entity.response.QrLoginTicketResponse;
-import cn.xianyum.system.infra.event.UserOnlineLogEvent;
 import cn.xianyum.system.infra.login.LoginStrategy;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
@@ -25,12 +23,14 @@ import com.alibaba.fastjson2.JSONObject;
 import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import java.util.Map;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class UserTokenServiceImpl implements UserTokenService {
 
     @Resource
@@ -94,7 +94,6 @@ public class UserTokenServiceImpl implements UserTokenService {
         }
         LoginUser loginUser = strategy.login(request);
         LoginTokenResponse response = this.createToken(loginUser);
-        SpringUtil.publishEvent(UserOnlineLogEvent.login(loginUser));
         return response;
     }
 
@@ -151,21 +150,17 @@ public class UserTokenServiceImpl implements UserTokenService {
 
     @Override
     public LoginTokenResponse createToken(LoginUser loginUser) {
-        this.setExtraUserInfo(loginUser);
         StpUtil.login(loginUser.getId(), loginUser.getLoginType());
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         LoginTokenResponse loginTokenResponse = new LoginTokenResponse();
         loginTokenResponse.setToken(tokenInfo.getTokenValue());
         loginUser.setToken(tokenInfo.getTokenValue());
         loginTokenResponse.setExpireTime(tokenInfo.tokenTimeout);
-        UserContextHolder.setLoginUser(loginUser.getId());
         return loginTokenResponse;
     }
 
     @Override
     public void logout() {
-        String token = StpUtil.getTokenValue();
-        SpringUtil.publishEvent(UserOnlineLogEvent.logout());
         StpUtil.logout();
     }
 }

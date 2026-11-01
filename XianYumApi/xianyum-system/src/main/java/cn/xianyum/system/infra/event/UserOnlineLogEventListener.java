@@ -8,7 +8,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.enums.LoginEventStatusEnum;
 import cn.xianyum.common.utils.IdGeneratorUtil;
-import cn.xianyum.common.utils.UserContextHolder;
 import cn.xianyum.system.dao.UserOnlineMapper;
 import cn.xianyum.system.entity.po.UserOnlineEntity;
 import jakarta.annotation.Resource;
@@ -36,7 +35,7 @@ public class UserOnlineLogEventListener {
         if (LoginEventStatusEnum.LOGIN.equals(event.status())) {
             handleLogin(event.loginUser());
         } else if (LoginEventStatusEnum.LOGOUT.equals(event.status())) {
-            handleLogout();
+            handleLogout(event.token());
         }
     }
 
@@ -77,11 +76,10 @@ public class UserOnlineLogEventListener {
      * 处理退出事件
      * - 退出时，从数据库删除在线用户记录
      */
-    private void handleLogout() {
+    private void handleLogout(String token) {
         try {
-            LoginUser loginUser = UserContextHolder.getLoginUser();
-            if (Objects.nonNull(loginUser) && StrUtil.isNotBlank(loginUser.getToken())) {
-                userOnlineMapper.deleteByToken(loginUser.getToken());
+            if (StrUtil.isNotBlank(token)) {
+                userOnlineMapper.deleteByToken(token);
             }
         } catch (Exception e) {
             log.error("【在线事件】删除在线用户失败", e);

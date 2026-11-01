@@ -153,7 +153,6 @@ public class UserServiceImpl implements UserService {
             userRoleMapper.delete(userRoleEntityLambdaQueryWrapper);
             LambdaQueryWrapper<UserThirdRelationEntity> thirdUserEntityLambdaQueryWrapper = Wrappers.<UserThirdRelationEntity>lambdaQuery().eq(UserThirdRelationEntity::getUserId,id);
             userThirdRelationMapper.delete(thirdUserEntityLambdaQueryWrapper);
-            SpringUtil.publishEvent(new UserCacheChangeEvent(id));
             // 注销该用户的所有登录凭证
             StpUtil.logout(id);
         }
@@ -291,8 +290,9 @@ public class UserServiceImpl implements UserService {
         userEntity.setId(request.getId());
         userEntity.setStatus(request.getStatus());
         int count = userMapper.updateById(userEntity);
-        StpUtil.logout(request.getId());
-        SpringUtil.publishEvent(new UserCacheChangeEvent(request.getId()));
+        if(request.getStatus().equals(YesOrNoEnum.NO.getStatus())){
+            StpUtil.logout(request.getId());
+        }
         return count;
     }
 

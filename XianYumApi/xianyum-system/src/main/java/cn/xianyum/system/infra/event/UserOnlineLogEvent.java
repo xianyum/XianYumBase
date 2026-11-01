@@ -11,20 +11,20 @@ import cn.xianyum.common.enums.LoginEventStatusEnum;
  * @param status   事件类型：LOGIN / LOGOUT
  * @param loginUser 登录用户信息
  */
-public record UserOnlineLogEvent(LoginEventStatusEnum status, LoginUser loginUser) {
+public record UserOnlineLogEvent(LoginEventStatusEnum status, LoginUser loginUser,String token) {
 
     /**
      * 构建登录事件
      */
     public static UserOnlineLogEvent login(LoginUser loginUser) {
-        return new UserOnlineLogEvent(LoginEventStatusEnum.LOGIN, loginUser);
+        return new UserOnlineLogEvent(LoginEventStatusEnum.LOGIN, loginUser,null);
     }
 
 
     /**
      * 构建登出事件
      */
-    public static UserOnlineLogEvent logout() {
-        return new UserOnlineLogEvent(LoginEventStatusEnum.LOGOUT,null);
+    public static UserOnlineLogEvent logout(String token) {
+        return new UserOnlineLogEvent(LoginEventStatusEnum.LOGOUT,null,token);
     }
 }
