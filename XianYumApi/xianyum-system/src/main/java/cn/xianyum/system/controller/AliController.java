@@ -1,7 +1,9 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("xym-system/v1/ali")
 @Tag(name = "阿里相关接口")
+@OperLog(module = "支付宝授权")
 public class AliController {
 
     @Autowired
@@ -38,6 +41,7 @@ public class AliController {
     @PostMapping("/login")
     @Operation(summary = "支付宝第三方登录")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.LOGIN, desc = "支付宝登录")
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest aliRequest) {
         aliRequest.setLoginType(LoginTypeEnum.ZHI_FU_BAO);
         return Results.success(userTokenService.login(aliRequest));
@@ -46,6 +50,7 @@ public class AliController {
     @PostMapping("/yunXiao/flowCallBack")
     @Operation(summary = "阿里云-云效-流水线执行结果回调")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "阿里云效回调")
     public Results<?> flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
         return Results.success();
@@ -54,6 +59,8 @@ public class AliController {
 
     @PostMapping("/bindUser")
     @Operation(summary = "支付宝绑定用户")
+    @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "支付宝绑定用户")
     public Results<?> bindUser(@RequestBody UserLoginRequest aliRequest) {
         boolean isSuccess = userService.binAliUser(aliRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");

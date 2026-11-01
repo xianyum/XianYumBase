@@ -1,7 +1,9 @@
 package cn.xianyum.message.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageSendRelationRequest;
 import cn.xianyum.message.entity.response.MessageSendRelationResponse;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "xym-message/v1/messageSendRelation")
 @Slf4j
+@OperLog(module = "消息发送关联")
 public class MessageSendRelationController {
 
 	@Autowired
@@ -33,6 +36,7 @@ public class MessageSendRelationController {
 	@Operation(summary = "发送配置关联表分页查询数据")
 	@GetMapping(value = "/getPage")
 	@SaCheckPermission("message:send-config:page")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询消息发送关联")
 	public Results<MessageSendRelationResponse> getPage(MessageSendRelationRequest request) {
 		PageResponse<MessageSendRelationResponse> response = messageSendRelationService.getPage(request);
         return Results.page(response);
@@ -45,6 +49,7 @@ public class MessageSendRelationController {
 	@Operation(summary = "发送配置关联表删除数据")
 	@DeleteMapping(value = "/delete/{id}")
 	@SaCheckPermission("message:send-config:query")
+	@OperLog(operType = OperTypeEnum.DELETE, desc = "删除消息发送关联")
 	public Results<?> delete(@PathVariable String id) {
 		messageSendRelationService.deleteById(id);
 		return Results.success();
@@ -57,6 +62,7 @@ public class MessageSendRelationController {
 	@Operation(summary = "发送配置关联表保存数据")
 	@PostMapping(value = "/save")
 	@SaCheckPermission("message:send-config:save")
+	@OperLog(operType = OperTypeEnum.ADD, desc = "新增消息发送关联")
 	public Results<?> save(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.save(request);
@@ -73,6 +79,7 @@ public class MessageSendRelationController {
 	@Operation(summary = "发送配置关联表修改数据")
 	@PutMapping(value = "/update")
 	@SaCheckPermission("message:send-config:update")
+	@OperLog(operType = OperTypeEnum.EDIT, desc = "修改消息发送关联")
 	public Results<?> update(@RequestBody MessageSendRelationRequest request) {
 
 		Integer count = messageSendRelationService.update(request);
@@ -90,6 +97,7 @@ public class MessageSendRelationController {
 	@Operation(summary = "发送配置关联表根据ID查询数据")
 	@GetMapping(value = "/getById/{id}")
 	@SaCheckPermission("message:send-config:query")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询消息发送关联")
 	public Results<MessageSendRelationResponse> getById(@PathVariable String id) {
 		MessageSendRelationResponse response = messageSendRelationService.getById(id);
 		return Results.success(response);
@@ -102,6 +110,7 @@ public class MessageSendRelationController {
 	@Operation(summary = "根据账户类型查询账户配置")
 	@PostMapping(value = "/getMessageConfigByAccountType")
 	@SaCheckPermission("message:send-config:query")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "根据账户类型查询账户配置")
 	public Results<?> getMessageConfigByAccountType(@RequestBody MessageSendRelationRequest request) {
 		JSONArray response = messageSendRelationService.getMessageConfigByAccountType(request.getMessageConfigId(),request.getMessageAccountType());
 		return Results.success(response);

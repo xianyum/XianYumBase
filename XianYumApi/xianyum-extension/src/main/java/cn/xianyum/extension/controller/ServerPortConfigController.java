@@ -1,7 +1,9 @@
 package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +22,7 @@ import cn.xianyum.extension.service.ServerPortConfigService;
 @RestController
 @RequestMapping("xym-extension/v1/serverPortConfig")
 @Tag(name = "主机端口维护接口")
+@OperLog(module = "主机端口维护")
 public class ServerPortConfigController{
 
     @Autowired
@@ -34,6 +37,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "分页查询主机端口维护")
     @GetMapping(value = "/getPage")
     @SaCheckPermission("zz:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询主机端口维护")
     public Results<ServerPortConfigResponse> getPage(ServerPortConfigRequest request) {
 		PageResponse<ServerPortConfigResponse> responsePage = serverPortConfigService.getPage(request);
         return Results.page(responsePage);
@@ -48,6 +52,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "根据ID查询主机端口维护")
     @GetMapping("getById/{id}")
     @SaCheckPermission("server-port-config:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询主机端口维护")
     public Results<ServerPortConfigResponse> selectOne(@PathVariable Long id) {
         return Results.success(serverPortConfigService.getById(id));
     }
@@ -61,6 +66,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "主机端口维护保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("server-port-config:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增主机端口维护")
     public Results<?> insert(@RequestBody ServerPortConfigRequest request) {
         return Results.success(this.serverPortConfigService.save(request));
     }
@@ -74,6 +80,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "主机端口维护更新数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("server-port-config:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改主机端口维护")
     public Results<?> update(@RequestBody ServerPortConfigRequest request) {
         return Results.success(this.serverPortConfigService.update(request));
     }
@@ -87,6 +94,7 @@ public class ServerPortConfigController{
 	@Operation(summary = "主机端口维护批量删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("server-port-config:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除主机端口维护")
     public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.serverPortConfigService.deleteById(ids));
     }

@@ -1,5 +1,7 @@
 package cn.xianyum.extension.controller;
 
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.HaoKaLotProductRequest;
 import cn.xianyum.extension.entity.response.HaoKaLotProductResponse;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("xym-extension/v1/haoKaLot")
 @Tag(name = "172号卡系统")
+@OperLog(module = "172号卡系统")
 public class HaoKaLotController {
 
     @Autowired
@@ -26,6 +29,7 @@ public class HaoKaLotController {
 
     @GetMapping("/getPage")
     @Operation(summary = "获取172号卡商品列表")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取172号卡商品列表")
     public Results<HaoKaLotProductResponse> getPage(HaoKaLotProductRequest request){
         PageResponse<HaoKaLotProductResponse> list = haoKaLotService.getPage(request);
         return Results.page(list);

@@ -2,6 +2,8 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.enums.PlatformTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.MenuEntity;
@@ -24,6 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("xym-system/v1/menu")
 @Tag(name = "菜单接口")
+@OperLog(module = "菜单管理")
 public class MenuController {
 
     @Autowired
@@ -34,6 +37,7 @@ public class MenuController {
      */
     @GetMapping("/nav")
     @Operation(summary = "获取导航菜单以及权限")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取导航菜单以及权限")
     public Results<List<MenuResponse>> nav(@RequestParam PlatformTypeEnum platformType) {
         List<MenuResponse> menuResponses = menuService.getUserMenuList(platformType.getCode());
         return Results.success(menuResponses);
@@ -46,6 +50,7 @@ public class MenuController {
     @Operation(summary = "分页查询菜单列表")
     @IgnoreDataScope
     @SaCheckPermission("system:menu:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询菜单列表")
     public Results<List<MenuEntity>> selectMenuList(MenuRequest menuRequest){
         List<MenuEntity> menuResponses = menuService.selectMenuList(menuRequest);
         return Results.success(menuResponses);
@@ -59,6 +64,7 @@ public class MenuController {
     @Operation(summary = "根据菜单编号获取详细信息")
     @IgnoreDataScope
     @SaCheckPermission("system:menu:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据菜单ID获取详细信息")
     public Results<MenuEntity> getInfo(@PathVariable Long menuId) {
         return Results.success(menuService.selectMenuById(menuId));
     }
@@ -70,6 +76,7 @@ public class MenuController {
     @PostMapping(value = "/save")
     @Operation(summary = "保存菜单信息")
     @SaCheckPermission("system:menu:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增菜单")
     public Results<?> save(@RequestBody MenuEntity menuEntity) {
         int count = menuService.save(menuEntity);
         return Results.success(count);
@@ -81,6 +88,7 @@ public class MenuController {
     @PutMapping(value = "/update")
     @Operation(summary = "保存菜单信息")
     @SaCheckPermission("system:menu:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改菜单")
     public Results<?> update(@RequestBody MenuEntity menuEntity) {
         int count = menuService.update(menuEntity);
         return Results.success(count);
@@ -93,6 +101,7 @@ public class MenuController {
     @DeleteMapping("/{menuId}")
     @Operation(summary = "删除菜单")
     @SaCheckPermission("system:menu:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除菜单")
     public Results<?> remove(@PathVariable("menuId") Long menuId) {
         return Results.success(menuService.deleteMenuById(menuId));
     }
@@ -121,6 +130,7 @@ public class MenuController {
      */
     @PostMapping(value = "/click")
     @Operation(summary = "前端菜单埋点上报")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "前端菜单埋点上报")
     public Results<?> reportMenuClick(@RequestBody MenuEntity menuRequest) {
        menuService.reportMenuClick(menuRequest);
         return Results.success();
@@ -131,6 +141,7 @@ public class MenuController {
      */
     @GetMapping(value = "/rank")
     @Operation(summary = "获取菜单点击排名（前N名）")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取菜单点击排名")
     public Results<List<MenuResponse>> getMenuClickRank() {
         return Results.success(menuService.getMenuClickRank());
     }

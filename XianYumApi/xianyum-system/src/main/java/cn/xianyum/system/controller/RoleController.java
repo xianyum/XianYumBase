@@ -2,7 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-system/v1/role")
 @Tag(name = "角色管理接口")
+@OperLog(module = "角色管理")
 public class RoleController{
 
     @Autowired
@@ -37,6 +40,7 @@ public class RoleController{
     @GetMapping(value = "/getPage")
     @IgnoreDataScope
     @SaCheckPermission("system:role:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询角色管理")
     public Results<RoleResponse> getPage(RoleRequest request) {
 		PageResponse<RoleResponse> responsePage = roleService.getPage(request);
         return Results.page(responsePage);
@@ -44,6 +48,7 @@ public class RoleController{
 
     @Operation(summary = "查询角色数据")
     @GetMapping(value = "/getList")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询角色列表")
     public Results<List<RoleResponse>> getList(RoleRequest request) {
         List<RoleResponse> responsePage = roleService.getList(request);
         return Results.success(responsePage);
@@ -59,6 +64,7 @@ public class RoleController{
     @GetMapping("getById/{id}")
     @IgnoreDataScope
     @SaCheckPermission("system:role:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询角色")
     public Results<RoleResponse> selectOne(@PathVariable Long id) {
         return Results.success(roleService.getById(id));
     }
@@ -72,6 +78,7 @@ public class RoleController{
 	@Operation(summary = "角色管理保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("system:role:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增角色")
     public Results<?> insert(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.save(request));
     }
@@ -85,6 +92,7 @@ public class RoleController{
 	@Operation(summary = "角色管理更新数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("system:role:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改角色")
     public Results<?> update(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.update(request));
     }
@@ -92,6 +100,7 @@ public class RoleController{
     @Operation(summary = "更新角色状态")
     @PutMapping(value = "/changeStatus")
     @SaCheckPermission("system:role:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "更新角色状态")
     public Results<?> changeStatus(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.changeStatus(request));
     }
@@ -100,6 +109,7 @@ public class RoleController{
     @Operation(summary = "更新角色权限范围")
     @PutMapping(value = "/changeDataScope")
     @SaCheckPermission("system:role:authorize")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "更新角色权限范围")
     public Results<?> changeDataScope(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.changeDataScope(request));
     }
@@ -107,6 +117,7 @@ public class RoleController{
     @Operation(summary = "菜单授权")
     @PutMapping(value = "/authorizationMenu")
     @SaCheckPermission("system:role:authorize")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "菜单授权")
     public Results<?> authorizationMenu(@RequestBody RoleRequest request) {
         return Results.success(this.roleService.authorizationMenu(request));
     }
@@ -120,6 +131,7 @@ public class RoleController{
 	@Operation(summary = "角色管理批量删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("system:role:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除角色")
     public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.roleService.deleteById(ids));
     }

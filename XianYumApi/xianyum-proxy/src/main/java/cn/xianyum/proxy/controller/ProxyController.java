@@ -3,8 +3,10 @@ package cn.xianyum.proxy.controller;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.proxy.entity.request.ProxyRequest;
@@ -31,6 +33,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "xym-proxy/v1/proxy")
 @Slf4j
+@OperLog(module = "客户端管理")
 public class ProxyController {
 
 	@Autowired
@@ -50,6 +53,7 @@ public class ProxyController {
 	@GetMapping(value = "/getPage")
     @IgnoreDataScope
     @SaCheckPermission("xianyu:proxy:page")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询客户端")
 	public Results<ProxyResponse> getPage(ProxyRequest request) {
 		PageResponse<ProxyResponse> response = proxyService.getPage(request);
         return Results.page(response);
@@ -63,6 +67,7 @@ public class ProxyController {
     @GetMapping(value = "/getById/{id}")
     @IgnoreDataScope
     @SaCheckPermission("xianyu:proxy:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询客户端")
     public Results<ProxyResponse> getById(@PathVariable String id) {
         ProxyResponse response = proxyService.getById(id);
         return Results.success(response);
@@ -75,6 +80,7 @@ public class ProxyController {
     @Operation(summary = "客户端管理保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("xianyu:proxy:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增客户端")
     public Results<?> save(@RequestBody ProxyRequest request) {
 		Integer count = proxyService.save(request);
 		if(count>0){
@@ -90,6 +96,7 @@ public class ProxyController {
     @Operation(summary = "客户端管理修改数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("xianyu:proxy:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改客户端")
     public Results<?> update(@RequestBody ProxyRequest request) {
 		Integer count = proxyService.update(request);
 		if(count>0){
@@ -105,6 +112,7 @@ public class ProxyController {
     @Operation(summary = "客户端管理删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("xianyu:proxy:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除客户端")
     public Results<?> delete(@RequestBody String[] ids) {
 		proxyService.deleteById(ids);
 	    return Results.success();
@@ -116,6 +124,7 @@ public class ProxyController {
      */
     @Operation(summary = "获取客户端所有数据")
     @GetMapping(value = "/getList")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取全部客户端列表")
     public Results<List<ProxyResponse>> getList() {
         List<ProxyResponse> response = proxyService.getList();
         return Results.success(response);
@@ -129,6 +138,7 @@ public class ProxyController {
     @Operation(summary = "刷入系统")
     @PutMapping(value = "/flushProxy")
     @SaCheckPermission("xianyu:proxy:flush")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "刷入客户端数据到系统")
     public Results<?> flushProxy() {
         proxyService.flushProxy();
         return Results.success();
@@ -143,6 +153,7 @@ public class ProxyController {
     @GetMapping(value = "/sendEmail/{id}")
     @IgnoreDataScope
     @SaCheckPermission("xianyu:proxy:send-email")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "发送客户端配置邮件")
     public Results<String> sendEmail(@PathVariable String id) {
         String result = proxyService.sendEmail(id);
         return Results.success(result);
@@ -155,6 +166,7 @@ public class ProxyController {
      */
     @Operation(summary = "获取在线online数量")
     @GetMapping(value = "/getOnlineProxyCount")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取在线客户端数量")
     public Results<?> getOnlineProxyCount() {
         return Results.success(proxyService.getOnlineProxyCount());
     }
@@ -167,6 +179,7 @@ public class ProxyController {
     @Operation(summary = "获取可绑定的用户列表")
     @GetMapping(value = "/getProxyBindUser")
     @SaCheckPermission("xianyu:proxy:save")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取可绑定的用户列表")
     public Results<List<LoginUser>> getProxyBindUser(@RequestParam(required = false) String id) {
         return Results.success(proxyService.getProxyBindUser(id));
     }
@@ -178,6 +191,7 @@ public class ProxyController {
      */
     @Operation(summary = "获取当前用户绑定的客户端配置")
     @GetMapping(value = "/getCurrentProxy")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取当前用户绑定的客户端配置")
     public Results<ProxyResponse> getCurrentProxy() {
         return Results.success(proxyService.getCurrentProxy());
     }
@@ -190,6 +204,7 @@ public class ProxyController {
     @Operation(summary = "生成客户端配置信息")
     @PostMapping(value = "/downloadConfig")
     @SaCheckPermission("xianyu:proxy:download")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "生成客户端配置文件")
     public void downloadConfig(@RequestParam String id, HttpServletResponse response) {
         PrintWriter writer = null;
         try {
@@ -211,6 +226,7 @@ public class ProxyController {
     @Operation(summary = "重启java应用刷入写入量和读取量")
     @GetMapping(value = "/flushWriteAndReadBytes")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "刷新写入和读取流量")
     public Results<String> flushWriteAndReadBytes() throws Exception {
         Map<String, String> jobMapParams = new HashMap<>(2);
         jobMapParams.put("resetZeroFlag","Y");

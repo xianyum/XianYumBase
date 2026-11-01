@@ -1,6 +1,8 @@
 package cn.xianyum.message.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.FnOsPushMessageRequest;
 import cn.xianyum.message.entity.request.GrafanaAlertWebhookRequest;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "xym-message/v1/message")
 @Slf4j
+@OperLog(module = "消息发送")
 public class MessageController {
 
     @Autowired
@@ -31,6 +34,7 @@ public class MessageController {
     @PostMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "发送简单消息")
     public Results<?> sendSimpleMessageByPost(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
@@ -39,6 +43,7 @@ public class MessageController {
     @PostMapping("/sendStandardMessage")
     @Operation(summary = "发送标准消息")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "发送标准消息")
     public Results<?> sendStandardMessage(@RequestBody @Valid MessageSenderRequest messageSenderRequest){
         messageService.sendStandardMessage(messageSenderRequest);
         return Results.success();
@@ -47,6 +52,7 @@ public class MessageController {
     @GetMapping("/sendSimpleMessage")
     @Operation(summary = "发送简单消息")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "发送简单消息")
     public Results<?> sendSimpleMessageByGet(@RequestParam() String messageCode, @RequestParam() String title, @RequestParam() String content){
         messageService.sendSimpleMessage(messageCode,title,content);
         return Results.success();
@@ -60,6 +66,7 @@ public class MessageController {
     @Operation(summary = "接收飞牛os消息推送")
     @SaIgnore
     @PostMapping("/receiveFnOsPushMessage")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "接收飞牛OS消息推送")
     public Results<?> receiveFnOsPushMessage(@RequestBody FnOsPushMessageRequest request){
         messageService.receiveFnOsPushMessage(request);
         return Results.success();

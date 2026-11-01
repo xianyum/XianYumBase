@@ -1,7 +1,9 @@
 package cn.xianyum.message.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.entity.request.MessageConfigEmailRequest;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "xym-message/v1/messageConfigEmail")
 @Slf4j
+@OperLog(module = "邮箱配置")
 public class MessageConfigEmailController {
 
 	@Autowired
@@ -34,6 +37,7 @@ public class MessageConfigEmailController {
      * 账户配置email分页查询数据
      *
      */
+
 
 	@GetMapping(value = "/getPage")
     @SaCheckPermission("message:email:page")
@@ -49,6 +53,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @SaCheckPermission("message:email:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询邮箱配置")
     public Results<MessageConfigEmailResponse> getById(@PathVariable String id) {
         MessageConfigEmailResponse response = messageConfigEmailService.getById(id);
         return Results.success(response);
@@ -61,6 +66,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("message:email:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增邮箱配置")
     public Results<?> save(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.save(request);
@@ -77,6 +83,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email修改数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("message:email:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改邮箱配置")
     public Results<?> update(@RequestBody MessageConfigEmailRequest request) {
 
 		Integer count = messageConfigEmailService.update(request);
@@ -93,6 +100,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "账户配置email删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("message:email:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除邮箱配置")
     public Results<?> delete(@RequestBody String[] ids) {
 
 		messageConfigEmailService.deleteById(ids);
@@ -106,6 +114,7 @@ public class MessageConfigEmailController {
     @Operation(summary = "邮箱账户测试发送")
     @PutMapping(value = "/sendEmail")
     @SaCheckPermission("message:email:test-send")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "邮箱测试发送")
     public Results<?> sendEmail(@RequestBody MessageSenderEntity request) {
         try {
             emailSender.sendEmail(request);

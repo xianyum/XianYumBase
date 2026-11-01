@@ -2,8 +2,10 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
 
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.DictTypeEntity;
 import cn.xianyum.system.entity.request.DictTypeRequest;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-system/v1/dict/type")
 @Tag(name = "字典类型接口")
+@OperLog(module = "字典管理")
 public class DictTypeController {
 
     @Autowired
@@ -34,6 +37,7 @@ public class DictTypeController {
     @Operation(summary = "获取字典类型列表")
     @IgnoreDataScope
     @SaCheckPermission("system:dict:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询字典类型")
     public Results<DictTypeResponse> list(DictTypeRequest request){
         PageResponse<DictTypeResponse> list = dictTypeService.selectDictTypeList(request);
         return Results.page(list);
@@ -47,6 +51,7 @@ public class DictTypeController {
     @Operation(summary = "查询字典类型详细")
     @IgnoreDataScope
     @SaCheckPermission("system:dict:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询字典类型")
     public Results<DictTypeResponse> getInfo(@PathVariable Long id) {
         return Results.success(dictTypeService.selectDictTypeById(id));
     }
@@ -57,6 +62,7 @@ public class DictTypeController {
     @PostMapping(value = "/save")
     @Operation(summary = "新增字典类型")
     @SaCheckPermission("system:dict:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增字典类型")
     public Results<?> save(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.save(dictTypeEntity));
     }
@@ -68,12 +74,14 @@ public class DictTypeController {
     @PutMapping(value = "/update")
     @Operation(summary = "更新字典类型详细")
     @SaCheckPermission("system:dict:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改字典类型")
     public Results<?> update(@RequestBody DictTypeEntity dictTypeEntity) {
         return Results.success(dictTypeService.update(dictTypeEntity));
     }
 
     @Operation(summary = "刷新字典缓存")
     @DeleteMapping("/refreshCache")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "刷新字典缓存")
     public Results<?> refreshCache() {
         dictTypeService.resetDictCache();
         return Results.success();
@@ -82,6 +90,7 @@ public class DictTypeController {
     @DeleteMapping("/{ids}")
     @Operation(summary = "批量删除字典类型")
     @SaCheckPermission("system:dict:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除字典类型")
     public Results<?> remove(@PathVariable Long[] ids) {
         dictTypeService.deleteDictTypeByIds(ids);
         return Results.success();
@@ -90,6 +99,7 @@ public class DictTypeController {
 
     @GetMapping("/optionSelect")
     @Operation(summary = "获取字典选择框列表")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取字典选择框列表")
     public Results<List<DictTypeEntity>> optionSelect() {
         List<DictTypeEntity> resultList = dictTypeService.optionSelect();
         return Results.success(resultList);

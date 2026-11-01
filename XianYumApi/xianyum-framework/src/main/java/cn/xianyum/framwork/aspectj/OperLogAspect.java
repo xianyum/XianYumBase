@@ -148,6 +148,11 @@ public class OperLogAspect {
         entity.setOperType(resolveOperType(methodOperLog, classOperLog).getCode());
         entity.setOperDesc(resolveDesc(methodOperLog, classOperLog));
 
+        // 如果没有接口描述，那就不保存
+        if(StrUtil.isBlank(entity.getOperDesc())){
+            return;
+        }
+
         if (request != null) {
             entity.setRequestUrl(request.getRequestURI());
             entity.setRequestMethod(request.getMethod());

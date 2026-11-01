@@ -1,7 +1,9 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.file.FileDetailResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/xym-system/v1/file")
 @Tag(name = "通用文件上传接口")
+@OperLog(module = "文件管理")
 public class FileController {
 
     @Autowired
@@ -26,6 +29,7 @@ public class FileController {
     @Operation(summary = "上传文件")
     @PostMapping(value = "/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @SaCheckPermission("system:file:upload")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "上传文件")
     public Results<FileDetailResponse> uploadSingleFile(@RequestParam("file") MultipartFile file) {
         FileDetailResponse fileDetailResponse = this.fileService.uploadFile(file);
         return Results.success(fileDetailResponse);
@@ -33,6 +37,7 @@ public class FileController {
 
     @Operation(summary = "获取文件访问url")
     @GetMapping(value = "/presignedUrl")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取文件访问URL")
     public Results<FileDetailResponse> presignedUrl(@RequestParam String fileId) {
         return Results.success(this.fileService.selectFileById(fileId,true));
     }

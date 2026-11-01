@@ -1,16 +1,40 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="账号" prop="username">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="85px">
+      <el-form-item label="账号" prop="userName">
         <el-input
-          v-model="queryParams.username"
+          v-model="queryParams.userName"
           placeholder="请输入账号"
           clearable
-          style="width: 240px;"
+          style="width: 200px;"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="操作时间" clearable>
+      <el-form-item label="模块名" prop="module">
+        <el-input
+          v-model="queryParams.module"
+          placeholder="请输入模块名"
+          clearable
+          style="width: 200px;"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="操作类型" prop="operType">
+        <el-select
+          v-model="queryParams.operType"
+          placeholder="请选择操作类型"
+          clearable
+          style="width: 200px"
+        >
+          <el-option
+            v-for="dict in dict.type.user_oper_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="操作时间" prop="dateRange">
         <el-date-picker
           v-model="dateRange"
           style="width: 240px"
@@ -55,32 +79,43 @@
 
     <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="日志编号" align="center" prop="id" width="100"/>
-      <el-table-column label="账号" align="center" prop="username" width="120"/>
-      <el-table-column label="用户操作" align="center" prop="operation" width="180"/>
-      <el-table-column label="请求方法" align="center" prop="method" width="150" :show-overflow-tooltip="true"/>
-      <el-table-column label="请求参数" align="center" prop="params" width="250" :show-overflow-tooltip="true"/>
-      <el-table-column label="执行时长" align="center" prop="time">
+      <el-table-column label="日志编号" align="center" prop="id" width="80"/>
+      <el-table-column label="账号" align="center" prop="userName" width="100"/>
+      <el-table-column label="模块" align="center" prop="module" width="120" :show-overflow-tooltip="true"/>
+      <el-table-column label="操作类型" align="center" prop="operType" width="100">
         <template v-slot="scope">
-          <span>{{ scope.row.time }}ms</span>
+          <dict-tag :options="dict.type.user_oper_type" :value="scope.row.operType"/>
         </template>
       </el-table-column>
-      <el-table-column label="IP地址" align="center" prop="ip" width="150"/>
-      <el-table-column label="IP地点" align="center" prop="ipInfo" width="180"/>
-      <el-table-column label="创建日期" align="center" prop="createTime" width="180">
+      <el-table-column label="操作描述" align="center" prop="operDesc" :show-overflow-tooltip="true"/>
+      <el-table-column label="请求方式" align="center" prop="requestMethod" width="90"/>
+      <el-table-column label="请求URL" align="center" prop="requestUrl" :show-overflow-tooltip="true"/>
+      <el-table-column label="IP地址" align="center" prop="ipAddress" width="130"/>
+      <el-table-column label="IP归属地" align="center" prop="location" width="160" :show-overflow-tooltip="true"/>
+      <el-table-column label="操作状态" align="center" prop="status" width="90">
+        <template v-slot="scope">
+          <el-tag v-if="scope.row.status === 1" size="small" type="success">成功</el-tag>
+          <el-tag v-else size="small" type="danger">失败</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="耗时" align="center" prop="costTime" width="90">
+        <template v-slot="scope">
+          <span>{{ scope.row.costTime }}ms</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作时间" align="center" prop="createTime" width="170">
         <template v-slot="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="150" fixed="right">
         <template v-slot="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-view"
             @click="handleView(scope.row)"
-          >查看请求参数</el-button>
+          >详细</el-button>
           <el-button
             size="mini"
             type="text"
@@ -100,13 +135,83 @@
       @pagination="getList"
     />
 
-    <!-- 操作日志详细 -->
-    <el-dialog title="请求参数详细" :visible.sync="open" width="700px" append-to-body>
-      <json-viewer
-        :value="requestParam" :expand-depth=6
-        copyable
-        boxed
-        sort></json-viewer>
+    <el-dialog title="操作日志详细" :visible.sync="open" width="760px" append-to-body>
+      <el-form :model="form" label-width="100px" size="mini">
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="日志编号">{{ form.id }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="账号">{{ form.userName }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="模块">{{ form.module }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="操作类型">
+              <dict-tag :options="dict.type.user_oper_type" :value="form.operType"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="操作状态">
+              <el-tag v-if="form.status === 1" size="small" type="success">成功</el-tag>
+              <el-tag v-else size="small" type="danger">失败</el-tag>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="执行耗时">{{ form.costTime }}ms</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="IP地址">{{ form.ipAddress }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="IP归属地" :show-overflow-tooltip="true">{{ form.location }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="请求方式">{{ form.requestMethod }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="操作时间">{{ parseTime(form.createTime) }}</el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="请求URL" :show-overflow-tooltip="true">{{ form.requestUrl }}</el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="操作描述" :show-overflow-tooltip="true">{{ form.operDesc }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="类名" :show-overflow-tooltip="true">{{ form.className }}</el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="方法名" :show-overflow-tooltip="true">{{ form.methodName }}</el-form-item>
+          </el-col>
+          <el-col :span="24" v-if="form.errorMsg">
+            <el-form-item label="错误信息">
+              <span style="color: #F56C6C;">{{ form.errorMsg }}</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" v-if="form.requestParams">
+            <el-form-item label="请求参数" label-position="top" class="json-form-item">
+              <json-viewer
+                :value="parseJson(form.requestParams)"
+                :expand-depth=3
+                copyable
+                boxed
+                sort></json-viewer>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" v-if="form.responseResult">
+            <el-form-item label="响应结果" label-position="top" class="json-form-item">
+              <json-viewer
+                :value="parseJson(form.responseResult)"
+                :expand-depth=3
+                copyable
+                boxed
+                sort></json-viewer>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="open = false">关 闭</el-button>
       </div>
@@ -120,71 +225,68 @@ import JsonViewer from 'vue-json-viewer';
 
 export default {
   name: "Operlog",
+  dicts: ['user_oper_type'],
+  components: { JsonViewer },
   data() {
     return {
-      // 遮罩层
       loading: true,
-      // 选中数组
       ids: [],
-      // 非多个禁用
       multiple: true,
-      // 显示搜索条件
       showSearch: true,
-      // 总条数
       total: 0,
-      // 表格数据
       list: [],
-      // 是否显示弹出层
       open: false,
-      // 日期范围
-      dateRange: [this.parseTime(new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0)),this.parseTime(new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59))],
-      // 查询参数
+      form: {},
+      dateRange: [],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        username: undefined
-      },
-      requestParam: {}
+        userName: undefined,
+        module: undefined,
+        operType: undefined
+      }
     };
   },
-  components: { JsonViewer },
   created() {
     this.getList();
   },
   methods: {
-    /** 查询登录日志 */
     getList() {
       this.loading = true;
-      list(this.addDateRange(this.queryParams, this.dateRange)).then( response => {
-          this.list = response.data;
-          this.total = response.total;
-          this.loading = false;
-        }
-      );
+      const params = this.addDateRange(this.queryParams, this.dateRange);
+      list(params).then(response => {
+        this.list = response.data;
+        this.total = response.total;
+        this.loading = false;
+      });
     },
-    /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
     },
-    /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = [this.parseTime(new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),0,0,0))
-        ,this.parseTime(new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),23,59,59))];
+      this.dateRange = [];
       this.resetForm("queryForm");
       this.queryParams.pageNum = 1;
+      this.handleQuery();
     },
-    /** 多选框选中数据 */
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.id);
+      this.multiple = !selection.length;
     },
-    /** 详细按钮操作 */
     handleView(row) {
       this.open = true;
-      this.requestParam = JSON.parse(row.params)
+      this.form = row;
     },
-    /** 删除按钮操作 */
+    parseJson(str) {
+      if (!str) return {};
+      if (typeof str === 'object') return str;
+      try {
+        return JSON.parse(str);
+      } catch (e) {
+        return str;
+      }
+    },
     handleDelete(row) {
       const operIds = row.id ? [row.id] : this.ids;
       this.$modal.confirm('是否确认删除日志编号为"' + operIds + '"的数据项？').then(function() {
@@ -194,7 +296,6 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 清空按钮操作 */
     handleClean() {
       this.$modal.confirm('是否确认清空所有操作日志数据项？').then(function() {
         return cleanOperLog();
@@ -207,3 +308,12 @@ export default {
 };
 </script>
 
+<style scoped>
+.json-form-item >>> .el-form-item__content {
+  max-height: 280px;
+  overflow: auto;
+  padding: 8px 10px;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+}
+</style>

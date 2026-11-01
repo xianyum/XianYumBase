@@ -1,5 +1,7 @@
 package cn.xianyum.extension.controller;
 
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.XiaoDaoRequest;
 import cn.xianyum.extension.entity.response.XiaoDaoResponse;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("xym-extension/v1/xiaodao")
 @Tag(name = "小刀爬取数据接口")
+@OperLog(module = "小刀爬取数据")
 public class XiaoDaoController {
 
     @Autowired
@@ -24,6 +27,7 @@ public class XiaoDaoController {
 
     @GetMapping("/getPage")
     @Operation(summary = "获取小刀数据列表")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取小刀数据列表")
     public Results<XiaoDaoResponse> getPage(XiaoDaoRequest request){
         PageResponse<XiaoDaoResponse> list = xiaoDaoService.getPage(request);
         return Results.page(list);

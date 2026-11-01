@@ -1,5 +1,7 @@
 package cn.xianyum.system.controller;
 
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.response.UserThirdRelationResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-system/v1/userThirdRelation")
 @Tag(name = "三方平台账号接口")
+@OperLog(module = "三方账号")
 public class UserThirdRelationController{
 
     @Autowired
@@ -26,6 +29,7 @@ public class UserThirdRelationController{
 
     @GetMapping("/getCurrentUserThirdRelation")
     @Operation(summary = "获取当前用户绑定三方账号列表")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取当前用户绑定三方账号列表")
     public Results<List<UserThirdRelationResponse>> getCurrentUserThirdRelation() {
         List<UserThirdRelationResponse> responseList = userThirdRelationService.getCurrentUserThirdRelation();
         return Results.success(responseList);
@@ -39,6 +43,7 @@ public class UserThirdRelationController{
      */
 	@Operation(summary = "解除绑定三方账号")
     @DeleteMapping(value = "/unbind")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "解除绑定三方账号")
     public Results<Integer> unbind(@RequestBody String id) {
         return Results.success(this.userThirdRelationService.unbind(id));
     }

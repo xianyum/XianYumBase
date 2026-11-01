@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.system.dao.OperLogMapper">
+
+
+    <select id="getCount" parameterType="cn.xianyum.system.entity.request.OperLogRequest" resultType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            sys_oper_log
+        WHERE
+            create_time &lt;= CONCAT(#{queryTime},' 23:59:59')
+          and create_time >= CONCAT(#{queryTime},' 00:00:00')
+    </select>
+
+
+    <select id="getVisitCountCharts" parameterType="cn.xianyum.system.entity.request.OperLogRequest" resultType="cn.xianyum.system.entity.response.OperLogResponse">
+
+        SELECT
+        count(*) as visitCount,
+        DATE_FORMAT( ul.create_time, '%Y-%m-%d' ) AS time
+        FROM
+        sys_oper_log ul
+        <where>
+            <if test="queryTime != null and queryTime != ''">
+                AND ul.create_time &gt;= #{queryTime}
+            </if>
+            <if test="userName != null and userName != ''">
+                AND ul.username = #{username}
+            </if>
+        </where>
+        GROUP BY DATE_FORMAT(ul.create_time,'%Y-%m-%d')
+        ORDER BY ul.create_time DESC
+        LIMIT 15
+    </select>
+
+    <update id="truncateLog">
+        truncate table sys_oper_log
+    </update>
+</mapper>

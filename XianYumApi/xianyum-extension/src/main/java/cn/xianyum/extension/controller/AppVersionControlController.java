@@ -1,7 +1,9 @@
 package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +22,7 @@ import cn.xianyum.extension.service.AppVersionControlService;
 @RestController
 @RequestMapping("/xym-extension/v1/appVersionControl")
 @Tag(name = "APP版本管理接口")
+@OperLog(module = "APP版本管理")
 public class AppVersionControlController {
 
     @Autowired
@@ -33,6 +36,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "分页查询APP版本管理")
     @GetMapping(value = "/getPage")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询APP版本管理")
     public Results<AppVersionControlResponse> getPage(AppVersionControlRequest request) {
         PageResponse<AppVersionControlResponse> responsePage = appVersionControlService.getPage(request);
         return Results.page(responsePage);
@@ -46,6 +50,7 @@ public class AppVersionControlController {
      */
     @Operation(summary = "根据ID查询APP版本管理")
     @GetMapping("getById/{id}")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询APP版本管理")
     public Results<AppVersionControlResponse> selectOne(@PathVariable Long id) {
         return Results.success(appVersionControlService.getById(id));
     }
@@ -59,6 +64,7 @@ public class AppVersionControlController {
     @Operation(summary = "APP版本管理保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("app:version_control:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增APP版本管理")
     public Results<?> insert(@RequestBody AppVersionControlRequest request) {
         return Results.success(this.appVersionControlService.save(request));
     }
@@ -72,6 +78,7 @@ public class AppVersionControlController {
     @Operation(summary = "APP版本管理更新数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("app:version_control:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改APP版本管理")
     public Results<Integer> update(@RequestBody AppVersionControlRequest request) {
         return Results.success(this.appVersionControlService.update(request));
     }
@@ -85,18 +92,21 @@ public class AppVersionControlController {
     @Operation(summary = "APP版本管理批量删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("app:version_control:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除APP版本管理")
     public Results<Integer> delete(@RequestBody Long[] ids) {
         return Results.success(this.appVersionControlService.deleteById(ids));
     }
 
     @Operation(summary = "查询最新APP版本管理")
     @PostMapping("/getLastAppVersion")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询最新APP版本")
     public Results<AppVersionControlResponse> getLastAppVersion(@RequestBody AppVersionControlRequest request) {
         return Results.success(appVersionControlService.getLastAppVersion(request));
     }
 
     @Operation(summary = "查询最新Apk安装包")
     @GetMapping("/getLastApkApp")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询最新Apk安装包")
     public Results<AppVersionControlResponse> getLastApkApp() {
         return Results.success(appVersionControlService.getLastApkApp());
     }

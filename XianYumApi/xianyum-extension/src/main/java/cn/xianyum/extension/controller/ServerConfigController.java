@@ -1,7 +1,9 @@
 package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.po.server.Server;
 import cn.xianyum.extension.service.ServerConfigService;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-extension/v1/serverConfig")
 @Tag(name = "主机维护接口")
+@OperLog(module = "主机维护")
 public class ServerConfigController{
 
     @Autowired
@@ -37,6 +40,7 @@ public class ServerConfigController{
 	@Operation(summary = "分页查询主机维护")
     @GetMapping(value = "/getPage")
     @SaCheckPermission("server-config:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询主机维护")
     public Results<ServerConfigResponse> getPage(ServerConfigRequest request) {
 		PageResponse<ServerConfigResponse> responsePage = serverConfigService.getPage(request);
         return Results.page(responsePage);
@@ -51,6 +55,7 @@ public class ServerConfigController{
     @Operation(summary = "查询主机维护list")
     @GetMapping(value = "/getList")
     @SaCheckPermission("server-config:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询主机维护列表")
     public Results<List<ServerConfigResponse>> getList(ServerConfigRequest request) {
         List<ServerConfigResponse> serverConfigResponseList = serverConfigService.getList(request);
         return Results.success(serverConfigResponseList);
@@ -65,6 +70,7 @@ public class ServerConfigController{
 	@Operation(summary = "根据ID查询主机维护")
     @GetMapping("getById/{id}")
     @SaCheckPermission("server-config:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询主机维护")
     public Results<ServerConfigResponse> selectOne(@PathVariable Long id) {
         return Results.success(serverConfigService.getById(id));
     }
@@ -78,6 +84,7 @@ public class ServerConfigController{
 	@Operation(summary = "主机维护保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("server-config:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增主机维护")
     public Results<?> insert(@RequestBody ServerConfigRequest request) {
         return Results.success(this.serverConfigService.save(request));
     }
@@ -91,6 +98,7 @@ public class ServerConfigController{
 	@Operation(summary = "主机维护更新数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("server-config:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改主机维护")
     public Results<?> update(@RequestBody ServerConfigRequest request) {
         return Results.success(this.serverConfigService.update(request));
     }
@@ -104,6 +112,7 @@ public class ServerConfigController{
 	@Operation(summary = "主机维护批量删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("server-config:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除主机维护")
     public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.serverConfigService.deleteById(ids));
     }
@@ -113,6 +122,7 @@ public class ServerConfigController{
     @Operation(summary = "获取当前jar启动服务器相关信息")
     @SaCheckPermission("monitor:server:list")
     @SneakyThrows
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取当前服务器信息")
     public Results<Server> getServerInfo(){
         Server server = new Server();
         server.copyTo();

@@ -1,7 +1,9 @@
 package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-extension/v1/goldPrice")
 @Tag(name = "每日黄金金价接口")
+@OperLog(module = "黄金金价")
 public class GoldPriceController{
 
     @Autowired
@@ -34,6 +37,7 @@ public class GoldPriceController{
      */
 	@Operation(summary = "分页查询每日黄金金价")
     @GetMapping(value = "/getPage")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询每日黄金金价")
     public Results<GoldPriceResponse> getPage(GoldPriceRequest request) {
 		PageResponse<GoldPriceResponse> responsePage = goldPriceService.getPage(request);
         return Results.page(responsePage);
@@ -47,6 +51,7 @@ public class GoldPriceController{
     @Operation(summary = "获取最新金价")
     @GetMapping(value = "/getLatestPrice")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取最新金价")
     public Results<GoldPriceResponse> getLatestPrice() {
         GoldPriceResponse response = goldPriceService.getLatestPrice();
         return Results.success(response);
@@ -61,6 +66,7 @@ public class GoldPriceController{
     @Operation(summary = "获取金价趋势图")
     @GetMapping(value = "/getTrend")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取金价趋势图")
     public Results<List<GoldPriceResponse>> getTrend() {
         List<GoldPriceResponse> responseList = goldPriceService.getTrend();
         return Results.success(responseList);
@@ -74,6 +80,7 @@ public class GoldPriceController{
     @Operation(summary = "获取K线图")
     @GetMapping(value = "/getKLine")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取黄金K线图")
     public Results<?> getKLine() {
         List<List<Object>> responseList = goldPriceService.getKLine();
         return Results.success(responseList);

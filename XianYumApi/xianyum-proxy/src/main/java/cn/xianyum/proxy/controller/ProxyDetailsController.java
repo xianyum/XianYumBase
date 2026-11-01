@@ -2,7 +2,9 @@ package cn.xianyum.proxy.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.common.utils.validator.ValidatorUtils;
 import cn.xianyum.proxy.entity.request.ProxyDetailsRequest;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "xym-proxy/v1/proxyDetails")
 @Slf4j
+@OperLog(module = "客户端配置详情")
 public class ProxyDetailsController {
 
 	@Autowired
@@ -36,6 +39,7 @@ public class ProxyDetailsController {
 	@GetMapping(value = "/getPage")
     @IgnoreDataScope
     @SaCheckPermission("xianyu:proxy-details:page")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询客户端配置详情")
 	public Results<ProxyDetailsResponse> getPage(ProxyDetailsRequest request) {
 		PageResponse<ProxyDetailsResponse> response = proxyDetailsService.getPage(request);
         return Results.page(response);
@@ -44,6 +48,7 @@ public class ProxyDetailsController {
 
     @Operation(summary = "获取当前用户客户端配置详情")
     @GetMapping(value = "/getCurrentProxyDetails")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取当前用户客户端配置详情")
     public Results<List<ProxyDetailsResponse>> getCurrentProxyDetails() {
         List<ProxyDetailsResponse> response = proxyDetailsService.getCurrentProxyDetails();
         return Results.success(response);
@@ -57,6 +62,7 @@ public class ProxyDetailsController {
     @GetMapping(value = "/getById/{id}")
     @IgnoreDataScope
     @SaCheckPermission("xianyu:proxy-details:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询客户端配置详情")
     public Results<ProxyDetailsResponse> getById(@PathVariable String id) {
         ProxyDetailsResponse response = proxyDetailsService.getById(id);
         return Results.success(response);
@@ -69,6 +75,7 @@ public class ProxyDetailsController {
     @Operation(summary = "客户端配置详细保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("xianyu:proxy-details:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增客户端配置详情")
     public Results<?> save(@RequestBody ProxyDetailsRequest request) {
         ValidatorUtils.validateEntity(request);
 		Integer count = proxyDetailsService.save(request);
@@ -85,6 +92,7 @@ public class ProxyDetailsController {
     @Operation(summary = "客户端配置详细修改数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("xianyu:proxy-details:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改客户端配置详情")
     public Results<?> update(@RequestBody ProxyDetailsRequest request) {
         ValidatorUtils.validateEntity(request);
 		Integer count = proxyDetailsService.update(request);
@@ -101,6 +109,7 @@ public class ProxyDetailsController {
     @Operation(summary = "客户端配置详细删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("xianyu:proxy-details:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除客户端配置详情")
     public Results<?> delete(@RequestBody String[] ids) {
 		proxyDetailsService.deleteById(ids);
 	    return Results.success();

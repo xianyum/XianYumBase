@@ -3,7 +3,9 @@ package cn.xianyum.extension.controller;
 import cn.hutool.core.text.StrPool;
 import cn.hutool.core.util.StrUtil;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.constant.Constants;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.common.utils.Results;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +23,7 @@ import java.util.*;
 @RestController
 @RequestMapping("xym-extension/v1/cache")
 @Tag(name = "缓存接口")
+@OperLog(module = "缓存管理")
 public class CacheController {
 
     @Resource
@@ -29,6 +32,7 @@ public class CacheController {
     @GetMapping("/getInfo")
     @Operation(summary = "查询Redis缓存基本信息")
     @SaCheckPermission("monitor:cache:list")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询Redis缓存基本信息")
     public Results<Map<String, Object>> getInfo() {
         Properties info = (Properties) redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisUtils.getRedisTemplate().execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
@@ -53,6 +57,7 @@ public class CacheController {
     @DeleteMapping("/deleteByKey")
     @Operation(summary = "根据Redis Key删除缓存")
     @SaCheckPermission("monitor:cache:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "根据Redis Key删除缓存")
     public Results<Void> deleteByKey(@RequestParam String redisKey) {
         Set<String> keys = new HashSet<>();
         String[] keyArray = StrUtil.splitToArray(redisKey, StrPool.COMMA);

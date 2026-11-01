@@ -2,15 +2,17 @@ package cn.xianyum.mqtt.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.mqtt.entity.request.MqttFishRequest;
 import cn.xianyum.mqtt.entity.response.MqttFishReportResponse;
 import cn.xianyum.mqtt.entity.response.MqttFishResponse;
+import cn.xianyum.mqtt.service.MqttFishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import cn.xianyum.mqtt.service.MqttFishService;
 
 
 /**
@@ -22,6 +24,7 @@ import cn.xianyum.mqtt.service.MqttFishService;
 @RestController
 @RequestMapping("/xianyum-mqtt/v1/mqttFish")
 @Tag(name = "智能鱼缸接口")
+@OperLog(module = "智能鱼缸")
 public class MqttFishController{
 
     @Autowired
@@ -30,6 +33,7 @@ public class MqttFishController{
 
     @GetMapping("/queryLatestData")
     @Operation(summary = "获取最新的实时数据")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取最新的实时数据")
     public Results<MqttFishResponse> queryLatestData(){
         MqttFishResponse response = mqttFishService.queryLatestData();
         return Results.success(response);
@@ -37,6 +41,7 @@ public class MqttFishController{
 
     @GetMapping("/queryTotalCount")
     @Operation(summary = "获取IOT上报的总量")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取IOT上报的总量")
     public Results<?> queryTotalCount(){
         Long count = mqttFishService.queryTotalCount();
         return Results.success(count);
@@ -45,6 +50,7 @@ public class MqttFishController{
 
     @PostMapping("/getReportLineData")
     @Operation(summary = "获取折线图")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取折线图数据")
     public Results<MqttFishReportResponse> getReportLineData(@RequestBody MqttFishRequest request){
         MqttFishReportResponse response = mqttFishService.getReportLineData(request);
         return Results.success(response);
@@ -52,6 +58,7 @@ public class MqttFishController{
     @GetMapping("/aiAnalysis")
     @Operation(summary = "AI预测分析")
     @SaCheckPermission("mqtt-fish:ai:analysis")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "AI预测分析")
     public Results<String> aiAnalysis() {
         return Results.success(mqttFishService.aiAnalysis());
     }
@@ -59,6 +66,7 @@ public class MqttFishController{
 
     @PostMapping("/recordWaterChange")
     @Operation(summary = "记录换水时间")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "记录换水时间")
     public Results<?> recordWaterChange() {
         mqttFishService.recordWaterChangeTime();
         return Results.success();

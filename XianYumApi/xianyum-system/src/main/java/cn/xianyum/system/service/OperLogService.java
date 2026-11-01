@@ -20,7 +20,11 @@ public interface OperLogService {
 
     void deleteByIds(Long[] ids);
 
-    void truncateAll();
-
     Long getOperLogCount();
+
+    Long getLogCountWithCache(String time);
+
+    void truncateLog();
+
+    void push();
 }

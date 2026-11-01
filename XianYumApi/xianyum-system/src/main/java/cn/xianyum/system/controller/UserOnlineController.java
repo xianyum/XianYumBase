@@ -1,7 +1,9 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserOnlineRequest;
 import cn.xianyum.system.entity.response.UserOnlineResponse;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("xym-system/v1/online")
 @Tag(name = "在线用户接口")
 @Slf4j
+@OperLog(module = "在线用户")
 public class UserOnlineController {
 
     @Autowired
@@ -31,6 +34,7 @@ public class UserOnlineController {
     @GetMapping("/getPage")
     @Operation(summary = "获取在线用户列表")
     @SaCheckPermission("monitor:online:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取在线用户列表")
     public Results<UserOnlineResponse> list(UserOnlineRequest request){
         PageResponse<UserOnlineResponse> responsePage = userOnlineService.queryPage(request);
         return Results.page(responsePage);
@@ -44,6 +48,7 @@ public class UserOnlineController {
     @DeleteMapping("/delete")
     @Operation(summary = "踢出用户")
     @SaCheckPermission("monitor:online:exit")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "踢出用户")
     public Results<?> delete(@RequestBody String[] tokenIds){
         userOnlineService.delete(tokenIds);
         return Results.success();

@@ -1,7 +1,9 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.enums.LoginTypeEnum;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.UserLoginRequest;
 import cn.xianyum.system.entity.response.LoginTokenResponse;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("xym-system/v1/qq")
 @Tag(name = "qq接口")
+@OperLog(module = "QQ授权")
 public class QqController {
 
     @Autowired
@@ -34,6 +37,7 @@ public class QqController {
     @PostMapping("/login")
     @Operation(summary = "QQ第三方登录")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.LOGIN, desc = "QQ登录")
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
         request.setLoginType(LoginTypeEnum.QQ);
         return Results.success(userTokenService.login(request));
@@ -41,6 +45,7 @@ public class QqController {
 
     @PostMapping("/bindUser")
     @Operation(summary = "QQ绑定用户")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "QQ绑定用户")
     public Results<?> bindUser(@RequestBody UserLoginRequest userLoginRequest) {
         boolean isSuccess = userService.bindQqUser(userLoginRequest.getAuthCode());
         return isSuccess ? Results.success() : Results.error("绑定用户失败！");

@@ -1,6 +1,8 @@
 package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.xianyum.common.annotation.OperLog;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.po.IpInfoEntity;
 import cn.xianyum.extension.service.IpService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("xym-extension/v1/ip")
 @Tag(name = "ip地理位置接口")
+@OperLog(module = "IP地理位置")
 public class IpController {
 
     @Autowired
@@ -28,6 +31,7 @@ public class IpController {
     @GetMapping("/getIpInfo")
     @Operation(summary = "查询IP地理位置")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询IP地理位置")
     public Results<IpInfoEntity> getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
         return Results.success(result);

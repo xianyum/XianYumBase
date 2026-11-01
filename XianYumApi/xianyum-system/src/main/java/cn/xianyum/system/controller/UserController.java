@@ -52,6 +52,7 @@ public class UserController {
      */
     @GetMapping("/info")
     @Operation(summary = "获取登录的用户信息")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取登录用户信息")
     public Results<?> info(){
         return Results.success().put("user", UserContextHolder.getLoginUser());
     }
@@ -64,6 +65,7 @@ public class UserController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除用户")
     @SaCheckPermission("system:user:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除用户")
     public Results<?> delete(@RequestBody String[] userIds){
         userService.deleteById(userIds);
         return Results.success();
@@ -76,6 +78,7 @@ public class UserController {
     @Operation(summary = "根据Id查询用户")
     @IgnoreDataScope
     @SaCheckPermission("system:user:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询用户")
     public Results<UserResponse> selectOneById(@PathVariable String id){
         UserResponse userResponse = userService.selectOneById(id);
         return Results.success(userResponse);
@@ -88,6 +91,7 @@ public class UserController {
     @GetMapping("/getByRoleId/{roleId}")
     @Operation(summary = "根据角色ID查询用户")
     @SaCheckPermission("system:role:user")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据角色ID查询用户")
     public Results<List<UserResponse>> getByRoleId(@PathVariable String roleId){
         List<UserResponse> userResponse = userService.getByRoleId(roleId);
         return Results.success(userResponse);
@@ -99,6 +103,7 @@ public class UserController {
     @PostMapping("/save")
     @Operation(summary = "保存用户")
     @SaCheckPermission("system:user:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增用户")
     public Results<?> save(@RequestBody UserRequest user){
         ValidatorUtils.validateEntity(user);
         int count = userService.save(user);
@@ -115,6 +120,7 @@ public class UserController {
     @PutMapping("/update")
     @Operation(summary = "修改用户")
     @SaCheckPermission("system:user:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改用户")
     public Results<?> update(@RequestBody UserRequest user){
         ValidatorUtils.validateEntity(user);
         int count = userService.update(user);
@@ -127,6 +133,7 @@ public class UserController {
 
     @PutMapping("/password")
     @Operation(summary = "修改密码")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改密码")
     public Results<?> updatePassword(@RequestBody UpdatePasswordRequest info){
         ValidatorUtils.validateEntity(info);
         boolean flag = userService.updatePassword(info);
@@ -140,6 +147,7 @@ public class UserController {
     @PutMapping("/changeStatus")
     @Operation(summary = "修改用户状态")
     @SaCheckPermission("system:user:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改用户状态")
     public Results<?> updatePassword(@RequestBody UserRequest request){
         int count = userService.changeStatus(request);
         return Results.success(count);
@@ -150,6 +158,7 @@ public class UserController {
      */
     @PutMapping ("/updateCurrentUser")
     @Operation(summary = "更新当前用户信息")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "更新当前用户信息")
     public Results<?> updateCurrentUser(@RequestBody UserRequest user){
         int count = userService.updateCurrentUser(user);
         if(count>0){
@@ -162,6 +171,7 @@ public class UserController {
 
     @PostMapping("/upload")
     @Operation(summary = "上传图像接口")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "上传图像")
     public Results<String> upload(@RequestParam("file") MultipartFile file){
         String imageUrl = userService.upload(file);
         return Results.success(imageUrl);

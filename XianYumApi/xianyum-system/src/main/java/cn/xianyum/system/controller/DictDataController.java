@@ -2,7 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.DictDataEntity;
 import cn.xianyum.system.entity.request.DictDataRequest;
@@ -23,6 +25,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("xym-system/v1/dict/data")
 @Tag(name = "字典类型接口")
+@OperLog(module = "字典管理")
 public class DictDataController {
 
     @Autowired
@@ -33,6 +36,7 @@ public class DictDataController {
      */
     @GetMapping(value = "/type/{dictType}")
     @Operation(summary = "根据字典类型查询字典数据信息")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据字典类型查询字典数据")
     public Results<List<DictDataEntity>> dictType(@PathVariable String dictType) {
         List<DictDataEntity> data = dictDataService.selectDictDataByType(dictType);
         if (Objects.isNull(data)) {
@@ -45,6 +49,7 @@ public class DictDataController {
     @Operation(summary = "分页查询字典数据信息")
     @IgnoreDataScope
     @SaCheckPermission("system:dict:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询字典数据")
     public Results<DictDataResponse> list(DictDataRequest dictData) {
         PageResponse<DictDataResponse> list = dictDataService.selectDictDataList(dictData);
         return Results.page(list);
@@ -54,6 +59,7 @@ public class DictDataController {
     @Operation(summary = "查询单条信息")
     @IgnoreDataScope
     @SaCheckPermission("system:dict:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询字典数据")
     public Results<DictDataResponse> getInfo(@PathVariable Long id) {
         DictDataResponse dictDataResponse = dictDataService.getInfo(id);
         return Results.success(dictDataResponse);
@@ -65,6 +71,7 @@ public class DictDataController {
     @PostMapping("/save")
     @Operation(summary = "新增字典数据")
     @SaCheckPermission("system:dict:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增字典数据")
     public Results<?> add(@RequestBody DictDataEntity dict) {
         int count = dictDataService.save(dict);
         return Results.success(count);
@@ -76,6 +83,7 @@ public class DictDataController {
     @PutMapping("/update")
     @Operation(summary = "修改字典数据")
     @SaCheckPermission("system:dict:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改字典数据")
     public Results<?> edit(@RequestBody DictDataEntity dict) {
         int count = dictDataService.update(dict);
         return Results.success(count);
@@ -87,6 +95,7 @@ public class DictDataController {
     @DeleteMapping("/{ids}")
     @Operation(summary = "删除字典数据")
     @SaCheckPermission("system:dict:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除字典数据")
     public Results<?> remove(@PathVariable Long[] ids) {
         dictDataService.deleteDictDataByIds(ids);
         return Results.success();

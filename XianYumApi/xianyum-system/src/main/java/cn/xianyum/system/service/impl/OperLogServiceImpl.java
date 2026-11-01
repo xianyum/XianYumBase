@@ -3,7 +3,13 @@ package cn.xianyum.system.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.utils.DateUtils;
+import cn.xianyum.common.utils.RedisUtils;
+import cn.xianyum.message.entity.po.MessageSenderEntity;
+import cn.xianyum.message.enums.MessageCodeEnums;
+import cn.xianyum.message.infra.sender.MessageSender;
+import cn.xianyum.message.infra.utils.MessageUtils;
 import cn.xianyum.system.dao.OperLogMapper;
 import cn.xianyum.system.entity.po.OperLogEntity;
 import cn.xianyum.system.entity.request.OperLogRequest;
@@ -13,6 +19,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +37,12 @@ public class OperLogServiceImpl implements OperLogService {
 
     @Resource
     private ThreadPoolTaskExecutor xianYumTaskExecutor;
+
+    @Resource
+    private RedisUtils redisUtils;
+
+    @Resource
+    private MessageSender messageSender;
 
     @Override
     public void saveOperLog(OperLogEntity operLogEntity) {
@@ -54,20 +68,15 @@ public class OperLogServiceImpl implements OperLogService {
 
     @Override
     public List<OperLogResponse> getVisitCountCharts() {
-        List<String> dateStrings = DateUtils.minusDate(new Date(), DateUtils.DATE_PATTERN, 15);
+        Date date = new Date();
+        List<String> dateStrings = DateUtils.minusDate(date, DateUtils.DATE_PATTERN, 15);
         List<OperLogResponse> responses = new ArrayList<>();
-        for (String dateStr : dateStrings) {
-            String startTime = dateStr + " 00:00:00";
-            String endTime = dateStr + " 23:59:59";
-            LambdaQueryWrapper<OperLogEntity> wrapper = Wrappers.<OperLogEntity>lambdaQuery()
-                    .ge(OperLogEntity::getCreateTime, DateUtil.parse(startTime))
-                    .le(OperLogEntity::getCreateTime, DateUtil.parse(endTime));
-            Long count = operLogMapper.selectCount(wrapper);
-            OperLogResponse response = new OperLogResponse();
-            response.setVisitCount(count != null ? count : 0L);
-            response.setCreateTime(DateUtil.parse(dateStr));
-            responses.add(response);
-        }
+        dateStrings.forEach(p -> {
+            OperLogResponse logResponse = new OperLogResponse();
+            logResponse.setTime(p);
+            logResponse.setVisitCount(this.getLogCountWithCache(p));
+            responses.add(logResponse);
+        });
         Collections.reverse(responses);
         return responses;
     }
@@ -83,14 +92,63 @@ public class OperLogServiceImpl implements OperLogService {
     }
 
     @Override
-    public void truncateAll() {
-        operLogMapper.delete(Wrappers.lambdaQuery());
-    }
-
-    @Override
     public Long getOperLogCount() {
         Long count = operLogMapper.selectCount(Wrappers.lambdaQuery());
         return count != null ? count : 0L;
+    }
+
+    @Override
+    public Long getLogCountWithCache(String time) {
+        String redisKey = RedisKeyEnum.LOG_COUNT.getKey() + time;
+        Long count;
+        if(redisUtils.hasKey(redisKey)){
+            String o = String.valueOf(redisUtils.get(redisKey));
+            count = Long.valueOf(o);
+        }else{
+            OperLogRequest logRequest = new OperLogRequest();
+            logRequest.setQueryTime(time);
+            count = operLogMapper.getCount(logRequest);
+            redisUtils.setDay(redisKey,count,16);
+        }
+        return count;
+    }
+
+    @Override
+    public void truncateLog() {
+        operLogMapper.truncateLog();
+    }
+
+    @Override
+    public void push() {
+        DateTime now = DateTime.now();
+        String nowDay = now.toString("yyyy-MM-dd");
+        String oneDay = now.minusDays(1).toString("yyyy-MM-dd");
+        String twoDay = now.minusDays(2).toString("yyyy-MM-dd");
+
+        OperLogRequest logRequest = new OperLogRequest();
+        logRequest.setQueryTime(nowDay);
+        Long nowCount = operLogMapper.getCount(logRequest);
+
+        Long oneCount = this.getLogCountWithCache(oneDay);
+
+        Long twoCount = this.getLogCountWithCache(twoDay);
+
+        Long hoopCount = oneCount - twoCount;
+        String hoopCountStr = hoopCount.toString();
+        if(hoopCount > 0){
+            hoopCountStr = "+"+hoopCount;
+        }
+
+        Map<String,Object> content = new LinkedHashMap<>();
+        content.put("今日实时量：",nowCount);
+        content.put("昨日访问量：",oneCount);
+        content.put("昨日环比量：",hoopCountStr);
+        content.put("统计时间：",now.toString(DateUtils.DATE_TIME_PATTERN));
+
+        MessageSenderEntity messageSenderEntity = new MessageSenderEntity();
+        messageSenderEntity.setTitle("Base-Api接口统计报表推送");
+        messageSenderEntity.setMessageContents(MessageUtils.mapConvertMessageContentEntity(content));
+        messageSender.sendAsyncMessage(MessageCodeEnums.SYSTEM_VISITS_NOTIFY.getMessageCode(),messageSenderEntity);
     }
 
     private void appendTimeRange(LambdaQueryWrapper<OperLogEntity> wrapper, String startTime, String endTime) {

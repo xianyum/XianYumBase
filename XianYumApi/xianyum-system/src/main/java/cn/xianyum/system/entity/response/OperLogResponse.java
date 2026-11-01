@@ -48,4 +48,6 @@ public class OperLogResponse extends BaseResponse {
     private Date createTime;
 
     private Long visitCount;
+
+    private String time;
 }

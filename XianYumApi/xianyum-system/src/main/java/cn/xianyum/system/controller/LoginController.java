@@ -6,7 +6,9 @@ import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.generator.common.model.dto.GenerateParam;
 import cloud.tianai.captcha.generator.common.model.dto.ParamKeyEnum;
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.constant.CaptchaConstant;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.enums.SystemConstantKeyEnum;
 import cn.xianyum.common.utils.*;
 import cn.xianyum.system.entity.request.CheckCaptchaRequest;
@@ -30,6 +32,7 @@ import java.util.Collections;
 @RestController
 @Tag(name = "登录接口")
 @Slf4j
+@OperLog(module = "登录认证")
 public class LoginController {
 
     @Resource
@@ -41,12 +44,14 @@ public class LoginController {
     @PostMapping("/login")
     @Operation(summary = "登录系统")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.LOGIN, desc = "登录系统")
     public Results<LoginTokenResponse> login(@RequestBody UserLoginRequest request) {
         return Results.success(this.userTokenService.login(request));
     }
 
     @PostMapping("/logout")
     @Operation(summary = "退出登录")
+    @OperLog(operType = OperTypeEnum.LOGOUT, desc = "退出登录")
     public Results<LoginTokenResponse> logout() {
         this.userTokenService.logout();
         return Results.success();
@@ -59,6 +64,7 @@ public class LoginController {
     @PostMapping("/captcha/genCaptcha")
     @SaIgnore
     @Operation(summary = "获取验证码")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "获取验证码")
     public ApiResponse<ImageCaptchaVO> genCaptcha() {
         GenerateParam generateParam = new GenerateParam();
         generateParam.setType(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.CAPTCHA_TYPE));
@@ -74,6 +80,7 @@ public class LoginController {
     @PostMapping("/captcha/check")
     @Operation(summary = "校验验证码")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "校验验证码")
     public ApiResponse<?> checkCaptcha(@RequestBody CheckCaptchaRequest request) {
         ApiResponse<?> response = imageCaptchaApplication.matching(request.getId(), request.getData());
         if (response.isSuccess()) {
@@ -90,6 +97,7 @@ public class LoginController {
     @GetMapping("/login/qrcode/generate")
     @SaIgnore
     @Operation(summary = "获取二维码登录凭证")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "获取二维码登录凭证")
     public Results<QrLoginTicketResponse> generateQrCode() {
         return Results.success(userTokenService.generateQrCode());
     }
@@ -100,6 +108,7 @@ public class LoginController {
      */
     @GetMapping("/login/qrcode/scan")
     @Operation(summary = "扫描二维码")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "扫描二维码")
     public Results<Void> scanQrCode(@RequestParam String ticket) {
         userTokenService.scanQrCode(ticket);
         return Results.success();
@@ -111,6 +120,7 @@ public class LoginController {
      */
     @GetMapping("/login/qrcode/confirm")
     @Operation(summary = "二维码确认登录")
+    @OperLog(operType = OperTypeEnum.LOGIN, desc = "二维码确认登录")
     public Results<Void> confirmQrCode(@RequestParam String ticket) {
         userTokenService.confirmQrCode(ticket);
         return Results.success();
@@ -123,6 +133,7 @@ public class LoginController {
     @GetMapping("/login/qrcode/status")
     @Operation(summary = "二维码状态")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "查询二维码状态")
     public Results<QrLoginTicketResponse> getQrCodeStatus(@RequestParam String ticket) {
         return Results.success(userTokenService.getQrCodeStatus(ticket));
     }
@@ -134,6 +145,7 @@ public class LoginController {
     @GetMapping("/captcha/getType")
     @SaIgnore
     @Operation(summary = "获取验证码类型")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取验证码类型")
     public Results<String> getCaptchaType() {
        return Results.success(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.CAPTCHA_TYPE));
     }
@@ -144,6 +156,7 @@ public class LoginController {
     @PostMapping("/sendLoginCredentials")
     @Operation(summary = "发送登录凭证")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "发送登录凭证")
     public Results<?> sendLoginCredentials(@RequestBody UserLoginRequest request) {
         this.userTokenService.sendLoginCredentials(request);
         return Results.success();
@@ -152,6 +165,7 @@ public class LoginController {
     @PostMapping("/xianYuLogin")
     @Operation(summary = "咸鱼客户端登录系统")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.LOGIN, desc = "咸鱼客户端登录")
     public Results<?> xianYuLogin(@RequestBody UserLoginRequest request) {
         // todo 后期得改造xianyu PC客户端登录方式
         return Results.success();

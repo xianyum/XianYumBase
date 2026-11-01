@@ -2,7 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.po.SystemConstantEntity;
 import cn.xianyum.system.entity.request.SystemConstantRequest;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("xym-system/v1/systemConstant")
 @Tag(name = "系统常用参数")
+@OperLog(module = "系统参数")
 public class SystemConstantController {
 
     @Autowired
@@ -28,6 +31,7 @@ public class SystemConstantController {
     @GetMapping("/getPublicConstant/{key}")
     @Operation(summary = "获取系统可见参数")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取系统可见参数")
     public Results<SystemConstantEntity> getPublicConstant(@PathVariable String key) {
         SystemConstantEntity response = systemConstantService.getPublicConstant(key);
         return Results.success(response);
@@ -37,6 +41,7 @@ public class SystemConstantController {
     @GetMapping("/getPrivateConstant/{key}")
     @Operation(summary = "获取私有系统内部参数")
     @SaCheckPermission("system:config:private")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取私有系统内部参数")
     public Results<SystemConstantEntity> getPrivateConstant(@PathVariable String key) {
         SystemConstantEntity response = systemConstantService.getPrivateConstant(key);
         return Results.success(response);
@@ -45,6 +50,7 @@ public class SystemConstantController {
     @PutMapping("/update")
     @Operation(summary = "更新系统参数")
     @SaCheckPermission("system:config:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "更新系统参数")
     public Results<?> update(@RequestBody SystemConstantRequest request) {
         int count = systemConstantService.update(request);
         return Results.success(count);
@@ -58,6 +64,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量分页查询数据")
     @GetMapping(value = "/getPage")
     @SaCheckPermission("system:config:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "系统常量分页查询")
     public Results<SystemConstantResponse> getPage(SystemConstantRequest request) {
         PageResponse<SystemConstantResponse> response = systemConstantService.getPage(request);
         return Results.page(response);
@@ -70,6 +77,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @SaCheckPermission("system:config:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "系统常量根据ID查询")
     public Results<SystemConstantResponse> getById(@PathVariable String id) {
         SystemConstantResponse response = systemConstantService.getById(id);
         return Results.success(response);
@@ -83,6 +91,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("system:config:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增系统常量")
     public Results<?> save(@RequestBody SystemConstantRequest request) {
 
         Integer count = systemConstantService.save(request);
@@ -99,6 +108,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("system:config:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除系统常量")
     public Results<?> delete(@RequestParam String key) {
         systemConstantService.deleteByKey(key);
         return Results.success();
@@ -108,6 +118,7 @@ public class SystemConstantController {
     @Operation(summary = "系统常量清除缓存")
     @GetMapping(value = "/deleteRedisCache")
     @SaCheckPermission("system:config:cache")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "清除系统常量缓存")
     public Results<?> deleteRedisCache(@RequestParam String key) {
         systemConstantService.deleteRedisCache(key);
         return Results.success();
@@ -117,6 +128,7 @@ public class SystemConstantController {
     @Operation(summary = "从缓存中获取系统常量")
     @GetMapping(value = "/getRedisCache")
     @SaCheckPermission("system:config:cache")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "从缓存中获取系统常量")
     public Results<SystemConstantEntity> getRedisCache(@RequestParam String key) {
         SystemConstantEntity byKeyFromRedis = systemConstantService.getByKeyFromRedis(key);
         return Results.success(byKeyFromRedis);
@@ -125,6 +137,7 @@ public class SystemConstantController {
 
     @Operation(summary = "刷新系统常量")
     @DeleteMapping(value = "/refreshCache")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "刷新系统常量缓存")
     public Results<?> refreshCache() {
         systemConstantService.refreshCache();
         return Results.success();

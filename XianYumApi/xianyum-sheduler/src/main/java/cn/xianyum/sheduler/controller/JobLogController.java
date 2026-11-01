@@ -2,7 +2,9 @@ package cn.xianyum.sheduler.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.sheduler.entity.request.JobLogRequest;
 import cn.xianyum.sheduler.entity.response.JobLogResponse;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "xym-sheduler/v1/jobLog")
 @Slf4j
+@OperLog(module = "定时任务日志")
 public class JobLogController {
 
 	@Autowired
@@ -34,6 +37,7 @@ public class JobLogController {
 	@GetMapping(value = "/getPage")
     @IgnoreDataScope
     @SaCheckPermission("job:log:page")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询定时任务日志")
 	public Results getPage(JobLogRequest request) {
         PageResponse<JobLogResponse> response = jobLogService.getPage(request);
         return Results.page(response);
@@ -45,6 +49,7 @@ public class JobLogController {
      */
     @Operation(summary = "定时任务调度日志表根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询定时任务日志")
     public Results getById(@PathVariable Long id) {
 
         JobLogResponse response = jobLogService.getById(id);
@@ -58,6 +63,7 @@ public class JobLogController {
     @Operation(summary = "清空调度任务日志")
     @DeleteMapping(value = "/truncateLog")
     @SaCheckPermission("job:log:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "清空调度任务日志")
     public Results truncateLog() {
         jobLogService.truncateLog();
         return Results.success();
@@ -70,6 +76,7 @@ public class JobLogController {
     @Operation(summary = "定时任务调度日志表删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("job:log:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除定时任务日志")
     public Results delete(@RequestBody String[] ids) {
 
 		jobLogService.deleteById(ids);
@@ -83,6 +90,7 @@ public class JobLogController {
      */
     @Operation(summary = "获取任务调度数量")
     @GetMapping(value = "/getJobLogCount")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取任务调度数量")
     public Results getJobLogCount() {
         return Results.success(jobLogService.getJobLogCount());
     }

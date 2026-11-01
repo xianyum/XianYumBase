@@ -1,7 +1,9 @@
 package cn.xianyum.message.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.po.MessageSendConfigEntity;
 import cn.xianyum.message.entity.request.MessageSendConfigRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "xym-message/v1/messageSendConfig")
 @Slf4j
+@OperLog(module = "消息发送配置")
 public class MessageSendConfigController {
 
 	@Autowired
@@ -33,6 +36,7 @@ public class MessageSendConfigController {
 	@Operation(summary = "消息发送配置分页查询数据")
 	@GetMapping(value = "/getPage")
     @SaCheckPermission("message:send-config:page")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询消息发送配置")
 	public Results<MessageSendConfigResponse> getPage(MessageSendConfigRequest request) {
         PageResponse<MessageSendConfigResponse> response = messageSendConfigService.getPage(request);
         return Results.page(response);
@@ -45,6 +49,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @SaCheckPermission("message:send-config:query")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询消息发送配置")
     public Results<MessageSendConfigResponse> getById(@PathVariable String id) {
         MessageSendConfigResponse response = messageSendConfigService.getById(id);
         return Results.success(response);
@@ -57,6 +62,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置保存数据")
     @PostMapping(value = "/save")
     @SaCheckPermission("message:send-config:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增消息发送配置")
     public Results<?> save(@RequestBody MessageSendConfigRequest request) {
 		Integer count = messageSendConfigService.save(request);
 		if(count>0){
@@ -72,6 +78,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置修改数据")
     @PutMapping(value = "/update")
     @SaCheckPermission("message:send-config:update")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改消息发送配置")
     public Results<?> update(@RequestBody MessageSendConfigRequest request) {
 		Integer count = messageSendConfigService.update(request);
 		if(count>0){
@@ -87,6 +94,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("message:send-config:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除消息发送配置")
     public Results<?> delete(@RequestBody String[] ids) {
 		messageSendConfigService.deleteById(ids);
 	    return Results.success();
@@ -100,6 +108,7 @@ public class MessageSendConfigController {
     @Operation(summary = "消息发送配置保存数据")
     @PostMapping(value = "/saveOrUpdate")
     @SaCheckPermission("message:send-config:save")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "保存或更新消息发送配置")
     public Results<?> saveOrUpdate(@RequestBody MessageSendConfigRequest request) {
         MessageSendConfigEntity messageSendConfigEntity = messageSendConfigService.saveOrUpdate(request);
         return Results.success(messageSendConfigEntity);

@@ -3,7 +3,9 @@ package cn.xianyum.message.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.IgnoreDataScope;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.message.entity.request.MessageMonitorRequest;
 import cn.xianyum.message.entity.response.MessageMonitorResponse;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "xym-message/v1/messageMonitor")
 @Slf4j
+@OperLog(module = "消息监控")
 public class MessageMonitorController {
 
 	@Autowired
@@ -35,6 +38,7 @@ public class MessageMonitorController {
 	@GetMapping(value = "/getPage")
     @IgnoreDataScope
     @SaCheckPermission("message:monitor:page")
+	@OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询消息监控")
 	public Results<MessageMonitorResponse> getPage(MessageMonitorRequest request) {
         PageResponse<MessageMonitorResponse> response = messageMonitorService.getPage(request);
         return Results.page(response);
@@ -47,6 +51,7 @@ public class MessageMonitorController {
     @Operation(summary = "消息监控根据ID查询数据")
     @GetMapping(value = "/getById/{id}")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询消息监控")
     public Results<MessageMonitorResponse> getById(@PathVariable String id) {
         MessageMonitorResponse response = messageMonitorService.getById(id);
         return Results.success(response);
@@ -60,6 +65,7 @@ public class MessageMonitorController {
     @Operation(summary = "消息监控删除数据")
     @DeleteMapping(value = "/delete")
     @SaCheckPermission("message:monitor:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除消息监控记录")
     public Results<?> delete(@RequestBody String[] ids) {
 		messageMonitorService.deleteById(ids);
 	    return Results.success();
@@ -73,6 +79,7 @@ public class MessageMonitorController {
     @Operation(summary = "清空监控删除数据")
     @DeleteMapping(value = "/truncate")
     @SaCheckPermission("message:monitor:delete")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "清空消息监控数据")
     public Results<?> truncate() {
         messageMonitorService.truncate();
         return Results.success();
@@ -85,6 +92,7 @@ public class MessageMonitorController {
      */
     @Operation(summary = "获取消息发送数量")
     @GetMapping(value = "/getMessageLogCount")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取消息发送数量")
     public Results<Long> getMessageLogCount() {
         return Results.success(messageMonitorService.getOnlineProxyCount());
     }

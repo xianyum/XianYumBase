@@ -22,4 +22,6 @@ public class OperLogRequest extends BaseRequest {
     private Integer status;
 
     private String requestUrl;
+
+    private String queryTime;
 }

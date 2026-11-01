@@ -2,7 +2,9 @@ package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.entity.request.OperLogRequest;
 import cn.xianyum.system.entity.response.OperLogResponse;
@@ -20,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("xym-system/v1/log")
 @Tag(name = "操作日志接口")
+@OperLog(module = "操作日志")
 public class OperLogController {
 
     @Autowired
@@ -35,6 +38,7 @@ public class OperLogController {
 
     @GetMapping("/getVisitCountCharts")
     @Operation(summary = "获取访问量趋势图")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取访问量趋势图")
     public Results<List<OperLogResponse>> getVisitCountCharts() {
         List<OperLogResponse> responses = operLogService.getVisitCountCharts();
         return Results.success(responses);
@@ -43,6 +47,7 @@ public class OperLogController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除日志记录")
     @SaCheckPermission("monitor:operlog:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "删除日志记录")
     public Results<?> delete(@RequestBody Long[] ids) {
         operLogService.deleteByIds(ids);
         return Results.success();
@@ -51,14 +56,16 @@ public class OperLogController {
     @DeleteMapping("/truncateLog")
     @Operation(summary = "清空操作日志")
     @SaCheckPermission("monitor:operlog:delete")
+    @OperLog(operType = OperTypeEnum.DELETE, desc = "清空操作日志")
     public Results<?> truncateLog() {
-        operLogService.truncateAll();
+        operLogService.truncateLog();
         return Results.success();
     }
 
     @GetMapping(value = "/getLogCount")
     @Operation(summary = "获取日志总数")
     @SaIgnore
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取日志总数")
     public Results<Long> getLogCount() {
         return Results.success(operLogService.getOperLogCount());
     }
