@@ -146,7 +146,6 @@ public class EvDriveRecordsController {
     @Operation(summary = "上报车机遥感数据")
     @PostMapping(value = "/autoReport")
     @SaIgnore
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "上报车机遥感数据")
     public Results<String> autoReport(@RequestBody EvAutoReportRequest request) {
         this.evDriveRecordsService.saveAutoReportData(request);
         return Results.success();
