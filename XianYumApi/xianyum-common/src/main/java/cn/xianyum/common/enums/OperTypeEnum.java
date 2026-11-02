@@ -1,7 +1,9 @@
 package cn.xianyum.common.enums;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 操作类型枚举
@@ -40,5 +42,15 @@ public enum OperTypeEnum {
                 .filter(e -> e.getCode().equals(code))
                 .findFirst();
         return first.orElse(null);
+    }
+
+    /**
+     * 获取除 QUERY 查询以外的所有code集合
+     */
+    public static List<String> getCodeListExceptQuery() {
+        return Arrays.stream(OperTypeEnum.values())
+                .filter(e -> !OperTypeEnum.QUERY.getCode().equals(e.getCode()))
+                .map(OperTypeEnum::getCode)
+                .collect(Collectors.toList());
     }
 }

@@ -4,9 +4,11 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.utils.DateUtils;
 import cn.xianyum.common.utils.RedisUtils;
+import cn.xianyum.common.utils.UserContextHolder;
 import cn.xianyum.message.entity.po.MessageSenderEntity;
 import cn.xianyum.message.enums.MessageCodeEnums;
 import cn.xianyum.message.infra.sender.MessageSender;
@@ -59,6 +61,7 @@ public class OperLogServiceImpl implements OperLogService {
                 .eq(StrUtil.isNotBlank(request.getOperType()), OperLogEntity::getOperType, request.getOperType())
                 .eq(request.getStatus() != null, OperLogEntity::getStatus, request.getStatus())
                 .like(StrUtil.isNotBlank(request.getRequestUrl()), OperLogEntity::getRequestUrl, request.getRequestUrl())
+                .in(UserContextHolder.isSupperAdminAuth() && CollUtil.isEmpty(request.getOperTypeList()), OperLogEntity::getOperType, OperTypeEnum.getCodeListExceptQuery())
                 .orderByDesc(OperLogEntity::getId);
 
         appendTimeRange(wrapper, request.getStartTime(), request.getEndTime());
