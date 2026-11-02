@@ -1,16 +1,57 @@
 <template>
   <view class="trip-list-page">
-    <view class="filter-bar">
-      <view class="filter-left" @tap="openDatePopup">
-        <view class="filter-icon">
-          <uni-icons type="calendar" size="16" color="#409eff"></uni-icons>
-        </view>
-        <text class="filter-text">{{ dateRangeText }}</text>
-        <uni-icons type="arrowdown" size="12" color="#999"></uni-icons>
+    <view class="top-bar">
+      <view class="search-input-wrap">
+        <uni-icons type="search" size="16" color="#909399"></uni-icons>
+        <input
+            v-model="searchKeyword"
+            type="text"
+            placeholder="搜索终点地址"
+            confirm-type="search"
+            @confirm="handleQuery"
+        />
+        <uni-icons
+            v-if="searchKeyword"
+            type="clear"
+            size="14"
+            color="#c0c4cc"
+            @tap="searchKeyword = ''; handleQuery()"
+        ></uni-icons>
+      </view>
+      <view class="filter-btn" :class="{ active: hasFilter }" @tap="showFilter = true">
+        <uni-icons type="list" size="18" color="#606266"></uni-icons>
       </view>
       <view class="filter-total" v-if="total > 0">
         <text class="total-num">{{ total }}</text>
-        <text class="total-label">条行程</text>
+        <text class="total-label">条</text>
+      </view>
+    </view>
+
+    <view class="filter-drawer" v-if="showFilter" @tap="showFilter = false">
+      <view class="drawer-mask"></view>
+      <view class="drawer-content" @tap.stop="">
+        <view class="drawer-header">
+          <text class="drawer-title">筛选条件</text>
+          <uni-icons type="closeempty" size="20" color="#909399" @tap="showFilter = false"></uni-icons>
+        </view>
+        <scroll-view scroll-y class="drawer-body">
+          <view class="filter-group">
+            <view class="filter-label">时间范围</view>
+            <view class="chip-list">
+              <view
+                  v-for="opt in dateOptions"
+                  :key="opt.value"
+                  class="chip"
+                  :class="{ active: dateFilterType === opt.value }"
+                  @tap="dateFilterType = opt.value"
+              >{{ opt.label }}</view>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="drawer-footer">
+          <view class="drawer-btn reset" @tap="resetQuery">重置</view>
+          <view class="drawer-btn confirm" @tap="handleFilterConfirm">确定</view>
+        </view>
       </view>
     </view>
 
@@ -84,30 +125,6 @@
       <text class="empty-title">暂无轨迹数据</text>
       <text class="empty-desc">快去驾驶爱车，开启你的第一次旅程吧</text>
     </view>
-
-    <uni-popup ref="datePopupRef" type="bottom" :mask-click="true">
-      <view class="date-popup">
-        <view class="popup-header">
-          <text class="popup-title">时间范围</text>
-          <view class="popup-close" @tap="closeDatePopup">
-            <uni-icons type="closeempty" size="18" color="#999"></uni-icons>
-          </view>
-        </view>
-        <view class="date-options">
-          <view
-            v-for="opt in dateOptions"
-            :key="opt.value"
-            class="date-option"
-            :class="{ active: dateFilterType === opt.value }"
-            @tap="selectDateFilter(opt.value)"
-          >
-            <text>{{ opt.label }}</text>
-            <uni-icons v-if="dateFilterType === opt.value" type="checkmarkempty" size="16" color="#409eff"></uni-icons>
-          </view>
-        </view>
-        <view class="popup-btn" @tap="confirmDateFilter">确定</view>
-      </view>
-    </uni-popup>
   </view>
 </template>
 
@@ -133,11 +150,13 @@ export default {
         pageSize: 10,
         params: {
           beginTime: undefined,
-          endTime: undefined
+          endTime: undefined,
+          destinationKeyword: undefined
         }
       },
       dateFilterType: 'all',
       dateRangeText: '全部时间',
+      searchKeyword: '',
       tripList: [],
       loading: false,
       hasMore: true,
@@ -148,7 +167,8 @@ export default {
         contentrefresh: '加载中...',
         contentnomore: '— 没有更多了 —'
       },
-      dateOptions: DATE_FILTER_OPTIONS
+      dateOptions: DATE_FILTER_OPTIONS,
+      showFilter: false
     };
   },
   computed: {
@@ -170,6 +190,9 @@ export default {
         });
       });
       return groups;
+    },
+    hasFilter() {
+      return !!(this.queryParams.params.beginTime || this.searchKeyword);
     }
   },
   onLoad(options) {
@@ -187,6 +210,70 @@ export default {
     }
   },
   methods: {
+    handleFilterConfirm() {
+      const { begin, end, text } = this._resolveDateRange(this.dateFilterType);
+      this.queryParams.params.beginTime = begin;
+      this.queryParams.params.endTime = end;
+      this.dateRangeText = text;
+      this.showFilter = false;
+      this._refresh();
+    },
+    handleQuery() {
+      this.queryParams.params.destinationKeyword = this.searchKeyword || undefined;
+      this._refresh();
+    },
+    resetQuery() {
+      this.dateFilterType = 'all';
+      this.searchKeyword = '';
+      this.queryParams.params.beginTime = undefined;
+      this.queryParams.params.endTime = undefined;
+      this.queryParams.params.destinationKeyword = undefined;
+      this.dateRangeText = '全部时间';
+      this.showFilter = false;
+      this._refresh();
+    },
+    _resolveDateRange(type) {
+      const now = new Date();
+      const _setDayStart = (d) => { d.setHours(0, 0, 0, 0); return d; };
+      const _setDayEnd = (d) => { d.setHours(23, 59, 59, 999); return d; };
+      const _fmt = (d, isStart) => this._formatDateTime(d, isStart);
+
+      switch (type) {
+        case 'yesterday': {
+          const y = new Date(now);
+          y.setDate(y.getDate() - 1);
+          return {
+            begin: _fmt(_setDayStart(new Date(y)), true),
+            end: _fmt(_setDayEnd(new Date(y)), false),
+            text: '昨天'
+          };
+        }
+        case 'lastWeek': {
+          const dow = now.getDay();
+          const offsetToMonday = dow === 0 ? -6 : 1 - dow;
+          const lastMonday = new Date(now);
+          lastMonday.setDate(lastMonday.getDate() + offsetToMonday - 7);
+          const lastSunday = new Date(lastMonday);
+          lastSunday.setDate(lastSunday.getDate() + 6);
+          return {
+            begin: _fmt(_setDayStart(new Date(lastMonday)), true),
+            end: _fmt(_setDayEnd(new Date(lastSunday)), false),
+            text: '上一周'
+          };
+        }
+        case 'lastMonth': {
+          const lmStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const lmEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+          return {
+            begin: _fmt(_setDayStart(lmStart), true),
+            end: _fmt(_setDayEnd(lmEnd), false),
+            text: '上一月'
+          };
+        }
+        default:
+          return { begin: undefined, end: undefined, text: '全部时间' };
+      }
+    },
     _processItem(item) {
       const startOdo = item.startOdometer || 0;
       const endOdo = item.endOdometer || 0;
@@ -278,65 +365,6 @@ export default {
       this._getTripList('refresh');
     },
 
-    openDatePopup() {
-      this.$refs.datePopupRef.open();
-    },
-    closeDatePopup() {
-      this.$refs.datePopupRef.close();
-    },
-    selectDateFilter(type) {
-      this.dateFilterType = type;
-    },
-    confirmDateFilter() {
-      const { begin, end, text } = this._resolveDateRange(this.dateFilterType);
-      this.queryParams.params.beginTime = begin;
-      this.queryParams.params.endTime = end;
-      this.dateRangeText = text;
-      this.closeDatePopup();
-      this._refresh();
-    },
-    _resolveDateRange(type) {
-      const now = new Date();
-      const _setDayStart = (d) => { d.setHours(0, 0, 0, 0); return d; };
-      const _setDayEnd = (d) => { d.setHours(23, 59, 59, 999); return d; };
-      const _fmt = (d, isStart) => this._formatDateTime(d, isStart);
-
-      switch (type) {
-        case 'yesterday': {
-          const y = new Date(now);
-          y.setDate(y.getDate() - 1);
-          return {
-            begin: _fmt(_setDayStart(new Date(y)), true),
-            end: _fmt(_setDayEnd(new Date(y)), false),
-            text: '昨天'
-          };
-        }
-        case 'lastWeek': {
-          const dow = now.getDay();
-          const offsetToMonday = dow === 0 ? -6 : 1 - dow;
-          const lastMonday = new Date(now);
-          lastMonday.setDate(lastMonday.getDate() + offsetToMonday - 7);
-          const lastSunday = new Date(lastMonday);
-          lastSunday.setDate(lastSunday.getDate() + 6);
-          return {
-            begin: _fmt(_setDayStart(new Date(lastMonday)), true),
-            end: _fmt(_setDayEnd(new Date(lastSunday)), false),
-            text: '上一周'
-          };
-        }
-        case 'lastMonth': {
-          const lmStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-          const lmEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-          return {
-            begin: _fmt(_setDayStart(lmStart), true),
-            end: _fmt(_setDayEnd(lmEnd), false),
-            text: '上一月'
-          };
-        }
-        default:
-          return { begin: undefined, end: undefined, text: '全部时间' };
-      }
-    },
     goToDetail(item) {
       uni.navigateTo({
         url: `/pages/ev-drive/trip/detail?id=${item.id}`
@@ -346,7 +374,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $primary: #409eff;
 $primary-light: #ecf5ff;
 $warning: #fa8c16;
@@ -357,6 +385,7 @@ $text-placeholder: #b2b2b2;
 $bg-page: #f5f6fa;
 $bg-card: #ffffff;
 $shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+$color-border: #ebeef5;
 
 .trip-list-page {
   min-height: 100vh;
@@ -364,40 +393,69 @@ $shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
   padding-bottom: 120rpx;
 }
 
-.filter-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20rpx 32rpx;
-  padding-top: calc(20rpx + env(safe-area-inset-top));
-  background-color: $bg-card;
+.top-bar {
   position: sticky;
   top: 0;
-  z-index: 10;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.03);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 24rpx;
+  padding-top: calc(20rpx + env(safe-area-inset-top));
+  background-color: $bg-card;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
 
-  .filter-left {
+  .search-input-wrap {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 10rpx;
-    padding: 12rpx 20rpx 12rpx 12rpx;
-    background-color: $primary-light;
-    border-radius: 40rpx;
+    gap: 12rpx;
+    height: 72rpx;
+    padding: 0 24rpx;
+    background-color: #f5f7fa;
+    border-radius: 36rpx;
 
-    .filter-icon {
-      width: 44rpx;
-      height: 44rpx;
-      background-color: rgba(64, 158, 255, 0.12);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    input {
+      flex: 1;
+      font-size: 28rpx;
+      color: $text-primary;
+      background: transparent;
+      height: 100%;
+
+      &::placeholder {
+        color: #c0c4cc;
+      }
+    }
+  }
+
+  .filter-btn {
+    width: 72rpx;
+    height: 72rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f7fa;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+
+    &.active {
+      background-color: rgba($primary, 0.1);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 12rpx;
+        right: 12rpx;
+        width: 14rpx;
+        height: 14rpx;
+        background-color: $primary;
+        border-radius: 50%;
+      }
     }
 
-    .filter-text {
-      font-size: 28rpx;
-      color: $primary;
-      font-weight: 500;
+    &:active {
+      opacity: 0.7;
     }
   }
 
@@ -405,6 +463,7 @@ $shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: baseline;
     gap: 6rpx;
+    flex-shrink: 0;
 
     .total-num {
       font-size: 32rpx;
@@ -415,6 +474,132 @@ $shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
     .total-label {
       font-size: 24rpx;
       color: $text-tertiary;
+    }
+  }
+}
+
+.filter-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+
+  .drawer-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+  }
+
+  .drawer-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $bg-card;
+    border-radius: 24rpx 24rpx 0 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 70vh;
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 32rpx;
+      border-bottom: 1rpx solid $color-border;
+      flex-shrink: 0;
+
+      .drawer-title {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: $text-primary;
+      }
+    }
+
+    .drawer-body {
+      flex: 1;
+      height: 0;
+      padding: 24rpx 32rpx;
+
+      .filter-group {
+        margin-bottom: 32rpx;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .filter-label {
+          font-size: 28rpx;
+          color: $text-secondary;
+          margin-bottom: 20rpx;
+        }
+
+        .chip-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 16rpx;
+
+          .chip {
+            padding: 14rpx 32rpx;
+            background-color: #f5f7fa;
+            border-radius: 8rpx;
+            font-size: 26rpx;
+            color: $text-secondary;
+            transition: all 0.2s;
+
+            &.active {
+              background-color: rgba($primary, 0.1);
+              color: $primary;
+              border: 1rpx solid $primary;
+            }
+
+            &:active {
+              opacity: 0.7;
+            }
+          }
+        }
+      }
+    }
+
+    .drawer-footer {
+      display: flex;
+      gap: 24rpx;
+      padding: 24rpx 32rpx;
+      padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+      border-top: 1rpx solid $color-border;
+      flex-shrink: 0;
+
+      .drawer-btn {
+        flex: 1;
+        height: 84rpx;
+        line-height: 84rpx;
+        text-align: center;
+        border-radius: 12rpx;
+        font-size: 30rpx;
+
+        &.reset {
+          background-color: #f5f7fa;
+          color: $text-secondary;
+
+          &:active {
+            background-color: #e9e9eb;
+          }
+        }
+
+        &.confirm {
+          background-color: $primary;
+          color: #fff;
+
+          &:active {
+            background-color: darken($primary, 5%);
+          }
+        }
+      }
     }
   }
 }
@@ -632,86 +817,6 @@ $shadow-card: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
   .empty-desc {
     font-size: 26rpx;
     color: $text-tertiary;
-  }
-}
-
-.date-popup {
-  background-color: $bg-card;
-  border-radius: 28rpx 28rpx 0 0;
-  padding: 32rpx 32rpx;
-  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
-
-  .popup-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28rpx;
-
-    .popup-title {
-      font-size: 34rpx;
-      font-weight: 600;
-      color: $text-primary;
-    }
-
-    .popup-close {
-      width: 56rpx;
-      height: 56rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #f5f5f5;
-      border-radius: 50%;
-    }
-  }
-
-  .date-options {
-    display: flex;
-    flex-direction: column;
-    gap: 16rpx;
-    margin-bottom: 36rpx;
-
-    .date-option {
-      height: 96rpx;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28rpx;
-      background-color: #f7f8fa;
-      border-radius: 16rpx;
-      font-size: 30rpx;
-      color: $text-secondary;
-      transition: all 0.2s ease;
-
-      &.active {
-        background-color: $primary-light;
-        color: $primary;
-        font-weight: 600;
-      }
-
-      &:active {
-        transform: scale(0.98);
-      }
-    }
-  }
-
-  .popup-btn {
-    height: 96rpx;
-    line-height: 96rpx;
-    text-align: center;
-    background: linear-gradient(135deg, $primary, #5a77d7);
-    color: #fff;
-    border-radius: 48rpx;
-    font-size: 32rpx;
-    font-weight: 500;
-    letter-spacing: 4rpx;
-    box-shadow: 0 8rpx 24rpx rgba(64, 158, 255, 0.3);
-    transition: all 0.2s ease;
-
-    &:active {
-      opacity: 0.9;
-      transform: translateY(2rpx);
-      box-shadow: 0 4rpx 12rpx rgba(64, 158, 255, 0.3);
-    }
   }
 }
 </style>

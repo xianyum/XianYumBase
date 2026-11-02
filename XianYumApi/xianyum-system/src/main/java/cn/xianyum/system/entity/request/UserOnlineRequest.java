@@ -21,4 +21,8 @@ public class UserOnlineRequest extends BaseRequest {
      */
     private String username;
 
+    /**
+     * 登录来源
+     */
+    private String loginType;
 }

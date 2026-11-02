@@ -1,37 +1,66 @@
 <template>
   <view class="user-online-container">
-    <!-- 搜索区域 -->
-    <view class="search-box">
-      <view class="search-form">
-        <view class="search-item">
-          <text class="label">账号名称：</text>
-          <input
-              v-model="queryParams.username"
-              type="text"
-              placeholder="请输入账号名称"
-              @confirm="handleQuery"
-          />
-        </view>
+    <view class="top-bar">
+      <view class="search-input-wrap">
+        <uni-icons type="search" size="16" color="#909399"></uni-icons>
+        <input
+            v-model="queryParams.username"
+            type="text"
+            placeholder="搜索账号"
+            confirm-type="search"
+            @confirm="handleQuery"
+        />
+        <uni-icons
+            v-if="queryParams.username"
+            type="clear"
+            size="14"
+            color="#c0c4cc"
+            @tap="queryParams.username = ''; handleQuery()"
+        ></uni-icons>
       </view>
-      <view class="btn-group">
-        <button class="btn search-btn" @tap="handleQuery">
-          <uni-icons type="search" size="14" color="#fff"></uni-icons>
-          <text>搜索</text>
-        </button>
-        <button class="btn reset-btn" @tap="resetQuery">
-          <uni-icons type="refresh" size="14" color="#606266"></uni-icons>
-          <text>重置</text>
-        </button>
+      <view class="filter-btn" :class="{ active: hasFilter }" @tap="showFilter = true">
+        <uni-icons type="list" size="18" color="#606266"></uni-icons>
       </view>
     </view>
 
-    <!-- 字典列表 -->
+    <view class="filter-drawer" v-if="showFilter" @tap="showFilter = false">
+      <view class="drawer-mask"></view>
+      <view class="drawer-content" @tap.stop="">
+        <view class="drawer-header">
+          <text class="drawer-title">筛选条件</text>
+          <uni-icons type="closeempty" size="20" color="#909399" @tap="showFilter = false"></uni-icons>
+        </view>
+        <scroll-view scroll-y class="drawer-body">
+          <view class="filter-group">
+            <view class="filter-label">登录类型</view>
+            <view class="chip-list">
+              <view
+                  class="chip"
+                  :class="{ active: !queryParams.loginType }"
+                  @tap="selectLoginType(null)"
+              >全部</view>
+              <view
+                  v-for="item in loginTypeOptions"
+                  :key="item.dictValue"
+                  class="chip"
+                  :class="{ active: queryParams.loginType === item.dictValue }"
+                  @tap="selectLoginType(item.dictValue)"
+              >{{ item.dictLabel }}</view>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="drawer-footer">
+          <view class="drawer-btn reset" @tap="resetQuery">重置</view>
+          <view class="drawer-btn confirm" @tap="handleFilterConfirm">确定</view>
+        </view>
+      </view>
+    </view>
+
     <view class="user-online-list" v-if="userOnlineList.length > 0">
       <view v-for="(item, index) in userOnlineList" :key="index" class="user-online-item">
         <view class="user-online-info">
           <view class="info-row">
             <text class="label">登录账号：</text>
-            <!-- 使用公共方法翻译登录类型 -->
             <text class="value">
               {{ item.username }}
               <text v-if="item.loginType" class="login-type-tag">({{ getDictLabel('sys_user_login_type', item.loginType) }})</text>
@@ -41,7 +70,7 @@
             <text class="label">登录地点：</text>
             <uni-tooltip placement="top" :content="`${item.loginLocation}(${item.ipaddr})`">
               <text class="value text-ellipsis">
-                {{ item.loginLocation}}({{item.ipaddr}})
+                {{ item.loginLocation }}({{item.ipaddr}})
               </text>
             </uni-tooltip>
           </view>
@@ -67,11 +96,9 @@
         </view>
       </view>
 
-      <!-- 加载更多提示 -->
       <uni-load-more :status="loadMoreStatus" :icon-size="16" :content-text="contentText" />
     </view>
 
-    <!-- 空数据提示 -->
     <view v-else class="empty-box">
       <uni-icons type="info" size="50" color="#999"></uni-icons>
       <text class="empty-text">暂无数据</text>
@@ -82,8 +109,7 @@
 <script>
 import { queryUserOnlinePage, forceLogout } from '@/api/monitor/user-online'
 import { checkPermi } from '@/utils/permission'
-// 导入公共字典工具
-import { getDictData, getDictLabel } from '@/utils/dict';
+import { getDictData, getDictLabel } from '@/utils/dict'
 
 export default {
   data() {
@@ -91,7 +117,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        username: undefined
+        username: undefined,
+        loginType: undefined
       },
       userOnlineList: [],
       loading: false,
@@ -102,27 +129,38 @@ export default {
         contentdown: '上拉显示更多',
         contentrefresh: '正在加载...',
         contentnomore: '没有更多数据了'
-      }
+      },
+      loginTypeOptions: [],
+      showFilter: false
+    }
+  },
+  computed: {
+    hasFilter() {
+      return !!(this.queryParams.loginType)
     }
   },
   onLoad(options) {
     if (options.pageTitle) {
       uni.setNavigationBarTitle({
         title: options.pageTitle
-      });
+      })
     }
-    // 初始化获取登录类型字典（会自动缓存）
-    this.initDictData();
+    this.initDictData()
     this.getList()
   },
   methods: {
-    // 初始化字典数据（可同时加载多个字典）
     async initDictData() {
-      await getDictData('sys_user_login_type');
+      this.loginTypeOptions = await getDictData('sys_user_login_type') || []
     },
-    // 直接使用公共方法（无需在当前页面定义）
     getDictLabel,
     checkPermi,
+    selectLoginType(val) {
+      this.queryParams.loginType = val || undefined
+    },
+    handleFilterConfirm() {
+      this.showFilter = false
+      this.handleQuery()
+    },
     async handleDelete(item) {
       const res = await this.$modal.confirm(`确定踢出【${item.username}】吗？`)
       if (res) {
@@ -135,10 +173,9 @@ export default {
       }
     },
     isCurrentDevice(item) {
-      if (!item?.token || !this.$store.getters.token) return false;
+      if (!item?.token || !this.$store.getters.token) return false
       return item.token === this.$store.getters.token;
     },
-    // 获取列表数据
     async getList(type = 'more') {
       if (this.loading) return
       this.loading = true
@@ -166,7 +203,6 @@ export default {
         }
       }
     },
-    // 搜索
     handleQuery() {
       this.queryParams.pageNum = 1
       this.userOnlineList = []
@@ -174,23 +210,22 @@ export default {
       this.loadMoreStatus = 'more'
       this.getList('refresh')
     },
-    // 重置
     resetQuery() {
       this.queryParams = {
         pageNum: 1,
         pageSize: 10,
-        username: undefined
+        username: undefined,
+        loginType: undefined
       }
+      this.showFilter = false
       this.handleQuery()
     },
-    // 下拉刷新
     onPullDownRefresh() {
       this.queryParams.pageNum = 1
       this.userOnlineList = []
       this.hasMore = true
       this.getList('refresh')
     },
-    // 上拉加载更多
     onReachBottom() {
       if (this.hasMore && !this.loading) {
         this.queryParams.pageNum++
@@ -202,7 +237,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// 样式部分不变，保留原有样式
+$color-main: #409eff;
+$color-success: #67c23a;
+$color-gray: #909399;
+$color-text: #303133;
+$color-text-light: #606266;
+$color-border: #ebeef5;
+$color-bg: #f5f5f5;
+$color-card: #fff;
+
 .login-type-tag {
   color: #909399;
   font-size: 24rpx;
@@ -211,122 +254,195 @@ export default {
 }
 
 .user-online-container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
+  background-color: $color-bg;
   min-height: 100vh;
 
-  .search-box {
-    background-color: #fff;
-    border-radius: 16rpx;
-    padding: 24rpx;
-    margin-bottom: 20rpx;
-    box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 20rpx;
+    padding: 20rpx 24rpx;
+    background-color: $color-card;
+    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
 
-    .search-form {
-      .search-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20rpx;
+    .search-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+      height: 72rpx;
+      padding: 0 24rpx;
+      background-color: #f5f7fa;
+      border-radius: 36rpx;
 
-        &:last-child {
-          margin-bottom: 0;
-        }
+      input {
+        flex: 1;
+        font-size: 28rpx;
+        color: $color-text;
+        background: transparent;
+        height: 100%;
 
-        .label {
-          width: 140rpx;
-          font-size: 28rpx;
-          color: #606266;
-          font-weight: 500;
-        }
-
-        input {
-          flex: 1;
-          height: 72rpx;
-          background-color: #f8f9fa;
-          border-radius: 8rpx;
-          padding: 0 24rpx;
-          font-size: 28rpx;
-          color: #2c3e50;
-
-          &::placeholder {
-            color: #909399;
-          }
-        }
-
-        .picker-box {
-          flex: 1;
-          height: 72rpx;
-          background-color: #f8f9fa;
-          border-radius: 8rpx;
-          padding: 0 24rpx;
-          font-size: 28rpx;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          text {
-            color: #2c3e50;
-
-            &.placeholder {
-              color: #909399;
-            }
-          }
-
-          .uni-icons {
-            margin-left: 12rpx;
-          }
+        &::placeholder {
+          color: #c0c4cc;
         }
       }
     }
 
-    .btn-group {
+    .filter-btn {
+      width: 72rpx;
+      height: 72rpx;
       display: flex;
-      gap: 20rpx;
-      margin-top: 30rpx;
-      padding-top: 30rpx;
-      border-top: 2rpx solid #f0f0f0;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f7fa;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
 
-      .btn {
-        flex: 1;
-        height: 80rpx;
+      &.active {
+        background-color: rgba($color-main, 0.1);
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 12rpx;
+          right: 12rpx;
+          width: 14rpx;
+          height: 14rpx;
+          background-color: $color-main;
+          border-radius: 50%;
+        }
+      }
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .filter-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+
+    .drawer-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.45);
+    }
+
+    .drawer-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: $color-card;
+      border-radius: 24rpx 24rpx 0 0;
+      display: flex;
+      flex-direction: column;
+      max-height: 70vh;
+
+      .drawer-header {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 12rpx;
-        font-size: 28rpx;
-        border-radius: 8rpx;
-        transition: all 0.3s;
+        justify-content: space-between;
+        padding: 32rpx;
+        border-bottom: 1rpx solid $color-border;
+        flex-shrink: 0;
 
-        &:active {
-          transform: scale(0.98);
-          opacity: 0.9;
+        .drawer-title {
+          font-size: 32rpx;
+          font-weight: 600;
+          color: $color-text;
         }
+      }
 
-        &.search-btn {
-          background-color: #409eff;
-          color: #fff;
+      .drawer-body {
+        flex: 1;
+        height: 0;
+        padding: 24rpx 32rpx;
 
-          &:active {
-            background-color: #3a8ee6;
+        .filter-group {
+          margin-bottom: 32rpx;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .filter-label {
+            font-size: 28rpx;
+            color: $color-text-light;
+            margin-bottom: 20rpx;
+          }
+
+          .chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16rpx;
+
+            .chip {
+              padding: 14rpx 32rpx;
+              background-color: #f5f7fa;
+              border-radius: 8rpx;
+              font-size: 26rpx;
+              color: $color-text-light;
+              transition: all 0.2s;
+
+              &.active {
+                background-color: rgba($color-main, 0.1);
+                color: $color-main;
+                border: 1rpx solid $color-main;
+              }
+
+              &:active {
+                opacity: 0.7;
+              }
+            }
           }
         }
+      }
 
-        &.reset-btn {
-          background-color: #f5f7fa;
-          color: #606266;
-          border: 2rpx solid #dcdfe6;
+      .drawer-footer {
+        display: flex;
+        gap: 24rpx;
+        padding: 24rpx 32rpx;
+        padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+        border-top: 1rpx solid $color-border;
+        flex-shrink: 0;
 
-          &:active {
-            background-color: #e9e9eb;
+        .drawer-btn {
+          flex: 1;
+          height: 84rpx;
+          line-height: 84rpx;
+          text-align: center;
+          border-radius: 12rpx;
+          font-size: 30rpx;
+
+          &.reset {
+            background-color: #f5f7fa;
+            color: $color-text-light;
+
+            &:active {
+              background-color: #e9e9eb;
+            }
           }
-        }
 
-        &.add-btn {
-          background-color: #67c23a;
-          color: #fff;
+          &.confirm {
+            background-color: $color-main;
+            color: #fff;
 
-          &:active {
-            background-color: #5daf34;
+            &:active {
+              background-color: darken($color-main, 5%);
+            }
           }
         }
       }
@@ -334,13 +450,15 @@ export default {
   }
 
   .user-online-list {
+    padding: 20rpx 24rpx 40rpx;
+
     .user-online-item {
       position: relative;
-      background-color: #fff;
+      background-color: $color-card;
       padding: 32rpx;
       margin-bottom: 24rpx;
       border-radius: 16rpx;
-      box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+      box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
 
       .user-online-info {
         padding-right: 100rpx;
@@ -358,20 +476,19 @@ export default {
           .label {
             width: 140rpx;
             font-size: 28rpx;
-            color: #606266;
+            color: $color-gray;
             flex-shrink: 0;
-            text-align: justify;
           }
 
           .value {
             flex: 1;
             font-size: 28rpx;
-            color: #2c3e50;
+            color: $color-text;
             font-weight: 500;
             word-break: break-all;
 
             &.text-success {
-              color: #67c23a;
+              color: $color-success;
             }
 
             &.text-ellipsis {
@@ -382,11 +499,7 @@ export default {
 
             &.bold {
               font-weight: 700 !important;
-              color: #409eff;
-            }
-
-            &.text-danger {
-              color: #f56c6c;
+              color: $color-main;
             }
           }
         }
@@ -414,12 +527,6 @@ export default {
             opacity: 0.8;
           }
 
-          &.edit-btn {
-            &:active {
-              background-color: #ecf5ff;
-            }
-          }
-
           &.delete-btn {
             &:active {
               background-color: #fef0f0;
@@ -440,14 +547,14 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 120rpx 0;
-    background-color: #fff;
+    background-color: $color-card;
     border-radius: 16rpx;
-    margin-top: 24rpx;
+    margin: 24rpx;
 
     .empty-text {
       margin-top: 24rpx;
       font-size: 28rpx;
-      color: #909399;
+      color: $color-gray;
       letter-spacing: 1rpx;
     }
   }

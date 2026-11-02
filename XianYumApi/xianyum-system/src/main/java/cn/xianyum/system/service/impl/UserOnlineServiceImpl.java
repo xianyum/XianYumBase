@@ -35,11 +35,10 @@ public class UserOnlineServiceImpl implements UserOnlineService {
         // 清理已过期的在线记录
         userOnlineMapper.deleteExpired();
         LambdaQueryWrapper<UserOnlineEntity> wrapper = Wrappers.<UserOnlineEntity>lambdaQuery()
+                .eq(StrUtil.isNotEmpty(request.getLoginType()), UserOnlineEntity::getLoginType, request.getLoginType())
                 .gt(UserOnlineEntity::getExpireTime, new Date())
+                .like(StrUtil.isNotEmpty(request.getUsername()), UserOnlineEntity::getUsername, request.getUsername())
                 .orderByDesc(UserOnlineEntity::getId);
-        if (StrUtil.isNotEmpty(request.getUsername())) {
-            wrapper.like(UserOnlineEntity::getUsername, request.getUsername());
-        }
         Page<UserOnlineEntity> page = userOnlineMapper.selectPage(new Page<>(request.getPageNum(), request.getPageSize()), wrapper);
         return PageResponse.of(page, UserOnlineResponse.class,
                 (response, entity) -> response.setExpireStr(DateUtils.formatExpire(entity.getExpireTime()))
