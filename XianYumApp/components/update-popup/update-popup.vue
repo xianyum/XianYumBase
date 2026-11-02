@@ -3,7 +3,7 @@
     <view class="content botton-radius" @click.stop>
       <!-- 顶部背景图和标题 -->
       <view class="content-top">
-        <text class="content-top-text">XianYumApp通知</text>
+        <text class="content-top-text">✨ 新鲜版本出炉啦</text>
         <!-- 替换为你提供的顶部背景图路径 -->
         <image class="content-top-bg" width="100%" height="100%" src="/static/images/update/bg_top.png"></image>
       </view>
@@ -23,7 +23,7 @@
         <view class="body">
           <scroll-view class="box-des-scroll" scroll-y="true">
             <text class="box-des">
-              <text v-for="(item, index) in updateLogList" :key="index" class="log-item">{{ item }}\n</text>
+              <text v-for="(item, index) in updateLogList" :key="index" class="log-item">• {{ item }}\n</text>
             </text>
           </scroll-view>
         </view>
@@ -305,6 +305,8 @@ page {
 }
 
 .title {
+  display: flex;
+  align-items: center;
   font-size: 33rpx;
   font-weight: bold;
   color: #3da7ff;
@@ -312,23 +314,24 @@ page {
 }
 
 .content-body-version {
-  padding-left: 20rpx;
   color: #fff;
-  font-size: 20rpx;
-  margin-left: 10rpx;
-  padding: 4rpx 8rpx;
-  border-radius: 20rpx;
+  font-size: 22rpx;
+  line-height: 1;
+  margin-left: 12rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
   background: #50aefd;
 }
 
 /* 更新日志区域 */
 .body {
   width: 100%;
+  margin-top: 20rpx;
 }
 
 .box-des-scroll {
   box-sizing: border-box;
-  padding: 0 40rpx;
+  padding: 0 10rpx;
   height: 200rpx;
   text-align: left;
 }
@@ -336,7 +339,7 @@ page {
 .box-des {
   font-size: 26rpx;
   color: #000000;
-  line-height: 50rpx;
+  line-height: 48rpx;
 }
 
 .log-item {
