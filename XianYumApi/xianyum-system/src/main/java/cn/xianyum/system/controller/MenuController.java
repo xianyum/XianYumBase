@@ -129,7 +129,7 @@ public class MenuController {
      * 保存菜单信息
      */
     @PostMapping(value = "/click")
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "前端菜单埋点上报")
+    @Operation(summary = "前端菜单埋点上报")
     public Results<?> reportMenuClick(@RequestBody MenuEntity menuRequest) {
        menuService.reportMenuClick(menuRequest);
         return Results.success();
@@ -139,7 +139,7 @@ public class MenuController {
      * 保存菜单信息
      */
     @GetMapping(value = "/rank")
-    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取菜单点击排名")
+    @Operation(summary = "获取菜单点击排名（前N名）")
     public Results<List<MenuResponse>> getMenuClickRank() {
         return Results.success(menuService.getMenuClickRank());
     }
