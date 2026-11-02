@@ -1,41 +1,56 @@
 <template>
-  <view class="energy-consume-container" @scroll="onPageScroll">
-    <view class="search-box">
-      <view class="search-form">
-        <view class="search-item">
-          <!-- 日期范围选择器 -->
-          <text class="label">驾驶日期：</text>
-          <view
-              class="date-range-picker"
-              :class="{ placeholder: !dateRangeText }"
-              @tap="openDatePicker"
-          >
-            <text class="picker-text">{{ dateRangeText || '请选择日期范围' }}</text>
-            <uni-icons type="arrowdown" size="16" color="#909399"></uni-icons>
-          </view>
-        </view>
+  <view class="energy-consume-container">
+    <view class="top-bar">
+      <view class="search-input-wrap" @tap="showFilter = true">
+        <uni-icons type="calendar" size="16" color="#909399"></uni-icons>
+        <text class="filter-display">{{ dateRangeText || '驾驶日期筛选' }}</text>
       </view>
-      <view class="btn-group">
-        <button class="btn search-btn" @tap="handleQuery">
-          <uni-icons type="search" size="14" color="#fff"></uni-icons>
-          <text>搜索</text>
-        </button>
-        <button class="btn reset-btn" @tap="resetQuery">
-          <uni-icons type="refresh" size="14" color="#606266"></uni-icons>
-          <text>重置</text>
-        </button>
-        <button class="btn add-btn" @tap="handleAdd">
-          <uni-icons type="plusempty" size="14" color="#fff"></uni-icons>
-          <text>新增</text>
-        </button>
+      <view class="add-btn" @tap="handleAdd">
+        <uni-icons type="plusempty" size="18" color="#67c23a"></uni-icons>
+      </view>
+      <view class="filter-btn" :class="{ active: hasFilter }" @tap="showFilter = true">
+        <uni-icons type="list" size="18" color="#606266"></uni-icons>
       </view>
     </view>
 
-    <!-- 能耗列表 -->
+    <view class="filter-drawer" v-if="showFilter" @tap="showFilter = false">
+      <view class="drawer-mask"></view>
+      <view class="drawer-content" @tap.stop="">
+        <view class="drawer-header">
+          <text class="drawer-title">筛选条件</text>
+          <uni-icons type="closeempty" size="20" color="#909399" @tap="showFilter = false"></uni-icons>
+        </view>
+        <scroll-view scroll-y class="drawer-body">
+          <view class="filter-group">
+            <view class="filter-label">驾驶日期</view>
+            <view class="chip-list">
+              <view
+                  class="chip"
+                  :class="{ active: pendingQuickDateType === 'month' }"
+                  @tap="pendingQuickDateType = 'month'"
+              >当月</view>
+              <view
+                  class="chip"
+                  :class="{ active: pendingQuickDateType === 'lastMonth' }"
+                  @tap="pendingQuickDateType = 'lastMonth'"
+              >上个月</view>
+              <view
+                  class="chip"
+                  :class="{ active: pendingQuickDateType === 'year' }"
+                  @tap="pendingQuickDateType = 'year'"
+              >近一年</view>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="drawer-footer">
+          <view class="drawer-btn reset" @tap="resetQuery">重置</view>
+          <view class="drawer-btn confirm" @tap="handleFilterConfirm">确定</view>
+        </view>
+      </view>
+    </view>
+
     <view class="energy-consume-list" v-if="energyConsumeList.length > 0">
-      <!-- 优化后的合计行 -->
       <view class="energy-consume-item summary-item">
-        <!-- 增加合计标题栏 -->
         <view class="summary-header">
           <uni-icons type="barchart" size="18" color="#409eff"></uni-icons>
           <text class="summary-title">合计</text>
@@ -56,7 +71,6 @@
         </view>
       </view>
 
-      <!-- 列表项 -->
       <view v-for="(item, index) in energyConsumeList" :key="index" class="energy-consume-item">
         <view class="energy-consume-info">
           <view class="info-row">
@@ -84,49 +98,13 @@
         </view>
       </view>
 
-      <!-- 加载更多提示 -->
       <uni-load-more :status="loadMoreStatus" :icon-size="16" :content-text="contentText" />
     </view>
 
-    <!-- 空数据提示 -->
     <view v-else class="empty-box">
       <uni-icons type="info" size="50" color="#999"></uni-icons>
       <text class="empty-text">暂无数据</text>
     </view>
-
-    <!-- 仅保留快捷日期选择弹窗（移除自定义日期选择器） -->
-    <uni-popup ref="quickDatePopupRef" type="bottom" :mask-click="false">
-      <view class="quick-date-popup">
-        <view class="popup-title">快捷选择</view>
-        <view class="quick-date-list">
-          <view
-              class="quick-date-item"
-              :class="{ active: quickDateType === 'month' }"
-              @tap="selectQuickDate('month')"
-          >
-            当月
-          </view>
-          <view
-              class="quick-date-item"
-              :class="{ active: quickDateType === 'lastMonth' }"
-              @tap="selectQuickDate('lastMonth')"
-          >
-            上个月
-          </view>
-          <view
-              class="quick-date-item"
-              :class="{ active: quickDateType === 'year' }"
-              @tap="selectQuickDate('year')"
-          >
-            近一年
-          </view>
-        </view>
-        <view class="popup-btn-group">
-          <button class="popup-btn cancel-btn" @tap="closeQuickDatePopup">取消</button>
-          <button class="popup-btn confirm-btn" @tap="confirmQuickDate">确定</button>
-        </view>
-      </view>
-    </uni-popup>
   </view>
 </template>
 
@@ -135,10 +113,11 @@ import { formatTime } from "@/utils/dateFormat";
 import { getEvDriveRecordsPage,delEvDriveRecords } from "@/api/ev-drive/list";
 import { checkPermi } from '@/utils/permission'
 
+const DEFAULT_QUICK_DATE_TYPE = 'month';
+
 export default {
   data() {
     return {
-      // 查询参数结构
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -147,13 +126,9 @@ export default {
           endTime: undefined
         }
       },
-      // 日期选择器相关
-      dateRangeText: '', // 显示的日期范围文本
-      startDate: '2020-01-01', // 选择器最小日期
-      endDate: formatTime(new Date()), // 选择器最大日期
-      // 快捷日期选择相关
-      quickDateType: 'month', // 默认选中当月
-      // 能耗数据列表
+      dateRangeText: '',
+      quickDateType: DEFAULT_QUICK_DATE_TYPE,
+      pendingQuickDateType: DEFAULT_QUICK_DATE_TYPE,
       energyConsumeList: [],
       loading: false,
       hasMore: true,
@@ -164,14 +139,24 @@ export default {
         contentrefresh: '正在加载...',
         contentnomore: '没有更多数据了'
       },
-      // 合计信息
       summaryInfo: {
         totalDistanceKm: 0,
         totalElectricityConsumed: 0,
         electricityPerKm: 0
       },
-      // 临时存储选中的日期
-      tempDate: {}
+      showFilter: false
+    }
+  },
+  computed: {
+    hasFilter() {
+      return this.quickDateType !== DEFAULT_QUICK_DATE_TYPE;
+    }
+  },
+  watch: {
+    showFilter(val) {
+      if (val) {
+        this.pendingQuickDateType = this.quickDateType;
+      }
     }
   },
   onLoad(options) {
@@ -180,49 +165,25 @@ export default {
         title: options.pageTitle
       });
     }
-    // 初始化默认日期范围（当月）
-    this.initDefaultDateRange();
-    this.getEnergyConsumeList();
+    this.applyQuickDate(DEFAULT_QUICK_DATE_TYPE);
+    this.handleQuery();
   },
   methods: {
     checkPermi,
-    // 新增字典
     handleAdd() {
       this.$tab.navigateTo('/pages/ev-drive/list/add')
     },
-    // 初始化默认日期范围（当月）
-    initDefaultDateRange() {
-      const now = new Date();
-      // 当月第一天 00:00:00
-      const monthFirstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-      // 当月最后一天 23:59:59
-      const monthLastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-      const begin = this.formatDateTime(monthFirstDay, true);
-      const end = this.formatDateTime(monthLastDay, false);
-      // 赋值到查询参数
-      this.queryParams.params.beginTime = begin;
-      this.queryParams.params.endTime = end;
-      // 赋值到显示文本
-      this.dateRangeText = `${formatTime(monthFirstDay, '{y}-{m}-{d}')} 至 ${formatTime(monthLastDay, '{y}-{m}-{d}')}`;
-    },
-    // 格式化日期为 yyyy-MM-dd HH:mm:ss 格式
     formatDateTime(date, isStart) {
       const fmt = isStart ? '{y}-{m}-{d} 00:00:00' : '{y}-{m}-{d} 23:59:59';
       return formatTime(date, fmt);
     },
-    // 打开日期快捷选择弹窗
-    openDatePicker() {
-      this.$refs.quickDatePopupRef.open();
-    },
-    // 选择快捷日期类型（当月/上个月/近一年）
-    selectQuickDate(type) {
+    applyQuickDate(type) {
       this.quickDateType = type;
       const now = new Date();
       let beginTime, endTime, beginText, endText;
 
       switch(type) {
-        case 'month': // 当月
+        case 'month': {
           const monthFirst = new Date(now.getFullYear(), now.getMonth(), 1);
           const monthLast = new Date(now.getFullYear(), now.getMonth() + 1, 0);
           beginTime = this.formatDateTime(monthFirst, true);
@@ -230,7 +191,8 @@ export default {
           beginText = formatTime(monthFirst, '{y}-{m}-{d}');
           endText = formatTime(monthLast, '{y}-{m}-{d}');
           break;
-        case 'lastMonth': // 上个月
+        }
+        case 'lastMonth': {
           const lastMonthFirst = new Date(now.getFullYear(), now.getMonth() - 1, 1);
           const lastMonthLast = new Date(now.getFullYear(), now.getMonth(), 0);
           beginTime = this.formatDateTime(lastMonthFirst, true);
@@ -238,36 +200,27 @@ export default {
           beginText = formatTime(lastMonthFirst, '{y}-{m}-{d}');
           endText = formatTime(lastMonthLast, '{y}-{m}-{d}');
           break;
-        case 'year': // 近一年
+        }
+        case 'year': {
           const lastYear = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
           beginTime = this.formatDateTime(lastYear, true);
           endTime = this.formatDateTime(now, false);
           beginText = formatTime(lastYear, '{y}-{m}-{d}');
           endText = formatTime(now, '{y}-{m}-{d}');
           break;
+        }
       }
-      // 临时存储选中的日期（确认后赋值到查询参数）
-      this.tempDate = { beginTime, endTime, beginText, endText };
+      this.queryParams.params.beginTime = beginTime;
+      this.queryParams.params.endTime = endTime;
+      this.dateRangeText = `${beginText} 至 ${endText}`;
     },
-    // 确认快捷日期选择
-    confirmQuickDate() {
-      if (this.tempDate) {
-        // 赋值到查询参数
-        this.queryParams.params.beginTime = this.tempDate.beginTime;
-        this.queryParams.params.endTime = this.tempDate.endTime;
-        // 赋值到显示文本
-        this.dateRangeText = `${this.tempDate.beginText} 至 ${this.tempDate.endText}`;
-        // 关闭弹窗
-        this.closeQuickDatePopup();
-        // 重新查询数据
+    handleFilterConfirm() {
+      this.showFilter = false;
+      if (this.pendingQuickDateType !== this.quickDateType) {
+        this.applyQuickDate(this.pendingQuickDateType);
         this.handleQuery();
       }
     },
-    // 关闭快捷日期弹窗
-    closeQuickDatePopup() {
-      this.$refs.quickDatePopupRef.close();
-    },
-    // 获取能耗列表数据
     async getEnergyConsumeList(type = 'more') {
       if (this.loading) return;
       this.loading = true;
@@ -302,7 +255,6 @@ export default {
         }
       }
     },
-    // 处理删除操作
     async handleDelete(row) {
       const ids = [row.id]
       this.$modal.confirm('确定要删除这条能耗记录吗？').then(function() {
@@ -313,7 +265,6 @@ export default {
       }).catch(() => {
       })
     },
-    // 搜索按钮逻辑
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.energyConsumeList = [];
@@ -322,19 +273,12 @@ export default {
       this.summaryInfo = { totalDistanceKm: 0, totalElectricityConsumed: 0, electricityPerKm: 0 };
       this.getEnergyConsumeList('refresh');
     },
-    // 重置按钮逻辑
     resetQuery() {
-      this.queryParams = {
-        pageNum: 1,
-        pageSize: 10,
-        params: { beginTime: undefined, endTime: undefined }
-      };
-      this.summaryInfo = { totalDistanceKm: 0, totalElectricityConsumed: 0, electricityPerKm: 0 };
-      // 恢复默认当月日期
-      this.initDefaultDateRange();
+      this.pendingQuickDateType = DEFAULT_QUICK_DATE_TYPE;
+      this.applyQuickDate(DEFAULT_QUICK_DATE_TYPE);
+      this.showFilter = false;
       this.handleQuery();
     },
-    // 下拉刷新
     onPullDownRefresh() {
       this.queryParams.pageNum = 1;
       this.energyConsumeList = [];
@@ -342,109 +286,228 @@ export default {
       this.summaryInfo = { totalDistanceKm: 0, totalElectricityConsumed: 0, electricityPerKm: 0 };
       this.getEnergyConsumeList('refresh');
     },
-    // 上拉加载更多
     onReachBottom() {
       if (this.hasMore && !this.loading) {
         this.queryParams.pageNum++;
         this.getEnergyConsumeList('more');
       }
-    },
-    // 页面滚动事件（空实现，保留原代码）
-    onPageScroll() {}
+    }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+$color-main: #409eff;
+$color-success: #67c23a;
+$color-gray: #909399;
+$color-text: #303133;
+$color-text-light: #606266;
+$color-border: #ebeef5;
+$color-bg: #f5f5f5;
+$color-card: #fff;
+
 .energy-consume-container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
+  background-color: $color-bg;
   min-height: 100vh;
-  overflow-y: auto;
 
-  .search-box {
-    background-color: #fff;
-    border-radius: 16rpx;
-    padding: 24rpx;
-    margin-bottom: 20rpx;
-    box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 20rpx;
+    padding: 20rpx 24rpx;
+    background-color: $color-card;
+    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
 
-    .search-form {
-      .search-item {
+    .search-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+      height: 72rpx;
+      padding: 0 24rpx;
+      background-color: #f5f7fa;
+      border-radius: 36rpx;
+
+      .filter-display {
+        flex: 1;
+        font-size: 28rpx;
+        color: $color-text;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .add-btn {
+      width: 72rpx;
+      height: 72rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba($color-success, 0.1);
+      border-radius: 50%;
+      flex-shrink: 0;
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+
+    .filter-btn {
+      width: 72rpx;
+      height: 72rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f5f7fa;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+
+      &.active {
+        background-color: rgba($color-main, 0.1);
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 12rpx;
+          right: 12rpx;
+          width: 14rpx;
+          height: 14rpx;
+          background-color: $color-main;
+          border-radius: 50%;
+        }
+      }
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .filter-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+
+    .drawer-mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.45);
+    }
+
+    .drawer-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: $color-card;
+      border-radius: 24rpx 24rpx 0 0;
+      display: flex;
+      flex-direction: column;
+      max-height: 75vh;
+
+      .drawer-header {
         display: flex;
         align-items: center;
-        margin-bottom: 20rpx;
+        justify-content: space-between;
+        padding: 32rpx;
+        border-bottom: 1rpx solid $color-border;
+        flex-shrink: 0;
 
-        .label {
-          width: 140rpx;
-          font-size: 28rpx;
-          color: #606266;
-          font-weight: 500;
+        .drawer-title {
+          font-size: 32rpx;
+          font-weight: 600;
+          color: $color-text;
         }
+      }
 
-        .date-range-picker {
-          flex: 1;
-          height: 72rpx;
-          background-color: #f8f9fa;
-          border-radius: 8rpx;
-          padding: 0 24rpx;
-          font-size: 28rpx;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          color: #2c3e50;
+      .drawer-body {
+        flex: 1;
+        height: 0;
+        padding: 24rpx 32rpx;
 
-          &.placeholder {
-            .picker-text {
-              color: #909399;
+        .filter-group {
+          margin-bottom: 32rpx;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .filter-label {
+            font-size: 28rpx;
+            color: $color-text-light;
+            margin-bottom: 20rpx;
+          }
+
+          .chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16rpx;
+
+            .chip {
+              padding: 14rpx 32rpx;
+              background-color: #f5f7fa;
+              border-radius: 8rpx;
+              font-size: 26rpx;
+              color: $color-text-light;
+              transition: all 0.2s;
+
+              &.active {
+                background-color: rgba($color-main, 0.1);
+                color: $color-main;
+                border: 1rpx solid $color-main;
+              }
+
+              &:active {
+                opacity: 0.7;
+              }
             }
           }
         }
       }
-    }
 
-    .btn-group {
-      display: flex;
-      gap: 20rpx;
-      margin-top: 30rpx;
-      padding-top: 30rpx;
-      border-top: 2rpx solid #f0f0f0;
-
-      .btn {
-        flex: 1;
-        height: 80rpx;
+      .drawer-footer {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12rpx;
-        font-size: 28rpx;
-        border-radius: 8rpx;
-        transition: all 0.3s;
+        gap: 24rpx;
+        padding: 24rpx 32rpx;
+        padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+        border-top: 1rpx solid $color-border;
+        flex-shrink: 0;
 
-        &:active {
-          transform: scale(0.98);
-          opacity: 0.9;
-        }
+        .drawer-btn {
+          flex: 1;
+          height: 84rpx;
+          line-height: 84rpx;
+          text-align: center;
+          border-radius: 12rpx;
+          font-size: 30rpx;
 
-        &.search-btn {
-          background-color: #409eff;
-          color: #fff;
-          &:active { background-color: #3a8ee6; }
-        }
+          &.reset {
+            background-color: #f5f7fa;
+            color: $color-text-light;
 
-        &.reset-btn {
-          background-color: #f5f7fa;
-          color: #606266;
-          border: 2rpx solid #dcdfe6;
-          &:active { background-color: #e9e9eb; }
-        }
+            &:active {
+              background-color: #e9e9eb;
+            }
+          }
 
-        &.add-btn {
-          background-color: #67c23a;
-          color: #fff;
+          &.confirm {
+            background-color: $color-main;
+            color: #fff;
 
-          &:active {
-            background-color: #5daf34;
+            &:active {
+              background-color: darken($color-main, 5%);
+            }
           }
         }
       }
@@ -452,15 +515,16 @@ export default {
   }
 
   .energy-consume-list {
+    padding: 24rpx;
+
     .energy-consume-item {
       position: relative;
-      background-color: #fff;
+      background-color: $color-card;
       padding: 32rpx;
       margin-bottom: 24rpx;
       border-radius: 16rpx;
       box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
 
-      // 恢复默认布局，不再使用flex
       .energy-consume-info {
         .info-row {
           display: flex;
@@ -487,7 +551,6 @@ export default {
         }
       }
 
-      // 使用新的操作按钮样式
       .user-online-actions {
         position: absolute;
         right: 32rpx;
@@ -510,16 +573,8 @@ export default {
             opacity: 0.8;
           }
 
-          &.edit-btn {
-            &:active {
-              background-color: #ecf5ff;
-            }
-          }
-
-          &.delete-btn {
-            &:active {
-              background-color: #fef0f0;
-            }
+          &.delete-btn:active {
+            background-color: #fef0f0;
           }
         }
       }
@@ -529,15 +584,12 @@ export default {
       }
     }
 
-    // 强化合计行样式
     .summary-item {
       background: linear-gradient(135deg, #e8f4ff 0%, #f0f8ff 100%);
-      //border: 3rpx solid #407cff;
       margin-bottom: 36rpx;
       padding: 24rpx 32rpx 32rpx;
       box-shadow: 0 4rpx 16rpx rgba(64, 158, 255, 0.15);
 
-      // 合计标题栏
       .summary-header {
         display: flex;
         align-items: center;
@@ -549,11 +601,9 @@ export default {
         .summary-title {
           font-size: 30rpx;
           font-weight: 700;
-          //color: #409eff;
         }
       }
 
-      // 合计内容样式
       .summary-content {
         .info-row {
           margin-bottom: 10rpx;
@@ -565,14 +615,12 @@ export default {
           .label {
             font-size: 30rpx;
             font-weight: 600;
-            //color: #1f6fb2;
             width: 260rpx;
           }
 
           .value {
             font-size: 30rpx;
             font-weight: 700;
-            //color: #1989fa;
             letter-spacing: 1rpx;
           }
         }
@@ -586,83 +634,15 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 120rpx 0;
-    background-color: #fff;
+    background-color: $color-card;
     border-radius: 16rpx;
-    margin-top: 24rpx;
+    margin: 24rpx;
 
     .empty-text {
       margin-top: 24rpx;
       font-size: 28rpx;
-      color: #909399;
+      color: $color-gray;
       letter-spacing: 1rpx;
-    }
-  }
-
-  // 快捷日期选择弹窗样式
-  .quick-date-popup {
-    background-color: #fff;
-    border-radius: 20rpx 20rpx 0 0;
-    padding: 30rpx;
-
-    .popup-title {
-      font-size: 32rpx;
-      font-weight: 600;
-      color: #333;
-      text-align: center;
-      margin-bottom: 30rpx;
-    }
-
-    .quick-date-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20rpx;
-      margin-bottom: 40rpx;
-
-      .quick-date-item {
-        flex: 1;
-        min-width: 160rpx;
-        height: 80rpx;
-        line-height: 80rpx;
-        text-align: center;
-        background-color: #f5f7fa;
-        border-radius: 8rpx;
-        font-size: 28rpx;
-        color: #606266;
-        transition: all 0.2s;
-
-        &.active {
-          background-color: #e8f4ff;
-          color: #409eff;
-          font-weight: 600;
-        }
-
-        &:active {
-          opacity: 0.9;
-        }
-      }
-    }
-
-    .popup-btn-group {
-      display: flex;
-      gap: 20rpx;
-
-      .popup-btn {
-        flex: 1;
-        height: 80rpx;
-        border-radius: 8rpx;
-        font-size: 28rpx;
-
-        &.cancel-btn {
-          background-color: #f5f7fa;
-          color: #606266;
-          border: 2rpx solid #dcdfe6;
-        }
-
-        &.confirm-btn {
-          background-color: #409eff;
-          color: #fff;
-        }
-      }
     }
   }
 }

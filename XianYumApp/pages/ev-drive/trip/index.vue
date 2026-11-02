@@ -1,22 +1,9 @@
 <template>
   <view class="trip-list-page">
     <view class="top-bar">
-      <view class="search-input-wrap">
-        <uni-icons type="search" size="16" color="#909399"></uni-icons>
-        <input
-            v-model="searchKeyword"
-            type="text"
-            placeholder="搜索终点地址"
-            confirm-type="search"
-            @confirm="handleQuery"
-        />
-        <uni-icons
-            v-if="searchKeyword"
-            type="clear"
-            size="14"
-            color="#c0c4cc"
-            @tap="searchKeyword = ''; handleQuery()"
-        ></uni-icons>
+      <view class="search-input-wrap" @tap="showFilter = true">
+        <uni-icons type="calendar" size="16" color="#909399"></uni-icons>
+        <text class="filter-display">{{ dateRangeText }}</text>
       </view>
       <view class="filter-btn" :class="{ active: hasFilter }" @tap="showFilter = true">
         <uni-icons type="list" size="18" color="#606266"></uni-icons>
@@ -42,8 +29,8 @@
                   v-for="opt in dateOptions"
                   :key="opt.value"
                   class="chip"
-                  :class="{ active: dateFilterType === opt.value }"
-                  @tap="dateFilterType = opt.value"
+                  :class="{ active: pendingDateFilterType === opt.value }"
+                  @tap="pendingDateFilterType = opt.value"
               >{{ opt.label }}</view>
             </view>
           </view>
@@ -131,8 +118,10 @@
 <script>
 import { getTripPage } from "@/api/ev-drive/list";
 
+const DEFAULT_DATE_FILTER_TYPE = 'all';
+
 const DATE_FILTER_OPTIONS = [
-  { value: 'all', label: '全部时间' },
+  { value: 'all', label: '全部' },
   { value: 'yesterday', label: '昨天' },
   { value: 'lastWeek', label: '上一周' },
   { value: 'lastMonth', label: '上一月' }
@@ -150,13 +139,12 @@ export default {
         pageSize: 10,
         params: {
           beginTime: undefined,
-          endTime: undefined,
-          destinationKeyword: undefined
+          endTime: undefined
         }
       },
-      dateFilterType: 'all',
-      dateRangeText: '全部时间',
-      searchKeyword: '',
+      dateFilterType: DEFAULT_DATE_FILTER_TYPE,
+      pendingDateFilterType: DEFAULT_DATE_FILTER_TYPE,
+      dateRangeText: '全部',
       tripList: [],
       loading: false,
       hasMore: true,
@@ -192,12 +180,20 @@ export default {
       return groups;
     },
     hasFilter() {
-      return !!(this.queryParams.params.beginTime || this.searchKeyword);
+      return this.dateFilterType !== DEFAULT_DATE_FILTER_TYPE;
+    }
+  },
+  watch: {
+    showFilter(val) {
+      if (val) {
+        this.pendingDateFilterType = this.dateFilterType;
+      }
     }
   },
   onLoad(options) {
     const title = (options && options.pageTitle) || '全部轨迹';
     uni.setNavigationBarTitle({ title });
+    this._resolveAndApplyDateRange(DEFAULT_DATE_FILTER_TYPE);
     this._getTripList('init');
   },
   onPullDownRefresh() {
@@ -211,40 +207,37 @@ export default {
   },
   methods: {
     handleFilterConfirm() {
-      const { begin, end, text } = this._resolveDateRange(this.dateFilterType);
+      this.showFilter = false;
+      if (this.pendingDateFilterType !== this.dateFilterType) {
+        this._resolveAndApplyDateRange(this.pendingDateFilterType);
+        this._refresh();
+      }
+    },
+    resetQuery() {
+      this.pendingDateFilterType = DEFAULT_DATE_FILTER_TYPE;
+      this._resolveAndApplyDateRange(DEFAULT_DATE_FILTER_TYPE);
+      this.showFilter = false;
+      this._refresh();
+    },
+    _resolveAndApplyDateRange(type) {
+      this.dateFilterType = type;
+      const { begin, end, text } = this._resolveDateRange(type);
       this.queryParams.params.beginTime = begin;
       this.queryParams.params.endTime = end;
       this.dateRangeText = text;
-      this.showFilter = false;
-      this._refresh();
-    },
-    handleQuery() {
-      this.queryParams.params.destinationKeyword = this.searchKeyword || undefined;
-      this._refresh();
-    },
-    resetQuery() {
-      this.dateFilterType = 'all';
-      this.searchKeyword = '';
-      this.queryParams.params.beginTime = undefined;
-      this.queryParams.params.endTime = undefined;
-      this.queryParams.params.destinationKeyword = undefined;
-      this.dateRangeText = '全部时间';
-      this.showFilter = false;
-      this._refresh();
     },
     _resolveDateRange(type) {
       const now = new Date();
       const _setDayStart = (d) => { d.setHours(0, 0, 0, 0); return d; };
       const _setDayEnd = (d) => { d.setHours(23, 59, 59, 999); return d; };
-      const _fmt = (d, isStart) => this._formatDateTime(d, isStart);
 
       switch (type) {
         case 'yesterday': {
           const y = new Date(now);
           y.setDate(y.getDate() - 1);
           return {
-            begin: _fmt(_setDayStart(new Date(y)), true),
-            end: _fmt(_setDayEnd(new Date(y)), false),
+            begin: this._formatDateTime(_setDayStart(new Date(y)), true),
+            end: this._formatDateTime(_setDayEnd(new Date(y)), false),
             text: '昨天'
           };
         }
@@ -256,8 +249,8 @@ export default {
           const lastSunday = new Date(lastMonday);
           lastSunday.setDate(lastSunday.getDate() + 6);
           return {
-            begin: _fmt(_setDayStart(new Date(lastMonday)), true),
-            end: _fmt(_setDayEnd(new Date(lastSunday)), false),
+            begin: this._formatDateTime(_setDayStart(new Date(lastMonday)), true),
+            end: this._formatDateTime(_setDayEnd(new Date(lastSunday)), false),
             text: '上一周'
           };
         }
@@ -265,13 +258,13 @@ export default {
           const lmStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
           const lmEnd = new Date(now.getFullYear(), now.getMonth(), 0);
           return {
-            begin: _fmt(_setDayStart(lmStart), true),
-            end: _fmt(_setDayEnd(lmEnd), false),
+            begin: this._formatDateTime(_setDayStart(lmStart), true),
+            end: this._formatDateTime(_setDayEnd(lmEnd), false),
             text: '上一月'
           };
         }
         default:
-          return { begin: undefined, end: undefined, text: '全部时间' };
+          return { begin: undefined, end: undefined, text: '全部' };
       }
     },
     _processItem(item) {
@@ -415,16 +408,13 @@ $color-border: #ebeef5;
     background-color: #f5f7fa;
     border-radius: 36rpx;
 
-    input {
+    .filter-display {
       flex: 1;
       font-size: 28rpx;
       color: $text-primary;
-      background: transparent;
-      height: 100%;
-
-      &::placeholder {
-        color: #c0c4cc;
-      }
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
@@ -504,7 +494,7 @@ $color-border: #ebeef5;
     border-radius: 24rpx 24rpx 0 0;
     display: flex;
     flex-direction: column;
-    max-height: 70vh;
+    max-height: 75vh;
 
     .drawer-header {
       display: flex;
