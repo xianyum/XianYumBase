@@ -50,51 +50,72 @@
     </view>
 
     <view class="energy-consume-list" v-if="energyConsumeList.length > 0">
-      <view class="energy-consume-item summary-item">
-        <view class="summary-header">
-          <uni-icons type="barchart" size="18" color="#409eff"></uni-icons>
-          <text class="summary-title">合计</text>
+      <view class="summary-card">
+        <view class="summary-row">
+          <view class="summary-label">
+            <view class="label-bar"></view>
+            <text>本周期合计</text>
+          </view>
         </view>
-        <view class="energy-consume-info summary-content">
-          <view class="info-row">
-            <text class="label">总行驶公里数：</text>
-            <text class="value">{{ summaryInfo.totalDistanceKm}}公里</text>
+        <view class="summary-stats">
+          <view class="stat-cell">
+            <view class="stat-top">
+              <text class="stat-value">{{ summaryInfo.totalDistanceKm }}</text>
+              <text class="stat-unit">公里</text>
+            </view>
+            <text class="stat-label">总行驶</text>
           </view>
-          <view class="info-row">
-            <text class="label">总消耗电量：</text>
-            <text class="value">{{ summaryInfo.totalElectricityConsumed}}度</text>
+          <view class="stat-cell">
+            <view class="stat-top">
+              <text class="stat-value">{{ summaryInfo.totalElectricityConsumed }}</text>
+              <text class="stat-unit">度</text>
+            </view>
+            <text class="stat-label">总耗电</text>
           </view>
-          <view class="info-row">
-            <text class="label">每公里电量消耗：</text>
-            <text class="value">{{ summaryInfo.electricityPerKm}}度/公里</text>
+          <view class="stat-cell">
+            <view class="stat-top">
+              <text class="stat-value">{{ summaryInfo.electricityPerKm }}</text>
+              <text class="stat-unit">度/km</text>
+            </view>
+            <text class="stat-label">能耗</text>
           </view>
         </view>
       </view>
 
-      <view v-for="(item, index) in energyConsumeList" :key="index" class="energy-consume-item">
-        <view class="energy-consume-info">
-          <view class="info-row">
-            <text class="label">驾驶日期：</text>
-            <uni-dateformat class="value" :date="item.driveDate" format="yyyy-MM-dd"></uni-dateformat>
+      <view v-for="(item, index) in energyConsumeList" :key="index" class="record-item">
+        <view class="record-date-block">
+          <text class="date-month">
+            <uni-dateformat :date="item.driveDate" format="MM"></uni-dateformat>月
+          </text>
+          <text class="date-day">
+            <uni-dateformat :date="item.driveDate" format="dd"></uni-dateformat>
+          </text>
+        </view>
+        <view class="record-main-wrap">
+          <view class="record-main">
+            <text class="record-label">行驶里程：</text>
+            <text class="record-value">{{ item.distanceKm }}</text>
+            <text class="record-unit">公里</text>
           </view>
-          <view class="info-row">
-            <text class="label">行驶公里数：</text>
-            <text class="value">{{ item.distanceKm }}公里</text>
-          </view>
-          <view class="info-row">
-            <text class="label">消耗电量：</text>
-            <text class="value">{{ item.electricityConsumed }}度</text>
-          </view>
-          <view class="info-row">
-            <text class="label">每公里电量消耗：</text>
-            <text class="value">{{ item.electricityPerKm }}度/公里</text>
+          <view class="record-bottom">
+            <view class="record-sub-card">
+              <view class="sub-top">
+                <text class="sub-value">{{ item.electricityConsumed }}</text>
+                <text class="sub-unit">度</text>
+              </view>
+              <text class="sub-label">总耗电</text>
+            </view>
+            <view class="record-sub-card">
+              <view class="sub-top">
+                <text class="sub-value">{{ item.electricityPerKm }}</text>
+                <text class="sub-unit">度/km</text>
+              </view>
+              <text class="sub-label">每公里能耗</text>
+            </view>
           </view>
         </view>
-
-        <view class="user-online-actions" v-if="checkPermi(['ev-drive-records:delete'])">
-          <button class="action-btn delete-btn" @tap.stop="handleDelete(item)">
-            <uni-icons type="trash" size="14" color="#f56c6c"></uni-icons>
-          </button>
+        <view class="record-delete" v-if="checkPermi(['ev-drive-records:delete'])" @tap.stop="handleDelete(item)">
+          <uni-icons type="trash" size="14" color="#c0c4cc"></uni-icons>
         </view>
       </view>
 
@@ -515,113 +536,201 @@ $color-card: #fff;
   }
 
   .energy-consume-list {
-    padding: 24rpx;
+    padding: 20rpx;
 
-    .energy-consume-item {
-      position: relative;
+    .summary-card {
+      margin-bottom: 20rpx;
+      padding: 24rpx 28rpx;
       background-color: $color-card;
-      padding: 32rpx;
-      margin-bottom: 24rpx;
       border-radius: 16rpx;
       box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
 
-      .energy-consume-info {
-        .info-row {
-          display: flex;
-          align-items: center;
-          margin-bottom: 16rpx;
-          line-height: 1.5;
-
-          &:last-child { margin-bottom: 0; }
-
-          .label {
-            width: 240rpx;
-            font-size: 28rpx;
-            color: #606266;
-            flex-shrink: 0;
-          }
-
-          .value {
-            flex: 1;
-            font-size: 28rpx;
-            color: #2c3e50;
-            font-weight: 500;
-            word-break: break-all;
-          }
-        }
+      .summary-row {
+        margin-bottom: 20rpx;
       }
 
-      .user-online-actions {
-        position: absolute;
-        right: 32rpx;
-        top: 32rpx;
-        display: flex;
-        gap: 16rpx;
-
-        .action-btn {
-          width: 56rpx;
-          height: 56rpx;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 28rpx;
-          background-color: #f8f9fa;
-          border: none;
-
-          &:active {
-            opacity: 0.8;
-          }
-
-          &.delete-btn:active {
-            background-color: #fef0f0;
-          }
-        }
-      }
-
-      &:active {
-        opacity: 0.9;
-      }
-    }
-
-    .summary-item {
-      background: linear-gradient(135deg, #e8f4ff 0%, #f0f8ff 100%);
-      margin-bottom: 36rpx;
-      padding: 24rpx 32rpx 32rpx;
-      box-shadow: 0 4rpx 16rpx rgba(64, 158, 255, 0.15);
-
-      .summary-header {
+      .summary-label {
         display: flex;
         align-items: center;
         gap: 12rpx;
-        padding-bottom: 20rpx;
-        margin-bottom: 20rpx;
-        border-bottom: 2rpx solid rgba(64, 158, 255, 0.2);
 
-        .summary-title {
-          font-size: 30rpx;
-          font-weight: 700;
+        .label-bar {
+          width: 6rpx;
+          height: 24rpx;
+          background-color: $color-main;
+          border-radius: 3rpx;
+        }
+
+        text {
+          font-size: 26rpx;
+          color: $color-text-light;
+          font-weight: 500;
         }
       }
 
-      .summary-content {
-        .info-row {
-          margin-bottom: 10rpx;
+      .summary-stats {
+        display: flex;
+        gap: 16rpx;
 
-          &:last-child {
-            margin-bottom: 0;
+        .stat-cell {
+          flex: 1;
+          padding: 20rpx 16rpx;
+          background-color: #f5f7fa;
+          border-radius: 12rpx;
+          display: flex;
+          flex-direction: column;
+
+          .stat-top {
+            display: flex;
+            align-items: baseline;
+            gap: 4rpx;
+            line-height: 1.2;
           }
 
-          .label {
-            font-size: 30rpx;
-            font-weight: 600;
-            width: 260rpx;
-          }
-
-          .value {
-            font-size: 30rpx;
+          .stat-value {
+            font-size: 40rpx;
             font-weight: 700;
-            letter-spacing: 1rpx;
+            color: $color-text;
+          }
+
+          .stat-unit {
+            font-size: 22rpx;
+            color: $color-gray;
+          }
+
+          .stat-label {
+            font-size: 22rpx;
+            color: $color-gray;
+            margin-top: 8rpx;
+          }
+        }
+      }
+    }
+
+    .record-item {
+      position: relative;
+      padding: 28rpx 24rpx;
+      padding-right: 88rpx;
+      background-color: $color-card;
+      border-radius: 12rpx;
+      box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      gap: 24rpx;
+      margin-bottom: 20rpx;
+
+      &:last-child { margin-bottom: 0; }
+      &:active { opacity: 0.85; }
+
+      .record-date-block {
+        width: 110rpx;
+        padding: 14rpx 0;
+        background-color: #ecf5ff;
+        border-radius: 12rpx;
+        border-left: 4rpx solid $color-main;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        .date-month {
+          font-size: 22rpx;
+          color: $color-main;
+          line-height: 1;
+        }
+
+        .date-day {
+          font-size: 40rpx;
+          font-weight: 700;
+          color: $color-main;
+          line-height: 1.2;
+          margin-top: 4rpx;
+        }
+      }
+
+      .record-delete {
+        position: absolute;
+        top: 20rpx;
+        right: 20rpx;
+        width: 56rpx;
+        height: 56rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 28rpx;
+        background-color: #f8f9fa;
+
+        &:active { opacity: 0.6; }
+      }
+
+      .record-main-wrap {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14rpx;
+
+        .record-main {
+          display: flex;
+          align-items: baseline;
+          gap: 4rpx;
+
+          .record-label {
+            font-size: 28rpx;
+            color: $color-gray;
+          }
+
+          .record-value {
+            font-size: 36rpx;
+            font-weight: 700;
+            color: $color-text;
+          }
+
+          .record-unit {
+            font-size: 24rpx;
+            color: $color-gray;
+          }
+        }
+
+        .record-bottom {
+          display: flex;
+          gap: 12rpx;
+
+          .record-sub-card {
+            flex: 1;
+            padding: 14rpx 16rpx;
+            background-color: #f5f7fa;
+            border-radius: 10rpx;
+            display: flex;
+            align-items: center;
+            gap: 8rpx;
+            white-space: nowrap;
+
+            .sub-top {
+              display: flex;
+              align-items: baseline;
+              gap: 4rpx;
+              flex-shrink: 0;
+
+              .sub-value {
+                font-size: 26rpx;
+                font-weight: 600;
+                color: $color-text;
+              }
+
+              .sub-unit {
+                font-size: 18rpx;
+                color: $color-gray;
+              }
+            }
+
+            .sub-label {
+              font-size: 18rpx;
+              color: $color-gray;
+              margin-left: auto;
+              flex-shrink: 0;
+            }
           }
         }
       }

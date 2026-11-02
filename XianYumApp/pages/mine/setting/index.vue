@@ -1,10 +1,16 @@
 <template>
-  <view class="setting-container" :style="{height: `${windowHeight}px`}">
+  <view class="page">
     <view class="menu-list">
       <view class="list-cell list-cell-arrow" @click="handleToUpgrade">
         <view class="menu-item-box">
           <view class="iconfont icon-refresh menu-icon"></view>
           <view>检查更新</view>
+        </view>
+      </view>
+      <view class="list-cell list-cell-arrow" @click="handleForceUpgrade">
+        <view class="menu-item-box">
+          <view class="iconfont icon-refresh menu-icon"></view>
+          <view>强制更新</view>
         </view>
       </view>
       <view class="list-cell list-cell-arrow" @click="handleCleanTmp">
@@ -20,18 +26,15 @@
         </view>
       </view>
     </view>
-    <view class="cu-list menu">
-      <view class="cu-item item-box">
-        <view class="content text-center" @click="handleLogout">
-          <text class="text-black">退出登录</text>
-        </view>
-      </view>
+
+    <view class="logout-card" @click="handleLogout">
+      <text class="logout-text">退出登录</text>
     </view>
 
-    <!-- 引入更新弹窗组件 -->
     <UpdatePopup
         :updateInfo="updateInfo"
         :showPopup="showUpdatePopup"
+        :forceInstall="forceInstall"
         @close="showUpdatePopup = false"
     />
   </view>
@@ -49,7 +52,8 @@
       return {
         showUpdatePopup: false,
         windowHeight: uni.getSystemInfoSync().windowHeight,
-        updateInfo: {}
+        updateInfo: {},
+        forceInstall: false
       }
     },
     methods: {
@@ -70,6 +74,7 @@
             this.$modal.closeLoading();
             if (response && response.data) {
               this.updateInfo = response.data;
+              this.forceInstall = false;
               this.showUpdatePopup = true
             }else{
               this.$modal.msg('当前是最新版本，无需更新')
@@ -86,11 +91,37 @@
         // #endif
       },
 
-      /**
-       * 格式化文件大小（字节转 KB/MB/GB）
-       * @param {Number} size 字节数
-       * @returns {String} 格式化后的大小
-       */
+      handleForceUpgrade() {
+        // #ifdef APP-PLUS
+        this._doForceUpgrade();
+        // #endif
+
+        // #ifndef APP-PLUS
+        this.$modal.msg('仅支持App端强制更新');
+        // #endif
+      },
+
+      _doForceUpgrade() {
+        this.$modal.loading('获取最新版本信息...');
+        const systemInfo = uni.getSystemInfoSync();
+        getLastAppVersion({
+          appId: systemInfo.appId,
+          version: '0'
+        }).then(response => {
+          this.$modal.closeLoading();
+          if (!response || !response.data) {
+            this.$modal.msg('未获取到更新包');
+            return;
+          }
+          this.updateInfo = response.data;
+          this.forceInstall = true;
+          this.showUpdatePopup = true;
+        }).catch(() => {
+          this.$modal.closeLoading();
+          this.$modal.msg('获取更新失败');
+        });
+      },
+
       formatSize(size) {
         if (size < 1024) {
           return size + "B";
@@ -102,30 +133,23 @@
           return (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
         }
       },
-      /**
-       * 处理清理缓存逻辑
-       */
+
       handleCleanTmp() {
-        // 先判断是否为App环境
         if (uni.getSystemInfoSync().platform !== 'android') {
           this.$modal.msg('仅支持App端清理缓存', 'none');
           return;
         }
 
         // #ifdef APP-PLUS
-        // 显示加载提示
         this.$modal.loading('计算缓存大小中...');
         
-        // 计算缓存大小
         plus.cache.calculate((size) => {
           this.$modal.closeLoading();
           const cacheSize = this.formatSize(size);
 
-          // 调用你原来的confirm方法（未优化版）
           this.$modal.confirm(`当前缓存大小：${cacheSize}\n确定要清除所有缓存吗？`, '清理缓存')
               .then((confirm) => {
                 if (confirm) {
-                  // 用户确认清除
                   this.$modal.loading('清除缓存中...');
                   plus.cache.clear(() => {
                     this.$modal.closeLoading();
@@ -156,19 +180,24 @@
 
 <style lang="scss" scoped>
   .page {
+    min-height: 100vh;
     background-color: #f8f8f8;
   }
 
-  .item-box {
-    background-color: #FFFFFF;
-    margin: 30rpx;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 10rpx;
+  .logout-card {
+    margin: 15px;
+    background-color: #fff;
     border-radius: 8rpx;
-    color: #303133;
-    font-size: 32rpx;
+    padding: 26rpx 30rpx;
+    text-align: center;
+
+    &:active {
+      background-color: #f5f5f5;
+    }
+  }
+
+  .logout-text {
+    font-size: 30rpx;
+    color: #e54d42;
   }
 </style>

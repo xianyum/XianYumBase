@@ -66,6 +66,10 @@ export default {
     showPopup: {
       type: Boolean,
       default: false
+    },
+    forceInstall: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -162,12 +166,13 @@ export default {
 
       const packageType = this.updateInfo.packageType;
       const isForceUpdate = this.isForceUpdate;
+      const installOptions = { force: this.forceInstall };
 
       // WGT热更新包安装
       if (packageType === 1) {
         plus.runtime.install(
             tempFilePath,
-            { force: false },
+            installOptions,
             () => {
               uni.hideLoading();
               uni.showToast({
@@ -188,7 +193,7 @@ export default {
       else if (packageType === 2) {
         plus.runtime.install(
             tempFilePath,
-            { force: false },
+            installOptions,
             () => {
               uni.hideLoading();
               uni.showToast({
