@@ -31,24 +31,22 @@ public class MysqlBackupTask implements IJobHandler {
             tool.error("目录不存在: " + filePath);
             return ReturnT.FAILURE;
         }
-        tool.info("========== MySQL 备份上传任务开始 ==========");
-        tool.info("源目录: " + dir.getAbsolutePath());
-        tool.info("目标路径: " + REMOTE_PATH);
+
+        tool.info(String.format("源目录:%s,目标路径:%s", dir.getAbsolutePath(), REMOTE_PATH));
         for (File file : FileUtil.loopFiles(dir)) {
             if (!file.isFile()) {
                 continue;
             }
             try {
-                tool.info("上传: " + file.getName());
                 FileDetailResponse resp = FileUtils.uploadFile(file, REMOTE_PATH);
                 if (resp != null) {
-                    boolean deleted = FileUtil.del(file);
-                    tool.info("上传成功, 删除本地文件" + (deleted ? "" : "(删除失败)"));
+                    FileUtil.del(file);
+                    tool.info(String.format("上传成功, 删除本地文件%s", file.getAbsolutePath()));
                 } else {
-                    tool.error("上传返回为空: " + file.getName());
+                    tool.error(String.format("上传返回为空: %s", file.getAbsolutePath()));
                 }
             } catch (Exception e) {
-                tool.error("上传失败: " + file.getName() + ", 原因: " + e.getMessage());
+                tool.error(String.format("上传失败: %s, 原因: %s", file.getAbsolutePath(), e.getMessage()));
             }
         }
 
