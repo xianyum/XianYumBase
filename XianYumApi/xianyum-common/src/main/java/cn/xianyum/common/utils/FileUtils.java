@@ -6,6 +6,7 @@ import cn.xianyum.common.exception.SoException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.lang.reflect.Method;
@@ -27,34 +28,51 @@ public class FileUtils {
 
     // 缓存Method对象，提升反射性能
     private static final Map<String, Method> METHOD_CACHE = new ConcurrentHashMap<>();
+
     /**
      * 反射调用FileService.uploadFile方法
      * @param file 上传的文件
      * @return common包的FileDetailResponse（强类型）
      * @throws Exception 反射调用异常（可封装为自定义异常）
      */
-    public static FileDetailResponse uploadFile(MultipartFile file){
+    public static FileDetailResponse uploadFile(File file){
         try {
-            // 1. 校验入参
-            if (file == null || file.isEmpty()) {
-                throw new IllegalArgumentException("上传文件不能为空");
+            if (file == null || !file.exists()) {
+                throw new IllegalArgumentException("本地文件不存在");
             }
-
-            // 2. 获取Spring容器中的FileService实例
             Object fileServiceBean = SpringUtil.getBean(FILE_SERVICE_BEAN_NAME);
             if (fileServiceBean == null) {
                 throw new IllegalStateException("未找到FileService实例（请确认system模块已加载）");
             }
-
-            // 3. 获取uploadFile方法（缓存优化）
             Method uploadMethod = getCachedMethod(
                     fileServiceBean.getClass(),
                     UPLOAD_FILE_METHOD,
-                    MultipartFile.class
+                    File.class
             );
-
-            // 4. 反射调用并返回强类型（FileDetailResponse在common包，可直接强转）
             Object result = uploadMethod.invoke(fileServiceBean, file);
+            return result == null ? null : (FileDetailResponse) result;
+        }catch (Exception e){
+            log.error("上传文件异常.",e);
+            throw new SoException("上传文件异常");
+        }
+    }
+
+    public static FileDetailResponse uploadFile(File file, String path){
+        try {
+            if (file == null || !file.exists()) {
+                throw new IllegalArgumentException("本地文件不存在");
+            }
+            Object fileServiceBean = SpringUtil.getBean(FILE_SERVICE_BEAN_NAME);
+            if (fileServiceBean == null) {
+                throw new IllegalStateException("未找到FileService实例（请确认system模块已加载）");
+            }
+            Method uploadMethod = getCachedMethod(
+                    fileServiceBean.getClass(),
+                    UPLOAD_FILE_METHOD,
+                    File.class,
+                    String.class
+            );
+            Object result = uploadMethod.invoke(fileServiceBean, file, path);
             return result == null ? null : (FileDetailResponse) result;
         }catch (Exception e){
             log.error("上传文件异常.",e);

@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -49,21 +51,47 @@ public class FileServiceImpl implements FileService {
 
 
 
-    /**
-     * 上传文件，并返回文件ID
-     *
-     * @param file
-     * @return
-     */
     @Override
     public FileDetailResponse uploadFile(MultipartFile file) {
+        return uploadFile(file, buildDefaultPath());
+    }
+
+    @Override
+    public FileDetailResponse uploadFile(MultipartFile file, String path) {
         if (file.isEmpty()) {
             throw new SoException("上传的文件为空");
         }
         FileInfo fileInfo = this.fileStorageService.of(file)
-                .setPath(DateUtils.format(new Date(), DateUtils.DATE_PATTERN) + Constants.SLASH)
+                .setPath(buildPath(path))
                 .upload();
         return this.selectFileById(fileInfo.getId(), true);
+    }
+
+    @Override
+    public FileDetailResponse uploadFile(File file) {
+        return uploadFile(file, buildDefaultPath());
+    }
+
+    @Override
+    public FileDetailResponse uploadFile(File file, String path) {
+        if (file == null || !file.exists()) {
+            throw new SoException("本地文件不存在: " + (file != null ? file.getAbsolutePath() : "null"));
+        }
+        FileInfo fileInfo = this.fileStorageService.of(file)
+                .setPath(buildPath(path))
+                .upload();
+        return this.selectFileById(fileInfo.getId(), true);
+    }
+
+    private String buildDefaultPath() {
+        return DateUtils.format(new Date(), DateUtils.DATE_PATTERN) + Constants.SLASH;
+    }
+
+    private String buildPath(String path) {
+        if (StrUtil.isBlank(path)) {
+            return buildDefaultPath();
+        }
+        return path.endsWith(Constants.SLASH) ? path : path + Constants.SLASH;
     }
 
     /**
