@@ -5,6 +5,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.OperTypeEnum;
+import cn.xianyum.common.enums.ReturnT;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.entity.request.EvAutoReportRequest;
 import cn.xianyum.extension.entity.request.EvTripRequest;
@@ -185,5 +186,15 @@ public class EvDriveRecordsController {
     @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询行程详情")
     public Results<EvTripResponse> getTripById(@PathVariable Long id) {
         return Results.success(evTripService.getById(id));
+    }
+
+    /**
+     * 手动执行汇总行程
+     */
+    @Operation(summary = "手动执行汇总行程")
+    @PostMapping(value = "/trip/summary")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "手动执行汇总行程")
+    public Results<ReturnT> summaryEvTrip() {
+        return Results.success(evTripService.doSummaryEvTrip());
     }
 }
