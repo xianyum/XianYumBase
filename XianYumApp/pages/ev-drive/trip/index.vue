@@ -8,6 +8,11 @@
       <view class="filter-btn" :class="{ active: hasFilter }" @tap="showFilter = true">
         <uni-icons type="list" size="18" color="#606266"></uni-icons>
       </view>
+      <view class="summary-btn" :class="{ loading: summaryLoading }" @tap="handleSummary">
+        <uni-icons v-if="!summaryLoading" type="reload" size="16" color="#409eff"></uni-icons>
+        <uni-icons v-else type="spinner" size="16" color="#409eff"></uni-icons>
+        <text class="summary-text">汇总</text>
+      </view>
       <view class="filter-total" v-if="total > 0">
         <text class="total-num">{{ total }}</text>
         <text class="total-label">条</text>
@@ -116,7 +121,7 @@
 </template>
 
 <script>
-import { getTripPage } from "@/api/ev-drive/list";
+import { getTripPage, tripSummary } from "@/api/ev-drive/list";
 
 const DEFAULT_DATE_FILTER_TYPE = 'all';
 
@@ -156,7 +161,8 @@ export default {
         contentnomore: '— 没有更多了 —'
       },
       dateOptions: DATE_FILTER_OPTIONS,
-      showFilter: false
+      showFilter: false,
+      summaryLoading: false
     };
   },
   computed: {
@@ -362,6 +368,24 @@ export default {
       uni.navigateTo({
         url: `/pages/ev-drive/trip/detail?id=${item.id}`
       });
+    },
+
+    async handleSummary() {
+      if (this.summaryLoading) return;
+      this.summaryLoading = true;
+      try {
+        const response = await tripSummary();
+        if (response.code === 200) {
+          this.$modal.msgSuccess('执行成功');
+          this._refresh();
+        } else {
+          this.$modal.msg(response.msg || '执行失败');
+        }
+      } catch (error) {
+        this.$modal.msg('网络异常，请稍后重试');
+      } finally {
+        this.summaryLoading = false;
+      }
     }
   }
 };
@@ -446,6 +470,32 @@ $color-border: #ebeef5;
 
     &:active {
       opacity: 0.7;
+    }
+  }
+
+  .summary-btn {
+    display: flex;
+    align-items: center;
+    gap: 4rpx;
+    height: 72rpx;
+    padding: 0 20rpx;
+    background-color: rgba($primary, 0.1);
+    border-radius: 36rpx;
+    flex-shrink: 0;
+
+    &.loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    &:active {
+      opacity: 0.7;
+    }
+
+    .summary-text {
+      font-size: 24rpx;
+      color: $primary;
+      font-weight: 500;
     }
   }
 

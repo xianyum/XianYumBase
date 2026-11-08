@@ -88,3 +88,10 @@ export function getCurrentLocation() {
     method: 'get'
   })
 }
+
+export function tripSummary() {
+  return request({
+    url: '/xym-extension/v1/evDriveRecords/trip/summary',
+    method: 'post'
+  })
+}
