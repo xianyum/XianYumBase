@@ -238,34 +238,13 @@ export default {
         const response = await getTripById(id);
         if (response.code === 200) {
           this.trip = response.data || {};
-          this.trackList = this.buildTrackList(response.data);
+          this.trackList = response.data?.trackList || [];
           this.calcTripStats();
           this.initMap();
         }
       } catch (error) {
         this.$modal.msg('加载行程详情失败');
       }
-    },
-    buildTrackList(data) {
-      if (!data) return [];
-      if (data.trackList && data.trackList.length > 0) {
-        return data.trackList;
-      }
-      const lonList = data.lonList || [];
-      const latList = data.latList || [];
-      const headingList = data.headingList || [];
-      const reportTimeList = data.reportTimeList || [];
-      const len = Math.min(lonList.length, latList.length);
-      const result = [];
-      for (let i = 0; i < len; i++) {
-        result.push({
-          lon: lonList[i],
-          lat: latList[i],
-          heading: headingList[i] != null ? headingList[i] : 0,
-          reportTime: reportTimeList[i] || null
-        });
-      }
-      return result;
     },
     calcTripStats() {
       const startOdo = this.trip.startOdometer || 0;
