@@ -186,21 +186,7 @@ public class EvTripServiceImpl implements EvTripService {
             response.setStartLon(trackList.get(0).getLon());
             response.setEndLat(trackList.get(trackList.size() - 1).getLat());
             response.setEndLon(trackList.get(trackList.size() - 1).getLon());
-
-            List<BigDecimal> lonList = new ArrayList<>(simplifiedTrack.size());
-            List<BigDecimal> latList = new ArrayList<>(simplifiedTrack.size());
-            List<BigDecimal> headingList = new ArrayList<>(simplifiedTrack.size());
-            List<LocalDateTime> reportTimeList = new ArrayList<>(simplifiedTrack.size());
-            for (EvTripTrackResponse point : simplifiedTrack) {
-                lonList.add(point.getLon());
-                latList.add(point.getLat());
-                headingList.add(point.getHeading());
-                reportTimeList.add(point.getReportTime());
-            }
-            response.setLonList(lonList);
-            response.setLatList(latList);
-            response.setHeadingList(headingList);
-            response.setReportTimeList(reportTimeList);
+            response.setTrackList(simplifiedTrack);
         }
         return response;
     }

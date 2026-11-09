@@ -1,6 +1,7 @@
 package cn.xianyum.extension.entity.response;
 
 import cn.xianyum.common.entity.base.BaseResponse;
+import cn.xianyum.common.utils.Pair;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -98,22 +99,7 @@ public class EvTripResponse extends BaseResponse {
     private BigDecimal maxBattTemp;
 
     /**
-     * 经度数组
+     * 行程轨迹列表
      */
-    private List<BigDecimal> lonList;
-
-    /**
-     * 纬度数组
-     */
-    private List<BigDecimal> latList;
-
-    /**
-     * 航向角数组
-     */
-    private List<BigDecimal> headingList;
-
-    /**
-     * 上报时间数组
-     */
-    private List<LocalDateTime> reportTimeList;
+    private List<EvTripTrackResponse> trackList;
 }
