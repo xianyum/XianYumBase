@@ -6,12 +6,15 @@ import cn.hutool.core.date.DateUtil;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.enums.ReturnT;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.extension.dao.EvAutoReportMapper;
 import cn.xianyum.extension.dao.EvTripMapper;
+import cn.xianyum.extension.dao.EvTripPointMapper;
 import cn.xianyum.extension.entity.po.EvAutoReportEntity;
 import cn.xianyum.extension.entity.po.EvTripEntity;
+import cn.xianyum.extension.entity.po.EvTripPointEntity;
 import cn.xianyum.extension.entity.request.EvTripRequest;
 import cn.xianyum.extension.entity.response.EvTripResponse;
 import cn.xianyum.extension.entity.response.EvTripTrackResponse;
@@ -49,6 +52,9 @@ public class EvTripServiceImpl implements EvTripService {
 
     @Resource
     private EvAutoReportMapper evAutoReportMapper;
+
+    @Resource
+    private EvTripPointMapper evTripPointMapper;
 
     @Resource
     private RedisUtils redisUtils;
@@ -121,6 +127,10 @@ public class EvTripServiceImpl implements EvTripService {
                             tripEntity.getEndSoc(),
                             tripEntity.getStartAddress(),
                             tripEntity.getEndAddress());
+
+                    // 对行程轨迹数据进行清洗、排序、批量保存
+                    saveTripPoints(tripEntity.getId(), tripData);
+
                     // 插入成功才更新内存maxTime和Redis
                     if (tripMaxTime.isAfter(maxTime)) {
                         maxTime = tripMaxTime;
@@ -170,15 +180,11 @@ public class EvTripServiceImpl implements EvTripService {
             return response;
         }
         // 查询该行程时间范围内、is_parked=0 的行驶数据
-        LambdaQueryWrapper<EvAutoReportEntity> queryWrapper = Wrappers.<EvAutoReportEntity>lambdaQuery()
-                .eq(EvAutoReportEntity::getIsParked, 0)
-                .ge(EvAutoReportEntity::getReportTime, response.getTripStartTime())
-                .le(EvAutoReportEntity::getReportTime, response.getTripEndTime())
-                .isNotNull(EvAutoReportEntity::getLat)
-                .isNotNull(EvAutoReportEntity::getLon)
-                .orderByAsc(EvAutoReportEntity::getReportTime);
+        LambdaQueryWrapper<EvTripPointEntity> queryWrapper = Wrappers.<EvTripPointEntity>lambdaQuery()
+                .eq(EvTripPointEntity::getTripId, id)
+                .orderByAsc(EvTripPointEntity::getId);
 
-        List<EvAutoReportEntity> reportList = evAutoReportMapper.selectList(queryWrapper);
+        List<EvTripPointEntity> reportList = evTripPointMapper.selectList(queryWrapper);
         List<EvTripTrackResponse> trackList = BeanUtil.copyToList(reportList, EvTripTrackResponse.class);
         List<EvTripTrackResponse> simplifiedTrack = douglasPeucker(trackList, 0.00005);
         if(CollUtil.isNotEmpty(trackList)){
@@ -350,6 +356,42 @@ public class EvTripServiceImpl implements EvTripService {
     }
 
     /**
+     * 保存行程轨迹点数据
+     * 清洗 → 排序 → 生成ID → 批量保存
+     */
+    private void saveTripPoints(Long tripId, List<EvAutoReportEntity> tripData) {
+        // 1. 清洗：排除经纬度坐标为空的数据
+        List<EvAutoReportEntity> cleanedData = tripData.stream()
+                .filter(item -> item.getLat() != null && item.getLon() != null)
+                .toList();
+        if (CollUtil.isEmpty(cleanedData)) {
+            return;
+        }
+
+        // 2. 按 reportTime 从小到大排序
+        List<EvAutoReportEntity> sortedData = cleanedData.stream()
+                .sorted(Comparator.comparing(EvAutoReportEntity::getReportTime))
+                .toList();
+
+        // 3. 转换为 EvTripPointEntity 并生成ID
+        List<EvTripPointEntity> pointList = new ArrayList<>();
+        for (EvAutoReportEntity report : sortedData) {
+            EvTripPointEntity point = BeanUtil.copyProperties(report, EvTripPointEntity.class);
+            point.setId(IdGeneratorUtil.nextId());
+            point.setTripId(tripId);
+            pointList.add(point);
+        }
+
+        // 4. 批量保存
+        try {
+            evTripPointMapper.savBatch(pointList);
+            log.info("保存行程轨迹点 {} 条，行程ID={}", pointList.size(), tripId);
+        } catch (Exception e) {
+            log.error("批量保存行程轨迹点失败，行程ID={}", tripId, e);
+        }
+    }
+
+    /**
      * 根据行程数据构建行程实体
      */
     private EvTripEntity buildTripEntity(List<EvAutoReportEntity> tripData) {
@@ -411,7 +453,7 @@ public class EvTripServiceImpl implements EvTripService {
             entity.setMaxBattTemp(max);
             entity.setAvgBattTemp(avg);
         }
-
+        entity.setId(IdGeneratorUtil.nextId());
         return entity;
     }
 }

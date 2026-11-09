@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @TableName(value = "ev_trip", autoResultMap = true)
 public class EvTripEntity extends BaseEntity {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.INPUT)
     private Long id;
 
     /**

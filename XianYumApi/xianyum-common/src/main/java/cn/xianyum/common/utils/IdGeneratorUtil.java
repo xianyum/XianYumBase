@@ -1,9 +1,7 @@
 package cn.xianyum.common.utils;
 
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import me.ahoo.cosid.snowflake.SnowflakeId;
-
 import java.util.Random;
 
 

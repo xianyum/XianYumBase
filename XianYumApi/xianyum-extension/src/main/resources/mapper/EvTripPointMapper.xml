@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xianyum.extension.dao.EvTripPointMapper">
+
+    <insert id="savBatch" parameterType="java.util.List">
+        INSERT INTO ev_trip_point (
+            id, trip_id, report_time, lat, lon, heading, speed, soc, power,
+            batt_temp, cabin_temp, ext_temp, capacity, odometer,
+            tire_pressure_fl, tire_pressure_fr, tire_pressure_rl, tire_pressure_rr,
+            is_charging, is_parked, is_dcfc, kwh_charged,
+            create_by, create_time, create_by_name, update_by, update_time, update_by_name
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.id},
+                #{item.tripId},
+                #{item.reportTime},
+                #{item.lat},
+                #{item.lon},
+                #{item.heading},
+                #{item.speed},
+                #{item.soc},
+                #{item.power},
+                #{item.battTemp},
+                #{item.cabinTemp},
+                #{item.extTemp},
+                #{item.capacity},
+                #{item.odometer},
+                #{item.tirePressureFl},
+                #{item.tirePressureFr},
+                #{item.tirePressureRl},
+                #{item.tirePressureRr},
+                #{item.isCharging},
+                #{item.isParked},
+                #{item.isDcfc},
+                #{item.kwhCharged},
+                #{item.createBy},
+                #{item.createTime},
+                #{item.createByName},
+                #{item.updateBy},
+                #{item.updateTime},
+                #{item.updateByName}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

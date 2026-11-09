@@ -2,6 +2,8 @@ package cn.xianyum.extension.entity.response;
 
 import cn.xianyum.common.entity.base.BaseResponse;
 import cn.xianyum.common.utils.Pair;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
