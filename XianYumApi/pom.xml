@@ -58,6 +58,7 @@
         <hutool-all.version>5.8.47</hutool-all.version>
         <cosid.version>2.15.2</cosid.version>
         <sa-token.version>1.46.0</sa-token.version>
+        <p6spy.version>1.12.1</p6spy.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -102,6 +103,12 @@
                 <groupId>org.dromara.x-file-storage</groupId>
                 <artifactId>x-file-storage-spring</artifactId>
                 <version>${x.file.storage.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.gavlyukovskiy</groupId>
+                <artifactId>p6spy-spring-boot-starter</artifactId>
+                <version>${p6spy.version}</version>
             </dependency>
 
             <dependency>

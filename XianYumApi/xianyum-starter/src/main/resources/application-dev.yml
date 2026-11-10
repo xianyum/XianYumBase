@@ -66,10 +66,6 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
   typeAliasesPackage: cn.xianyum.**.entity.po
   check-config-location: true
-  # SQL日志配置
-  sql-log:
-    # 不打印SQL日志的Mapper方法全名，多个用逗号分隔，支持 * 通配符
-    exclude: cn.xianyum.system.dao.OperLogMapper.insert
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
@@ -223,7 +219,7 @@ captcha:
     enabled: false
     expire: 120000
     keyPrefix: "${spring.application.name}:xianyum-system:captcha:secondary"
-    
+
 # CosId配置：雪花算法 + Redis自动分配machineId
 cosid:
   # 命名空间，区分不同业务应用；多项目共用一套Redis时必须隔离，防止争抢machineId
