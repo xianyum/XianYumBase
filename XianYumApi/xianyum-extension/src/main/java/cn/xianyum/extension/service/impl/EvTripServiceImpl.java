@@ -181,6 +181,8 @@ public class EvTripServiceImpl implements EvTripService {
         }
         // 查询该行程时间范围内、is_parked=0 的行驶数据
         LambdaQueryWrapper<EvTripPointEntity> queryWrapper = Wrappers.<EvTripPointEntity>lambdaQuery()
+                .select(EvTripPointEntity::getId, EvTripPointEntity::getLat, EvTripPointEntity::getLon,
+                        EvTripPointEntity::getHeading, EvTripPointEntity::getReportTime)
                 .eq(EvTripPointEntity::getTripId, id)
                 .orderByAsc(EvTripPointEntity::getId);
 
@@ -206,7 +208,7 @@ public class EvTripServiceImpl implements EvTripService {
      * @return 抽稀后的轨迹点列表
      */
     private List<EvTripTrackResponse> douglasPeucker(List<EvTripTrackResponse> trackList, double tolerance) {
-        if (CollUtil.isEmpty(trackList) || trackList.size() <= 1000) {
+        if (CollUtil.isEmpty(trackList) || trackList.size() <= 200) {
             return CollUtil.isNotEmpty(trackList) ? new ArrayList<>(trackList) : new ArrayList<>();
         }
 
