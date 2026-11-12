@@ -24,7 +24,10 @@ import java.util.Map;
 public class MysqlBackupTask implements IJobHandler {
 
     private static final String REMOTE_PATH = "mysql/";
-
+    
+    // 1MB = 1024 * 1024
+    private static final long MB_UNIT = 1024L * 1024L;
+    
     @Autowired
     private MessageSender messageSender;
 
@@ -49,21 +52,25 @@ public class MysqlBackupTask implements IJobHandler {
                 continue;
             }
             long start = System.currentTimeMillis();
+
+            long fileSizeByte = file.length();
+            double fileSizeMb = (double) fileSizeByte / MB_UNIT;
+            
             try {
                 FileDetailResponse resp = FileUtils.uploadFile(file, REMOTE_PATH);
                 long cost = System.currentTimeMillis() - start;
                 if (resp != null) {
                     FileUtil.del(file);
                     tool.info(String.format("上传成功, 删除本地文件%s", file.getAbsolutePath()));
-                    sendMessage(file.getName(), "success", cost);
+                    sendMessage(file.getName(), "success", cost, fileSizeMb);
                 } else {
                     tool.error(String.format("上传返回为空: %s", file.getAbsolutePath()));
-                    sendMessage(file.getName(), "error", System.currentTimeMillis() - start);
+                    sendMessage(file.getName(), "error", System.currentTimeMillis() - start, fileSizeMb);
                 }
             } catch (Exception e) {
                 long cost = System.currentTimeMillis() - start;
                 tool.error(String.format("上传失败: %s, 原因: %s", file.getAbsolutePath(), e.getMessage()));
-                sendMessage(file.getName(), "error", cost);
+                sendMessage(file.getName(), "error", cost, fileSizeMb);
             }
         }
 
@@ -75,11 +82,13 @@ public class MysqlBackupTask implements IJobHandler {
      * @param fileName
      * @param status
      * @param costMs
+     * @param fileSizeMb 文件大小 MB
      */
-    private void sendMessage(String fileName, String status, long costMs) {
+    private void sendMessage(String fileName, String status, long costMs, double fileSizeMb) {
         try {
             Map<String, Object> content = new LinkedHashMap<>();
             content.put("文件名：", fileName);
+            content.put("文件大小：", String.format("%.2f MB", fileSizeMb));
             content.put("上传状态：", status);
             content.put("耗时：", costMs + " ms");
             MessageSenderEntity entity = new MessageSenderEntity();
