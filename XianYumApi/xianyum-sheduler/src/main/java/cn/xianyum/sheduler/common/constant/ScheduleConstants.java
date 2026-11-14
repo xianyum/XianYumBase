@@ -3,10 +3,10 @@ package cn.xianyum.sheduler.common.constant;
 /**
  * 任务调度通用常量
  *
- * @author ruoyi
+ * @author xianyum
  */
-public class ScheduleConstants
-{
+public class ScheduleConstants {
+
     public static final String TASK_CLASS_NAME = "TASK_CLASS_NAME";
 
     /** 执行目标key */
@@ -34,8 +34,7 @@ public class ScheduleConstants
     /** 不触发立即执行 */
     public static final String MISFIRE_DO_NOTHING = "3";
 
-    public enum Status
-    {
+    public enum Status {
         /**
          * 正常
          */
