@@ -2,6 +2,7 @@ package cn.xianyum.extension.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.xianyum.common.annotation.BusinessLock;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.enums.OperTypeEnum;
@@ -193,6 +194,7 @@ public class EvDriveRecordsController {
      */
     @Operation(summary = "手动执行汇总行程")
     @PostMapping(value = "/trip/summary")
+    @BusinessLock(leaseTime = 30*60)
     @OperLog(operType = OperTypeEnum.OTHER, desc = "手动执行汇总行程")
     public Results<ReturnT> summaryEvTrip() {
         return Results.success(evTripService.doSummaryEvTrip());

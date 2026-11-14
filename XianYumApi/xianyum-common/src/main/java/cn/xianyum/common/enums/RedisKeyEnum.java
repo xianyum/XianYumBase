@@ -8,6 +8,10 @@ import cn.xianyum.common.constant.Constants;
  */
 public enum RedisKeyEnum {
 
+    // ======================== 通用能力 ========================
+    DISTRIBUTED_LOCK("lock:"),
+    BUSINESS_LOCK("business-lock:"),
+
     // ======================== xianyum-system模块 ========================
     USER_DATA("xianyum-system:user"),
     ANALYSIS_HAO_KAO_LOT_TOKEN("xianyum-analysis:hao_kao_lot:access_token:"),

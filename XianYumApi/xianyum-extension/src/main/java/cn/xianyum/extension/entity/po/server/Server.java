@@ -114,7 +114,7 @@ public class Server {
 
         setJvmInfo();
 
-        setSysFiles(si.getOperatingSystem());
+        fillSysFiles(si.getOperatingSystem());
     }
 
     /**
@@ -183,7 +183,7 @@ public class Server {
     /**
      * 设置磁盘信息
      */
-    private void setSysFiles(OperatingSystem os)
+    private void fillSysFiles(OperatingSystem os)
     {
         FileSystem fileSystem = os.getFileSystem();
         List<OSFileStore> fsArray = fileSystem.getFileStores();
