@@ -5,11 +5,9 @@
     <parent>
         <artifactId>XianYumApi</artifactId>
         <groupId>cn.xianyum</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <version>0.0.1-SNAPSHOT</version>
 
     <artifactId>xianyum-api</artifactId>
     <packaging>jar</packaging>
@@ -34,11 +32,6 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
         <!-- 添加 Undertow依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -48,49 +41,49 @@
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-message</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-proxy</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-sheduler</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-extension</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-framework</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
-            <artifactId>xianyum-proxy</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>xianyum-system</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-mqtt</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
 
         <!-- Mysql驱动包 -->

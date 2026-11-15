@@ -5,7 +5,7 @@
     <parent>
         <artifactId>XianYumApi</artifactId>
         <groupId>cn.xianyum</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,15 +39,15 @@
 
         <dependency>
             <groupId>cn.xianyum</groupId>
-            <artifactId>xianyum-framework</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>xianyum-common</artifactId>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-message</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>

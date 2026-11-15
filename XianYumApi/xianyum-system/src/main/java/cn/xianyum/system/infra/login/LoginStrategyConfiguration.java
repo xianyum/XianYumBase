@@ -4,7 +4,6 @@ import cn.xianyum.common.enums.LoginTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -22,7 +21,9 @@ public class LoginStrategyConfiguration {
     public Map<LoginTypeEnum, LoginStrategy> loginStrategyMap(List<LoginStrategy> loginStrategyList) {
         Map<LoginTypeEnum, LoginStrategy> strategyMap = loginStrategyList.stream()
                 .collect(Collectors.toMap(LoginStrategy::getLoginType, Function.identity()));
-        strategyMap.forEach((type, strategy) -> log.info("初始化登录策略 [{}] → {}", type, strategy.getClass().getSimpleName()));
+        log.info("初始化登录策略: {}", strategyMap.entrySet().stream()
+                .map(entry -> entry.getKey() + " -> " + entry.getValue().getClass().getSimpleName())
+                .collect(Collectors.joining(", ")));
         return strategyMap;
     }
 }

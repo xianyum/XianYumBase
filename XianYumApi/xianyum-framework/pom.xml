@@ -5,7 +5,7 @@
     <parent>
         <artifactId>XianYumApi</artifactId>
         <groupId>cn.xianyum</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xianyum-framework</artifactId>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>cn.xianyum</groupId>
             <artifactId>xianyum-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -67,12 +67,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-3-starter</artifactId>
-        </dependency>
-
-        <!--dynamic-datasource-多数据源-->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
         </dependency>
 
         <dependency>

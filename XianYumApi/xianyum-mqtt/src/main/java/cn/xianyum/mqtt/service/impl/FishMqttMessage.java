@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class TestMqttMessage implements MqttMessageHandler {
+public class FishMqttMessage implements MqttMessageHandler {
 
     @Resource
     private MqttFishService mqttFishService;

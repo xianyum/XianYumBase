@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.xianyum</groupId>
         <artifactId>XianYumApi</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>xianyum-mqtt</artifactId>
@@ -26,8 +26,8 @@
 
         <dependency>
             <groupId>cn.xianyum</groupId>
-            <artifactId>xianyum-system</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>xianyum-common</artifactId>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
 
