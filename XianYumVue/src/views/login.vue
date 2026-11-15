@@ -313,7 +313,7 @@ export default {
                 };
                 try {
                   await this.$store.dispatch("Login", loginData);
-                  this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+                  await this.$router.push({ path: this.redirect || "/" });
                 } finally {
                   this.isLoginLoading = false;
                 }
@@ -374,7 +374,8 @@ export default {
           Cookies.remove('rememberMe');
         }
         await this.$store.dispatch("Login", this.loginForm);
-        this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+        // 必须 await：路由守卫里还要拉取用户信息和动态路由，否则 loading 会提前结束
+        await this.$router.push({ path: this.redirect || "/" });
       } finally {
         this.loading = false;
       }
@@ -433,18 +434,19 @@ export default {
   background-attachment: fixed;
 
   .login-container {
+    /* 作为 #captcha-mask 的定位参照，避免遮罩随 hover 的 transform 在“整屏/卡片”之间跳变 */
+    position: relative;
     width: 400px;
     background: #ffffff;
     border-radius: 12px;
     padding: 0;
     overflow: hidden;
     box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    transition: box-shadow 0.3s ease;
     animation: fadeIn 0.5s ease-in-out;
 
     &:hover {
       box-shadow: 0 6px 25px 0 rgba(0, 0, 0, 0.12);
-      transform: translateY(-2px);
     }
   }
 
