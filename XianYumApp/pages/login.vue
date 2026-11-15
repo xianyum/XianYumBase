@@ -181,6 +181,11 @@
           </view>
         </view>
       </view>
+
+      <!-- 版本信息 -->
+      <view class="footer">
+        <text class="footer-text">{{ footerText }}</text>
+      </view>
     </view>
 
     <verify-code
@@ -211,6 +216,8 @@ export default {
       captchaEnabled: true,
       loginType: 'password', // password, phone, email
       showPassword: false,
+      appVersion: '',
+      currentYear: new Date().getFullYear(),
       countdown: 0,
       // 记住密码开关
       rememberPwd: true,
@@ -238,7 +245,15 @@ export default {
   created() {
     this.loadRememberedInfo()
   },
+  computed: {
+    // 页脚版权信息：版本号按运行环境动态获取
+    footerText() {
+      const version = this.appVersion ? `v${this.appVersion} · ` : ''
+      return `${version}© ${this.currentYear} XianYum`
+    }
+  },
   onLoad() {
+    this.appVersion = this.getAppVersion()
     if (getToken()) {
       this.$tab.reLaunch('/pages/index')
     }
@@ -420,6 +435,22 @@ export default {
     showVerify() {
       this.$refs.verifyCode.open()
     },
+    // 按运行环境获取应用版本号
+    getAppVersion() {
+      const systemInfo = uni.getSystemInfoSync()
+      let version = ''
+      // App端：优先使用系统信息中的应用版本号
+      // #ifdef APP-PLUS
+      if (systemInfo.appWgtVersion) {
+        version = systemInfo.appWgtVersion
+      }
+      // #endif
+      // H5端：使用系统信息中的应用版本号兜底
+      // #ifdef H5
+      version = systemInfo.appVersion || version
+      // #endif
+      return version
+    },
     getCaptchaType() {
       getCaptchaType().then(res => {
         this.verifyType = res.msg
@@ -480,6 +511,8 @@ export default {
 /* ============ 基础布局 ============ */
 .page {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: #f7f8fc;
   overflow: hidden;
@@ -516,6 +549,7 @@ export default {
 }
 
 .status-bar {
+  flex: none;
   height: var(--status-bar-height);
   width: 100%;
 }
@@ -523,7 +557,11 @@ export default {
 .content {
   position: relative;
   z-index: 1;
-  padding: 32rpx 48rpx calc(48rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  padding: 32rpx 48rpx calc(40rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -534,16 +572,16 @@ export default {
   animation: rise 0.55s cubic-bezier(0.22, 0.68, 0, 1) both;
 }
 .brand-logo {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 20rpx;
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 24rpx;
   background: url('/static/logo.png') no-repeat center / cover,
   linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 8rpx 20rpx rgba(102, 126, 234, 0.28);
+  box-shadow: 0 10rpx 24rpx rgba(102, 126, 234, 0.28);
 }
 .brand-name {
-  margin-left: 16rpx;
-  font-size: 30rpx;
+  margin-left: 20rpx;
+  font-size: 36rpx;
   font-weight: 600;
   color: #2b2f4a;
   letter-spacing: 1rpx;
@@ -757,7 +795,7 @@ export default {
 
 /* ============ 第三方登录 ============ */
 .third-party-section {
-  margin-top: 60rpx;
+  margin-top: 44rpx;
   animation: rise 0.55s cubic-bezier(0.22, 0.68, 0, 1) 0.3s both;
 }
 .divider {
@@ -801,6 +839,19 @@ export default {
   background: linear-gradient(135deg, #5fb8f5 0%, #3d8ee0 100%);
   border: none;
   box-shadow: 0 10rpx 24rpx rgba(61, 142, 224, 0.28);
+}
+
+/* ============ 版本信息 ============ */
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 40rpx;
+  animation: rise 0.55s cubic-bezier(0.22, 0.68, 0, 1) 0.36s both;
+}
+.footer-text {
+  font-size: 21rpx;
+  color: #b6bbcc;
+  letter-spacing: 1rpx;
 }
 
 /* ============ 入场动画 ============ */
