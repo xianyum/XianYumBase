@@ -11,7 +11,7 @@
       <view class="summary-btn" :class="{ loading: summaryLoading }" @tap="handleSummary">
         <uni-icons v-if="!summaryLoading" type="reload" size="16" color="#409eff"></uni-icons>
         <uni-icons v-else type="spinner" size="16" color="#409eff"></uni-icons>
-        <text class="summary-text">汇总</text>
+        <text class="summary-text">同步</text>
       </view>
       <view class="filter-total" v-if="total > 0">
         <text class="total-num">{{ total }}</text>

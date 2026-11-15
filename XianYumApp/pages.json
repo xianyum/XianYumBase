@@ -3,7 +3,9 @@
     {
       "path": "pages/login",
       "style": {
-        "navigationBarTitleText": "XianYum移动端"
+        "navigationBarTitleText": "XianYum移动端",
+        "navigationStyle": "custom",
+        "backgroundColor": "#f7f8fc"
       }
     },
     {
