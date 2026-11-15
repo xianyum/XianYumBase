@@ -35,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("xym-extension/v1/evDriveRecords")
 @Tag(name = "新能源车行驶记录接口")
-@OperLog(module = "新能源车行驶记录")
+@OperLog(module = "新能源车辆")
 public class EvDriveRecordsController {
 
     @Autowired
@@ -192,10 +192,10 @@ public class EvDriveRecordsController {
     /**
      * 手动执行汇总行程
      */
-    @Operation(summary = "手动执行汇总行程")
+    @Operation(summary = "同步行程")
     @PostMapping(value = "/trip/summary")
     @BusinessLock(leaseTime = 30*60)
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "手动执行汇总行程")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "同步行程")
     public Results<ReturnT> summaryEvTrip() {
         return Results.success(evTripService.doSummaryEvTrip());
     }

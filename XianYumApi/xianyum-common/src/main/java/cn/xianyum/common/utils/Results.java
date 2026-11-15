@@ -21,7 +21,7 @@ public class Results<T> extends HashMap<String, Object> {
     private static final String MSG_FIELD = "msg";
     private static final String CODE_FIELD = "code";
     private static final String SUCCESS_FIELD = "success";
-    private static final String ERROR_EXCEPTION_FIELD = "系统异常";
+    private static final String ERROR_EXCEPTION_FIELD = "服务处理异常，请稍后重试";
 
     /**
      * 默认构造器：初始化成功状态

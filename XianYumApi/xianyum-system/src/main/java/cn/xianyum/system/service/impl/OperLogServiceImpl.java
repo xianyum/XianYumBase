@@ -56,8 +56,8 @@ public class OperLogServiceImpl implements OperLogService {
     public PageResponse<OperLogResponse> getPage(OperLogRequest request) {
         LambdaQueryWrapper<OperLogEntity> wrapper = Wrappers.<OperLogEntity>lambdaQuery()
                 .in(CollUtil.isNotEmpty(request.getOperTypeList()), OperLogEntity::getOperType, request.getOperTypeList())
-                .eq(StrUtil.isNotBlank(request.getUserName()), OperLogEntity::getUserName, request.getUserName())
-                .eq(StrUtil.isNotBlank(request.getModule()), OperLogEntity::getModule, request.getModule())
+                .like(StrUtil.isNotBlank(request.getUserName()), OperLogEntity::getUserName, request.getUserName())
+                .like(StrUtil.isNotBlank(request.getModule()), OperLogEntity::getModule, request.getModule())
                 .eq(StrUtil.isNotBlank(request.getOperType()), OperLogEntity::getOperType, request.getOperType())
                 .eq(request.getStatus() != null, OperLogEntity::getStatus, request.getStatus())
                 .like(StrUtil.isNotBlank(request.getRequestUrl()), OperLogEntity::getRequestUrl, request.getRequestUrl())
