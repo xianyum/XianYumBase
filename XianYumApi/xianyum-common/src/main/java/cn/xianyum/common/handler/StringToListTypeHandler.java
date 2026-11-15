@@ -1,4 +1,4 @@
-package cn.xianyum.framwork.mybatis.handler;
+package cn.xianyum.common.handler;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.collection.CollUtil;

@@ -280,6 +280,12 @@
                 <artifactId>sa-token-redis-template</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
+            <!-- Sa-Token 整合 API Key -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-apikey</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
 
             <dependency>
                 <artifactId>cglib</artifactId>
