@@ -1,11 +1,10 @@
-package cn.xianyum.system.infra.listener;
+package cn.xianyum.system.infra.event;
 
 import cn.dev33.satoken.listener.SaTokenListener;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.entity.LoginUser;
 import cn.xianyum.common.utils.UserContextHolder;
-import cn.xianyum.system.infra.event.UserOnlineLogEvent;
 import cn.xianyum.system.service.UserTokenService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;

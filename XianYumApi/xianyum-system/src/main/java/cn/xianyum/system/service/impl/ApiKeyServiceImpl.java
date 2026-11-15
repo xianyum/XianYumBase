@@ -1,10 +1,12 @@
 package cn.xianyum.system.service.impl;
 
+import cn.dev33.satoken.apikey.model.ApiKeyModel;
 import cn.dev33.satoken.apikey.template.SaApiKeyUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
+import cn.xianyum.common.handler.ApiKeyProvider;
 import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.system.dao.ApiKeyMapper;
 import cn.xianyum.system.entity.po.ApiKeyEntity;
@@ -25,7 +27,7 @@ import java.util.Objects;
  * API Key 服务实现
  */
 @Service
-public class ApiKeyServiceImpl implements ApiKeyService {
+public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
 
     @Autowired
     private ApiKeyMapper apiKeyMapper;
@@ -116,5 +118,21 @@ public class ApiKeyServiceImpl implements ApiKeyService {
             throw new SoException("请选择要删除的数据");
         }
         apiKeyMapper.deleteByIds(Arrays.asList(ids));
+    }
+
+    /**
+     * 根据 apiKey 查询数据
+     *
+     * @param apiKey ApiKey 值
+     * @return ApiKeyModel，查不到返回 null
+     */
+    @Override
+    public ApiKeyModel getApiKeyModel(String apiKey) {
+        try {
+            ApiKeyResponse response = this.getByApiKey(apiKey);
+            return BeanUtil.copyProperties(response, ApiKeyModel.class);
+        } catch (SoException e) {
+            return null;
+        }
     }
 }

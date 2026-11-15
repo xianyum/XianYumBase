@@ -24,9 +24,15 @@
 
         <dependency>
             <groupId>cn.xianyum</groupId>
-            <artifactId>xianyum-system</artifactId>
+            <artifactId>xianyum-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- 验证码 -->
+        <dependency>
+            <groupId>cloud.tianai.captcha</groupId>
+            <artifactId>tianai-captcha-springboot-starter</artifactId>
         </dependency>
 
         <!-- spring-doc -->

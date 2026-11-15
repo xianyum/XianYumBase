@@ -5,11 +5,10 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.entity.LoginUser;
+import cn.xianyum.common.entity.operlog.OperLogEvent;
 import cn.xianyum.common.utils.HttpContextUtils;
 import cn.xianyum.common.utils.IPUtils;
 import cn.xianyum.common.utils.UserContextHolder;
-import cn.xianyum.system.entity.po.OperLogEntity;
-import cn.xianyum.system.service.OperLogService;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -132,57 +131,55 @@ public class OperLogAspect {
         Method method = signature.getMethod();
         HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
 
-        OperLogEntity entity = new OperLogEntity();
+        OperLogEvent event = new OperLogEvent();
         LoginUser loginUser = UserContextHolder.getLoginUser();
         if (loginUser != null) {
-            entity.setUserId(loginUser.getId());
-            entity.setUserName(loginUser.getUsername());
+            event.setUserId(loginUser.getId());
+            event.setUserName(loginUser.getUsername());
         } else {
-            entity.setUserId("anonymous");
-            entity.setUserName("anonymous");
+            event.setUserId("anonymous");
+            event.setUserName("anonymous");
         }
 
         String module = resolveModule(methodOperLog, classOperLog,
                 joinPoint.getTarget().getClass().getSimpleName().replace("Controller", ""));
-        entity.setModule(module);
-        entity.setOperType(resolveOperType(methodOperLog, classOperLog).getCode());
-        entity.setOperDesc(resolveDesc(methodOperLog, classOperLog));
+        event.setModule(module);
+        event.setOperType(resolveOperType(methodOperLog, classOperLog).getCode());
+        event.setOperDesc(resolveDesc(methodOperLog, classOperLog));
 
         // 如果没有接口描述，那就不保存
-        if(StrUtil.isBlank(entity.getOperDesc())){
+        if(StrUtil.isBlank(event.getOperDesc())){
             return;
         }
 
         if (request != null) {
-            entity.setRequestUrl(request.getRequestURI());
-            entity.setRequestMethod(request.getMethod());
+            event.setRequestUrl(request.getRequestURI());
+            event.setRequestMethod(request.getMethod());
             String ip = IPUtils.getIpAddr(request);
-            entity.setIpAddress(ip);
-            entity.setLocation(IPUtils.getIpInfo(ip));
+            event.setIpAddress(ip);
+            event.setLocation(IPUtils.getIpInfo(ip));
         }
 
-        entity.setClassName(joinPoint.getTarget().getClass().getName());
-        entity.setMethodName(method.getName());
+        event.setClassName(joinPoint.getTarget().getClass().getName());
+        event.setMethodName(method.getName());
 
         if (resolveSaveParam(methodOperLog, classOperLog)) {
-            entity.setRequestParams(buildRequestParams(joinPoint, resolveExcludeFields(methodOperLog, classOperLog)));
+            event.setRequestParams(buildRequestParams(joinPoint, resolveExcludeFields(methodOperLog, classOperLog)));
         }
 
         if (resolveSaveResult(methodOperLog, classOperLog) && exception == null) {
-            entity.setResponseResult(buildResponseResult(result));
+            event.setResponseResult(buildResponseResult(result));
         }
 
-        entity.setCostTime(costTime);
+        event.setCostTime(costTime);
 
         if (exception != null) {
-            entity.setStatus(0);
-            entity.setErrorMsg(StrUtil.subPre(exception.getMessage(), 2000));
+            event.setStatus(0);
+            event.setErrorMsg(StrUtil.subPre(exception.getMessage(), 2000));
         } else {
-            entity.setStatus(1);
+            event.setStatus(1);
         }
-
-        OperLogService operLogService = SpringUtil.getBean(OperLogService.class);
-        operLogService.saveOperLog(entity);
+        SpringUtil.publishEvent(event);
     }
 
     private String buildRequestParams(ProceedingJoinPoint joinPoint, String[] excludeFields) {
