@@ -64,7 +64,7 @@ public class LoginController {
     @PostMapping("/captcha/genCaptcha")
     @SaIgnore
     @Operation(summary = "获取验证码")
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "获取验证码")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取验证码")
     public ApiResponse<ImageCaptchaVO> genCaptcha() {
         GenerateParam generateParam = new GenerateParam();
         generateParam.setType(SystemConstantUtils.getValueByKey(SystemConstantKeyEnum.CAPTCHA_TYPE));
@@ -97,7 +97,7 @@ public class LoginController {
     @GetMapping("/login/qrcode/generate")
     @SaIgnore
     @Operation(summary = "获取二维码登录凭证")
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "获取二维码登录凭证")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "获取二维码登录凭证")
     public Results<QrLoginTicketResponse> generateQrCode() {
         return Results.success(userTokenService.generateQrCode());
     }
@@ -133,7 +133,7 @@ public class LoginController {
     @GetMapping("/login/qrcode/status")
     @Operation(summary = "二维码状态")
     @SaIgnore
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "查询二维码状态")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "查询二维码状态")
     public Results<QrLoginTicketResponse> getQrCodeStatus(@RequestParam String ticket) {
         return Results.success(userTokenService.getQrCodeStatus(ticket));
     }
