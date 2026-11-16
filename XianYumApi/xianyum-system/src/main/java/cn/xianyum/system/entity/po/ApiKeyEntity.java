@@ -14,7 +14,7 @@ import java.util.List;
  * API Key 调用密钥
  */
 @Data
-@TableName("api_key")
+@TableName(value = "api_key",autoResultMap = true)
 public class ApiKeyEntity extends BaseEntity {
 
     /** 主键ID */

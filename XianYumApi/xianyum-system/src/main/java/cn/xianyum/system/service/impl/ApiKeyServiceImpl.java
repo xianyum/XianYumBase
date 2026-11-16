@@ -1,9 +1,11 @@
 package cn.xianyum.system.service.impl;
 
+import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.dev33.satoken.apikey.model.ApiKeyModel;
 import cn.dev33.satoken.apikey.template.SaApiKeyUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.entity.base.PageResponse;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.ApiKeyProvider;
@@ -18,10 +20,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * API Key 服务实现
@@ -31,6 +39,31 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
 
     @Autowired
     private ApiKeyMapper apiKeyMapper;
+
+    @Override
+    public List<String> getScopeList() {
+        RequestMappingHandlerMapping handlerMapping = SpringUtil.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
+        return handlerMapping.getHandlerMethods().values().stream()
+                .map(HandlerMethod::getMethod)
+                .map(this::getSaCheckApiKey)
+                .filter(Objects::nonNull)
+                .flatMap(annotation -> Arrays.stream(annotation.scope()))
+                .filter(StrUtil::isNotBlank)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 获取方法或其所在类上的 @SaCheckApiKey 注解
+     */
+    private SaCheckApiKey getSaCheckApiKey(Method method) {
+        SaCheckApiKey annotation = AnnotationUtils.findAnnotation(method, SaCheckApiKey.class);
+        if (Objects.isNull(annotation)) {
+            annotation = AnnotationUtils.findAnnotation(method.getDeclaringClass(), SaCheckApiKey.class);
+        }
+        return annotation;
+    }
 
     @Override
     public PageResponse<ApiKeyResponse> getPage(ApiKeyRequest request) {

@@ -1,5 +1,7 @@
 package cn.xianyum.system.infra.handler;
 
+import cn.dev33.satoken.apikey.error.SaApiKeyErrorCode;
+import cn.dev33.satoken.apikey.exception.ApiKeyException;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.util.SaResult;
@@ -54,6 +56,37 @@ public class SystemExceptionHandler {
         Results result = new Results();
         result.put(Constants.ERROR_CODE_FIELD, Constants.SERVER_ERROR_STATUS_CODE);
         result.put(Constants.ERROR_MSG_FIELD, e.getMessage());
+        return result;
+    }
+
+    /**
+     * 处理 API Key 异常（包含 ApiKeyScopeException）
+     * code 对应 SaApiKeyErrorCode：12301~12305、12311、12312
+     */
+    @ExceptionHandler(ApiKeyException.class)
+    public Results handleApiKeyException(ApiKeyException e){
+        String message;
+        if(e.getCode() == SaApiKeyErrorCode.CODE_12301) {
+            message = "ApiKey无效，请检查后重试";
+        } else if(e.getCode() == SaApiKeyErrorCode.CODE_12302) {
+            message = "ApiKey已过期";
+        } else if(e.getCode() == SaApiKeyErrorCode.CODE_12303) {
+            message = "ApiKey已被禁用";
+        } else if(e.getCode() == SaApiKeyErrorCode.CODE_12304) {
+            message = "ApiKey参数校验未通过";
+        } else if(e.getCode() == SaApiKeyErrorCode.CODE_12305) {
+            message = "ApiKey索引记录功能未开启";
+        } else if(e.getCode() == SaApiKeyErrorCode.CODE_12311) {
+            message = "当前接口不允许此ApiKey访问";
+        } else if(e.getCode() == SaApiKeyErrorCode.CODE_12312) {
+            message = "ApiKey与当前用户不匹配";
+        } else {
+            message = "ApiKey校验失败";
+        }
+        logger.error("",e);
+        Results result = new Results();
+        result.put(Constants.ERROR_CODE_FIELD, e.getCode());
+        result.put(Constants.ERROR_MSG_FIELD, message);
         return result;
     }
 

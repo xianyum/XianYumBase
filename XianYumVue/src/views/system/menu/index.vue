@@ -111,6 +111,13 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-document-copy"
+            @click="handleCopy(scope.row)"
+            v-hasPermi="['system:role:save']"
+          >复制</el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:role:delete']"
@@ -474,6 +481,27 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改菜单";
+      });
+    },
+    /** 复制按钮操作 */
+    handleCopy(row) {
+      this.reset();
+      this.getTreeSelect();
+      getMenu(row.menuId).then(response => {
+        const data = response.data || {};
+        delete data.children;
+        delete data.createBy;
+        delete data.createTime;
+        delete data.updateBy;
+        delete data.updateTime;
+        this.form = {
+          ...this.form,
+          ...data,
+          menuId: undefined,
+          menuName: data.menuName + "_副本"
+        };
+        this.open = true;
+        this.title = "复制菜单";
       });
     },
     /** 提交按钮 */
