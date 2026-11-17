@@ -1,6 +1,5 @@
 package cn.xianyum.extension.controller;
 
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.entity.ai.OpenAiLogResponse;
 import cn.xianyum.common.entity.ai.OpenAiModelResponse;
 import cn.xianyum.common.entity.ai.OpenAiTokenUsageResponse;
@@ -8,7 +7,6 @@ import cn.xianyum.common.utils.Results;
 import cn.xianyum.extension.service.OpenAiService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**
@@ -37,7 +35,6 @@ public class OpenAiController {
      * @return 令牌使用情况
      */
     @GetMapping("/token/usage")
-    @SaIgnore
     public Results<OpenAiTokenUsageResponse> getTokenUsage() {
         return Results.success(openAiService.getTokenUsage());
     }

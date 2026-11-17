@@ -25,7 +25,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI().components(new Components()
                         // 设置认证的请求头
-                        .addSecuritySchemes("apikey", securityScheme()))
+                        .addSecuritySchemes("Authorization", securityScheme())
+                        .addSecuritySchemes("apikey", apiKeySecurityScheme()))
+                .addSecurityItem(new SecurityRequirement().addList("Authorization"))
                 .addSecurityItem(new SecurityRequirement().addList("apikey"))
                 .info(getApiInfo());
     }
@@ -38,6 +40,16 @@ public class OpenApiConfig {
                 .name("Authorization")
                 .in(SecurityScheme.In.HEADER)
                 .scheme("Bearer");
+    }
+
+    /**
+     * ApiKey 认证请求头
+     */
+    public SecurityScheme apiKeySecurityScheme() {
+        return new SecurityScheme()
+                .type(SecurityScheme.Type.APIKEY)
+                .name("apikey")
+                .in(SecurityScheme.In.HEADER);
     }
 
     /**

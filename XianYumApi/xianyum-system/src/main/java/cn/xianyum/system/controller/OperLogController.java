@@ -64,7 +64,6 @@ public class OperLogController {
 
     @GetMapping(value = "/getLogCount")
     @Operation(summary = "获取日志总数")
-    @SaIgnore
     @OperLog(operType = OperTypeEnum.QUERY, desc = "获取日志总数")
     public Results<Long> getLogCount() {
         return Results.success(operLogService.getOperLogCount());

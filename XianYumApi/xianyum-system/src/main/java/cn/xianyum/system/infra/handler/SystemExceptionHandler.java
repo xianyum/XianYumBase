@@ -4,7 +4,6 @@ import cn.dev33.satoken.apikey.error.SaApiKeyErrorCode;
 import cn.dev33.satoken.apikey.exception.ApiKeyException;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
-import cn.dev33.satoken.util.SaResult;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.Results;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.LinkedHashMap;
@@ -84,10 +82,7 @@ public class SystemExceptionHandler {
             message = "ApiKey校验失败";
         }
         logger.error("",e);
-        Results result = new Results();
-        result.put(Constants.ERROR_CODE_FIELD, e.getCode());
-        result.put(Constants.ERROR_MSG_FIELD, message);
-        return result;
+        return Results.error(HttpStatus.UNAUTHORIZED.value(),message);
     }
 
 

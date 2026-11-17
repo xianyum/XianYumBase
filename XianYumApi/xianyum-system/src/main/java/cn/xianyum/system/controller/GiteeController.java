@@ -1,6 +1,6 @@
 package cn.xianyum.system.controller;
 
-import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.GiteeSerivce;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ public class GiteeController {
 
     @PostMapping("/push")
     @Operation(summary = "接受仓库推送请求")
-    @SaIgnore
+    @SaCheckApiKey(scope = {"system:gitee:push"})
     public Results<?> getIpInfo(@RequestBody String json) {
         log.info("接受的参数:{}",json);
         giteeSerivce.push(json);

@@ -131,7 +131,8 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
         if (Objects.isNull(request.getId())) {
             throw new SoException("主键ID不能为空");
         }
-        if (Objects.isNull(apiKeyMapper.selectById(request.getId()))) {
+        ApiKeyEntity apiKeyEntity = apiKeyMapper.selectById(request.getId());
+        if (Objects.isNull(apiKeyEntity)) {
             throw new SoException("API Key 不存在");
         }
         ApiKeyEntity entity = new ApiKeyEntity();
@@ -141,6 +142,7 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
         entity.setScopes(request.getScopes());
         entity.setExpiresTime(request.getExpiresTime());
         entity.setIsValid(request.getIsValid());
+        SaApiKeyUtil.deleteApiKey(apiKeyEntity.getApiKey());
         return apiKeyMapper.updateById(entity);
     }
 
@@ -150,7 +152,9 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
         if (Objects.isNull(ids) || ids.length == 0) {
             throw new SoException("请选择要删除的数据");
         }
-        apiKeyMapper.deleteByIds(Arrays.asList(ids));
+        List<Long> idList = Arrays.asList(ids);
+        apiKeyMapper.selectByIds(idList).forEach(apiKey -> SaApiKeyUtil.deleteApiKey(apiKey.getApiKey()));
+        apiKeyMapper.deleteByIds(idList);
     }
 
     /**

@@ -37,12 +37,12 @@ public class UserContextInterceptor extends SaInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 设置traceId
+        MDC.put(Constants.TRACE_ID, IdUtil.fastSimpleUUID());
         boolean checkPass = super.preHandle(request, response, handler);
         if (!checkPass) {
             return false;
         }
-        // 设置traceId
-        MDC.put(Constants.TRACE_ID, IdUtil.fastSimpleUUID());
         // 设置上下文用户信息
         if(StpUtil.isLogin()){
             UserContextHolder.setLoginUser(StpUtil.getLoginIdAsString(),StpUtil.getTokenValue());

@@ -1,6 +1,7 @@
 package cn.xianyum.message.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
@@ -64,16 +65,16 @@ public class MessageController {
      * @return
      */
     @Operation(summary = "接收飞牛os消息推送")
-    @SaIgnore
     @PostMapping("/receiveFnOsPushMessage")
+    @SaCheckApiKey(scope = {"message:receive:fn-os"})
     @OperLog(operType = OperTypeEnum.OTHER, desc = "接收飞牛OS消息推送")
     public Results<?> receiveFnOsPushMessage(@RequestBody FnOsPushMessageRequest request){
         messageService.receiveFnOsPushMessage(request);
         return Results.success();
     }
 
-    @SaIgnore
     @PostMapping("/grafana/alert")
+    @SaCheckApiKey(scope = {"message:grafana:alert"})
     public Results<?> receiveGrafanaAlert(@RequestBody String json) {
         GrafanaAlertWebhookRequest request =  JSONObject.parseObject(json, GrafanaAlertWebhookRequest.class);
         messageService.receiveGrafanaAlert(request);

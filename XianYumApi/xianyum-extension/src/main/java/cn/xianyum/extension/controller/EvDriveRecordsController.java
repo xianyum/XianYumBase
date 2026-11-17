@@ -1,7 +1,7 @@
 package cn.xianyum.extension.controller;
 
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.xianyum.common.annotation.BusinessLock;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.base.PageResponse;
@@ -147,7 +147,7 @@ public class EvDriveRecordsController {
 
     @Operation(summary = "上报车机遥感数据")
     @PostMapping(value = "/autoReport")
-    @SaIgnore
+    @SaCheckApiKey(scope = {"extension:ev-drive-records:auto-report"})
     public Results<String> autoReport(@RequestBody EvAutoReportRequest request) {
         this.evDriveRecordsService.saveAutoReportData(request);
         return Results.success();

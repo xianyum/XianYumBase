@@ -1,6 +1,7 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.enums.LoginTypeEnum;
 import cn.xianyum.common.enums.OperTypeEnum;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("xym-system/v1/ali")
 @Tag(name = "阿里相关接口")
-@OperLog(module = "支付宝授权")
+@OperLog(module = "阿里接口")
 public class AliController {
 
     @Autowired
@@ -49,7 +50,7 @@ public class AliController {
 
     @PostMapping("/yunXiao/flowCallBack")
     @Operation(summary = "阿里云-云效-流水线执行结果回调")
-    @SaIgnore
+    @SaCheckApiKey(scope = {"system:ali:yun-xiao:call-back"})
     @OperLog(operType = OperTypeEnum.OTHER, desc = "阿里云效回调")
     public Results<?> flowCallBack(@RequestBody String requestInfo) {
         aliNetService.yunXiaoFlowCallBack(requestInfo);
