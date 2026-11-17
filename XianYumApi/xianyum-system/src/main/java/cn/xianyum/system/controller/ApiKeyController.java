@@ -60,7 +60,7 @@ public class ApiKeyController {
     @PostMapping("/save")
     @Operation(summary = "新增ApiKey")
     @SaCheckPermission(value = "system:apiKey:save")
-    @OperLog(operType = OperTypeEnum.ADD, desc = "新增ApiKey")
+    @OperLog(operType = OperTypeEnum.ADD, desc = "新增ApiKey",excludeFields = "apiKey")
     public Results<?> save(@RequestBody ApiKeyRequest request) {
         int count = apiKeyService.save(request);
         return count > 0 ? Results.success(count) : Results.error("保存失败");
@@ -69,7 +69,7 @@ public class ApiKeyController {
     @PutMapping("/update")
     @Operation(summary = "修改ApiKey")
     @SaCheckPermission("system:apiKey:update")
-    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改ApiKey")
+    @OperLog(operType = OperTypeEnum.EDIT, desc = "修改ApiKey",excludeFields = "apiKey")
     public Results<?> update(@RequestBody ApiKeyRequest request) {
         int count = apiKeyService.update(request);
         return count > 0 ? Results.success(count) : Results.error("修改失败");
