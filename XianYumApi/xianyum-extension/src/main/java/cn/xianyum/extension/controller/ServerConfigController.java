@@ -39,7 +39,7 @@ public class ServerConfigController{
      */
 	@Operation(summary = "分页查询主机维护")
     @GetMapping(value = "/getPage")
-    @SaCheckPermission("server-config:page")
+    @SaCheckPermission("extension:server-config:page")
     @OperLog(operType = OperTypeEnum.QUERY, desc = "分页查询主机维护")
     public Results<ServerConfigResponse> getPage(ServerConfigRequest request) {
 		PageResponse<ServerConfigResponse> responsePage = serverConfigService.getPage(request);
@@ -54,7 +54,7 @@ public class ServerConfigController{
      */
     @Operation(summary = "查询主机维护list")
     @GetMapping(value = "/getList")
-    @SaCheckPermission("server-config:query")
+    @SaCheckPermission("extension:server-config:query")
     @OperLog(operType = OperTypeEnum.QUERY, desc = "查询主机维护列表")
     public Results<List<ServerConfigResponse>> getList(ServerConfigRequest request) {
         List<ServerConfigResponse> serverConfigResponseList = serverConfigService.getList(request);
@@ -69,7 +69,7 @@ public class ServerConfigController{
      */
 	@Operation(summary = "根据ID查询主机维护")
     @GetMapping("getById/{id}")
-    @SaCheckPermission("server-config:query")
+    @SaCheckPermission("extension:server-config:query")
     @OperLog(operType = OperTypeEnum.QUERY, desc = "根据ID查询主机维护")
     public Results<ServerConfigResponse> selectOne(@PathVariable Long id) {
         return Results.success(serverConfigService.getById(id));
@@ -83,7 +83,7 @@ public class ServerConfigController{
      */
 	@Operation(summary = "主机维护保存数据")
     @PostMapping(value = "/save")
-    @SaCheckPermission("server-config:save")
+    @SaCheckPermission("extension:server-config:save")
     @OperLog(operType = OperTypeEnum.ADD, desc = "新增主机维护")
     public Results<?> insert(@RequestBody ServerConfigRequest request) {
         return Results.success(this.serverConfigService.save(request));
@@ -97,7 +97,7 @@ public class ServerConfigController{
      */
 	@Operation(summary = "主机维护更新数据")
     @PutMapping(value = "/update")
-    @SaCheckPermission("server-config:update")
+    @SaCheckPermission("extension:server-config:update")
     @OperLog(operType = OperTypeEnum.EDIT, desc = "修改主机维护")
     public Results<?> update(@RequestBody ServerConfigRequest request) {
         return Results.success(this.serverConfigService.update(request));
@@ -111,7 +111,7 @@ public class ServerConfigController{
      */
 	@Operation(summary = "主机维护批量删除数据")
     @DeleteMapping(value = "/delete")
-    @SaCheckPermission("server-config:delete")
+    @SaCheckPermission("extension:server-config:delete")
     @OperLog(operType = OperTypeEnum.DELETE, desc = "删除主机维护")
     public Results<?> delete(@RequestBody Long[] ids) {
         return Results.success(this.serverConfigService.deleteById(ids));
