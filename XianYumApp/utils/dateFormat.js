@@ -9,6 +9,10 @@ export const formatTime = (time, format = '{y}-{m}-{d} {h}:{i}:{s}') => {
     if (!time) return '';
 
     let date;
+    // 处理纯数字时间戳字符串（10位秒级 / 13位毫秒级）
+    if (typeof time === 'string' && /^\d{10}$|^\d{13}$/.test(time)) {
+        time = Number(time);
+    }
     // 处理10位时间戳（秒级）→ 转为13位（毫秒级）
     if (typeof time === 'number' && time.toString().length === 10) {
         time = time * 1000;

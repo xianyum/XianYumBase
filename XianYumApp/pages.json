@@ -209,6 +209,23 @@
         "navigationBarTitleText": "Markdown浏览",
         "backgroundTextStyle": "dark"
       }
+    },
+    {
+      "path": "pages/system/apiKey/index",
+      "style": {
+        "navigationBarTitleText": "ApiKey管理",
+        "enablePullDownRefresh": true,
+        "backgroundColor": "#f5f5f5",
+        "backgroundTextStyle": "dark"
+      }
+    },
+    {
+      "path": "pages/system/apiKey/edit",
+      "style": {
+        "navigationBarTitleText": "新增ApiKey",
+        "backgroundColor": "#f5f5f5",
+        "backgroundTextStyle": "dark"
+      }
     }
   ],
   "tabBar": {

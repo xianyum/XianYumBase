@@ -1,6 +1,23 @@
 import upload from '@/utils/upload'
 import request from '@/utils/request'
 
+// 查询用户列表
+export function listUser(query) {
+  return request({
+    url: '/xym-system/v1/user/getPage',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询用户详细
+export function getUser(id) {
+  return request({
+    url: '/xym-system/v1/user/getById/' + id,
+    method: 'get'
+  })
+}
+
 // 用户密码重置
 export function updateUserPwd(password, newPassword) {
   const data = {
