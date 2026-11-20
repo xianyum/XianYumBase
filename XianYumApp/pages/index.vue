@@ -704,7 +704,7 @@ export default {
           .version-item {
             display: flex;
             align-items: center;
-            padding: 28rpx 0;
+            padding: 21rpx 0;
             border-bottom: 2rpx solid #f5f5f8;
             position: relative;
 
