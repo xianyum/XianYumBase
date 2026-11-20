@@ -1,5 +1,9 @@
 <template>
-  <view class="index-container">
+  <view
+      class="index-container"
+      :class="{ 'page-locked': pageLocked }"
+      :style="pageLocked ? { top: -lockedScrollTop + 'px' } : {}"
+  >
     <view class="header" :style="{ paddingTop: (statusBarHeight + 10) + 'px' }">
       <view class="header-bg">
         <view class="blob blob-1"></view>
@@ -124,67 +128,45 @@
       </scroll-view>
     </view>
 
-    <uni-popup ref="versionPopup" type="center" :mask-click="true">
-      <view class="version-detail-popup" @touchmove.stop="handlePopupTouch">
-        <view class="popup-header">
-          <view class="popup-header-bg"></view>
-          <view class="popup-header-content">
-            <view class="popup-icon-box">
-              <uni-icons type="info" size="20" color="#fff"></uni-icons>
+    <uni-popup ref="versionPopup" type="bottom" :mask-click="true" @change="handleVersionPopupChange">
+      <view class="version-detail-sheet" @touchmove.stop="handlePopupTouch">
+        <view class="sheet-handle"></view>
+
+        <view class="sheet-header">
+          <view class="sheet-title-row">
+            <view class="sheet-icon-box">
+              <uni-icons type="info-filled" size="20" color="#fff"></uni-icons>
             </view>
-            <text class="popup-title">版本详情</text>
+            <view class="sheet-title-wrap">
+              <text class="sheet-title">{{ currentVersion.updateTitle || '版本详情' }}</text>
+              <text class="sheet-sub">{{ formatTime(currentVersion.createTime) }}</text>
+            </view>
+            <view class="sheet-version">v{{ currentVersion.version }}</view>
           </view>
-          <view class="popup-close" @tap="closeVersionPopup">
-            <uni-icons type="closeempty" size="20" color="#909399"></uni-icons>
+          <view class="sheet-tags">
+            <text class="tag">{{ currentVersion.packageType === 1 ? 'WGT包' : 'APK包' }}</text>
+            <text class="tag warn" v-if="currentVersion.isForceUpdate === 0">强制更新</text>
+            <text class="tag normal" v-else>普通更新</text>
           </view>
         </view>
-        <scroll-view class="popup-content" scroll-y="true">
-          <view class="detail-item">
-            <view class="detail-icon">
-              <uni-icons type="flag" size="14" color="#409eff"></uni-icons>
+
+        <scroll-view class="sheet-content" scroll-y="true">
+          <view class="log-block">
+            <view class="log-block-header">
+              <view class="log-block-bar"></view>
+              <text class="log-block-title">更新日志</text>
+              <text class="log-block-count">{{ formatUpdateLog(currentVersion.updateLog).length }} 项</text>
             </view>
-            <text class="label">版本号</text>
-            <text class="value">v{{ currentVersion.version }}</text>
-          </view>
-          <view class="detail-item">
-            <view class="detail-icon">
-              <uni-icons type="star" size="14" color="#e6a23c"></uni-icons>
-            </view>
-            <text class="label">更新标题</text>
-            <text class="value">{{ currentVersion.updateTitle }}</text>
-          </view>
-          <view class="detail-item">
-            <view class="detail-icon">
-              <uni-icons type="calendar" size="14" color="#67c23a"></uni-icons>
-            </view>
-            <text class="label">发布时间</text>
-            <text class="value">{{ formatTime(currentVersion.createTime) }}</text>
-          </view>
-          <view class="detail-item">
-            <view class="detail-icon">
-              <uni-icons type="settings" size="14" color="#909399"></uni-icons>
-            </view>
-            <text class="label">更新类型</text>
-            <text class="value">
-              <text class="tag">{{ currentVersion.packageType === 1 ? 'WGT包' : 'APK包' }}</text>
-              <text class="tag warn" v-if="currentVersion.isForceUpdate === 0">强制更新</text>
-              <text class="tag normal" v-else>普通更新</text>
-            </text>
-          </view>
-          <view class="detail-item log-item">
-            <view class="detail-icon">
-              <uni-icons type="list" size="14" color="#409eff"></uni-icons>
-            </view>
-            <text class="label">更新日志</text>
-            <view class="log-content">
+            <view class="log-list">
               <view class="log-line" v-for="(line, idx) in formatUpdateLog(currentVersion.updateLog)" :key="idx">
-                <text class="log-dot">•</text>
+                <view class="log-dot"></view>
                 <text class="log-text">{{ line }}</text>
               </view>
             </view>
           </view>
         </scroll-view>
-        <view class="popup-footer">
+
+        <view class="sheet-footer">
           <button class="close-btn" @tap="closeVersionPopup">知道了</button>
         </view>
       </view>
@@ -239,6 +221,9 @@ export default {
       touchEndX: 0,
       swipeThreshold: 50,
       currentVersion: {},
+      pageLocked: false,
+      pageScrollTop: 0,
+      lockedScrollTop: 0,
     }
   },
   computed: {
@@ -274,6 +259,9 @@ export default {
   onPullDownRefresh() {
     this.refreshData();
   },
+  onPageScroll(e) {
+    this.pageScrollTop = e.scrollTop
+  },
   methods: {
     handleTouchStart(e) {
       this.touchStartX = e.changedTouches[0].clientX;
@@ -294,6 +282,20 @@ export default {
     },
     handlePopupTouch(e) {
       e.stopPropagation();
+    },
+    // 弹窗打开时锁定页面滚动，避免滚动穿透；关闭后恢复原滚动位置
+    handleVersionPopupChange(e) {
+      if (e.show) {
+        this.lockedScrollTop = this.pageScrollTop
+        this.pageLocked = true
+      } else {
+        const scrollTop = this.lockedScrollTop
+        this.pageLocked = false
+        this.currentVersion = {}
+        this.$nextTick(() => {
+          uni.pageScrollTo({ scrollTop, duration: 0 })
+        })
+      }
     },
     formatNumber(value) {
       if (value >= 10000) {
@@ -466,6 +468,14 @@ export default {
   min-height: 100vh;
   background: linear-gradient(180deg, #eef2f7 0%, #f5f7fa 300rpx);
   padding-bottom: 40rpx;
+
+  /* 弹窗打开时锁定页面滚动，防止滚动穿透 */
+  &.page-locked {
+    position: fixed;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+  }
 
   .header {
     position: relative;
@@ -861,177 +871,213 @@ export default {
     }
   }
 
-  .version-detail-popup {
-    width: 620rpx;
+  .version-detail-sheet {
+    width: 100%;
     background-color: #fff;
-    border-radius: 28rpx;
+    border-radius: 36rpx 36rpx 0 0;
     overflow: hidden;
-    max-height: 85vh;
     display: flex;
     flex-direction: column;
 
-    .popup-header {
-      position: relative;
-      padding: 30rpx 30rpx 40rpx;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-
-      .popup-header-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 120rpx;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      }
-
-      .popup-header-content {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-
-        .popup-icon-box {
-          width: 60rpx;
-          height: 60rpx;
-          border-radius: 16rpx;
-          background: rgba(255, 255, 255, 0.25);
-          backdrop-filter: blur(10px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: 16rpx;
-        }
-
-        .popup-title {
-          font-size: 32rpx;
-          font-weight: 600;
-          color: #fff;
-        }
-      }
-
-      .popup-close {
-        position: relative;
-        z-index: 2;
-        width: 52rpx;
-        height: 52rpx;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.95);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+    .sheet-handle {
+      width: 72rpx;
+      height: 8rpx;
+      border-radius: 8rpx;
+      background: #e4e7ed;
+      margin: 18rpx auto 4rpx;
+      flex-shrink: 0;
     }
 
-    .popup-content {
-      flex: 1;
-      padding: 10rpx 30rpx 30rpx;
-      overflow-y: auto;
+    .sheet-header {
+      padding: 16rpx 40rpx 24rpx;
+      flex-shrink: 0;
+      border-bottom: 2rpx solid #f2f3f7;
 
-      .detail-item {
-        margin-bottom: 28rpx;
+      .sheet-title-row {
         display: flex;
-        align-items: flex-start;
-        flex-wrap: wrap;
+        align-items: center;
 
-        &.log-item {
-          flex-wrap: wrap;
-        }
-
-        .detail-icon {
-          width: 44rpx;
-          height: 44rpx;
-          border-radius: 12rpx;
-          background: #f5f7fa;
+        .sheet-icon-box {
+          width: 76rpx;
+          height: 76rpx;
+          border-radius: 22rpx;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          box-shadow: 0 8rpx 20rpx rgba(102, 126, 234, 0.28);
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-right: 14rpx;
-          margin-top: 2rpx;
+          margin-right: 20rpx;
           flex-shrink: 0;
         }
 
-        .label {
-          font-size: 28rpx;
-          color: #606266;
-          font-weight: 500;
+        .sheet-title-wrap {
           flex: 1;
-          margin-bottom: 10rpx;
-        }
-
-        .value {
-          font-size: 28rpx;
-          color: #2c3e50;
-          width: 100%;
-          padding-left: 58rpx;
+          min-width: 0;
           display: flex;
-          flex-wrap: wrap;
-          gap: 10rpx;
+          flex-direction: column;
 
-          .tag {
-            display: inline-block;
-            padding: 4rpx 16rpx;
-            border-radius: 8rpx;
-            font-size: 22rpx;
-            background: #ecf5ff;
-            color: #409eff;
+          .sheet-title {
+            font-size: 32rpx;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            word-break: break-all;
+          }
 
-            &.warn {
-              background: #fef0f0;
-              color: #f56c6c;
-            }
-
-            &.normal {
-              background: #f0f9eb;
-              color: #67c23a;
-            }
+          .sheet-sub {
+            margin-top: 6rpx;
+            font-size: 24rpx;
+            color: #9aa3af;
           }
         }
 
-        .log-content {
-          width: 100%;
-          padding-left: 58rpx;
+        .sheet-version {
+          flex-shrink: 0;
+          margin-left: 16rpx;
+          padding: 8rpx 20rpx;
+          border-radius: 999rpx;
+          font-size: 24rpx;
+          font-weight: 600;
+          color: #667eea;
+          background: rgba(102, 126, 234, 0.1);
+        }
+      }
 
+      .sheet-tags {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12rpx;
+        margin-top: 20rpx;
+
+        .tag {
+          display: inline-block;
+          padding: 6rpx 18rpx;
+          border-radius: 8rpx;
+          font-size: 22rpx;
+          background: #ecf5ff;
+          color: #409eff;
+
+          &.warn {
+            background: #fef0f0;
+            color: #f56c6c;
+          }
+
+          &.normal {
+            background: #f0f9eb;
+            color: #67c23a;
+          }
+        }
+      }
+    }
+
+    .sheet-content {
+      max-height: 46vh;
+      padding: 24rpx 40rpx;
+      box-sizing: border-box;
+      overflow-y: auto;
+
+      .log-block {
+        padding: 24rpx;
+        background: #f7f8fc;
+        border-radius: 20rpx;
+
+        .log-block-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 18rpx;
+
+          .log-block-bar {
+            width: 6rpx;
+            height: 26rpx;
+            border-radius: 6rpx;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            margin-right: 12rpx;
+          }
+
+          .log-block-title {
+            font-size: 26rpx;
+            font-weight: 600;
+            color: #303133;
+            flex: 1;
+          }
+
+          .log-block-count {
+            font-size: 22rpx;
+            color: #b0b6c3;
+          }
+        }
+
+        .log-list {
           .log-line {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 10rpx;
+            margin-bottom: 14rpx;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
 
             .log-dot {
-              color: #409eff;
-              margin-right: 10rpx;
-              line-height: 1.6;
-              font-size: 30rpx;
+              width: 10rpx;
+              height: 10rpx;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              margin: 14rpx 14rpx 0 0;
+              flex-shrink: 0;
             }
 
             .log-text {
               flex: 1;
               font-size: 26rpx;
-              color: #2c3e50;
-              line-height: 1.6;
+              color: #4b5563;
+              line-height: 1.7;
+              word-break: break-all;
             }
           }
         }
       }
     }
 
-    .popup-footer {
-      padding: 24rpx 30rpx 30rpx;
+    .sheet-footer {
+      padding: 20rpx 40rpx;
+      /* 底部弹窗贴屏幕底部，H5 下需避让 tabBar 区域，保证按钮可见 */
+      padding-bottom: calc(20rpx + var(--window-bottom, 0px));
       background: #fff;
+      flex-shrink: 0;
+      border-top: 2rpx solid #f5f6fa;
 
       .close-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        border: none;
-        border-radius: 48rpx;
-        font-size: 30rpx;
-        padding: 16rpx 0;
         width: 100%;
-        min-height: 80rpx;
-        box-sizing: border-box;
-        font-weight: 500;
-        letter-spacing: 2rpx;
+        height: 88rpx;
+        line-height: 88rpx;
+        padding: 0;
+        margin: 0;
+        border: none;
+        border-radius: 24rpx;
+        background: linear-gradient(135deg, #7b8cf5 0%, #667eea 45%, #764ba2 100%);
+        color: #fff;
+        font-size: 30rpx;
+        font-weight: 600;
+        letter-spacing: 4rpx;
+        box-shadow: 0 12rpx 28rpx rgba(102, 126, 234, 0.32);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+
+        /* 去掉小程序/uni 默认按钮边框 */
+        &::after {
+          border: none;
+        }
+
+        &:active {
+          transform: scale(0.97);
+          box-shadow: 0 6rpx 16rpx rgba(102, 126, 234, 0.24);
+          opacity: 0.92;
+        }
       }
     }
   }

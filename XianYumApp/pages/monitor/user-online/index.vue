@@ -1,5 +1,5 @@
 <template>
-  <view class="user-online-container">
+  <view class="user-online-container" :class="{ 'select-mode': selectionMode }">
     <view class="top-bar">
       <view class="search-input-wrap">
         <uni-icons type="search" size="16" color="#909399"></uni-icons>
@@ -21,6 +21,12 @@
       <view class="filter-btn" :class="{ active: hasFilter }" @tap="showFilter = true">
         <uni-icons type="list" size="18" color="#606266"></uni-icons>
       </view>
+      <view
+          v-if="checkPermi(['monitor:online:exit'])"
+          class="select-btn"
+          :class="{ active: selectionMode }"
+          @tap="toggleSelectionMode"
+      >{{ selectionMode ? '取消' : '多选' }}</view>
     </view>
 
     <view class="filter-drawer" v-if="showFilter" @tap="showFilter = false">
@@ -57,7 +63,17 @@
     </view>
 
     <view class="user-online-list" v-if="userOnlineList.length > 0">
-      <view v-for="(item, index) in userOnlineList" :key="index" class="user-online-item">
+      <view
+          v-for="(item, index) in userOnlineList"
+          :key="index"
+          class="user-online-item"
+          :class="{ selecting: selectionMode, checked: isSelected(item) }"
+          @tap="handleItemTap(item)"
+          @longpress="enterSelectionMode"
+      >
+        <view v-if="selectionMode" class="select-check" :class="{ checked: isSelected(item) }">
+          <uni-icons v-if="isSelected(item)" type="checkmarkempty" size="13" color="#fff"></uni-icons>
+        </view>
         <view class="user-online-info">
           <view class="info-row">
             <text class="label">登录账号：</text>
@@ -89,9 +105,10 @@
             <text class="value">{{item.expireStr}}</text>
           </view>
         </view>
-        <view class="user-online-actions">
-          <button class="action-btn delete-btn" @tap.stop="handleDelete(item)" v-if="checkPermi(['monitor:online:exit'])">
-            <uni-icons type="trash" size="14" color="#f56c6c"></uni-icons>
+        <view class="user-online-actions" v-if="!selectionMode">
+          <button class="action-btn kick-btn" @tap.stop="handleDelete(item)" v-if="checkPermi(['monitor:online:exit'])">
+            <uni-icons type="forward" size="13" color="#f56c6c"></uni-icons>
+            <text class="kick-text">踢出</text>
           </button>
         </view>
       </view>
@@ -102,6 +119,18 @@
     <view v-else class="empty-box">
       <uni-icons type="info" size="50" color="#999"></uni-icons>
       <text class="empty-text">暂无数据</text>
+    </view>
+
+    <view class="batch-bar" v-if="selectionMode">
+      <view class="batch-all" @tap="toggleSelectAll">
+        <view class="select-check" :class="{ checked: allSelected }">
+          <uni-icons v-if="allSelected" type="checkmarkempty" size="13" color="#fff"></uni-icons>
+        </view>
+        <text class="batch-all-text">全选（已选 {{ selectedCount }} 项）</text>
+      </view>
+      <view class="batch-delete-btn" :class="{ disabled: selectedCount === 0 }" @tap="handleBatchDelete">
+        批量踢出{{ selectedCount > 0 ? `(${selectedCount})` : '' }}
+      </view>
     </view>
   </view>
 </template>
@@ -131,12 +160,21 @@ export default {
         contentnomore: '没有更多数据了'
       },
       loginTypeOptions: [],
-      showFilter: false
+      showFilter: false,
+      selectionMode: false,
+      selectedTokens: []
     }
   },
   computed: {
     hasFilter() {
       return !!(this.queryParams.loginType)
+    },
+    selectedCount() {
+      return this.selectedTokens.length
+    },
+    allSelected() {
+      return this.userOnlineList.length > 0 &&
+          this.userOnlineList.every(item => !!item.token && this.selectedTokens.includes(item.token))
     }
   },
   onLoad(options) {
@@ -172,6 +210,58 @@ export default {
         }
       }
     },
+    isSelected(item) {
+      return !!item.token && this.selectedTokens.includes(item.token)
+    },
+    toggleSelectionMode() {
+      if (this.selectionMode) {
+        this.exitSelectionMode()
+      } else {
+        this.selectionMode = true
+      }
+    },
+    enterSelectionMode() {
+      if (!this.checkPermi(['monitor:online:exit'])) return
+      this.selectionMode = true
+    },
+    exitSelectionMode() {
+      this.selectionMode = false
+      this.selectedTokens = []
+    },
+    handleItemTap(item) {
+      if (!this.selectionMode) return
+      const index = this.selectedTokens.indexOf(item.token)
+      if (index > -1) {
+        this.selectedTokens.splice(index, 1)
+      } else if (item.token) {
+        this.selectedTokens.push(item.token)
+      }
+    },
+    toggleSelectAll() {
+      if (this.allSelected) {
+        this.selectedTokens = []
+      } else {
+        this.selectedTokens = this.userOnlineList.map(item => item.token).filter(Boolean)
+      }
+    },
+    async handleBatchDelete() {
+      if (this.selectedCount === 0) {
+        this.$modal.msg('请先选择要踢出的用户')
+        return
+      }
+      const res = await this.$modal.confirm(`确定踢出选中的 ${this.selectedCount} 个用户吗？`)
+      if (!res) return
+      try {
+        const result = await forceLogout([...this.selectedTokens])
+        if (result.code === 200) {
+          this.$modal.msgSuccess('踢出成功')
+          this.exitSelectionMode()
+          this.handleQuery()
+        }
+      } catch (error) {
+        this.$modal.msgError('踢出失败')
+      }
+    },
     isCurrentDevice(item) {
       if (!item?.token || !this.$store.getters.token) return false
       return item.token === this.$store.getters.token;
@@ -204,6 +294,7 @@ export default {
       }
     },
     handleQuery() {
+      this.exitSelectionMode()
       this.queryParams.pageNum = 1
       this.userOnlineList = []
       this.hasMore = true
@@ -221,6 +312,7 @@ export default {
       this.handleQuery()
     },
     onPullDownRefresh() {
+      this.exitSelectionMode()
       this.queryParams.pageNum = 1
       this.userOnlineList = []
       this.hasMore = true
@@ -315,6 +407,27 @@ $color-card: #fff;
           background-color: $color-main;
           border-radius: 50%;
         }
+      }
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+
+    .select-btn {
+      flex-shrink: 0;
+      height: 72rpx;
+      line-height: 72rpx;
+      padding: 0 28rpx;
+      border-radius: 36rpx;
+      font-size: 26rpx;
+      color: $color-main;
+      background-color: rgba($color-main, 0.1);
+      transition: all 0.2s;
+
+      &.active {
+        color: #fff;
+        background-color: $color-main;
       }
 
       &:active {
@@ -459,9 +572,44 @@ $color-card: #fff;
       margin-bottom: 24rpx;
       border-radius: 16rpx;
       box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+      transition: background-color 0.2s, border-color 0.2s;
+
+      &.selecting {
+        padding-left: 100rpx;
+
+        .user-online-info {
+          padding-right: 0;
+        }
+      }
+
+      &.checked {
+        background-color: #f7faff;
+        border: 2rpx solid rgba($color-main, 0.4);
+      }
+
+      .select-check {
+        position: absolute;
+        left: 28rpx;
+        top: 32rpx;
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: 50%;
+        border: 2rpx solid #c0c4cc;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        transition: all 0.2s;
+
+        &.checked {
+          border-color: $color-main;
+          background-color: $color-main;
+        }
+      }
 
       .user-online-info {
-        padding-right: 100rpx;
+        padding-right: 150rpx;
 
         .info-row {
           display: flex;
@@ -507,30 +655,37 @@ $color-card: #fff;
 
       .user-online-actions {
         position: absolute;
-        right: 32rpx;
+        right: 24rpx;
         top: 32rpx;
         display: flex;
         gap: 16rpx;
 
         .action-btn {
-          width: 56rpx;
-          height: 56rpx;
-          padding: 0;
+          height: 52rpx;
+          padding: 0 20rpx;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 28rpx;
-          background-color: #f8f9fa;
+          gap: 6rpx;
+          border-radius: 26rpx;
+          background-color: #fef0f0;
           border: none;
+          box-sizing: border-box;
 
-          &:active {
-            opacity: 0.8;
+          /* 去掉小程序/uni 默认按钮边框 */
+          &::after {
+            border: none;
           }
 
-          &.delete-btn {
-            &:active {
-              background-color: #fef0f0;
-            }
+          .kick-text {
+            font-size: 22rpx;
+            line-height: 1;
+            color: #f56c6c;
+            font-weight: 500;
+          }
+
+          &:active {
+            background-color: #fde2e2;
           }
         }
       }
@@ -556,6 +711,84 @@ $color-card: #fff;
       font-size: 28rpx;
       color: $color-gray;
       letter-spacing: 1rpx;
+    }
+  }
+
+  /* 多选模式下为底部操作栏留出空间 */
+  &.select-mode {
+    .user-online-list {
+      padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
+    }
+  }
+
+  .batch-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24rpx;
+    padding: 20rpx 24rpx;
+    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+    background-color: $color-card;
+    box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+
+    .batch-all {
+      display: flex;
+      align-items: center;
+      gap: 16rpx;
+      flex-shrink: 0;
+
+      .select-check {
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: 50%;
+        border: 2rpx solid #c0c4cc;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        transition: all 0.2s;
+
+        &.checked {
+          border-color: $color-main;
+          background-color: $color-main;
+        }
+      }
+
+      .batch-all-text {
+        font-size: 26rpx;
+        color: $color-text-light;
+        white-space: nowrap;
+      }
+    }
+
+    .batch-delete-btn {
+      flex: 1;
+      height: 76rpx;
+      line-height: 76rpx;
+      text-align: center;
+      border-radius: 38rpx;
+      font-size: 28rpx;
+      font-weight: 500;
+      color: #fff;
+      background: linear-gradient(135deg, #f78989 0%, #f56c6c 100%);
+      box-shadow: 0 8rpx 18rpx rgba(245, 108, 108, 0.28);
+      transition: opacity 0.2s;
+
+      &:active {
+        opacity: 0.85;
+      }
+
+      &.disabled {
+        color: #c0c4cc;
+        background: #f2f3f5;
+        box-shadow: none;
+      }
     }
   }
 }
