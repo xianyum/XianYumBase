@@ -28,6 +28,8 @@ public enum RedisKeyEnum {
     MENU_CLICK_RANK("xianyum-system:menu:rank:%s"),
     ROLE_INFO_BY_USER_KEY("xianyum-system:role:info"),
     MENU_PERMISSION_BY_ROLE_KEY("xianyum-system:menu:perm"),
+    API_KEY_DAY_STAT("xianyum-system:api_key:stat:%s"),
+    API_KEY_STAT_FLUSH_DONE("xianyum-system:api_key:stat:flush-done:%s"),
 
 
     // ======================== xianyum-message模块 ========================

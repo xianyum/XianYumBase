@@ -43,4 +43,7 @@ public class ApiKeyEntity extends BaseEntity {
     /** 是否有效：1生效 0禁用 */
     @TableField("is_valid")
     private Boolean isValid;
+
+    /** 累计请求次数 */
+    private Long totalRequestCount;
 }

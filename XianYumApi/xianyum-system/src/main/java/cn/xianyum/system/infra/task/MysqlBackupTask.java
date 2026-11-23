@@ -1,4 +1,4 @@
-package cn.xianyum.system.task;
+package cn.xianyum.system.infra.task;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -24,10 +24,10 @@ import java.util.Map;
 public class MysqlBackupTask implements IJobHandler {
 
     private static final String REMOTE_PATH = "mysql/";
-    
+
     // 1MB = 1024 * 1024
     private static final long MB_UNIT = 1024L * 1024L;
-    
+
     @Autowired
     private MessageSender messageSender;
 
@@ -55,7 +55,7 @@ public class MysqlBackupTask implements IJobHandler {
 
             long fileSizeByte = file.length();
             double fileSizeMb = (double) fileSizeByte / MB_UNIT;
-            
+
             try {
                 FileDetailResponse resp = FileUtils.uploadFile(file, REMOTE_PATH);
                 long cost = System.currentTimeMillis() - start;

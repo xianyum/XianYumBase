@@ -1,4 +1,4 @@
-package cn.xianyum.system.task;
+package cn.xianyum.system.infra.task;
 
 import cn.xianyum.common.annotation.JobHandler;
 import cn.xianyum.common.enums.ReturnT;

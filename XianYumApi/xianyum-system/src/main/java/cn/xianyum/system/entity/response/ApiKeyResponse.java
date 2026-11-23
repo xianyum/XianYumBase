@@ -34,4 +34,10 @@ public class ApiKeyResponse extends BaseResponse {
 
     /** 是否有效：true生效 false禁用 */
     private Boolean isValid;
+
+    /** 累计请求次数 */
+    private Long totalRequestCount;
+
+    /** 今日请求次数 */
+    private Long todayRequestCount;
 }

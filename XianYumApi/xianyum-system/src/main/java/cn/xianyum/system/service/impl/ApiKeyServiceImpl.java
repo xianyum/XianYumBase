@@ -4,19 +4,24 @@ import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.dev33.satoken.apikey.model.ApiKeyModel;
 import cn.dev33.satoken.apikey.template.SaApiKeyUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.entity.base.PageResponse;
+import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.handler.ApiKeyProvider;
 import cn.xianyum.common.utils.IdGeneratorUtil;
+import cn.xianyum.common.utils.RedisUtils;
 import cn.xianyum.system.dao.ApiKeyMapper;
 import cn.xianyum.system.entity.po.ApiKeyEntity;
 import cn.xianyum.system.entity.request.ApiKeyRequest;
 import cn.xianyum.system.entity.response.ApiKeyResponse;
 import cn.xianyum.system.service.ApiKeyService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +32,9 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,6 +46,9 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
 
     @Autowired
     private ApiKeyMapper apiKeyMapper;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public List<String> getScopeList() {
@@ -75,16 +85,36 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
                 .eq(StrUtil.isNotBlank(request.getApiKey()), ApiKeyEntity::getApiKey, request.getApiKey())
                 .orderByDesc(ApiKeyEntity::getId);
         IPage<ApiKeyEntity> pageResult = apiKeyMapper.selectPage(page, queryWrapper);
-        return PageResponse.of(pageResult, ApiKeyResponse.class);
+        PageResponse<ApiKeyResponse> response = PageResponse.of(pageResult, ApiKeyResponse.class);
+        fillRequestCount(response.getDataList());
+        return response;
     }
 
     @Override
     public ApiKeyResponse getById(Long id) {
         ApiKeyEntity entity = apiKeyMapper.selectById(id);
         if (Objects.isNull(entity)) {
-            throw new SoException("API Key 不存在");
+            throw new SoException("ApiKey不存在");
         }
-        return BeanUtil.copyProperties(entity, ApiKeyResponse.class);
+        ApiKeyResponse response = BeanUtil.copyProperties(entity, ApiKeyResponse.class);
+        fillRequestCount(List.of(response));
+        return response;
+    }
+
+    /**
+     * 批量回填请求次数：今日次数 + 累计次数
+     */
+    private void fillRequestCount(List<ApiKeyResponse> dataList) {
+        if (CollUtil.isEmpty(dataList)) {
+            return;
+        }
+        String statKey = RedisKeyEnum.API_KEY_DAY_STAT.formatKey(DateUtil.format(new Date(), DatePattern.PURE_DATE_FORMAT));
+        Map<Object, Object> statMap = redisUtils.hMGet(statKey);
+        for (ApiKeyResponse item : dataList) {
+            long todayCount = Convert.toLong(statMap.get(item.getApiKey()), 0L);
+            item.setTodayRequestCount(todayCount);
+            item.setTotalRequestCount(Convert.toLong(item.getTotalRequestCount(), 0L) + todayCount);
+        }
     }
 
     @Override
@@ -108,10 +138,9 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
         String apiKey = StrUtil.isBlank(request.getApiKey())
                 ? SaApiKeyUtil.createApiKeyModel(request.getLoginId()).getApiKey()
                 : request.getApiKey().trim();
-        Long count = apiKeyMapper.selectCount(
-                new QueryWrapper<ApiKeyEntity>().eq("api_key", apiKey));
+        Long count = apiKeyMapper.selectCount(new LambdaQueryWrapper<ApiKeyEntity>().eq(ApiKeyEntity::getApiKey, apiKey));
         if (count > 0) {
-            throw new SoException("ApiKey 已存在");
+            throw new SoException("ApiKey已存在");
         }
         ApiKeyEntity entity = new ApiKeyEntity();
         entity.setId(IdGeneratorUtil.nextId());
@@ -133,7 +162,7 @@ public class ApiKeyServiceImpl implements ApiKeyService,ApiKeyProvider {
         }
         ApiKeyEntity apiKeyEntity = apiKeyMapper.selectById(request.getId());
         if (Objects.isNull(apiKeyEntity)) {
-            throw new SoException("API Key 不存在");
+            throw new SoException("ApiKey不存在");
         }
         ApiKeyEntity entity = new ApiKeyEntity();
         entity.setId(request.getId());
