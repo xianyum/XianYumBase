@@ -137,9 +137,9 @@ public class EvDriveRecordsController {
     }
 
     @GetMapping(value = "/aiAnalysis")
-    @Operation(summary = "行驶记录AI预测分析")
+    @Operation(summary = "AI预测分析")
     @SaCheckPermission("ev-drive-records:ai:analysis")
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "行驶记录AI预测分析")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "行驶记录AI预测分析")
     public Results<String> aiAnalysis() {
         String result = this.evDriveRecordsService.aiAnalysis();
         return Results.success(result);

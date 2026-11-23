@@ -58,7 +58,7 @@ public class MqttFishController{
     @GetMapping("/aiAnalysis")
     @Operation(summary = "AI预测分析")
     @SaCheckPermission("mqtt-fish:ai:analysis")
-    @OperLog(operType = OperTypeEnum.OTHER, desc = "AI预测分析")
+    @OperLog(operType = OperTypeEnum.QUERY, desc = "AI预测分析")
     public Results<String> aiAnalysis() {
         return Results.success(mqttFishService.aiAnalysis());
     }
