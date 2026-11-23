@@ -77,6 +77,14 @@
         <view class="item-header">
           <text class="item-title">{{ item.title || '未命名' }}</text>
           <view class="header-right">
+            <view class="stat-badge stat-badge-today">
+              <text class="badge-label">今日</text>
+              <text class="badge-value">{{ formatCount(item.todayRequestCount) }}</text>
+            </view>
+            <view class="stat-badge stat-badge-total">
+              <text class="badge-label">总</text>
+              <text class="badge-value">{{ formatCount(item.totalRequestCount) }}</text>
+            </view>
             <view class="status-tag" :class="item.isValid ? 'status-success' : 'status-danger'">
               {{ item.isValid ? '生效' : '禁用' }}
             </view>
@@ -173,6 +181,14 @@
             </text>
           </view>
           <view class="detail-row">
+            <text class="row-label">今日请求</text>
+            <text class="row-value">{{ formatCount(detailData.todayRequestCount) }}</text>
+          </view>
+          <view class="detail-row">
+            <text class="row-label">总请求</text>
+            <text class="row-value">{{ formatCount(detailData.totalRequestCount) }}</text>
+          </view>
+          <view class="detail-row">
             <text class="row-label">创建时间</text>
             <text class="row-value">{{ formatTime(detailData.createTime) || '-' }}</text>
           </view>
@@ -206,7 +222,7 @@
 </template>
 
 <script>
-import { listApiKey, delApiKey } from '@/api/system/apiKey'
+import { listApiKey, getApiKey, delApiKey } from '@/api/system/apiKey'
 import { listUser } from '@/api/system/user'
 import { checkPermi } from '@/utils/permission'
 import { formatTime } from '@/utils/dateFormat'
@@ -266,6 +282,25 @@ export default {
     getUserLabel(item) {
       return this.userMap[String(item.loginId)] || item.loginId || '-'
     },
+    formatCount(value) {
+      if (value === null || value === undefined || value === '') {
+        return '-'
+      }
+      const num = Number(value)
+      if (!isFinite(num) || num <= 0) {
+        return '-'
+      }
+      if (num >= 10000) {
+        return this.abbrNumber(num / 10000) + 'w'
+      }
+      if (num >= 1000) {
+        return this.abbrNumber(num / 1000) + 'k'
+      }
+      return String(num)
+    },
+    abbrNumber(num) {
+      return num.toFixed(1).replace(/\.0$/, '')
+    },
     async getUserMap() {
       try {
         const response = await listUser({ pageNum: 1, pageSize: 10000 })
@@ -300,6 +335,17 @@ export default {
       this.detailData = item
       this.detailKeyRevealed = false
       this.showDetail = true
+      this.loadDetail(item.id)
+    },
+    async loadDetail(id) {
+      try {
+        const response = await getApiKey(id)
+        if (response.code === 200 && response.data) {
+          this.detailData = response.data
+        }
+      } catch (error) {
+        // 请求异常已由拦截器提示，保留列表数据展示
+      }
     },
     openActionMenu(item) {
       this.actionData = item
@@ -688,6 +734,39 @@ $color-card: #fff;
           align-items: center;
           gap: 12rpx;
           flex-shrink: 0;
+
+          .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 4rpx;
+            padding: 6rpx 14rpx;
+            border-radius: 999rpx;
+            font-size: 22rpx;
+            line-height: 1;
+            flex-shrink: 0;
+            white-space: nowrap;
+
+            .badge-label {
+              font-size: 20rpx;
+              opacity: 0.8;
+              flex-shrink: 0;
+            }
+
+            .badge-value {
+              font-size: 22rpx;
+              font-weight: 600;
+            }
+
+            &.stat-badge-today {
+              color: $color-main;
+              background-color: #ecf5ff;
+            }
+
+            &.stat-badge-total {
+              color: $color-gray;
+              background-color: #f4f4f5;
+            }
+          }
 
           .more-btn {
             width: 44rpx;
