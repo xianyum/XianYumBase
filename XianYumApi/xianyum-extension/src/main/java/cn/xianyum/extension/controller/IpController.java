@@ -1,6 +1,6 @@
 package cn.xianyum.extension.controller;
 
-import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.apikey.annotation.SaCheckApiKey;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
@@ -30,7 +30,7 @@ public class IpController {
 
     @GetMapping("/getIpInfo")
     @Operation(summary = "查询IP地理位置")
-    @SaIgnore
+    @SaCheckApiKey(scope = "system:ip:query")
     @OperLog(operType = OperTypeEnum.QUERY, desc = "查询IP地理位置")
     public Results<IpInfoEntity> getIpInfo(@RequestParam(required = false) String ip) {
         IpInfoEntity result = ipService.getIpInfo(ip);
