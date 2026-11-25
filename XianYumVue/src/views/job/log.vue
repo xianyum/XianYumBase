@@ -72,7 +72,7 @@
       <el-table-column label="JobHandler" align="center" prop="jobHandler" :show-overflow-tooltip="true" />
       <el-table-column label="执行状态" align="center" prop="status">
         <template v-slot="scope">
-          <el-tag v-if="scope.row.status === 1" size="small" type="danger">失败</el-tag>
+          <el-tag v-if="scope.row.status == 1" size="small" type="danger">失败</el-tag>
           <el-tag v-else type="success" size="small">正常</el-tag>
         </template>
       </el-table-column>

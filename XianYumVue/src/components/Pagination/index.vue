@@ -7,7 +7,7 @@
       :layout="layout"
       :page-sizes="pageSizes"
       :pager-count="pagerCount"
-      :total="total"
+      :total="totalCount"
       v-bind="$attrs"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -23,7 +23,7 @@ export default {
   props: {
     total: {
       required: true,
-      type: Number
+      type: [Number, String]
     },
     page: {
       type: Number,
@@ -66,6 +66,11 @@ export default {
     };
   },
   computed: {
+    // 后端统一将 Long 序列化为字符串，这里转成数字，否则 el-pagination 无法计算总页数，导致最后一页仍可继续翻页
+    totalCount() {
+      const total = Number(this.total)
+      return isNaN(total) ? 0 : total
+    },
     currentPage: {
       get() {
         return this.page
@@ -85,7 +90,7 @@ export default {
   },
   methods: {
     handleSizeChange(val) {
-      if (this.currentPage * val > this.total) {
+      if (this.currentPage * val > this.totalCount) {
         this.currentPage = 1
       }
       this.$emit('pagination', { page: this.currentPage, limit: val })

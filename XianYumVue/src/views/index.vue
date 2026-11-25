@@ -75,7 +75,7 @@ export default {
         this.lineChartData.title = "接口访问量";
         res.data.forEach((item,index) =>{
           this.lineChartData.xData.push(item.time)
-          this.lineChartData.yData.push(item.visitCount)
+          this.lineChartData.yData.push(Number(item.visitCount))
         });
       });
     },
