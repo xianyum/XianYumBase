@@ -2,13 +2,17 @@ package cn.xianyum.system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.file.FileNameUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.enums.RedisKeyEnum;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.DateUtils;
+import cn.xianyum.common.utils.IdGeneratorUtil;
 import cn.xianyum.common.utils.RedisUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.file.FileDetailResponse;
+import cn.xianyum.common.entity.file.PresignedUploadResponse;
 import cn.xianyum.system.service.FileDetailService;
 import cn.xianyum.system.service.FileService;
 import com.alibaba.fastjson2.JSONObject;
@@ -16,11 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.x.file.storage.core.FileInfo;
 import org.dromara.x.file.storage.core.FileStorageProperties;
 import org.dromara.x.file.storage.core.FileStorageService;
+import org.dromara.x.file.storage.core.constant.Constant;
+import org.dromara.x.file.storage.core.platform.FileStorage;
+import org.dromara.x.file.storage.core.platform.QiniuKodoFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -44,11 +50,8 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private RedisUtils redisUtils;
 
-
-
     @Value("${dromara.x-file-storage.custom-domain}")
     private String customDomain;
-
 
 
     @Override
@@ -139,6 +142,59 @@ public class FileServiceImpl implements FileService {
     public String presignedUrl(String fileId) {
         FileDetailResponse response = this.selectFileById(fileId, true);
         return Objects.nonNull(response) ? response.getFileUrl() : null;
+    }
+
+    /**
+     * 生成七牛云表单直传凭证
+     *
+     * @param filename 文件名
+     * @return
+     */
+    @Override
+    public PresignedUploadResponse generateUploadPresignedUrl(String filename) {
+        if (StrUtil.isBlank(filename)) {
+            throw new SoException("文件名不能为空");
+        }
+        if (filename.contains(Constants.SLASH) || filename.contains("\\") || filename.contains("..")) {
+            throw new SoException("文件名不合法");
+        }
+        FileStorage fileStorage = fileStorageService.getFileStorage();
+        if (!(fileStorage instanceof QiniuKodoFileStorage)) {
+            throw new SoException("当前仅支持七牛云存储平台直传");
+        }
+        return generateQiniuUploadAuth((QiniuKodoFileStorage) fileStorage, filename);
+    }
+
+    /**
+     * 七牛云 Kodo 仅支持 GET 预签名，前端直传使用表单上传：token + key + 上传域名
+     */
+    private PresignedUploadResponse generateQiniuUploadAuth(QiniuKodoFileStorage fileStorage, String originalFilename) {
+        String ext = FileNameUtil.extName(originalFilename);
+        String filename = IdGeneratorUtil.nextIdStr() + (StrUtil.isBlank(ext) ? "" : "." + ext);
+        FileInfo fileInfo = new FileInfo(fileStorage.getBasePath(), buildDefaultPath(), filename);
+        fileInfo.setOriginalFilename(originalFilename);
+        fileInfo.setUrl("");
+        fileInfo.setUploadStatus(Constant.FileInfoUploadStatus.INITIATE);
+        fileInfo.setPlatform(fileStorage.getPlatform());
+        String key = fileStorage.getFileKey(fileInfo);
+        long expireSeconds = 10 * 60L;
+        String token = fileStorage.getClient().getAuth().uploadToken(fileStorage.getBucketName(), key, expireSeconds, null);
+        String uploadUrl;
+        try {
+            uploadUrl = fileStorage.getClient().getConfiguration().upHost(token);
+        } catch (Exception e) {
+            log.error("获取七牛云上传域名失败", e);
+            throw new SoException("获取上传地址失败");
+        }
+        SpringUtil.getBean(FileDetailServiceImpl.class).save(fileInfo);
+        PresignedUploadResponse response = new PresignedUploadResponse();
+        response.setKey(key);
+        response.setToken(token);
+        response.setUrl(uploadUrl);
+        response.setFilename(filename);
+        response.setOriginalFilename(originalFilename);
+        response.setFileId(fileInfo.getId());
+        return response;
     }
 
 }

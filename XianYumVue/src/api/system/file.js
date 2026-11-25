@@ -10,3 +10,14 @@ export function presignedFileUrl(fileId) {
     }
   })
 }
+
+// 获取上传预签名凭证（前端直传存储平台）
+export function uploadPresignedUrl(filename) {
+  return request({
+    url: '/xym-system/v1/file/uploadPresignedUrl',
+    method: 'get',
+    params: {
+      "filename": filename
+    }
+  })
+}

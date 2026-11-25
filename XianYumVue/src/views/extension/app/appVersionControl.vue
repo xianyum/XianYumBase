@@ -175,11 +175,14 @@
           <el-upload
             ref="upload"
             :limit="1"
-            :headers="uploadHeaders"
             accept=".wgt,.apk"
             :file-list="fileList"
-            :action="uploadUrl"
+            action="#"
+            :disabled="uploading"
+            :http-request="handleUploadRequest"
             :on-success="handleFileSuccess"
+            :on-error="handleFileError"
+            :on-remove="handleFileRemove"
             :before-upload="beforeUpload"
             drag
             style="width: 100%"
@@ -229,9 +232,9 @@
 </template>
 
 <script>
-import { getToken } from "@/utils/auth";
 import {getAppVersionControlPage, updateAppVersionControl, saveAppVersionControl, delAppVersionControl, getAppVersionControl} from '@/api/extension/appVersionControl'
 import {presignedFileUrl} from "@/api/system/file";
+import {uploadFileDirectly} from "@/utils/upload";
 
 export default {
   name: 'appVersion',
@@ -256,15 +259,15 @@ export default {
       // 是否显示弹出层
       open: false,
       // 文件上传相关
-      uploadUrl: process.env.VUE_APP_BASE_API + "/xym-system/v1/file/uploadFile",
       fileList: [],
+      // 上传中
+      uploading: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         appId: undefined
       },
-      uploadHeaders: {},
       // 表单参数
       form: {
         id: undefined,
@@ -301,11 +304,6 @@ export default {
           { required: true, message: '更新日志不能为空', trigger: 'blur' }
         ]
       }
-    }
-  },
-  mounted() {
-    this.uploadHeaders = {
-      'Authorization': 'Bearer ' + getToken()
     }
   },
   created() {
@@ -412,27 +410,52 @@ export default {
         this.$modal.msgError('上传文件大小不能超过100MB！')
         return false
       }
-      // 设置上传请求头（携带token）
-      this.uploadHeaders = {
-        'Authorization': 'Bearer ' + getToken()
-      };
       return true
     },
 
+    /**
+     * 自定义上传：调用通用直传工具，上传成功后写入 fileId
+     */
+    handleUploadRequest(options) {
+      this.uploading = true
+      uploadFileDirectly(options.file, {
+        onProgress: percent => options.onProgress({ percent })
+      }).then(presign => {
+        options.onSuccess(presign)
+      }).catch(error => {
+        this.uploading = false
+        options.onError(error)
+        this.$modal.msgError('文件上传失败：' + (error && error.message ? error.message : '请重试'))
+      })
+    },
+
     /** 文件上传成功回调 */
-    handleFileSuccess(response) {
-      if (response.code === 200) {
-        console.log(response)
-        this.form.packageFileId = response.data.id
-        // 更新文件列表
-        this.fileList = [{
-          name: response.data.originalFilename,
-          url: response.data.fileUrl
-        }]
-        this.$modal.msgSuccess('文件上传成功！')
-      } else {
-        this.$modal.msgError('文件上传失败：' + response.msg)
+    handleFileSuccess(presign) {
+      this.uploading = false
+      this.form.packageFileId = presign.fileId
+      this.fileList = [{
+        name: presign.originalFilename,
+        url: ''
+      }]
+      if (this.$refs['form']) {
+        this.$refs['form'].validateField('packageFileId')
       }
+      this.$modal.msgSuccess('文件上传成功！')
+    },
+
+    /** 文件上传失败回调 */
+    handleFileError() {
+      this.uploading = false
+      // 清理失败项，便于重新选择文件
+      if (this.$refs['upload']) {
+        this.$refs['upload'].clearFiles()
+      }
+    },
+
+    /** 移除文件时清空文件ID */
+    handleFileRemove() {
+      this.form.packageFileId = undefined
+      this.fileList = []
     },
 
     // 取消按钮
@@ -504,7 +527,7 @@ export default {
         if (this.form.packageFileId && this.form.fileInfo) {
           this.fileList = [{
             name: this.form.fileInfo.originalFilename,
-            url: this.form.fileInfo.fileUr
+            url: this.form.fileInfo.fileUrl
           }]
         }else{
           this.fileList = []
@@ -515,6 +538,10 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      if (this.uploading) {
+        this.$modal.msgError('文件正在上传中，请稍候')
+        return
+      }
       this.$refs['form'].validate(valid => {
         if (valid) {
           // 转换强制更新为数字类型

@@ -1,8 +1,10 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.file.FileDetailResponse;
+import cn.xianyum.common.entity.file.PresignedUploadResponse;
 import cn.xianyum.common.enums.OperTypeEnum;
 import cn.xianyum.common.utils.Results;
 import cn.xianyum.system.service.FileService;
@@ -40,5 +42,13 @@ public class FileController {
     @OperLog(operType = OperTypeEnum.QUERY, desc = "获取文件访问URL")
     public Results<FileDetailResponse> presignedUrl(@RequestParam String fileId) {
         return Results.success(this.fileService.selectFileById(fileId,true));
+    }
+
+    @Operation(summary = "获取上传预签名URL（前端直传）")
+    @GetMapping(value = "/uploadPresignedUrl")
+    @SaCheckPermission("system:file:upload")
+    @OperLog(operType = OperTypeEnum.OTHER, desc = "获取上传预签名URL")
+    public Results<PresignedUploadResponse> uploadPresignedUrl(@RequestParam String filename) {
+        return Results.success(this.fileService.generateUploadPresignedUrl(filename));
     }
 }

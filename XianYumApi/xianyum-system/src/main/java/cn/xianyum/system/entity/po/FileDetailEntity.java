@@ -18,7 +18,7 @@ public class FileDetailEntity extends BaseEntity {
     /**
      * 文件id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.INPUT)
     private String id;
 
     /**

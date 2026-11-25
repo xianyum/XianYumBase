@@ -1,6 +1,7 @@
 package cn.xianyum.system.service;
 
 import cn.xianyum.common.entity.file.FileDetailResponse;
+import cn.xianyum.common.entity.file.PresignedUploadResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -55,4 +56,11 @@ public interface FileService {
      * @return
      */
     String presignedUrl(String fileId);
+
+    /**
+     * 生成上传预签名URL，供前端直传存储平台
+     * @param filename 文件名
+     * @return
+     */
+    PresignedUploadResponse generateUploadPresignedUrl(String filename);
 }
