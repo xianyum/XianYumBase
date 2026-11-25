@@ -3,8 +3,8 @@ package cn.xianyum.system.service;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.entity.file.PresignedUploadResponse;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
+import java.util.List;
 
 /**
  * @author xianyum
@@ -63,4 +63,16 @@ public interface FileService {
      * @return
      */
     PresignedUploadResponse generateUploadPresignedUrl(String filename);
+
+    /**
+     * 文件持久化
+     * @param fileIds
+     */
+    void updateUploadStatusToComplete(List<String> fileIds);
+
+    /**
+     * 删除文件：删除远程文件及文件记录
+     * @param fileIds 文件id集合
+     */
+    void deleteFiles(List<String> fileIds);
 }

@@ -1,7 +1,6 @@
 package cn.xianyum.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.annotation.SaIgnore;
 import cn.xianyum.common.annotation.OperLog;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.entity.file.PresignedUploadResponse;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 /**
  * @author xianyum
  * @date 2026/1/19 22:22

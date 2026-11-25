@@ -1,8 +1,10 @@
 package cn.xianyum.system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.file.FileNameUtil;
+import cn.hutool.core.text.StrPool;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.xianyum.common.constant.Constants;
 import cn.xianyum.common.enums.RedisKeyEnum;
@@ -13,6 +15,7 @@ import cn.xianyum.common.utils.RedisUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.xianyum.common.entity.file.FileDetailResponse;
 import cn.xianyum.common.entity.file.PresignedUploadResponse;
+import cn.xianyum.system.entity.po.FileDetailEntity;
 import cn.xianyum.system.service.FileDetailService;
 import cn.xianyum.system.service.FileService;
 import com.alibaba.fastjson2.JSONObject;
@@ -21,6 +24,7 @@ import org.dromara.x.file.storage.core.FileInfo;
 import org.dromara.x.file.storage.core.FileStorageProperties;
 import org.dromara.x.file.storage.core.FileStorageService;
 import org.dromara.x.file.storage.core.constant.Constant;
+import org.dromara.x.file.storage.core.get.RemoteFileInfo;
 import org.dromara.x.file.storage.core.platform.FileStorage;
 import org.dromara.x.file.storage.core.platform.QiniuKodoFileStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,11 +170,58 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
+     * 文件持久化
+     *
+     * @param fileIds
+     */
+    @Override
+    public void updateUploadStatusToComplete(List<String> fileIds) {
+        if(CollUtil.isEmpty(fileIds)){
+            return;
+        }
+        List<FileDetailEntity> fileDetailEntities = fileDetailService.selectByFileIds(fileIds);
+        for (FileDetailEntity fileDetailEntity : fileDetailEntities) {
+            RemoteFileInfo file = fileStorageService.getFile(fileDetailService.toFileInfo(fileDetailEntity));
+            if(Objects.isNull(file)){
+                this.fileDetailService.deleteById(fileDetailEntity.getId());
+                continue;
+            }
+            fileDetailEntity.setUrl(file.getUrl());
+            fileDetailEntity.setSize(file.getSize());
+            fileDetailEntity.setUploadStatus(Constant.FileInfoUploadStatus.COMPLETE);
+            fileDetailEntity.setId(fileDetailEntity.getId());
+            this.fileDetailService.updateComplete(fileDetailEntity);
+        }
+    }
+
+    /**
+     * 删除文件：先删远程文件，再删数据库记录
+     *
+     * @param fileIds
+     */
+    @Override
+    public void deleteFiles(List<String> fileIds) {
+        if (CollUtil.isEmpty(fileIds)) {
+            return;
+        }
+        List<FileDetailEntity> fileDetailEntities = fileDetailService.selectByFileIds(fileIds);
+        for (FileDetailEntity fileDetailEntity : fileDetailEntities) {
+            try {
+                fileStorageService.delete(fileDetailService.toFileInfo(fileDetailEntity));
+            } catch (Exception e) {
+                log.error("删除远程文件失败，fileId：{}", fileDetailEntity.getId(), e);
+                continue;
+            }
+            this.fileDetailService.deleteById(fileDetailEntity.getId());
+        }
+    }
+
+    /**
      * 七牛云 Kodo 仅支持 GET 预签名，前端直传使用表单上传：token + key + 上传域名
      */
     private PresignedUploadResponse generateQiniuUploadAuth(QiniuKodoFileStorage fileStorage, String originalFilename) {
         String ext = FileNameUtil.extName(originalFilename);
-        String filename = IdGeneratorUtil.nextIdStr() + (StrUtil.isBlank(ext) ? "" : "." + ext);
+        String filename = IdGeneratorUtil.nextIdStr() + (StrUtil.isBlank(ext) ? "" : StrPool.DOT + ext);
         FileInfo fileInfo = new FileInfo(fileStorage.getBasePath(), buildDefaultPath(), filename);
         fileInfo.setOriginalFilename(originalFilename);
         fileInfo.setUrl("");
@@ -196,5 +247,4 @@ public class FileServiceImpl implements FileService {
         response.setFileId(fileInfo.getId());
         return response;
     }
-
 }

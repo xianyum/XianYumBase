@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.xianyum.common.exception.SoException;
 import cn.xianyum.common.utils.AppVersionCompareUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.xianyum.common.utils.FileServiceUtils;
 import cn.xianyum.common.utils.FileUtils;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -19,6 +20,9 @@ import cn.xianyum.extension.entity.response.AppVersionControlResponse;
 import cn.xianyum.extension.service.AppVersionControlService;
 import cn.xianyum.extension.dao.AppVersionControlMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -61,6 +65,7 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
     public Integer save(AppVersionControlRequest request) {
         AppVersionControlEntity bean = BeanUtil.toBean(request, AppVersionControlEntity.class);
         bean.setId(IdUtil.getSnowflakeNextIdStr());
+        FileServiceUtils.transferPermanent(List.of(bean.getPackageFileId()));
         return appVersionControlMapper.insert(bean);
     }
 
@@ -71,17 +76,19 @@ public class AppVersionControlServiceImpl implements AppVersionControlService {
             throw new SoException("id不能为空");
         }
         AppVersionControlEntity bean = BeanUtil.toBean(request, AppVersionControlEntity.class);
+        FileServiceUtils.transferPermanent(List.of(bean.getPackageFileId()));
         return appVersionControlMapper.updateById(bean);
     }
 
 
     @Override
     public Integer deleteById(Long[] ids) {
-        int resultCount = 0;
-        for (Long id : ids) {
-            resultCount = appVersionControlMapper.deleteById(id) + resultCount;
+        List<AppVersionControlEntity> appVersionControlEntityList = this.appVersionControlMapper.selectByIds(Arrays.asList(ids));
+        for (AppVersionControlEntity appVersionControlEntity : appVersionControlEntityList) {
+            FileServiceUtils.deleteFiles(List.of(appVersionControlEntity.getPackageFileId()));
         }
-        return resultCount;
+        appVersionControlMapper.deleteByIds(Arrays.asList(ids));
+        return appVersionControlEntityList.size();
     }
 
     @Override

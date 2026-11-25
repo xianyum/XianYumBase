@@ -8,8 +8,10 @@ import cn.xianyum.system.entity.po.FileDetailEntity;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.dromara.x.file.storage.core.FileInfo;
+import org.dromara.x.file.storage.core.constant.Constant;
 import org.dromara.x.file.storage.core.hash.HashInfo;
 import org.dromara.x.file.storage.core.recorder.FileRecorder;
 import org.dromara.x.file.storage.core.upload.FilePartInfo;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import cn.xianyum.system.service.FileDetailService;
 import cn.xianyum.system.dao.FileDetailMapper;
 import org.springframework.stereotype.Service;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,6 +44,7 @@ public class FileDetailServiceImpl implements FileDetailService, FileRecorder {
         FileDetailEntity detail = toFileDetail(fileInfo);
         String id = IdUtil.getSnowflakeNextIdStr();
         detail.setId(id);
+        detail.setUploadStatus(Constant.FileInfoUploadStatus.COMPLETE);
         int insert = this.fileDetailMapper.insert(detail);
         if(insert > 0){
             fileInfo.setId(id);
@@ -123,6 +127,7 @@ public class FileDetailServiceImpl implements FileDetailService, FileRecorder {
     /**
      * 将 FileDetail 转为 FileInfo
      */
+    @Override
     public FileInfo toFileInfo(FileDetailEntity detail){
         FileInfo info = BeanUtil.copyProperties(
                 detail, FileInfo.class, "metadata", "userMetadata", "thMetadata", "thUserMetadata", "attr", "hashInfo");
@@ -137,6 +142,29 @@ public class FileDetailServiceImpl implements FileDetailService, FileRecorder {
         // 这里手动获取数据库中的 json 字符串 并转成 哈希信息，方便使用
         info.setHashInfo(jsonToHashInfo(detail.getHashInfo()));
         return info;
+    }
+
+    @Override
+    public void deleteById(String id) {
+        this.fileDetailMapper.deleteById(id);
+    }
+
+    /**
+     * 更新文件上传状态为完成
+     * 仅当数据库中 uploadStatus 为初始化(1)时，才按 id 更新传入的所有字段
+     *
+     * @param fileDetail
+     */
+    @Override
+    public void updateComplete(FileDetailEntity fileDetail) {
+        if (fileDetail == null || StrUtil.isBlank(fileDetail.getId())) {
+            return;
+        }
+        fileDetail.setUploadStatus(Constant.FileInfoUploadStatus.COMPLETE);
+        LambdaUpdateWrapper<FileDetailEntity> updateWrapper = Wrappers.<FileDetailEntity>lambdaUpdate()
+                .eq(FileDetailEntity::getId, fileDetail.getId())
+                .eq(FileDetailEntity::getUploadStatus, Constant.FileInfoUploadStatus.INITIATE);
+        this.fileDetailMapper.update(fileDetail, updateWrapper);
     }
 
     /**
@@ -192,6 +220,17 @@ public class FileDetailServiceImpl implements FileDetailService, FileRecorder {
             return null;
         }
         return toFileInfo(fileDetailEntity);
+    }
+
+    /**
+     * 通过ID列表查询文件
+     *
+     * @param fileIds
+     * @return
+     */
+    @Override
+    public List<FileDetailEntity> selectByFileIds(List<String> fileIds) {
+        return this.fileDetailMapper.selectBatchIds(fileIds);
     }
 }
 
