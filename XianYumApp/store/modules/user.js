@@ -15,7 +15,8 @@ const user = {
     name: storage.get(constant.name),
     avatar: storage.get(constant.avatar),
     roles: storage.get(constant.roles),
-    permissions: storage.get(constant.permissions)
+    permissions: storage.get(constant.permissions),
+    nickName: storage.get(constant.nickName)
   },
 
   mutations: {

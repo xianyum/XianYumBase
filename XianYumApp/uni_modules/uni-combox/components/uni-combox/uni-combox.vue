@@ -72,18 +72,10 @@
 				type: String,
 				default: '无匹配项'
 			},
-			// #ifndef VUE3
-			value: {
-				type: [String, Number],
-				default: ''
-			},
-			// #endif
-			// #ifdef VUE3
 			modelValue: {
 				type: [String, Number],
 				default: ''
 			},
-			// #endif
 		},
 		data() {
 			return {
@@ -108,22 +100,12 @@
 			}
 		},
 		watch: {
-			// #ifndef VUE3
-			value: {
-				handler(newVal) {
-					this.inputVal = newVal
-				},
-				immediate: true
-			},
-			// #endif
-			// #ifdef VUE3
 			modelValue: {
 				handler(newVal) {
 					this.inputVal = newVal
 				},
 				immediate: true
 			},
-			// #endif
 		},
 		methods: {
 			toggleSelector() {

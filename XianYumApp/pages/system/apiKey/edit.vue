@@ -244,9 +244,7 @@ export default {
     if (options.id) {
       this.id = options.id
       this.isEdit = true
-      uni.setNavigationBarTitle({
-        title: '修改ApiKey'
-      })
+      this.$setPageTitle('修改ApiKey')
       this.loadDetail()
     }
   },

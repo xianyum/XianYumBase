@@ -31,7 +31,8 @@ const request = config => {
       header: config.header,
       dataType: 'json'
     }).then(response => {
-      let [error, res] = response
+      // Vue3 运行时 resolve 的是响应对象，Vue2 运行时是 [error, res]，两种都兼容
+      let [error, res] = Array.isArray(response) ? response : [null, response]
       if (error) {
         showErrorToast('网络异常,请稍后重试')
         reject('后端接口连接异常')

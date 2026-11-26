@@ -181,11 +181,7 @@ export default {
     }
   },
   onLoad(options) {
-    if (options.pageTitle) {
-      uni.setNavigationBarTitle({
-        title: options.pageTitle
-      });
-    }
+    this.$setPageTitle(options.pageTitle)
     this.applyQuickDate(DEFAULT_QUICK_DATE_TYPE);
     this.handleQuery();
   },

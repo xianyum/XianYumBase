@@ -109,7 +109,7 @@ export default {
     };
   },
   onLoad(options) {
-    if (options.pageTitle) uni.setNavigationBarTitle({ title: options.pageTitle });
+    this.$setPageTitle(options.pageTitle)
     this.initData();
   },
   onPullDownRefresh() {

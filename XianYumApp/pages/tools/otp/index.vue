@@ -76,11 +76,7 @@ export default {
     this.startOTPTimer();
   },
   onLoad(options) {
-    if (options.pageTitle) {
-      uni.setNavigationBarTitle({
-        title: options.pageTitle
-      });
-    }
+    this.$setPageTitle(options.pageTitle)
   },
   methods: {
     // 加载 OTP 列表

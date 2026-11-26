@@ -192,20 +192,10 @@
 			}
 
 		},
-		// #ifndef VUE3
-		// TODO vue2
-		destroyed() {
-			if (this.__isUnmounted) return
-			this.uninstall()
-		},
-		// #endif
-		// #ifdef VUE3
-		// TODO vue3
 		unmounted() {
 			this.__isUnmounted = true
 			this.uninstall()
 		},
-		// #endif
 
 		methods: {
 			uninstall() {

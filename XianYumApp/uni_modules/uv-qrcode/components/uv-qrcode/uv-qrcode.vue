@@ -76,9 +76,7 @@
 	import props from './props.js';
 	import mpMixin from '@/uni_modules/uv-ui-tools/libs/mixin/mpMixin.js'
 	import mixin from '@/uni_modules/uv-ui-tools/libs/mixin/mixin.js'
-	// #ifdef VUE3
 	import { toRaw } from 'vue';
-	// #endif
 	/* 引入uvQRCode核心js */
 	import UQRCode from './qrcode';
 	/* 引入nvue所需模块 */
@@ -675,13 +673,8 @@
 					// #ifdef MP-WEIXIN
 					try {
 						let dataURL = null;
-						// #ifdef VUE3
 						dataURL = toRaw(this.canvas)
 							.toDataURL();
-						// #endif
-						// #ifndef VUE3
-						dataURL = this.canvas.toDataURL();
-						// #endif
 						callback.success({
 							tempFilePath: dataURL
 						});

@@ -128,18 +128,6 @@
 			}
 		},
 		watch: {
-			// #ifndef VUE3
-			value: {
-				immediate: true,
-				handler(newVal) {
-					this.searchVal = newVal
-					if (newVal) {
-						this.show = true
-					}
-				}
-			},
-			// #endif
-			// #ifdef VUE3
 			modelValue: {
 				immediate: true,
 				handler(newVal) {
@@ -149,7 +137,6 @@
 					}
 				}
 			},
-			// #endif
 			focus: {
 				immediate: true,
 				handler(newVal) {
@@ -164,9 +151,7 @@
 			},
 			searchVal(newVal, oldVal) {
 				this.$emit("input", newVal)
-				// #ifdef VUE3
 				this.$emit("update:modelValue", newVal)
-				// #endif
 			}
 		},
 		methods: {

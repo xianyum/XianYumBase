@@ -1,5 +1,5 @@
 <template>
-  <view class="verify-wrap" v-if="verifyShow">
+  <view class="verify-wrap" v-show="verifyShow">
     <view class="verify-code">
       <!-- SLIDER  ROTATE  CONCAT 类型 -->
       <block v-if="type !== 'WORD_IMAGE_CLICK'">
@@ -39,7 +39,7 @@
             @touchstart="touchstart"
             @touchmove="touchmove"
             @touchend="touchend"
-            v-if="isActive"
+            v-show="isActive"
             class="move-area"
           >
             <movable-area class="move-block" :animation="true">
@@ -324,58 +324,67 @@ export default {
           this.captchaData.slider_image = data.data.templateImage;
           this.$modal.closeLoading()
           this.$nextTick(() => {
-            // 获取当前设备上渲染的背景图和滑块尺寸
-            let query = uni.createSelectorQuery().in(this);
-            query
-              .select("#bg")
-              .boundingClientRect((res) => {
-                this.bgImg.width = res.width;
-                this.bgImg.height = res.height;
-              })
-              .exec();
-
-            if (this.type === "ROTATE" || this.type === "SLIDER") {
-              query
-                .select("#slider-img")
-                .boundingClientRect((res) => {
-                  this.sliderImg.width = res.width;
-                  this.sliderImg.height = res.height;
-                })
-                .exec();
-            } else if (this.type === "CONCAT") {
-              query
-                .select("#verify-concat-bg")
-                .boundingClientRect((res) => {
-                  const height =
-                    ((data.data.backgroundImageHeight -
-                            data.data.data.randomY) /
-                        data.data.backgroundImageHeight) *
-                    uni.upx2px(data.data.backgroundImageHeight);
-                  this.sliderImg.height = height;
-                })
-                .exec();
-            } else if (this.type === "WORD_IMAGE_CLICK") {
-              query
-                .select("#image-click-mask")
-                .boundingClientRect((res) => {
-                  this.sliderImg.left = res.left;
-                  this.sliderImg.top = res.top;
-                })
-                .exec();
-            }
-            setTimeout(() => {
-              this.captchaData.end = this.bgImg.width - uni.upx2px(40);
-              this.initConfig(
-                this.bgImg.width,
-                this.bgImg.height,
-                this.sliderImg.width,
-                this.sliderImg.height,
-                this.captchaData.end
-              );
-            }, 1000);
+            this.measureSize();
           });
         }
       });
+    },
+    // 测量渲染尺寸：App 端选择器可能取不到节点，取不到时按布局尺寸兜底
+    measureSize() {
+      let measured = false;
+      const apply = (width, height) => {
+        if (measured || !(width > 0)) return;
+        measured = true;
+        this.applySize(width, height);
+      };
+      try {
+        const query = uni.createSelectorQuery().in(this);
+        query.select("#bg").boundingClientRect((res) => {
+          if (res && res.width > 0) {
+            apply(res.width, res.height);
+          } else {
+            this.applyLayoutSize(apply);
+          }
+        });
+        if (this.type === "ROTATE" || this.type === "SLIDER") {
+          query.select("#slider-img").boundingClientRect((res) => {
+            if (res) {
+              this.sliderImg.width = res.width;
+              this.sliderImg.height = res.height;
+            }
+          });
+        } else if (this.type === "WORD_IMAGE_CLICK") {
+          query.select("#image-click-mask").boundingClientRect((res) => {
+            if (res) {
+              this.sliderImg.left = res.left;
+              this.sliderImg.top = res.top;
+            }
+          });
+        }
+        query.exec();
+      } catch (e) {
+        this.applyLayoutSize(apply);
+      }
+      // 选择器始终没有回调时的兜底
+      setTimeout(() => {
+        if (!measured) this.applyLayoutSize(apply);
+      }, 800);
+    },
+    // 按样式尺寸计算：.verify-code 640rpx 减去左右 padding 40rpx = 600rpx，高 360rpx
+    applyLayoutSize(apply) {
+      apply(uni.upx2px(600), uni.upx2px(360));
+    },
+    applySize(width, height) {
+      this.bgImg.width = width;
+      this.bgImg.height = height;
+      this.captchaData.end = width - uni.upx2px(40);
+      this.initConfig(
+        width,
+        height,
+        this.sliderImg.width,
+        this.sliderImg.height,
+        this.captchaData.end
+      );
     },
     // 初始化配置
     initConfig(

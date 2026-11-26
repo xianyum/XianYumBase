@@ -177,12 +177,8 @@ export default {
       return this.location.isParked === 0 ? '行驶中' : '已驻车';
     }
   },
-  onLoad() {
-    if (options.pageTitle) {
-      uni.setNavigationBarTitle({ title: options.pageTitle });
-    } else {
-      uni.setNavigationBarTitle({ title: '车辆信息' });
-    }
+  onLoad(options) {
+    this.$setPageTitle(options.pageTitle)
     this.loadData();
   },
   onShow() {

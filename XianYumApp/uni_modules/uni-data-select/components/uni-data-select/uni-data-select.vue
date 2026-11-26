@@ -255,28 +255,13 @@
 				}
 			},
       slotSelected(){
-        // #ifdef VUE2
-        return this.$scopedSlots ? this.$scopedSlots.selected : false
-        // #endif
-        // #ifdef VUE3
         return this.$slots ? this.$slots.selected : false
-        // #endif
       },
       slotEmpty(){
-        // #ifdef VUE2
-        return this.$scopedSlots ? this.$scopedSlots.empty : false
-        // #endif
-        // #ifdef VUE3
         return this.$slots ? this.$slots.empty : false
-        // #endif
       },
 			slotOption(){
-				// #ifdef VUE2
-				return this.$scopedSlots ? this.$scopedSlots.option : false
-				// #endif
-				// #ifdef VUE3
 				return this.$slots ? this.$slots.option : false
-				// #endif
 			}
 		},
 		watch: {

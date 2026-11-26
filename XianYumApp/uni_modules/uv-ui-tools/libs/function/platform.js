@@ -8,13 +8,7 @@
 
 let platform = 'none'
 
-// #ifdef VUE3
 platform = 'vue3'
-// #endif
-
-// #ifdef VUE2
-platform = 'vue2'
-// #endif
 
 // #ifdef APP-PLUS
 platform = 'plus'

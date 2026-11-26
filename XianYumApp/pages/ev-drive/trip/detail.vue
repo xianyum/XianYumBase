@@ -227,7 +227,7 @@ export default {
     if (options.id) {
       this.loadDetail(options.id);
     }
-    uni.setNavigationBarTitle({ title: '行程详情' });
+    this.$setPageTitle('行程详情');
   },
   onUnload() {
     this.stopPlayback();

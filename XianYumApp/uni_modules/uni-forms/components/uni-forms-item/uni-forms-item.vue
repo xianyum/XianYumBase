@@ -198,18 +198,10 @@
 			}
 
 		},
-		// #ifndef VUE3
-		destroyed() {
-			if (this.__isUnmounted) return
-			this.unInit()
-		},
-		// #endif
-		// #ifdef VUE3
 		unmounted() {
 			this.__isUnmounted = true
 			this.unInit()
 		},
-		// #endif
 		methods: {
 			/**
 			 * 外部调用方法

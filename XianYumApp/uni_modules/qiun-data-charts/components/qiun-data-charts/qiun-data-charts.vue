@@ -505,7 +505,7 @@ export default {
     );
     // #endif
   },
-  destroyed(){
+  unmounted(){
     if(this.echarts === true){
       delete cfe.option[this.cid]
       delete cfe.instance[this.cid]
@@ -1264,7 +1264,7 @@ export default {
       }
     },200)
   },
-  destroyed(){
+  unmounted(){
     delete cfu.option[this.rid]
     delete cfu.instance[this.rid]
     delete cfe.option[this.rid]

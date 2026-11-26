@@ -1,19 +1,17 @@
-import Vue from 'vue'
 import App from './App'
 import store from './store' // store
 import plugins from './plugins' // plugins
 import './permission' // permission
 import { getDicts } from "@/api/system/dict/data"
+import { createSSRApp } from 'vue'
 
-Vue.use(plugins)
-
-Vue.config.productionTip = false
-Vue.prototype.$store = store
-Vue.prototype.getDicts = getDicts
-App.mpType = 'app'
-
-const app = new Vue({
-  ...App
-})
-
-app.$mount()
+export function createApp() {
+  const app = createSSRApp(App)
+  app.use(store)
+  app.use(plugins)
+  // $store 由 Vuex 4 自动注入，无需手动挂载
+  app.config.globalProperties.getDicts = getDicts
+  return {
+    app
+  }
+}

@@ -3,6 +3,10 @@
   import { getToken } from '@/utils/auth'
 
   export default {
+    // Vue3 需显式声明 globalData，供 getApp().globalData 读取
+    globalData: {
+      config: null
+    },
     onLaunch: function() {
       this.initApp()
     },

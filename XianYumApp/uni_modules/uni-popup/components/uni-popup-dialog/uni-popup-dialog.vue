@@ -71,18 +71,10 @@
 				type: Boolean,
 				default: true
 			},
-			// #ifdef VUE2
-			value: {
-				type: [String, Number],
-				default: ''
-			},
-			// #endif
-			// #ifdef VUE3
 			modelValue: {
 				type: [Number, String],
 				default: ''
 			},
-			// #endif
 
 
 			placeholder: {
@@ -159,23 +151,11 @@
 					this.dialogType = 'info'
 				}
 			},
-			value(val) {
-				this.setVal(val)
-			},
-			// #ifdef VUE3
 			modelValue(val) {
 				this.setVal(val)
 			},
-			// #endif
 			val(val) {
-				// #ifdef VUE2
-				// TODO 兼容 vue2
-				this.$emit('input', val);
-				// #endif
-				// #ifdef VUE3
-				// TODO　兼容　vue3
 				this.$emit('update:modelValue', val);
-				// #endif
 			}
 		},
 		created() {
@@ -184,10 +164,7 @@
 			// this.popup.closeMask()
 			if (this.mode === 'input') {
 				this.dialogType = 'info'
-				this.val = this.value;
-				// #ifdef VUE3
 				this.val = this.modelValue;
-				// #endif
 			} else {
 				this.dialogType = this.type
 			}

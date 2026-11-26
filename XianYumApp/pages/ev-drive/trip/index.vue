@@ -197,8 +197,7 @@ export default {
     }
   },
   onLoad(options) {
-    const title = (options && options.pageTitle) || '全部轨迹';
-    uni.setNavigationBarTitle({ title });
+    this.$setPageTitle(options.pageTitle || '全部轨迹')
     this._resolveAndApplyDateRange(DEFAULT_DATE_FILTER_TYPE);
     this._getTripList('init');
   },

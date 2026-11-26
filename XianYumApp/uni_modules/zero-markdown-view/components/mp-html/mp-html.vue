@@ -107,9 +107,7 @@ export default {
     tagStyle: Object,
     useAnchor: [Boolean, Number]
   },
-  // #ifdef VUE3
   emits: ['load', 'ready', 'imgtap', 'linktap', 'play', 'error'],
-  // #endif
   // #ifndef APP-PLUS-NVUE
   components: {
     node
@@ -131,7 +129,7 @@ export default {
       this.setContent(this.content)
     }
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this._hook('onDetached')
   },
   methods: {
@@ -326,7 +324,7 @@ export default {
         this._set(nodes, append)
       }
       // #endif
-      this.$set(this, 'nodes', append ? (this.nodes || []).concat(nodes) : nodes)
+      this.nodes = append ? (this.nodes || []).concat(nodes) : nodes
 
       // #ifndef APP-PLUS-NVUE
       this._videos = []

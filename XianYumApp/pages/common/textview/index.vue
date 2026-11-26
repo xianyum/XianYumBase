@@ -17,9 +17,7 @@ export default {
   onLoad(options) {
     this.title = options.title
     this.content = options.content
-    uni.setNavigationBarTitle({
-      title: options.title
-    })
+    this.$setPageTitle(options.title)
   }
 }
 </script>

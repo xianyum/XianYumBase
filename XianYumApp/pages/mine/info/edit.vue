@@ -131,7 +131,7 @@
       },
       clearError(field) {
         if (this.errors[field]) {
-          this.$set(this.errors, field, '')
+          this.errors[field] = ''
         }
       },
       validate() {

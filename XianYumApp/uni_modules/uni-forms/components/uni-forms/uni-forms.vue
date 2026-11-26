@@ -20,26 +20,6 @@
 		isEqual
 	} from './utils.js'
 
-	// #ifndef VUE3
-	// 后续会慢慢废弃这个方法
-	import Vue from 'vue';
-	Vue.prototype.binddata = function(name, value, formName) {
-		if (formName) {
-			this.$refs[formName].setValue(name, value);
-		} else {
-			let formVm;
-			for (let i in this.$refs) {
-				const vm = this.$refs[i];
-				if (vm && vm.$options && vm.$options.name === 'uniForms') {
-					formVm = vm;
-					break;
-				}
-			}
-			if (!formVm) return console.error('当前 uni-froms 组件缺少 ref 属性');
-			formVm.setValue(name, value);
-		}
-	};
-	// #endif
 	/**
 	 * Forms 表单
 	 * @description 由输入框、选择器、单选框、多选框等控件组成，用以收集、校验、提交数据
@@ -169,7 +149,6 @@
 			}
 		},
 		created() {
-			// #ifdef VUE3
 			let getbinddata = getApp().$vm.$.appContext.config.globalProperties.binddata
 			if (!getbinddata) {
 				getApp().$vm.$.appContext.config.globalProperties.binddata = function(name, value, formName) {
@@ -191,7 +170,6 @@
 					}
 				}
 			}
-			// #endif
 
 			// 子组件实例数组
 			this.childrens = []

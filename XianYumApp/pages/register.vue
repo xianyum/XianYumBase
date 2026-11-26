@@ -36,13 +36,13 @@
 </template>
 
 <script>
-  import { getCodeImg, register } from '@/api/login'
+  import { register } from '@/api/login'
 
   export default {
     data() {
       return {
         codeUrl: "",
-        captchaEnabled: true,
+        captchaEnabled: false,
         globalConfig: getApp().globalData.config,
         registerForm: {
           username: "",
@@ -53,23 +53,10 @@
         }
       }
     },
-    created() {
-      this.getCode()
-    },
     methods: {
       // 用户登录
       handleUserLogin() {
         this.$tab.navigateTo(`/pages/login`)
-      },
-      // 获取图形验证码
-      getCode() {
-        getCodeImg().then(res => {
-          this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled
-          if (this.captchaEnabled) {
-            this.codeUrl = 'data:image/gif;base64,' + res.img
-            this.registerForm.uuid = res.uuid
-          }
-        })
       },
       // 注册方法
       async handleRegister() {

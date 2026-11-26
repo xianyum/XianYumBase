@@ -270,19 +270,6 @@
 					this.isRange = newVal.indexOf('range') !== -1
 				}
 			},
-			// #ifndef VUE3
-			value: {
-				immediate: true,
-				handler(newVal) {
-					if (this.isEmitValue) {
-						this.isEmitValue = false
-						return
-					}
-					this.initPicker(newVal)
-				}
-			},
-			// #endif
-			// #ifdef VUE3
 			modelValue: {
 				immediate: true,
 				handler(newVal) {
@@ -293,7 +280,6 @@
 					this.initPicker(newVal)
 				}
 			},
-			// #endif
 			start: {
 				immediate: true,
 				handler(newVal) {

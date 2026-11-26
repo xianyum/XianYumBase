@@ -234,18 +234,9 @@
 			// })
 			// #endif
 		},
-		// #ifndef VUE3
-		// TODO vue2
-		destroyed() {
-			this.setH5Visible()
-		},
-		// #endif
-		// #ifdef VUE3
-		// TODO vue3
 		unmounted() {
 			this.setH5Visible()
 		},
-		// #endif
 		activated() {
    	  this.setH5Visible(!this.showPopup);
     },

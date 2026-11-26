@@ -21,9 +21,7 @@ export default {
     this.content = options.markdownContent || "";
 
     // 设置导航标题
-    uni.setNavigationBarTitle({
-      title: this.title
-    });
+    this.$setPageTitle(this.title);
   },
 };
 </script>

@@ -10,7 +10,7 @@ const config = {
   // 块级标签（转为 div，其他的非信任标签转为 span）
   blockTags: makeMap('address,article,aside,body,caption,center,cite,footer,header,html,nav,pre,section'),
 
-  // #ifdef (MP-WEIXIN || MP-QQ || APP-PLUS || MP-360) && VUE3
+  // #ifdef MP-WEIXIN || MP-QQ || APP-PLUS || MP-360
   // 行内标签
   inlineTags: makeMap('abbr,b,big,code,del,em,i,ins,label,q,small,span,strong,sub,sup'),
   // #endif
@@ -340,7 +340,7 @@ Parser.prototype.onTagName = function (name) {
  */
 Parser.prototype.onAttrName = function (name) {
   name = this.xml ? name : name.toLowerCase()
-  // #ifdef (VUE3 && (H5 || APP-PLUS)) || APP-PLUS-NVUE
+  // #ifdef (H5 || APP-PLUS) || APP-PLUS-NVUE
   if (name.includes('?') || name.includes(';')) {
     this.attrName = undefined
     return
@@ -585,7 +585,7 @@ Parser.prototype.onOpenTag = function (selfClose) {
       }
     }
     attrs.style = attrs.style.substr(1) || undefined
-    // #ifdef (MP-WEIXIN || MP-QQ) && VUE3
+    // #ifdef MP-WEIXIN || MP-QQ
     if (!attrs.style) {
       delete attrs.style
     }
@@ -1082,7 +1082,7 @@ Parser.prototype.popNode = function () {
       node.c = 2
       for (let i = node.children.length; i--;) {
         const child = node.children[i]
-        // #ifdef (MP-WEIXIN || MP-QQ || APP-PLUS || MP-360) && VUE3
+        // #ifdef MP-WEIXIN || MP-QQ || APP-PLUS || MP-360
         if (child.name && (config.inlineTags[child.name] || ((child.attrs.style || '').includes('inline') && child.children)) && !child.c) {
           traversal(child)
         }
@@ -1136,7 +1136,7 @@ Parser.prototype.popNode = function () {
     }
   }
   attrs.style = attrs.style.substr(1) || undefined
-  // #ifdef (MP-WEIXIN || MP-QQ) && VUE3
+  // #ifdef MP-WEIXIN || MP-QQ
   for (const key in attrs) {
     if (!attrs[key]) {
       delete attrs[key]
@@ -1169,18 +1169,16 @@ Parser.prototype.onText = function (text) {
     // 去除含有换行符的空串
     if (trim === ' ') {
       if (flag) return
-      // #ifdef VUE3
       else {
         const parent = this.stack[this.stack.length - 1]
         if (parent && parent.name[0] === 't') return
       }
-      // #endif
     }
     text = trim
   }
   const node = Object.create(null)
   node.type = 'text'
-  // #ifdef (MP-BAIDU || MP-ALIPAY || MP-TOUTIAO) && VUE3
+  // #ifdef MP-BAIDU || MP-ALIPAY || MP-TOUTIAO
   node.attrs = {}
   // #endif
   node.text = decodeEntity(text)

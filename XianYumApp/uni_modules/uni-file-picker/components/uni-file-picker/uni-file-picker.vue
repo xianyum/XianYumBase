@@ -581,12 +581,8 @@
 					}
 					this.localValue = [...data]
 				}
-				// #ifdef VUE3
 				this.$emit('update:modelValue', this.localValue)
-				// #endif
-				// #ifndef VUE3
 				this.$emit('input', this.localValue)
-				// #endif
 			},
 
 			/**
