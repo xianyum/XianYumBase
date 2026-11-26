@@ -478,12 +478,20 @@ export default {
       });
     },
     async goToAiReport() {
-      const response = await doAiAnalysis();
-      const title = "智能鱼缸AI分析报告";
-      const content = response.msg || "";
-      uni.navigateTo({
-        url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`
-      });
+      try {
+        const response = await doAiAnalysis();
+        const content = response.msg || "";
+        if (!content) {
+          this.$modal.msg('AI分析中，请稍后重试');
+          return;
+        }
+        const title = "智能鱼缸AI分析报告";
+        uni.navigateTo({
+          url: `/pages/common/markdown/markdown-view?markdownTitle=${encodeURIComponent(title)}&markdownContent=${encodeURIComponent(content)}`
+        });
+      } catch (e) {
+        // 请求层已提示失败原因（AI 报告异步生成，稍后再点即可）
+      }
     }
   }
 };

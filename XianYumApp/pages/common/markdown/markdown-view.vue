@@ -18,10 +18,21 @@ export default {
   },
   onLoad(options) {
     this.title = options.markdownTitle || "Markdown浏览";
-    this.content = options.markdownContent || "";
+    // 来源页面用 encodeURIComponent 传参，App 端部分基座拿到的仍是编码后的原文，这里兜底解码
+    this.content = this.decodeQuery(options.markdownContent);
 
     // 设置导航标题
     this.$setPageTitle(this.title);
+  },
+  methods: {
+    decodeQuery(value) {
+      if (!value) return "";
+      try {
+        return decodeURIComponent(value);
+      } catch (e) {
+        return value;
+      }
+    }
   },
 };
 </script>
