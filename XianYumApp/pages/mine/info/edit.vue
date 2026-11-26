@@ -2,7 +2,10 @@
   <view class="edit-page">
     <view class="form-card">
       <view class="card-head">
-        <text class="card-title">基本资料</text>
+        <view class="card-title-wrap">
+          <view class="title-bar"></view>
+          <text class="card-title">基本资料</text>
+        </view>
         <text class="card-desc">完善资料，让你的账号更完整</text>
       </view>
 
@@ -60,28 +63,28 @@
         </view>
         <text class="field-tip" v-if="errors.email">{{ errors.email }}</text>
       </view>
-    </view>
 
-    <view class="form-card">
-      <view class="card-head">
-        <text class="card-title">性别</text>
-      </view>
-      <view class="sex-group">
-        <view
-          class="sex-chip"
-          :class="{ active: isSex(0) }"
-          @tap="selectSex(0)"
-        >
-          <uni-icons :type="isSex(0) ? 'checkmarkempty' : 'person'" size="16" :color="isSex(0) ? '#ffffff' : '#7a8499'"></uni-icons>
-          <text>男</text>
+      <view class="field">
+        <view class="field-label">
+          <text>性别</text>
         </view>
-        <view
-          class="sex-chip"
-          :class="{ active: isSex(1) }"
-          @tap="selectSex(1)"
-        >
-          <uni-icons :type="isSex(1) ? 'checkmarkempty' : 'person'" size="16" :color="isSex(1) ? '#ffffff' : '#7a8499'"></uni-icons>
-          <text>女</text>
+        <view class="sex-group">
+          <view
+            class="sex-chip"
+            :class="{ active: isSex(0) }"
+            @tap="selectSex(0)"
+          >
+            <uni-icons :type="isSex(0) ? 'checkmarkempty' : 'person'" size="14" :color="isSex(0) ? '#ffffff' : '#7a8499'"></uni-icons>
+            <text>男</text>
+          </view>
+          <view
+            class="sex-chip"
+            :class="{ active: isSex(1) }"
+            @tap="selectSex(1)"
+          >
+            <uni-icons :type="isSex(1) ? 'checkmarkempty' : 'person'" size="14" :color="isSex(1) ? '#ffffff' : '#7a8499'"></uni-icons>
+            <text>女</text>
+          </view>
         </view>
       </view>
     </view>
@@ -197,18 +200,32 @@
   }
 
   .card-head {
-    margin-bottom: 30rpx;
+    margin-bottom: 32rpx;
+
+    .card-title-wrap {
+      display: flex;
+      align-items: center;
+    }
+
+    .title-bar {
+      width: 8rpx;
+      height: 30rpx;
+      border-radius: 4rpx;
+      background: linear-gradient(180deg, #667eea, #764ba2);
+      margin-right: 14rpx;
+    }
 
     .card-title {
-      display: block;
-      font-size: 30rpx;
+      font-size: 34rpx;
       font-weight: 600;
       color: #1f2430;
+      letter-spacing: 1rpx;
     }
 
     .card-desc {
       display: block;
-      margin-top: 8rpx;
+      margin-top: 10rpx;
+      padding-left: 22rpx;
       font-size: 24rpx;
       color: #9aa4b8;
     }
@@ -279,30 +296,28 @@
   }
 
   .sex-chip {
-    flex: 1;
-    height: 88rpx;
-    border-radius: 20rpx;
+    min-width: 132rpx;
+    height: 64rpx;
+    padding: 0 28rpx;
+    box-sizing: border-box;
+    border-radius: 32rpx;
     background: #f5f7fc;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28rpx;
+    font-size: 26rpx;
     color: #5b6478;
-    margin-right: 24rpx;
+    margin-right: 20rpx;
     transition: all 0.2s;
 
-    &:last-child {
-      margin-right: 0;
-    }
-
     text {
-      margin-left: 8rpx;
+      margin-left: 6rpx;
     }
 
     &.active {
-      background: linear-gradient(135deg, #4f7cff, #7c5cff);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: #ffffff;
-      box-shadow: 0 10rpx 24rpx rgba(79, 124, 255, 0.28);
+      box-shadow: 0 8rpx 18rpx rgba(102, 126, 234, 0.26);
     }
   }
 
@@ -313,7 +328,7 @@
   .submit-btn {
     height: 96rpx;
     border-radius: 48rpx;
-    background: linear-gradient(135deg, #4f7cff, #7c5cff);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: #ffffff;
     font-size: 31rpx;
     font-weight: 600;
@@ -321,7 +336,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 14rpx 30rpx rgba(79, 124, 255, 0.3);
+    box-shadow: 0 14rpx 30rpx rgba(102, 126, 234, 0.3);
     transition: opacity 0.2s;
 
     &:active {
