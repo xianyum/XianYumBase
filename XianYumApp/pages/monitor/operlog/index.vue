@@ -302,6 +302,18 @@ export default {
     this.initDictData()
     this.getList()
   },
+  onPullDownRefresh() {
+    this.queryParams.pageNum = 1
+    this.operlogList = []
+    this.hasMore = true
+    this.getList('refresh')
+  },
+  onReachBottom() {
+    if (this.hasMore && !this.loading) {
+      this.queryParams.pageNum++
+      this.getList('more')
+    }
+  },
   methods: {
     async initDictData() {
       this.operTypeOptions = await getDictData('user_oper_type') || []
@@ -410,18 +422,6 @@ export default {
       this.operTypeList = []
       this.showFilter = false
       this.handleQuery()
-    },
-    onPullDownRefresh() {
-      this.queryParams.pageNum = 1
-      this.operlogList = []
-      this.hasMore = true
-      this.getList('refresh')
-    },
-    onReachBottom() {
-      if (this.hasMore && !this.loading) {
-        this.queryParams.pageNum++
-        this.getList('more')
-      }
     }
   }
 }
