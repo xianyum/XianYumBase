@@ -384,9 +384,9 @@ page {
   }
 
   .menu-name {
-    font-size: 30rpx;
-    color: #1f2430;
-    font-weight: 500;
+    font-size: 27rpx;
+    color: #2b3240;
+    font-weight: 400;
   }
 }
 
