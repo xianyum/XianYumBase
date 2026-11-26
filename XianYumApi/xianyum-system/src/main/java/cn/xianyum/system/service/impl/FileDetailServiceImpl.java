@@ -44,7 +44,9 @@ public class FileDetailServiceImpl implements FileDetailService, FileRecorder {
         FileDetailEntity detail = toFileDetail(fileInfo);
         String id = IdUtil.getSnowflakeNextIdStr();
         detail.setId(id);
-        detail.setUploadStatus(Constant.FileInfoUploadStatus.COMPLETE);
+        if(Objects.isNull(detail.getUploadStatus())){
+            detail.setUploadStatus(Constant.FileInfoUploadStatus.COMPLETE);
+        }
         int insert = this.fileDetailMapper.insert(detail);
         if(insert > 0){
             fileInfo.setId(id);
