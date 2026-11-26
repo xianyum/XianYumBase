@@ -1,104 +1,95 @@
 <template>
   <view class="mine-page">
     <!-- 用户信息卡片 -->
-    <view class="user-card">
-      <view class="user-header" @click="handleToInfo">
-        <image @click.stop="handleToAvatar" class="avatar" :src="avatarSrc" mode="aspectFill"></image>
-        <view class="user-info">
+    <view class="profile-card">
+      <view class="blob blob-1"></view>
+      <view class="blob blob-2"></view>
+
+      <view class="profile-main" @tap="handleToInfo">
+        <image @tap.stop="handleToAvatar" class="avatar" :src="avatarSrc" mode="aspectFill"></image>
+        <view class="profile-info">
           <text class="nickname">{{ user.nickName || user.username || '未登录' }}</text>
-          <text class="role-tag">{{ user.groupRoleName || '普通用户' }}</text>
-        </view>
-        <!-- 扫一扫按钮 -->
-        <view class="qr-code" @click.stop="scanQRCode">
-          <uni-icons type="scan" size="20" color="#333"></uni-icons>
-        </view>
-        <uni-icons type="right" size="20" color="#333"></uni-icons>
-      </view>
-    </view>
-
-    <!-- 第一组菜单卡片：编辑资料、修改密码 -->
-    <view class="service-card" style="margin-bottom: 30rpx;">
-      <view class="service-list">
-        <view class="service-item" @tap="handleToEditInfo">
-          <view class="left">
-            <view class="service-icon">
-              <uni-icons type="person" size="20" color="#409eff"></uni-icons>
-            </view>
-            <text class="service-name">编辑资料</text>
-          </view>
-          <view class="right">
-            <uni-icons type="right" size="14" color="#999"></uni-icons>
+          <view class="profile-meta">
+            <view class="role-pill">{{ user.groupRoleName || '普通用户' }}</view>
           </view>
         </view>
-        <view class="service-item" @tap="handleToPwd">
-          <view class="left">
-            <view class="service-icon">
-              <uni-icons type="locked" size="20" color="#67c23a"></uni-icons>
-            </view>
-            <text class="service-name">修改密码</text>
-          </view>
-          <view class="right">
-            <uni-icons type="right" size="14" color="#999"></uni-icons>
-          </view>
-        </view>
-        <view class="service-item" @tap="handleToThirdAuth">
-          <view class="left">
-            <view class="service-icon">
-              <uni-icons type="link" size="20" color="#fa8c16"></uni-icons>
-            </view>
-            <text class="service-name">三方授权</text>
-          </view>
-          <view class="right">
-            <uni-icons type="right" size="14" color="#999"></uni-icons>
-          </view>
+        <view class="scan-btn" @tap.stop="scanQRCode">
+          <uni-icons type="scan" size="22" color="#ffffff"></uni-icons>
         </view>
       </view>
     </view>
 
-    <!-- 第二组菜单卡片：应用设置、分享APP、关于我们 -->
-    <view class="service-card" style="margin-bottom: 30rpx;">
-      <view class="service-list">
-        <view class="service-item" @tap="handleToSetting">
-          <view class="left">
-            <view class="service-icon">
-              <uni-icons type="gear" size="20" color="#909399"></uni-icons>
-            </view>
-            <text class="service-name">应用设置</text>
+    <!-- 账号与安全 -->
+    <view class="section-title">账号与安全</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" @tap="handleToEditInfo">
+        <view class="menu-left">
+          <view class="menu-icon-box icon-blue">
+            <uni-icons type="person-filled" size="20" color="#ffffff"></uni-icons>
           </view>
-          <view class="right">
-            <uni-icons type="right" size="14" color="#999"></uni-icons>
-          </view>
+          <text class="menu-name">编辑资料</text>
         </view>
-        <view class="service-item" @tap="shareApp">
-          <view class="left">
-            <view class="service-icon">
-              <uni-icons type="paperplane" size="20" color="#3b82f6"></uni-icons>
-            </view>
-            <text class="service-name">分享APP</text>
+        <uni-icons type="right" size="16" color="#c6ccd8"></uni-icons>
+      </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" @tap="handleToPwd">
+        <view class="menu-left">
+          <view class="menu-icon-box icon-green">
+            <uni-icons type="locked-filled" size="20" color="#ffffff"></uni-icons>
           </view>
-          <view class="right">
-            <uni-icons type="right" size="14" color="#999"></uni-icons>
-          </view>
+          <text class="menu-name">修改密码</text>
         </view>
-        <view class="service-item" @tap="handleAbout">
-          <view class="left">
-            <view class="service-icon">
-              <uni-icons type="info" size="20" color="#f56c6c"></uni-icons>
-            </view>
-            <text class="service-name">关于我们</text>
+        <uni-icons type="right" size="16" color="#c6ccd8"></uni-icons>
+      </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" @tap="handleToThirdAuth">
+        <view class="menu-left">
+          <view class="menu-icon-box icon-orange">
+            <uni-icons type="link" size="20" color="#ffffff"></uni-icons>
           </view>
-          <view class="right">
-            <uni-icons type="right" size="14" color="#999"></uni-icons>
-          </view>
+          <text class="menu-name">三方授权</text>
         </view>
+        <uni-icons type="right" size="16" color="#c6ccd8"></uni-icons>
       </view>
     </view>
 
-    <!-- 退出登录区域 - 宽度占满屏幕 -->
-    <view class="logout-section">
-      <view class="logout-item" @tap="handleLogout">
-        <text class="logout-text">退出登录</text>
+    <!-- 更多服务 -->
+    <view class="section-title">更多服务</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" @tap="handleToSetting">
+        <view class="menu-left">
+          <view class="menu-icon-box icon-slate">
+            <uni-icons type="gear-filled" size="20" color="#ffffff"></uni-icons>
+          </view>
+          <text class="menu-name">应用设置</text>
+        </view>
+        <uni-icons type="right" size="16" color="#c6ccd8"></uni-icons>
       </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" @tap="shareApp">
+        <view class="menu-left">
+          <view class="menu-icon-box icon-cyan">
+            <uni-icons type="paperplane-filled" size="20" color="#ffffff"></uni-icons>
+          </view>
+          <text class="menu-name">分享APP</text>
+        </view>
+        <uni-icons type="right" size="16" color="#c6ccd8"></uni-icons>
+      </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" @tap="handleAbout">
+        <view class="menu-left">
+          <view class="menu-icon-box icon-red">
+            <uni-icons type="info-filled" size="20" color="#ffffff"></uni-icons>
+          </view>
+          <text class="menu-name">关于我们</text>
+        </view>
+        <uni-icons type="right" size="16" color="#c6ccd8"></uni-icons>
+      </view>
+    </view>
+
+    <!-- 退出登录 -->
+    <view class="logout-btn" hover-class="logout-hover" @tap="handleLogout">
+      <text>退出登录</text>
     </view>
   </view>
 </template>
@@ -247,138 +238,205 @@ export default {
 }
 </script>
 
+<style lang="scss">
+page {
+  background-color: #f4f6fb;
+}
+</style>
+
 <style lang="scss" scoped>
 .mine-page {
   min-height: 100vh;
-  background: #f5f6fa;
-  padding: 30rpx;
+  background: #f4f6fb;
+  padding: 30rpx 30rpx 60rpx;
+  box-sizing: border-box;
 }
 
 // 用户信息卡片
-.user-card {
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 40rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+.profile-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32rpx;
+  padding: 40rpx 32rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 14rpx 34rpx rgba(102, 126, 234, 0.28);
 
-  .user-header {
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    background: #ffffff;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  .blob-1 {
+    width: 260rpx;
+    height: 260rpx;
+    top: -130rpx;
+    right: -70rpx;
+  }
+
+  .blob-2 {
+    width: 180rpx;
+    height: 180rpx;
+    bottom: -110rpx;
+    left: 40rpx;
+    opacity: 0.08;
+  }
+
+  .profile-main {
+    position: relative;
     display: flex;
     align-items: center;
-
-    .avatar {
-      width: 120rpx;
-      height: 120rpx;
-      border-radius: 60rpx;
-      margin-right: 30rpx;
-    }
-
-    .user-info {
-      flex: 1;
-
-      .nickname {
-        font-size: 36rpx;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 12rpx;
-        display: block;
-      }
-
-      .role-tag {
-        background: linear-gradient(90deg, #409eff 0%, #1890ff 100%);
-        color: #fff;
-        font-size: 24rpx;
-        padding: 4rpx 16rpx;
-        border-radius: 20rpx;
-        display: inline-block;
-      }
-    }
-
-    // 扫一扫按钮样式
-    .qr-code {
-      width: 72rpx;
-      height: 72rpx;
-      border-radius: 36rpx;
-      background: #f5f6fa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 20rpx;
-    }
   }
-}
 
-// 菜单卡片容器
-.service-card {
-  background: #fff;
-  border-radius: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
-}
+  .avatar {
+    width: 124rpx;
+    height: 124rpx;
+    border-radius: 50%;
+    border: 6rpx solid rgba(255, 255, 255, 0.9);
+    background: #ffffff;
+    margin-right: 26rpx;
+    box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.15);
+  }
 
-// 服务菜单列表（调窄高度）
-.service-list {
-  padding: 10rpx 30rpx;
+  .profile-info {
+    flex: 1;
+    min-width: 0;
+  }
 
-  .service-item {
+  .nickname {
+    display: block;
+    font-size: 38rpx;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 14rpx;
+  }
+
+  .profile-meta {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    // 核心调整：将上下内边距从30rpx改为20rpx，调窄菜单高度
-    padding: 20rpx 0;
-    border-bottom: 2rpx solid #f5f6fa;
+  }
 
-    &:last-child {
-      border-bottom: none;
-    }
+  .role-pill {
+    padding: 4rpx 18rpx;
+    border-radius: 20rpx;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1rpx solid rgba(255, 255, 255, 0.32);
+    color: #ffffff;
+    font-size: 22rpx;
+    line-height: 1.4;
+  }
 
-    .left {
-      display: flex;
-      align-items: center;
-
-      // 无背景色的图标容器
-      .service-icon {
-        width: 64rpx;
-        height: 64rpx;
-        margin-right: 24rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .service-name {
-        font-size: 28rpx;
-        color: #333;
-      }
-    }
-
-    .right {
-      display: flex;
-      align-items: center;
-
-      .desc {
-        font-size: 24rpx;
-        color: #999;
-        margin-right: 16rpx;
-      }
-    }
+  .scan-btn {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1rpx solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 16rpx;
   }
 }
 
-// 退出登录样式 - 宽度占满屏幕
-.logout-section {
-  width: 100%;
+// 分组标题
+.section-title {
+  margin: 40rpx 10rpx 18rpx;
+  font-size: 26rpx;
+  color: #8a93a6;
+  letter-spacing: 1rpx;
+}
 
-  .logout-item {
-    background-color: #fff;
-    border-radius: 16rpx;
-    padding: 32rpx 24rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
-    text-align: center;
+// 菜单卡片
+.menu-card {
+  background: #ffffff;
+  border-radius: 28rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 30rpx rgba(23, 43, 99, 0.05);
+}
 
-    .logout-text {
-      color: #f56c6c;
-      font-size: 30rpx;
-    }
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 30rpx;
+  border-bottom: 1rpx solid #f1f3f8;
+
+  &:last-child {
+    border-bottom: none;
   }
+
+  .menu-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu-icon-box {
+    width: 68rpx;
+    height: 68rpx;
+    border-radius: 20rpx;
+    margin-right: 24rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-name {
+    font-size: 30rpx;
+    color: #1f2430;
+    font-weight: 500;
+  }
+}
+
+.menu-item-hover {
+  background: #f7f9fd;
+}
+
+.icon-blue {
+  background: linear-gradient(135deg, #5b8cff, #7c5cff);
+}
+
+.icon-green {
+  background: linear-gradient(135deg, #34c77b, #52d9a0);
+}
+
+.icon-orange {
+  background: linear-gradient(135deg, #ff9f43, #ffbe76);
+}
+
+.icon-slate {
+  background: linear-gradient(135deg, #8e9aaf, #b4bfd0);
+}
+
+.icon-cyan {
+  background: linear-gradient(135deg, #22b8cf, #4dd4e8);
+}
+
+.icon-red {
+  background: linear-gradient(135deg, #ff6b6b, #ff9a8b);
+}
+
+// 退出登录
+.logout-btn {
+  margin-top: 40rpx;
+  height: 104rpx;
+  border-radius: 28rpx;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 30rpx rgba(23, 43, 99, 0.05);
+
+  text {
+    font-size: 30rpx;
+    font-weight: 500;
+    color: #f5522d;
+  }
+}
+
+.logout-hover {
+  background: #fff5f3;
 }
 </style>

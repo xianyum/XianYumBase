@@ -7,11 +7,12 @@
           mode="aspectFill"
           @click="previewAvatar"
       ></image>
-      <view class="avatar-tips">{{user.username}}</view>
+      <view class="avatar-tips">点击头像可预览</view>
     </view>
 
     <!-- 原有信息列表 -->
     <uni-list>
+      <uni-list-item showExtraIcon="true" :extraIcon="{type: 'auth-filled'}" title="登录账号" :rightText="user.username" />
       <uni-list-item showExtraIcon="true" :extraIcon="{type: 'person-filled'}" title="用户昵称" :rightText="user.nickName" />
       <uni-list-item showExtraIcon="true" :extraIcon="{type: 'staff-filled'}" title="用户角色" :rightText="user.groupRoleName" />
       <uni-list-item showExtraIcon="true" :extraIcon="{type: 'phone-filled'}" title="手机号码" :rightText="user.mobile" />
