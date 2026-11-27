@@ -319,48 +319,25 @@ export default {
       // 加载提示
       this.$modal.loading("正在获取下载地址...");
 
-      // 1. 调用接口获取预签名URL
+      // 调用接口获取预签名URL
       presignedFileUrl(row.packageFileId).then(response => {
         this.$modal.closeLoading();
-        if (response.code === 200 && response.data) {
-          const customFileName = response.data.originalFilename;
-
-          // 2. 关键：通过XMLHttpRequest获取文件流（兼容预签名URL跨域）
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', response.data.fileUrl, true);
-          xhr.responseType = 'blob'; // 以Blob形式接收文件
-
-          // 3. 请求成功后处理
-          xhr.onload = function() {
-            if (xhr.status === 200) {
-              // 创建Blob URL
-              const blobUrl = URL.createObjectURL(xhr.response);
-              // 创建a标签触发下载
-              const a = document.createElement('a');
-              a.href = blobUrl;
-              a.download = customFileName; // 强制指定文件名（必生效）
-              a.style.display = 'none';
-              document.body.appendChild(a);
-              a.click();
-
-              // 4. 清理资源（避免内存泄漏）
-              document.body.removeChild(a);
-              URL.revokeObjectURL(blobUrl);
-            } else {
-              this.$modal.msgError('文件下载失败，请重试');
-            }
-          }.bind(this);
-
-          // 5. 处理请求异常
-          xhr.onerror = function() {
-            this.$modal.msgError('获取文件失败，请检查网络或链接有效性');
-          }.bind(this);
-
-          // 6. 发送请求（预签名URL无需额外请求头，如有需要可加）
-          xhr.send();
-        } else {
+        const fileUrl = response.data && response.data.fileUrl;
+        if (response.code !== 200 || !fileUrl) {
           this.$modal.msgError('获取下载地址失败');
+          return;
         }
+        // 预签名地址为跨域 CDN 地址且未开启 CORS，用 XHR 拉流会被浏览器拦截（浏览器直接访问却正常），
+        // 因此直接交给浏览器导航下载；referrerPolicy=no-referrer 避免被 CDN 防盗链拦截
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        // 同源时生效，跨域时浏览器会忽略并使用响应头中的文件名
+        a.download = response.data.originalFilename || '';
+        a.referrerPolicy = 'no-referrer';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }).catch(() => {
         this.$modal.closeLoading();
         this.$modal.msgError('获取下载地址异常，请重试');
