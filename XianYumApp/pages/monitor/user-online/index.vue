@@ -182,6 +182,19 @@ export default {
     this.initDictData()
     this.getList()
   },
+  onPullDownRefresh() {
+    this.exitSelectionMode()
+    this.queryParams.pageNum = 1
+    this.userOnlineList = []
+    this.hasMore = true
+    this.getList('refresh')
+  },
+  onReachBottom() {
+    if (this.hasMore && !this.loading) {
+      this.queryParams.pageNum++
+      this.getList('more')
+    }
+  },
   methods: {
     async initDictData() {
       this.loginTypeOptions = await getDictData('sys_user_login_type') || []
@@ -306,19 +319,6 @@ export default {
       }
       this.showFilter = false
       this.handleQuery()
-    },
-    onPullDownRefresh() {
-      this.exitSelectionMode()
-      this.queryParams.pageNum = 1
-      this.userOnlineList = []
-      this.hasMore = true
-      this.getList('refresh')
-    },
-    onReachBottom() {
-      if (this.hasMore && !this.loading) {
-        this.queryParams.pageNum++
-        this.getList('more')
-      }
     }
   }
 }

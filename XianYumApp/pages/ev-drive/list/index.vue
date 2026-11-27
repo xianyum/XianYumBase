@@ -185,6 +185,19 @@ export default {
     this.applyQuickDate(DEFAULT_QUICK_DATE_TYPE);
     this.handleQuery();
   },
+  onPullDownRefresh() {
+    this.queryParams.pageNum = 1;
+    this.energyConsumeList = [];
+    this.hasMore = true;
+    this.summaryInfo = { totalDistanceKm: 0, totalElectricityConsumed: 0, electricityPerKm: 0 };
+    this.getEnergyConsumeList('refresh');
+  },
+  onReachBottom() {
+    if (this.hasMore && !this.loading) {
+      this.queryParams.pageNum++;
+      this.getEnergyConsumeList('more');
+    }
+  },
   methods: {
     checkPermi,
     handleAdd() {
@@ -295,19 +308,6 @@ export default {
       this.applyQuickDate(DEFAULT_QUICK_DATE_TYPE);
       this.showFilter = false;
       this.handleQuery();
-    },
-    onPullDownRefresh() {
-      this.queryParams.pageNum = 1;
-      this.energyConsumeList = [];
-      this.hasMore = true;
-      this.summaryInfo = { totalDistanceKm: 0, totalElectricityConsumed: 0, electricityPerKm: 0 };
-      this.getEnergyConsumeList('refresh');
-    },
-    onReachBottom() {
-      if (this.hasMore && !this.loading) {
-        this.queryParams.pageNum++;
-        this.getEnergyConsumeList('more');
-      }
     }
   }
 }

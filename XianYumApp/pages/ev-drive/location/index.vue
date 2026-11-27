@@ -184,10 +184,15 @@ export default {
   onShow() {
     this.loadData();
   },
+  onPullDownRefresh() {
+    this.loadData(false).finally(() => {
+      uni.stopPullDownRefresh();
+    });
+  },
   methods: {
-    async loadData() {
+    async loadData(showMask = true) {
       try {
-        uni.showLoading({ title: '加载中...', mask: true });
+        if (showMask) uni.showLoading({ title: '加载中...', mask: true });
         const response = await getCurrentLocation();
         if (response.code === 200) {
           this.location = response.data || {};
@@ -196,7 +201,7 @@ export default {
       } catch (error) {
         this.$modal.msg('加载位置信息失败');
       } finally {
-        uni.hideLoading();
+        if (showMask) uni.hideLoading();
       }
     },
     onRefresh() {

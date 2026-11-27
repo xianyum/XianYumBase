@@ -266,6 +266,18 @@ export default {
     this.getUserMap()
     this.getList()
   },
+  onPullDownRefresh() {
+    this.queryParams.pageNum = 1
+    this.apiKeyList = []
+    this.hasMore = true
+    this.getList('refresh')
+  },
+  onReachBottom() {
+    if (this.hasMore && !this.loading) {
+      this.queryParams.pageNum++
+      this.getList('more')
+    }
+  },
   methods: {
     checkPermi,
     formatTime,
@@ -438,18 +450,6 @@ export default {
       }
       this.showFilter = false
       this.handleQuery()
-    },
-    onPullDownRefresh() {
-      this.queryParams.pageNum = 1
-      this.apiKeyList = []
-      this.hasMore = true
-      this.getList('refresh')
-    },
-    onReachBottom() {
-      if (this.hasMore && !this.loading) {
-        this.queryParams.pageNum++
-        this.getList('more')
-      }
     }
   }
 }
